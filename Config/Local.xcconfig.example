@@ -1,3 +1,2 @@
-// Copy to Config/Local.xcconfig and fill in your Apple Developer Team ID
-// (Xcode › Settings › Accounts, or developer.apple.com › Membership).
-DEVELOPMENT_TEAM = YOUR_TEAM_ID
+// Optional: copy to Config/Local.xcconfig to override settings on this machine only.
+// DEVELOPMENT_TEAM = SOME_OTHER_TEAM_ID

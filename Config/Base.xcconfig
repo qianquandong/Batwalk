@@ -1,4 +1,7 @@
-// Shared build settings. Put your personal Team ID in Config/Local.xcconfig
-// (git-ignored) so it never lands in the repo:
-//   DEVELOPMENT_TEAM = ABCDE12345
+// Shared build settings.
+// Apple Developer Team: AI Man Jack LLC. A Team ID is not a secret — it is
+// embedded in every app the team signs.
+DEVELOPMENT_TEAM = GB24TMUMQ5
+
+// Optional per-machine overrides (git-ignored), e.g. a different team for testing.
 #include? "Local.xcconfig"

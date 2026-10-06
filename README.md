@@ -41,6 +41,8 @@ project.yml             XcodeGen spec (the .xcodeproj is generated, not committe
 
 ## Getting started
 
+Signing is preset to the **AI Man Jack LLC** team (`GB24TMUMQ5`, in `Config/Base.xcconfig`).
+
 Requirements: a Mac with **Xcode 16+**, [XcodeGen](https://github.com/yonaskolb/XcodeGen), an Apple Watch on watchOS 10+ (or the simulator).
 
 ```bash
@@ -48,13 +50,10 @@ git clone https://github.com/qianquandong/batwalk.git
 cd batwalk
 brew install xcodegen
 
-# 1. Your signing team (once)
-cp Config/Local.xcconfig.example Config/Local.xcconfig   # then put your Team ID in it
-
-# 2. Run the rules' tests — no Xcode project needed
+# 1. Run the rules' tests — no Xcode project needed
 swift test --package-path Packages/BatwalkCore
 
-# 3. Generate and open the Xcode project
+# 2. Generate and open the Xcode project
 xcodegen generate
 open Batwalk.xcodeproj
 ```
@@ -65,7 +64,7 @@ so the $1.99 unlock can be tested without App Store Connect.
 
 ### Before running on real devices
 
-In the Apple Developer portal, register for the bundle IDs below:
+With automatic signing, Xcode registers the bundle IDs, App Group, iCloud container and HealthKit capability on the first device build — sign in to Xcode with the AI Man Jack LLC account. Only the in-app purchase must be created by hand in App Store Connect (until then, `Batwalk.storekit` covers testing):
 
 | Thing | ID |
 |---|---|
