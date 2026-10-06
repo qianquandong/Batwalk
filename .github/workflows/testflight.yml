@@ -2,7 +2,9 @@ name: TestFlight
 
 # Builds the iPhone app (which carries the Watch app + complication), signs it
 # in the cloud with an App Store Connect API key, and uploads it to TestFlight.
-# No Mac needed: start it from the Actions tab (Run workflow) on any device.
+# No Mac needed: start it from the Actions tab (Run workflow) on any device,
+# or push a tag:  tf-<anything>          → archive + upload
+#                 tf-archive-<anything>  → archive only (registers App IDs)
 #
 # Required repository secrets (Settings › Secrets and variables › Actions):
 #   ASC_KEY_ID      Key ID of an App Store Connect API key with the Admin role
@@ -11,6 +13,8 @@ name: TestFlight
 #                   (including the BEGIN/END PRIVATE KEY lines)
 
 on:
+  push:
+    tags: ["tf-*"]
   workflow_dispatch:
     inputs:
       upload:
@@ -88,7 +92,7 @@ jobs:
             archive
 
       - name: Export & upload to TestFlight
-        if: ${{ inputs.upload }}
+        if: ${{ (github.event_name == 'workflow_dispatch' && inputs.upload) || (github.event_name == 'push' && !startsWith(github.ref_name, 'tf-archive-')) }}
         env:
           ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
           ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
