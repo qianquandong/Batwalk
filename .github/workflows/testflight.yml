@@ -1,0 +1,109 @@
+name: TestFlight
+
+# Builds the iPhone app (which carries the Watch app + complication), signs it
+# in the cloud with an App Store Connect API key, and uploads it to TestFlight.
+# No Mac needed: start it from the Actions tab (Run workflow) on any device.
+#
+# Required repository secrets (Settings › Secrets and variables › Actions):
+#   ASC_KEY_ID      Key ID of an App Store Connect API key with the Admin role
+#   ASC_ISSUER_ID   Issuer ID shown above the key list
+#   ASC_KEY_P8      Full text of the downloaded AuthKey_XXXX.p8 file
+#                   (including the BEGIN/END PRIVATE KEY lines)
+
+on:
+  workflow_dispatch:
+    inputs:
+      upload:
+        description: "Upload to TestFlight (off = only archive & sign, which also registers the App IDs)"
+        type: boolean
+        default: true
+
+concurrency:
+  group: testflight
+  cancel-in-progress: false
+
+jobs:
+  testflight:
+    name: Archive, sign, upload
+    runs-on: macos-15
+    timeout-minutes: 45
+    env:
+      BUILD_NUMBER: ${{ github.run_number }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check secrets are set
+        env:
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+          ASC_KEY_P8: ${{ secrets.ASC_KEY_P8 }}
+        run: |
+          missing=""
+          [ -n "$ASC_KEY_ID" ] || missing="$missing ASC_KEY_ID"
+          [ -n "$ASC_ISSUER_ID" ] || missing="$missing ASC_ISSUER_ID"
+          [ -n "$ASC_KEY_P8" ] || missing="$missing ASC_KEY_P8"
+          if [ -n "$missing" ]; then
+            echo "::error::Missing repository secrets:$missing"
+            exit 1
+          fi
+          case "$ASC_KEY_P8" in
+            *"BEGIN PRIVATE KEY"*) ;;
+            *) echo "::error::ASC_KEY_P8 must be the full .p8 text including the BEGIN PRIVATE KEY line"; exit 1 ;;
+          esac
+
+      - name: Write API key
+        env:
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_KEY_P8: ${{ secrets.ASC_KEY_P8 }}
+        run: |
+          key_path="$RUNNER_TEMP/AuthKey_${ASC_KEY_ID}.p8"
+          printf '%s\n' "$ASC_KEY_P8" > "$key_path"
+          chmod 600 "$key_path"
+          echo "ASC_KEY_PATH=$key_path" >> "$GITHUB_ENV"
+
+      - name: Xcode version
+        run: xcodebuild -version
+
+      - name: Generate project
+        run: |
+          brew install xcodegen
+          xcodegen generate
+
+      - name: Archive (cloud signing; registers App IDs on first run)
+        env:
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+        run: |
+          scripts/ci-xcodebuild.sh \
+            -project Batwalk.xcodeproj \
+            -scheme BatwalkPhone \
+            -configuration Release \
+            -destination 'generic/platform=iOS' \
+            -archivePath "$RUNNER_TEMP/Batwalk.xcarchive" \
+            -allowProvisioningUpdates \
+            -authenticationKeyPath "$ASC_KEY_PATH" \
+            -authenticationKeyID "$ASC_KEY_ID" \
+            -authenticationKeyIssuerID "$ASC_ISSUER_ID" \
+            CURRENT_PROJECT_VERSION="$BUILD_NUMBER" \
+            archive
+
+      - name: Export & upload to TestFlight
+        if: ${{ inputs.upload }}
+        env:
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+        run: |
+          scripts/ci-xcodebuild.sh \
+            -exportArchive \
+            -archivePath "$RUNNER_TEMP/Batwalk.xcarchive" \
+            -exportOptionsPlist Config/ExportOptions.plist \
+            -exportPath "$RUNNER_TEMP/export" \
+            -allowProvisioningUpdates \
+            -authenticationKeyPath "$ASC_KEY_PATH" \
+            -authenticationKeyID "$ASC_KEY_ID" \
+            -authenticationKeyIssuerID "$ASC_ISSUER_ID"
+          echo "::notice::Build $BUILD_NUMBER uploaded. It appears in TestFlight after Apple finishes processing (usually 5–20 min)."
+
+      - name: Remove API key
+        if: always()
+        run: rm -f "$RUNNER_TEMP"/AuthKey_*.p8

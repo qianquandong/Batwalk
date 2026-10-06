@@ -39,7 +39,18 @@ docs/                   PRD, roadmap, open questions, ADRs, test plan
 project.yml             XcodeGen spec (the .xcodeproj is generated, not committed)
 ```
 
-## Getting started
+## No Mac? Ship to TestFlight from your phone
+
+`.github/workflows/testflight.yml` archives, cloud-signs and uploads the app on
+GitHub's macOS runners. One-time setup (all doable in a phone browser):
+
+1. **App Store Connect › Users and Access › Integrations › App Store Connect API** → generate a *Team key* with the **Admin** role. Download the `.p8` (only possible once) and note the **Key ID** and **Issuer ID**.
+2. **GitHub › repo Settings › Secrets and variables › Actions** → add `ASC_KEY_ID`, `ASC_ISSUER_ID`, `ASC_KEY_P8` (the whole `.p8` text).
+3. **Actions › TestFlight › Run workflow** with *upload* **off** — this registers the App IDs, App Group and iCloud container.
+4. **App Store Connect › Apps › + New App** → iOS, bundle ID `com.aimanjack.batwalk`, SKU `batwalk`.
+5. Run the workflow again with *upload* **on**. Install from the **TestFlight** app on iPhone; the Watch app installs to the paired Apple Watch.
+
+## Getting started (with a Mac)
 
 Signing is preset to the **AI Man Jack LLC** team (`GB24TMUMQ5`, in `Config/Base.xcconfig`).
 

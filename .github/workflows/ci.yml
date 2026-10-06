@@ -28,11 +28,11 @@ jobs:
         run: xcodegen generate
       - name: Build Watch app
         run: |
-          xcodebuild -project Batwalk.xcodeproj -scheme BatwalkWatch \
+          scripts/ci-xcodebuild.sh -project Batwalk.xcodeproj -scheme BatwalkWatch \
             -destination 'generic/platform=watchOS Simulator' \
-            CODE_SIGNING_ALLOWED=NO -quiet build
+            CODE_SIGNING_ALLOWED=NO build
       - name: Build iPhone app (embeds the Watch app)
         run: |
-          xcodebuild -project Batwalk.xcodeproj -scheme BatwalkPhone \
+          scripts/ci-xcodebuild.sh -project Batwalk.xcodeproj -scheme BatwalkPhone \
             -destination 'generic/platform=iOS Simulator' \
-            CODE_SIGNING_ALLOWED=NO -quiet build
+            CODE_SIGNING_ALLOWED=NO build

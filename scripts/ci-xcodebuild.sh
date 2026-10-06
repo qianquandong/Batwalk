@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+# Runs xcodebuild, keeps the full log as a file, and on failure re-emits the
+# compiler / signing errors as GitHub Actions annotations so they are readable
+# from the run summary (and via the API) without downloading logs.
+set -uo pipefail
+
+log="${RUNNER_TEMP:-/tmp}/xcodebuild-$(date +%s).log"
+xcodebuild "$@" >"$log" 2>&1
+status=$?
+
+if [ $status -ne 0 ]; then
+  echo "xcodebuild failed with status $status — last 80 lines:"
+  tail -n 80 "$log"
+  # Up to 10 distinct error lines become annotations.
+  grep -E "error:|error -|Error Domain|No profiles|No signing certificate|requires a provisioning profile|Provisioning profile|doesn't match|is not registered|ITMS-[0-9]+" "$log" \
+    | sed -E 's/^[[:space:]]+//' | awk '!seen[$0]++' | head -n 10 \
+    | while IFS= read -r line; do
+        echo "::error::${line//$'\n'/ }"
+      done
+  if [ -z "$(grep -E 'error' "$log" | head -n 1)" ]; then
+    echo "::error::$(tail -n 3 "$log" | tr '\n' ' ')"
+  fi
+else
+  grep -E "\*\* (ARCHIVE|EXPORT|BUILD) SUCCEEDED \*\*|Upload succeeded|Uploaded" "$log" || true
+fi
+exit $status
