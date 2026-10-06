@@ -46,9 +46,9 @@ GitHub's macOS runners. One-time setup (all doable in a phone browser):
 
 1. **App Store Connect › Users and Access › Integrations › App Store Connect API** → generate a *Team key* with the **Admin** role. Download the `.p8` (only possible once) and note the **Key ID** and **Issuer ID**.
 2. **GitHub › repo Settings › Secrets and variables › Actions** → add `ASC_KEY_ID`, `ASC_ISSUER_ID`, `ASC_KEY_P8` (the whole `.p8` text).
-3. **Actions › TestFlight › Run workflow** with *upload* **off** — this registers the App IDs, App Group and iCloud container.
+3. **Actions › TestFlight › Run workflow** with *upload* **off** (or push to the `testflight-archive` branch) — this registers the App IDs, App Group and iCloud container.
 4. **App Store Connect › Apps › + New App** → iOS, bundle ID `com.aimanjack.batwalk`, SKU `batwalk`.
-5. Run the workflow again with *upload* **on**. Install from the **TestFlight** app on iPhone; the Watch app installs to the paired Apple Watch.
+5. Run the workflow again with *upload* **on** (or push to the `testflight` branch). Install from the **TestFlight** app on iPhone; the Watch app installs to the paired Apple Watch.
 
 ## Getting started (with a Mac)
 
