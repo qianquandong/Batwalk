@@ -68,12 +68,12 @@ With automatic signing, Xcode registers the bundle IDs, App Group, iCloud contai
 
 | Thing | ID |
 |---|---|
-| iPhone app | `com.qianquandong.batwalk` |
-| Watch app | `com.qianquandong.batwalk.watchkitapp` |
-| Complication | `com.qianquandong.batwalk.watchkitapp.complication` |
-| App Group | `group.com.qianquandong.batwalk` |
-| iCloud container | `iCloud.com.qianquandong.batwalk` |
-| In-app purchase (non-consumable) | `com.qianquandong.batwalk.fullunlock` |
+| iPhone app | `com.aimanjack.batwalk` |
+| Watch app | `com.aimanjack.batwalk.watchkitapp` |
+| Complication | `com.aimanjack.batwalk.watchkitapp.complication` |
+| App Group | `group.com.aimanjack.batwalk` |
+| iCloud container | `iCloud.com.aimanjack.batwalk` |
+| In-app purchase (non-consumable) | `com.aimanjack.batwalk.fullunlock` |
 
 Watch app capabilities: HealthKit (+ background delivery), iCloud/CloudKit, App Groups, Push Notifications.
 

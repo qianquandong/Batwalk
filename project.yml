@@ -4,7 +4,7 @@
 name: Batwalk
 
 options:
-  bundleIdPrefix: com.qianquandong
+  bundleIdPrefix: com.aimanjack
   deploymentTarget:
     iOS: "17.0"
     watchOS: "10.0"
@@ -40,7 +40,7 @@ targets:
       - target: BatwalkComplication
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.qianquandong.batwalk.watchkitapp
+        PRODUCT_BUNDLE_IDENTIFIER: com.aimanjack.batwalk.watchkitapp
         PRODUCT_NAME: Batwalk
         TARGETED_DEVICE_FAMILY: "4"
         SKIP_INSTALL: YES
@@ -53,7 +53,7 @@ targets:
         CFBundleShortVersionString: "$(MARKETING_VERSION)"
         CFBundleVersion: "$(CURRENT_PROJECT_VERSION)"
         WKApplication: true
-        WKCompanionAppBundleIdentifier: com.qianquandong.batwalk
+        WKCompanionAppBundleIdentifier: com.aimanjack.batwalk
         WKRunsIndependentlyOfCompanionApp: true
         NSHealthShareUsageDescription: "Your steps hatch your bat. Batwalk only reads your Step Count, and it never leaves your devices."
     entitlements:
@@ -62,9 +62,9 @@ targets:
         com.apple.developer.healthkit: true
         com.apple.developer.healthkit.access: []
         com.apple.developer.healthkit.background-delivery: true
-        com.apple.developer.icloud-container-identifiers: [iCloud.com.qianquandong.batwalk]
+        com.apple.developer.icloud-container-identifiers: [iCloud.com.aimanjack.batwalk]
         com.apple.developer.icloud-services: [CloudKit]
-        com.apple.security.application-groups: [group.com.qianquandong.batwalk]
+        com.apple.security.application-groups: [group.com.aimanjack.batwalk]
         aps-environment: development
     scheme:
       testTargets: []
@@ -79,7 +79,7 @@ targets:
       - Apps/Shared/SharedConfig.swift
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.qianquandong.batwalk.watchkitapp.complication
+        PRODUCT_BUNDLE_IDENTIFIER: com.aimanjack.batwalk.watchkitapp.complication
         PRODUCT_NAME: BatwalkComplication
         TARGETED_DEVICE_FAMILY: "4"
         SKIP_INSTALL: YES
@@ -94,7 +94,7 @@ targets:
     entitlements:
       path: Apps/Complication/BatwalkComplication.entitlements
       properties:
-        com.apple.security.application-groups: [group.com.qianquandong.batwalk]
+        com.apple.security.application-groups: [group.com.aimanjack.batwalk]
 
   # ── iPhone companion: Batpedia, history, purchase ─────────────────────
   BatwalkPhone:
@@ -110,7 +110,7 @@ targets:
       - target: BatwalkWatch
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.qianquandong.batwalk
+        PRODUCT_BUNDLE_IDENTIFIER: com.aimanjack.batwalk
         PRODUCT_NAME: Batwalk
         TARGETED_DEVICE_FAMILY: "1"
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
@@ -128,9 +128,9 @@ targets:
     entitlements:
       path: Apps/Phone/BatwalkPhone.entitlements
       properties:
-        com.apple.developer.icloud-container-identifiers: [iCloud.com.qianquandong.batwalk]
+        com.apple.developer.icloud-container-identifiers: [iCloud.com.aimanjack.batwalk]
         com.apple.developer.icloud-services: [CloudKit]
-        com.apple.security.application-groups: [group.com.qianquandong.batwalk]
+        com.apple.security.application-groups: [group.com.aimanjack.batwalk]
         aps-environment: development
     scheme:
       storeKitConfiguration: Config/Batwalk.storekit
