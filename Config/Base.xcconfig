@@ -1,0 +1,4 @@
+// Shared build settings. Put your personal Team ID in Config/Local.xcconfig
+// (git-ignored) so it never lands in the repo:
+//   DEVELOPMENT_TEAM = ABCDE12345
+#include? "Local.xcconfig"

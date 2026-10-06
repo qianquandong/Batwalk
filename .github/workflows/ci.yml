@@ -1,0 +1,38 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  core-tests:
+    name: BatwalkCore tests
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Swift version
+        run: swift --version
+      - name: Run game-rule tests
+        run: swift test --package-path Packages/BatwalkCore
+
+  build-apps:
+    name: Build Watch + iPhone (simulator, unsigned)
+    runs-on: macos-15
+    needs: core-tests
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install XcodeGen
+        run: brew install xcodegen
+      - name: Generate project
+        run: xcodegen generate
+      - name: Build Watch app
+        run: |
+          xcodebuild -project Batwalk.xcodeproj -scheme BatwalkWatch \
+            -destination 'generic/platform=watchOS Simulator' \
+            CODE_SIGNING_ALLOWED=NO -quiet build
+      - name: Build iPhone app (embeds the Watch app)
+        run: |
+          xcodebuild -project Batwalk.xcodeproj -scheme BatwalkPhone \
+            -destination 'generic/platform=iOS Simulator' \
+            CODE_SIGNING_ALLOWED=NO -quiet build

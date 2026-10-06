@@ -1,0 +1,28 @@
+{
+  "identifier" : "4B1A7C2E",
+  "nonRenewingSubscriptions" : [ ],
+  "products" : [
+    {
+      "displayPrice" : "1.99",
+      "familyShareable" : false,
+      "internalID" : "6740000001",
+      "localizations" : [
+        {
+          "description" : "All 20 bats, every egg, Rare, Legendary and Shiny bats.",
+          "displayName" : "Batwalk Full Unlock",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "com.qianquandong.batwalk.fullunlock",
+      "referenceName" : "Full Unlock",
+      "type" : "NonConsumable"
+    }
+  ],
+  "settings" : {
+    "_applicationInternalID" : "6740000000",
+    "_developerTeamID" : "",
+    "_lastSynchronizedDate" : 0
+  },
+  "subscriptionGroups" : [ ],
+  "version" : { "major" : 3, "minor" : 0 }
+}
