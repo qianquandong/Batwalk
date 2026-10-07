@@ -17,6 +17,12 @@ if [ $status -ne 0 ]; then
     | while IFS= read -r line; do
         echo "::error::${line//$'\n'/ }"
       done
+  # Export failures: the useful detail is in Apple's distribution logs.
+  find "${TMPDIR:-/tmp}" -name "*.xcdistributionlogs" -maxdepth 3 2>/dev/null | while IFS= read -r dir; do
+    grep -rhoE "(NSLocalizedDescription|NSLocalizedFailureReason|NSLocalizedRecoverySuggestion|NSUnderlyingError|message|detail|title)[\" =:]+[^;}]{8,300}" "$dir" 2>/dev/null \
+      | awk '!seen[$0]++' | head -n 10 \
+      | while IFS= read -r line; do echo "::warning::${line}"; done
+  done
   if [ -z "$(grep -E 'error' "$log" | head -n 1)" ]; then
     echo "::error::$(tail -n 3 "$log" | tr '\n' ' ')"
   fi
