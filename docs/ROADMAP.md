@@ -19,7 +19,9 @@ that runs on a real Apple Watch.
 ## M1 — First playable on wrist (target: Alpha-ready loop)
 
 - [x] Team ID set (AI Man Jack LLC · GB24TMUMQ5)
-- [ ] First device build in Xcode (auto-registers IDs + capabilities); create the $1.99 IAP in App Store Connect
+- [x] Phone-only pipeline: GitHub Actions archives, cloud-signs and uploads to TestFlight (build 9, 2026-10-06) — see docs/SIGNING.md
+- [ ] Create App Group + iCloud container in the portal, re-enable iCloud backup + complication data
+- [ ] Create the $1.99 IAP in App Store Connect
 - [ ] Run on a physical Apple Watch; walk 2,000 steps; hatch Mochi
 - [ ] Tune egg-shake / crack / reveal animations on real hardware (Emotional DoD 1–5)
 - [ ] Verify open-to-visible-bat < ~1 s; hatch animation 2–4 s
