@@ -28,6 +28,9 @@ enum Persistence {
     /// game is always playable even if iCloud is unavailable.
     static func makeContainer() -> ModelContainer {
         let schema = Schema([SaveRecord.self])
+        guard SharedConfig.iCloudAndAppGroupEnabled else {
+            return localOnly(schema)
+        }
         do {
             let config = ModelConfiguration(
                 schema: schema,
@@ -37,12 +40,16 @@ enum Persistence {
             return try ModelContainer(for: schema, configurations: config)
         } catch {
             print("[persistence] CloudKit store unavailable, using local-only store: \(error)")
-            let local = ModelConfiguration(schema: schema, cloudKitDatabase: .none)
-            do {
-                return try ModelContainer(for: schema, configurations: local)
-            } catch {
-                fatalError("Could not create even a local store: \(error)")
-            }
+            return localOnly(schema)
+        }
+    }
+
+    private static func localOnly(_ schema: Schema) -> ModelContainer {
+        let local = ModelConfiguration(schema: schema, cloudKitDatabase: .none)
+        do {
+            return try ModelContainer(for: schema, configurations: local)
+        } catch {
+            fatalError("Could not create even a local store: \(error)")
         }
     }
 }

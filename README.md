@@ -81,7 +81,7 @@ With automatic signing, Xcode registers the bundle IDs, App Group, iCloud contai
 |---|---|
 | iPhone app | `com.aimanjack.batwalk` |
 | Watch app | `com.aimanjack.batwalk.watchkitapp` |
-| Complication | `com.aimanjack.batwalk.watchkitapp.complication` |
+| Complication | `com.aimanjack.batwalk.watchkitapp.widget` |
 | App Group | `group.com.aimanjack.batwalk` |
 | iCloud container | `iCloud.com.aimanjack.batwalk` |
 | In-app purchase (non-consumable) | `com.aimanjack.batwalk.fullunlock` |

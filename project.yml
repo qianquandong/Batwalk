@@ -62,10 +62,12 @@ targets:
         com.apple.developer.healthkit: true
         com.apple.developer.healthkit.access: []
         com.apple.developer.healthkit.background-delivery: true
-        com.apple.developer.icloud-container-identifiers: [iCloud.com.aimanjack.batwalk]
-        com.apple.developer.icloud-services: [CloudKit]
-        com.apple.security.application-groups: [group.com.aimanjack.batwalk]
-        aps-environment: development
+        # Re-enable together with SharedConfig.iCloudAndAppGroupEnabled once the
+        # App Group + iCloud container exist in the developer portal (docs/SIGNING.md):
+        # com.apple.developer.icloud-container-identifiers: [iCloud.com.aimanjack.batwalk]
+        # com.apple.developer.icloud-services: [CloudKit]
+        # com.apple.security.application-groups: [group.com.aimanjack.batwalk]
+        # aps-environment: development
     scheme:
       testTargets: []
 
@@ -79,7 +81,7 @@ targets:
       - Apps/Shared/SharedConfig.swift
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.aimanjack.batwalk.watchkitapp.complication
+        PRODUCT_BUNDLE_IDENTIFIER: com.aimanjack.batwalk.watchkitapp.widget
         PRODUCT_NAME: BatwalkComplication
         TARGETED_DEVICE_FAMILY: "4"
         SKIP_INSTALL: YES
@@ -91,10 +93,8 @@ targets:
         CFBundleVersion: "$(CURRENT_PROJECT_VERSION)"
         NSExtension:
           NSExtensionPointIdentifier: com.apple.widgetkit-extension
-    entitlements:
-      path: Apps/Complication/BatwalkComplication.entitlements
-      properties:
-        com.apple.security.application-groups: [group.com.aimanjack.batwalk]
+    # entitlements (re-enable with the App Group — docs/SIGNING.md):
+    #   com.apple.security.application-groups: [group.com.aimanjack.batwalk]
 
   # ── iPhone companion: Batpedia, history, purchase ─────────────────────
   BatwalkPhone:
@@ -122,15 +122,13 @@ targets:
         CFBundleShortVersionString: "$(MARKETING_VERSION)"
         CFBundleVersion: "$(CURRENT_PROJECT_VERSION)"
         UILaunchScreen: {}
-        UIBackgroundModes: [remote-notification]
         UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
         ITSAppUsesNonExemptEncryption: false
-    entitlements:
-      path: Apps/Phone/BatwalkPhone.entitlements
-      properties:
-        com.apple.developer.icloud-container-identifiers: [iCloud.com.aimanjack.batwalk]
-        com.apple.developer.icloud-services: [CloudKit]
-        com.apple.security.application-groups: [group.com.aimanjack.batwalk]
-        aps-environment: development
+    # entitlements + UIBackgroundModes [remote-notification] come back with
+    # iCloud / App Group (docs/SIGNING.md):
+    #   com.apple.developer.icloud-container-identifiers: [iCloud.com.aimanjack.batwalk]
+    #   com.apple.developer.icloud-services: [CloudKit]
+    #   com.apple.security.application-groups: [group.com.aimanjack.batwalk]
+    #   aps-environment: development
     scheme:
       storeKitConfiguration: Config/Batwalk.storekit
