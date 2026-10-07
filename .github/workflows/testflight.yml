@@ -66,8 +66,8 @@ jobs:
           chmod 600 "$key_path"
           echo "ASC_KEY_PATH=$key_path" >> "$GITHUB_ENV"
 
-      - name: Xcode version
-        run: xcodebuild -version
+      - name: Select Xcode 26+
+        run: scripts/select-xcode.sh
 
       - name: Generate project
         run: |

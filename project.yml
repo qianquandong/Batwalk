@@ -56,6 +56,7 @@ targets:
         WKCompanionAppBundleIdentifier: com.aimanjack.batwalk
         WKRunsIndependentlyOfCompanionApp: true
         NSHealthShareUsageDescription: "Your steps hatch your bat. Batwalk only reads your Step Count, and it never leaves your devices."
+        NSHealthUpdateUsageDescription: "Batwalk never writes to Health. It only reads your Step Count so your steps can hatch your bat."
     entitlements:
       path: Apps/Watch/BatwalkWatch.entitlements
       properties:

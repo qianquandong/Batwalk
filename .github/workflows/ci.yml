@@ -11,6 +11,8 @@ jobs:
     runs-on: macos-15
     steps:
       - uses: actions/checkout@v4
+      - name: Select Xcode 26+
+        run: scripts/select-xcode.sh
       - name: Swift version
         run: swift --version
       - name: Run game-rule tests
@@ -22,6 +24,8 @@ jobs:
     needs: core-tests
     steps:
       - uses: actions/checkout@v4
+      - name: Select Xcode 26+
+        run: scripts/select-xcode.sh
       - name: Install XcodeGen
         run: brew install xcodegen
       - name: Generate project
