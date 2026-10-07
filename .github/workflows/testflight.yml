@@ -74,7 +74,7 @@ jobs:
           brew install xcodegen
           xcodegen generate
 
-      - name: Archive (cloud signing; registers App IDs on first run)
+      - name: Archive (distribution signing in the cloud; no test devices needed)
         env:
           ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
           ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
@@ -89,6 +89,7 @@ jobs:
             -authenticationKeyPath "$ASC_KEY_PATH" \
             -authenticationKeyID "$ASC_KEY_ID" \
             -authenticationKeyIssuerID "$ASC_ISSUER_ID" \
+            CODE_SIGN_IDENTITY="Apple Distribution" \
             CURRENT_PROJECT_VERSION="$BUILD_NUMBER" \
             archive
 
