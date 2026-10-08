@@ -26,7 +26,20 @@ enum SpriteResolver {
         let name: String
         /// Hue rotation applied when borrowing another species' art or faking Shiny.
         let hueDegrees: Double
+        var saturation: Double = 1
+        var brightness: Double = 0
     }
+
+    /// Recolour of Mochi for species without art yet, matched to the roster's
+    /// visual hooks (PRD §6): (hue°, saturation, brightness).
+    private static let borrowedTint: [String: (Double, Double, Double)] = [
+        "cocoa": (0, 1.0, -0.12), "long-ear": (20, 0.8, 0.05), "fruit": (-20, 1.2, 0),
+        "cave": (190, 0.5, -0.05), "sleepy": (250, 0.7, 0.05), "dust": (0, 0, 0.05),
+        "pebble": (0, 0.2, -0.05), "blossom": (-40, 0.9, 0.12), "moss": (70, 0.9, 0),
+        "sunset": (-10, 1.4, 0.05), "snow": (180, 0.2, 0.25), "cloud": (0, 0.1, 0.2),
+        "golden": (20, 1.6, 0.1), "crystal": (190, 1.3, 0.05), "vampire": (0, 0.3, -0.25),
+        "eclipse": (0, 0, -0.3),
+    ]
 
     private static let moodFallbacks: [BatMood: [BatMood]] = [
         .sleeping: [.sleeping, .drowsy, .awake],
@@ -48,10 +61,10 @@ enum SpriteResolver {
         for m in moods where assetExists(SpriteName.bat(speciesID, mood: m, shiny: false)) {
             return Resolved(name: SpriteName.bat(speciesID, mood: m, shiny: false), hueDegrees: shinyShift)
         }
-        let number = Double(Roster.species(speciesID)?.number ?? 1)
-        let speciesShift = speciesID == "mochi" ? 0 : (number * 47).truncatingRemainder(dividingBy: 360)
+        let (hue, sat, bright) = borrowedTint[speciesID] ?? (0, 1, 0)
         for m in moods where assetExists(SpriteName.bat("mochi", mood: m, shiny: false)) {
-            return Resolved(name: SpriteName.bat("mochi", mood: m, shiny: false), hueDegrees: speciesShift + shinyShift)
+            return Resolved(name: SpriteName.bat("mochi", mood: m, shiny: false),
+                            hueDegrees: hue + shinyShift, saturation: sat, brightness: bright)
         }
         return nil
     }
@@ -96,6 +109,8 @@ struct BatSprite: View {
                     .resizable()
                     .scaledToFit()
                     .hueRotation(.degrees(art.hueDegrees))
+                    .saturation(art.saturation)
+                    .brightness(art.brightness)
             } else {
                 PlaceholderBat(color: SpeciesPalette.body(speciesID, shiny: shiny), mood: mood)
             }
