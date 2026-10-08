@@ -22,7 +22,7 @@ that runs on a real Apple Watch.
 - [x] Phone-only pipeline: GitHub Actions archives, cloud-signs and uploads to TestFlight (build 9, 2026-10-06) — see docs/SIGNING.md
 - [ ] Create App Group + iCloud container in the portal, re-enable iCloud backup + complication data
 - [ ] Create the $1.99 IAP in App Store Connect
-- [ ] Run on a physical Apple Watch; walk 2,000 steps; hatch Mochi
+- [x] Run on a physical Apple Watch; walk 2,000 steps; hatch Mochi (build 9, 2026-10-08)
 - [ ] Tune egg-shake / crack / reveal animations on real hardware (Emotional DoD 1–5)
 - [ ] Verify open-to-visible-bat < ~1 s; hatch animation 2–4 s
 - [ ] Verify battery impact over a full day (no GPS, no workout session, hourly background only)
