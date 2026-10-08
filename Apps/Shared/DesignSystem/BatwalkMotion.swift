@@ -23,50 +23,80 @@ enum BatwalkMotion {
 
 // MARK: - Idle float + ear twitch
 
-/// Gentle 2.4 s bob. Off with Reduce Motion; stops when off screen.
+/// Ambient motion runs only when it's wanted: not with Reduce Motion, and not in
+/// the Watch's Always On (wrist-down) state. Each modifier re-evaluates live.
+private struct AmbientMotion {
+    let reduceMotion: Bool
+    let luminanceReduced: Bool
+    var allowed: Bool { !reduceMotion && !luminanceReduced }
+}
+
+/// Gentle 2.4 s bob. Off with Reduce Motion / Always On; stops when off screen.
 struct IdleFloat: ViewModifier {
     var enabled = true
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.isLuminanceReduced) private var luminanceReduced
     @State private var up = false
+
+    private var active: Bool {
+        enabled && AmbientMotion(reduceMotion: reduceMotion, luminanceReduced: luminanceReduced).allowed
+    }
 
     func body(content: Content) -> some View {
         content
             .offset(y: up ? -BatwalkMotion.idleFloatDistance : BatwalkMotion.idleFloatDistance)
-            .onAppear {
-                guard enabled, !reduceMotion else { return }
+            .task(id: active) {
+                stopMotion { up = false }
+                guard active else { return }
                 withAnimation(.easeInOut(duration: BatwalkMotion.idleFloatDuration).repeatForever(autoreverses: true)) {
                     up = true
                 }
             }
-            .onDisappear {
-                var t = Transaction()
-                t.disablesAnimations = true
-                withTransaction(t) { up = false }
-            }
+            .onDisappear { stopMotion { up = false } }
     }
 }
 
 /// Sprites are single images, so the "ear twitch" is a quick ±3° head tilt
-/// every 6–10 s. The loop lives in `.task`, which SwiftUI cancels off screen.
+/// every 6–10 s. The loop restarts whenever it becomes (in)active and SwiftUI
+/// cancels it off screen.
 struct EarTwitch: ViewModifier {
     var enabled = true
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.isLuminanceReduced) private var luminanceReduced
     @State private var angle: Double = 0
+
+    private var active: Bool {
+        enabled && AmbientMotion(reduceMotion: reduceMotion, luminanceReduced: luminanceReduced).allowed
+    }
 
     func body(content: Content) -> some View {
         content
             .rotationEffect(.degrees(angle), anchor: .bottom)
-            .task {
-                guard enabled, !reduceMotion else { return }
+            .task(id: active) {
+                angle = 0
+                guard active else { return }
                 while !Task.isCancelled {
-                    try? await Task.sleep(for: .seconds(Double.random(in: 6...10)))
-                    if Task.isCancelled { break }
+                    guard (try? await Task.sleep(for: .seconds(Double.random(in: 6...10)))) != nil else { return }
                     withAnimation(.easeOut(duration: 0.15)) { angle = Bool.random() ? 3 : -3 }
-                    try? await Task.sleep(for: .milliseconds(150))
+                    guard (try? await Task.sleep(for: .milliseconds(150))) != nil else { angle = 0; return }
                     withAnimation(.easeInOut(duration: 0.2)) { angle = 0 }
                 }
             }
     }
+}
+
+/// Stops a repeatForever animation by resetting its state without animation.
+func stopMotion(_ reset: () -> Void) {
+    var t = Transaction()
+    t.disablesAnimations = true
+    withTransaction(t, reset)
+}
+
+/// True when decorative, repeating motion may run (shared by components).
+struct AmbientMotionReader: DynamicProperty {
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.isLuminanceReduced) private var luminanceReduced
+    var allowed: Bool { !reduceMotion && !luminanceReduced }
 }
 
 /// Happy bounce: scale 1 → 1.06 → 1 and lift ~3 pt, 0.35 s spring. Fires when `trigger` changes.

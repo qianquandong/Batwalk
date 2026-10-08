@@ -110,6 +110,7 @@ struct BatwalkProgressRing<Center: View>: View {
     @ViewBuilder var center: () -> Center
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    private let ambient = AmbientMotionReader()
     @State private var shown: Double = 0
     @State private var pulsing = false
 
@@ -127,18 +128,16 @@ struct BatwalkProgressRing<Center: View>: View {
         .scaleEffect(pulsing ? 1.025 : 1)
         .onAppear {
             withAnimation(reduceMotion ? nil : BatwalkMotion.ringFill) { shown = progress }
-            if pulses && !reduceMotion {
-                withAnimation(BatwalkMotion.ringPulse.delay(0.7)) { pulsing = true }
-            }
         }
         .onChange(of: progress) { _, new in
             withAnimation(reduceMotion ? nil : BatwalkMotion.ringFill) { shown = new }
         }
-        .onDisappear {
-            var t = Transaction()
-            t.disablesAnimations = true
-            withTransaction(t) { pulsing = false }
+        .task(id: pulses && ambient.allowed) {
+            stopMotion { pulsing = false }
+            guard pulses && ambient.allowed else { return }
+            withAnimation(BatwalkMotion.ringPulse.delay(0.7)) { pulsing = true }
         }
+        .onDisappear { stopMotion { pulsing = false } }
         .accessibilityElement(children: .combine)
         .accessibilityValue("\(Int(progress * 100)) percent")
     }
@@ -430,6 +429,7 @@ struct SparkleField: View {
     var color: Color = BatwalkColor.moonlight
     var spread: CGFloat = 52
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    private let ambient = AmbientMotionReader()
     @State private var twinkle = false
 
     var body: some View {
@@ -443,15 +443,12 @@ struct SparkleField: View {
                     .opacity(reduceMotion ? 0.8 : (twinkle == (i % 2 == 0) ? 1 : 0.3))
             }
         }
-        .onAppear {
-            guard !reduceMotion else { return }
+        .task(id: ambient.allowed) {
+            stopMotion { twinkle = false }
+            guard ambient.allowed else { return }
             withAnimation(BatwalkMotion.hatchGlow) { twinkle = true }
         }
-        .onDisappear {
-            var t = Transaction()
-            t.disablesAnimations = true
-            withTransaction(t) { twinkle = false }
-        }
+        .onDisappear { stopMotion { twinkle = false } }
         .allowsHitTesting(false)
         .accessibilityHidden(true)
     }

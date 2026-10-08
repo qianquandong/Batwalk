@@ -5,7 +5,8 @@ import BatwalkCore
 /// subscription, no countdowns or fake discounts (PRD §2.10).
 struct UnlockView: View {
     @Environment(PurchaseManager.self) private var purchases
-    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(GameStore.self) private var store
+    private let ambient = AmbientMotionReader()
 
     @State private var ctaGlow = false
     @State private var celebrate = false
@@ -67,7 +68,13 @@ struct UnlockView: View {
                         }
                         .buttonStyle(BatwalkPrimaryButtonStyle(minHeight: 58))
                         .shadow(color: BatwalkColor.purpleGlow.opacity(ctaGlow ? 0.55 : 0.2), radius: ctaGlow ? 14 : 6)
-                        .disabled(purchases.isBusy)
+                        .disabled(purchases.isBusy || (purchases.product == nil && !store.isDemo))
+
+                        if purchases.product == nil && !store.isDemo {
+                            Text(purchases.lastError == nil ? "Connecting to the App Store…" : "The App Store isn't reachable right now.")
+                                .font(BatwalkFont.caption)
+                                .foregroundStyle(BatwalkColor.textSecondaryLight)
+                        }
                     }
 
                     Button("Restore Purchase") { Task { await purchases.restore() } }
@@ -88,10 +95,12 @@ struct UnlockView: View {
             .background(BatwalkColor.lightBackground.ignoresSafeArea())
             .toolbar(.hidden, for: .navigationBar)
         }
-        .onAppear {
-            guard !reduceMotion else { return }
+        .task(id: ambient.allowed) {
+            stopMotion { ctaGlow = false }
+            guard ambient.allowed else { return }
             withAnimation(.easeInOut(duration: 1.6).repeatForever(autoreverses: true)) { ctaGlow = true }
         }
+        .onDisappear { stopMotion { ctaGlow = false } }
         .onChange(of: purchases.isUnlocked) { _, unlocked in
             guard unlocked else { return }
             Haptics.success()

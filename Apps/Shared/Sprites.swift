@@ -215,7 +215,7 @@ struct EggSprite: View {
     var size: CGFloat = 96
     var animated = true
 
-    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    private let ambient = AmbientMotionReader()
     @State private var wiggle = false
 
     private var wiggleDegrees: Double {
@@ -235,7 +235,7 @@ struct EggSprite: View {
         }
     }
 
-    private var moves: Bool { animated && !reduceMotion && state != .calm }
+    private var moves: Bool { animated && ambient.allowed && state != .calm }
 
     var body: some View {
         Group {
@@ -247,15 +247,13 @@ struct EggSprite: View {
         }
         .frame(width: size * 0.8, height: size)
         .rotationEffect(.degrees(moves && wiggle ? wiggleDegrees : (moves ? -wiggleDegrees : 0)), anchor: .bottom)
-        .onAppear {
+        // Restarts when the egg changes state (calm → shaking → cracked…) or motion is toggled.
+        .task(id: "\(moves)-\(state.rawValue)") {
+            stopMotion { wiggle = false }
             guard moves else { return }
             withAnimation(.easeInOut(duration: wiggleDuration).repeatForever(autoreverses: true)) { wiggle = true }
         }
-        .onDisappear {
-            var t = Transaction()
-            t.disablesAnimations = true
-            withTransaction(t) { wiggle = false }
-        }
+        .onDisappear { stopMotion { wiggle = false } }
         .accessibilityLabel(type.displayName)
     }
 }

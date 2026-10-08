@@ -35,7 +35,7 @@ struct FriendshipPage: View {
                             .contentShape(Rectangle())
                             .onTapGesture { pet(companion) }
                             .accessibilityAddTraits(.isButton)
-                            .accessibilityHint("Pet \(companion.displayName)")
+                            .accessibilityHint(BatMood.resting(at: time) == .awake ? "Pet \(companion.displayName)" : "Wake \(companion.displayName)")
 
                             Text(companion.displayName)
                                 .font(BatwalkFont.headline)
@@ -94,10 +94,12 @@ struct FriendshipPage: View {
         if after > levelBefore { Haptics.success() } else { Haptics.light() }
         bounce += 1
         hearts += 1
-        reaction = .happy
+        // Tapping a sleeping / drowsy bat wakes it (CARE: feed · pet · wake, PRD §2.4).
+        let resting = BatMood.resting(at: DemoMode.timeOfDay(at: .now))
+        reaction = (reaction == nil && (resting == .sleeping || resting == .drowsy)) ? .awake : .happy
         reactionTask?.cancel()
         reactionTask = Task { @MainActor in
-            try? await Task.sleep(for: .seconds(1.6))
+            try? await Task.sleep(for: .seconds(2.5))
             if !Task.isCancelled { reaction = nil }
         }
     }

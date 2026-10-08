@@ -15,7 +15,7 @@ struct HatchReadyView: View {
     let egg: ActiveEgg
     let onHatch: () -> Void
 
-    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    private let ambient = AmbientMotionReader()
     @State private var glowing = false
 
     var body: some View {
@@ -54,15 +54,12 @@ struct HatchReadyView: View {
             .padding(.horizontal, BatwalkSpacing.sm)
             .frame(width: geo.size.width, height: geo.size.height)
         }
-        .onAppear {
-            guard !reduceMotion else { return }
+        .task(id: ambient.allowed) {
+            stopMotion { glowing = false }
+            guard ambient.allowed else { return }
             withAnimation(BatwalkMotion.hatchGlow) { glowing = true }
         }
-        .onDisappear {
-            var t = Transaction()
-            t.disablesAnimations = true
-            withTransaction(t) { glowing = false }
-        }
+        .onDisappear { stopMotion { glowing = false } }
     }
 }
 
@@ -157,6 +154,11 @@ struct HatchSequenceView: View {
         }
     }
 
+    /// Sleeps; false if the cover was dismissed (task cancelled) so the sequence stops.
+    private func pause(_ ms: Int) async -> Bool {
+        (try? await Task.sleep(for: .milliseconds(ms))) != nil
+    }
+
     @MainActor
     private func run() async {
         guard phase != .reveal else { return }
@@ -169,28 +171,28 @@ struct HatchSequenceView: View {
             return
         }
         withAnimation(.easeOut(duration: 0.25)) { dimmed = true }
-        try? await Task.sleep(for: .milliseconds(250))
+        guard await pause(250) else { return }
 
         phase = .shake
         for i in 0..<6 {
             withAnimation(.easeInOut(duration: 0.06)) { shakeAngle = i.isMultiple(of: 2) ? 9 : -9 }
-            try? await Task.sleep(for: .milliseconds(65))
+            guard await pause(65) else { return }
         }
         withAnimation(.easeOut(duration: 0.08)) { shakeAngle = 0 }
 
         withAnimation(.spring(response: 0.25, dampingFraction: 0.5)) { phase = .crack }
         Haptics.light()
-        try? await Task.sleep(for: .milliseconds(450))
+        guard await pause(450) else { return }
 
         withAnimation(.easeIn(duration: 0.12)) { flash = 1 }
-        try? await Task.sleep(for: .milliseconds(130))
+        guard await pause(130) else { return }
         phase = .reveal
         Haptics.strong()
         withAnimation(.easeOut(duration: 0.4)) { flash = 0 }
         withAnimation(BatwalkMotion.unlock) { revealScale = 1 }
 
         if special {
-            try? await Task.sleep(for: .milliseconds(400))
+            guard await pause(400) else { return }
             Haptics.success()
         }
     }

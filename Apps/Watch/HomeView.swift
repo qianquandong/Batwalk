@@ -68,7 +68,7 @@ struct HomeView: View {
                 .contentShape(Rectangle())
                 .onTapGesture { pet(companion) }
                 .accessibilityAddTraits(.isButton)
-                .accessibilityHint("Pet \(companion.displayName)")
+                .accessibilityHint(BatMood.resting(at: time) == .awake ? "Pet \(companion.displayName)" : "Wake \(companion.displayName)")
                 Spacer(minLength: 0)
                 VStack(spacing: 6) {
                     NavigationLink(value: companion.speciesID) {
@@ -153,10 +153,12 @@ struct HomeView: View {
         let levelAfter = Friendship.level(forEXP: store.state.collection[bat.speciesID]?.friendshipEXP ?? 0)
         if levelAfter > levelBefore { Haptics.success() } else { Haptics.light() }
         petCount += 1
-        reaction = .happy
+        // Tapping a sleeping / drowsy bat wakes it (CARE: feed · pet · wake, PRD §2.4).
+        let resting = BatMood.resting(at: DemoMode.timeOfDay(at: .now))
+        reaction = (resting == .sleeping || resting == .drowsy) ? .awake : .happy
         reactionTask?.cancel()
         reactionTask = Task { @MainActor in
-            try? await Task.sleep(for: .seconds(1.6))
+            try? await Task.sleep(for: .seconds(2.5))
             if !Task.isCancelled { reaction = nil }
         }
     }

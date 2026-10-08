@@ -7,6 +7,7 @@ struct CollectionPage: View {
     @Environment(GameStore.self) private var store
     /// Species the player has already seen in the grid (UI memory, not game state).
     @AppStorage("batwalk.seenBats") private var seenRaw = ""
+    @AppStorage("batwalk.seenBatsInitialized") private var seenInitialized = false
     @State private var newIDs: Set<String> = []
 
     private let columns = Array(repeating: GridItem(.flexible(), spacing: 6), count: 3)
@@ -52,6 +53,12 @@ struct CollectionPage: View {
         let owned = Set(store.state.collection.keys)
         if store.isDemo {
             newIDs = DemoMode.newlyUnlocked
+            return
+        }
+        // First run on this device (update, restore): everything already owned is "seen".
+        guard seenInitialized else {
+            seenRaw = owned.sorted().joined(separator: ",")
+            seenInitialized = true
             return
         }
         let seen = Set(seenRaw.split(separator: ",").map(String.init))

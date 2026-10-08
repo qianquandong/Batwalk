@@ -5,6 +5,7 @@ import BatwalkCore
 enum HealthStatus: Equatable {
     case connected
     case notSetUp
+    /// Asked before, but no steps have arrived today.
     case needsAttention
 }
 

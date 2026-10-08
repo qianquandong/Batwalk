@@ -156,7 +156,7 @@ struct HealthAccessView: View {
                     .foregroundStyle(BatwalkColor.textSecondaryDark)
 
                 if status != .connected {
-                    Text("No steps are arriving. On your iPhone open Health › Sharing › Apps › Batwalk and turn on Steps.")
+                    Text("No steps have arrived today. If you've been walking, open Health on your iPhone › Sharing › Apps › Batwalk and turn on Steps.")
                         .font(BatwalkFont.micro)
                         .foregroundStyle(.white)
                         .batwalkGlassCard(padding: 8, radius: 14)
@@ -180,13 +180,15 @@ struct HealthAccessView: View {
         .watchPageBackground()
     }
 
-    /// HealthKit hides read denials, so: never asked → Not set up; steps flowing →
-    /// Connected; asked but nothing ever counted → Needs attention.
+    /// HealthKit hides read denials, so: never asked → Not set up; steps counted
+    /// today → Connected; otherwise → Needs attention (with the fix steps).
     @MainActor
     static func currentStatus(steps: StepService, state: GameState) async -> HealthStatus {
         if let demo = DemoMode.healthStatus { return demo }
         if await steps.authorizationRequestStatus() == .shouldRequest { return .notSetUp }
+        // Today's total, not lifetime: if Steps access is later turned off in Health,
+        // the status must stop saying "Connected".
         let today = state.ledger.dayKey == DayKey.make(.now) ? state.ledger.lastDailyTotal : 0
-        return (today > 0 || state.lifetimeCreditedSteps > 0) ? .connected : .needsAttention
+        return today > 0 ? .connected : .needsAttention
     }
 }

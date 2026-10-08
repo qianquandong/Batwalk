@@ -51,12 +51,12 @@ struct BatpediaView: View {
     }
 
     private var foundCount: Int {
-        store.state.collection.values.filter { variant == .shiny ? $0.hasShiny : true }.count
+        store.state.collection.values.filter { variant == .shiny ? $0.hasShiny : $0.hasNormal }.count
     }
 
     private func isOwned(_ id: String) -> Bool {
         guard let bat = store.state.collection[id] else { return false }
-        return variant == .shiny ? bat.hasShiny : true
+        return variant == .shiny ? bat.hasShiny : bat.hasNormal
     }
 }
 
@@ -119,6 +119,7 @@ struct BatDetailPage: View {
         .ignoresSafeArea(edges: .top)
         .toolbarBackground(.hidden, for: .navigationBar)
         .toolbarColorScheme(.dark, for: .navigationBar)
+        .onChange(of: store.state.companionID) { _, _ in sendResult = nil }
     }
 
     private func hero(bat: OwnedBat, species: Species) -> some View {
