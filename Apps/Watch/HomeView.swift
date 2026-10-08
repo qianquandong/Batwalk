@@ -1,184 +1,227 @@
 import SwiftUI
-import WatchKit
 import BatwalkCore
 
-/// Where most time is spent: the current bat or the current egg (PRD §2.4).
-/// The bat/egg dominates; numbers stay secondary (PRD §3.4).
+/// Home (board: Watch › 1. Home). The bat dominates the moonlit scene; one glass
+/// card carries the name and a single progress pill. Tap the bat to pet it.
 struct HomeView: View {
     @Environment(GameStore.self) private var store
 
-    @State private var reveal: RevealItem?
+    @State private var hatching: HatchPresentation?
     @State private var showEggPicker = false
+    @State private var petCount = 0
+    @State private var reaction: BatMood?
+    @State private var reactionTask: Task<Void, Never>?
+    @State private var demoRevealShown = false
 
     var body: some View {
-        TimelineView(.everyMinute) { context in
-            let time = DemoMode.timeOfDay(at: context.date)
-            ZStack {
-                SkyBackground(time: time)
+        NavigationStack {
+            TimelineView(.everyMinute) { context in
+                let time = DemoMode.timeOfDay(at: context.date)
                 content(time: time)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .watchPageBackground(time, scenery: true)
             }
+            .navigationTitle(store.state.isEggReady ? "Ready!" : "Batwalk")
+            .navigationDestination(for: String.self) { BatDetailView(speciesID: $0) }
         }
-        .sheet(item: $reveal, onDismiss: {
+        .fullScreenCover(item: $hatching, onDismiss: {
             // Straight into choosing the next egg — keeps the loop moving (PRD §2.1).
             if store.state.egg == nil { showEggPicker = true }
-        }) { item in
-            HatchRevealView(result: item.result) { reveal = nil }
+        }) { presentation in
+            HatchSequenceView(presentation: presentation) { hatching = nil }
         }
-        .sheet(isPresented: $showEggPicker) {
-            EggPickerView()
-        }
+        .sheet(isPresented: $showEggPicker) { EggPickerView() }
         .onAppear {
-            if let demo = DemoMode.reveal { reveal = RevealItem(result: demo) }
+            if let demo = DemoMode.reveal, !demoRevealShown {
+                demoRevealShown = true
+                hatching = HatchPresentation(result: demo, egg: demo.record.eggType, startRevealed: true)
+            }
         }
     }
 
     @ViewBuilder
     private func content(time: TimeOfDay) -> some View {
         let state = store.state
-        if let egg = state.egg, egg.isReady || state.companion == nil {
-            // Before the first hatch, or when ready: the egg is the star.
-            VStack(spacing: 4) {
-                EggSprite(type: egg.type, state: egg.visualState, size: 110)
-                    .onTapGesture { if egg.isReady { hatch() } }
-                if egg.isReady {
-                    Text("Tap to hatch").font(.footnote.bold())
-                } else {
-                    Text("\(egg.stepsRemaining.formatted()) steps to go")
-                        .font(.caption2)
-                        .foregroundStyle(.secondary)
-                }
-            }
+        if let egg = state.egg, egg.isReady {
+            HatchReadyView(egg: egg) { hatch(egg) }
+                .batwalkAppear()
         } else if let companion = state.companion {
-            VStack(spacing: 2) {
-                BatSprite(
+            companionScene(companion, time: time)
+        } else if let egg = state.egg {
+            firstEggScene(egg)
+        }
+    }
+
+    private func companionScene(_ companion: OwnedBat, time: TimeOfDay) -> some View {
+        GeometryReader { geo in
+            let batSize = min(geo.size.width * 0.66, geo.size.height * 0.55)
+            VStack(spacing: BatwalkSpacing.xs) {
+                Spacer(minLength: 0)
+                BatHeroView(
                     speciesID: companion.speciesID,
                     shiny: companion.showsShiny,
-                    mood: BatMood.resting(at: time),
-                    size: 110
+                    mood: reaction ?? BatMood.resting(at: time),
+                    size: batSize,
+                    bounceTrigger: petCount
                 )
-                Text(companion.displayName).font(.headline)
-                if let egg = state.egg {
-                    EggChip(egg: egg)
-                } else {
-                    Button("Pick an egg") { showEggPicker = true }
-                        .buttonStyle(.borderedProminent)
-                        .controlSize(.mini)
-                }
-            }
-        }
-    }
-
-    private func hatch() {
-        do {
-            let isFirst = store.state.history.isEmpty
-            let result = try store.mutate { try $0.hatch(now: .now) }
-            WKInterfaceDevice.current().play(result.record.outcome == .duplicate ? .click : .success)
-            store.analytics.log(isFirst ? .firstHatch : .batCollected, properties: [
-                "species": result.record.speciesID,
-                "rarity": Roster.species(result.record.speciesID)?.rarity.rawValue ?? "",
-                "shiny": result.record.isShiny ? "true" : "false",
-            ])
-            if result.record.outcome == .duplicate {
-                store.analytics.log(.duplicateFriendship, properties: ["species": result.record.speciesID])
-            }
-            reveal = RevealItem(result: result)
-        } catch {
-            WKInterfaceDevice.current().play(.failure)
-        }
-    }
-}
-
-struct RevealItem: Identifiable {
-    let id = UUID()
-    let result: HatchResult
-}
-
-private struct EggChip: View {
-    let egg: ActiveEgg
-    var body: some View {
-        HStack(spacing: 4) {
-            Gauge(value: egg.progress) { EmptyView() }
-                .gaugeStyle(.accessoryCircularCapacity)
-                .scaleEffect(0.45)
-                .frame(width: 22, height: 22)
-            Text("\(egg.stepsRemaining.formatted()) to hatch")
-                .font(.caption2)
-                .foregroundStyle(.secondary)
-        }
-    }
-}
-
-/// High-value emotional moment (PRD §3.2). Rare/Legendary get a bigger reveal.
-struct HatchRevealView: View {
-    let result: HatchResult
-    let onDone: () -> Void
-
-    @State private var revealed = false
-
-    private var species: Species? { Roster.species(result.record.speciesID) }
-
-    var body: some View {
-        ScrollView {
-            VStack(spacing: 6) {
-                ZStack {
-                    if (species?.rarity ?? .common) >= .rare || result.record.isShiny {
-                        Circle()
-                            .fill(RadialGradient(colors: [.yellow.opacity(0.6), .clear], center: .center, startRadius: 4, endRadius: 70))
-                            .scaleEffect(revealed ? 1.2 : 0.2)
+                .overlay { HeartBurst(trigger: petCount) }
+                .contentShape(Rectangle())
+                .onTapGesture { pet(companion) }
+                .accessibilityAddTraits(.isButton)
+                .accessibilityHint("Pet \(companion.displayName)")
+                Spacer(minLength: 0)
+                VStack(spacing: 6) {
+                    NavigationLink(value: companion.speciesID) {
+                        HStack(spacing: 4) {
+                            Text(companion.displayName)
+                                .font(BatwalkFont.headline)
+                                .lineLimit(1)
+                                .minimumScaleFactor(0.8)
+                            Image(systemName: "chevron.right")
+                                .font(.system(size: 10, weight: .bold))
+                                .foregroundStyle(BatwalkColor.textSecondaryDark)
+                        }
+                        .foregroundStyle(.white)
+                        .frame(maxWidth: .infinity)
                     }
-                    BatSprite(speciesID: result.record.speciesID, shiny: result.record.isShiny, mood: .happy, size: 96)
-                        .scaleEffect(revealed ? 1 : 0.1)
-                        .opacity(revealed ? 1 : 0)
+                    .buttonStyle(.plain)
+                    progressPill
                 }
-                .frame(height: 110)
-
-                Text(species?.name ?? "New bat").font(.headline)
-                Text(subtitle).font(.caption2).foregroundStyle(.secondary).multilineTextAlignment(.center)
-
-                Button("Yay!", action: onDone).padding(.top, 4)
+                .batwalkGlassCard(padding: 8)
             }
+            .padding(.horizontal, BatwalkSpacing.xs)
+            .frame(width: geo.size.width, height: geo.size.height)
         }
-        .onAppear {
-            // Hatch animation target: 2–4 s (PRD §4.7).
-            withAnimation(.spring(response: 0.9, dampingFraction: 0.6).delay(0.4)) { revealed = true }
+        .batwalkAppear()
+    }
+
+    @ViewBuilder
+    private var progressPill: some View {
+        if let egg = store.state.egg {
+            HStack(spacing: 6) {
+                EggIcon(type: egg.type, size: 16)
+                Text("\(egg.stepsRemaining.formatted()) steps to hatch")
+                    .font(BatwalkFont.caption)
+                    .monospacedDigit()
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.8)
+            }
+            .foregroundStyle(.white)
+            .padding(.horizontal, 10)
+            .padding(.vertical, 5)
+            .frame(maxWidth: .infinity)
+            .background(Capsule().fill(Color.white.opacity(0.08)))
+            .overlay(Capsule().strokeBorder(.white.opacity(0.12), lineWidth: 1))
+            .accessibilityElement(children: .combine)
+        } else {
+            Button {
+                showEggPicker = true
+            } label: {
+                HStack(spacing: 6) { EggIcon(size: 16); Text("Pick an egg") }
+            }
+            .buttonStyle(BatwalkPrimaryButtonStyle(minHeight: 32))
         }
     }
 
-    private var subtitle: String {
-        let rarity = species?.rarity.displayName ?? ""
-        switch result.record.outcome {
-        case .newSpecies: return result.record.isShiny ? "Shiny \(rarity)! A new friend." : "\(rarity) · A new friend!"
-        case .newShiny: return "A Shiny one! ✨"
-        case .duplicate: return "Old friend! +\(result.friendshipGained) Friendship"
+    private func firstEggScene(_ egg: ActiveEgg) -> some View {
+        VStack(spacing: BatwalkSpacing.sm) {
+            Spacer(minLength: 0)
+            EggSprite(type: egg.type, state: egg.visualState, size: 96)
+                .idleFloat()
+            Spacer(minLength: 0)
+            HStack(spacing: 6) {
+                EggIcon(type: egg.type, size: 16)
+                Text("\(egg.stepsRemaining.formatted()) steps to hatch")
+                    .font(BatwalkFont.caption)
+                    .monospacedDigit()
+            }
+            .foregroundStyle(.white)
+            .padding(.horizontal, 12)
+            .padding(.vertical, 6)
+            .background(Capsule().fill(Color.white.opacity(0.08)))
+            .overlay(Capsule().strokeBorder(.white.opacity(0.12), lineWidth: 1))
         }
+        .padding(.bottom, BatwalkSpacing.xs)
+        .batwalkAppear()
+    }
+
+    // MARK: Actions
+
+    private func pet(_ bat: OwnedBat) {
+        let levelBefore = Friendship.level(forEXP: bat.friendshipEXP)
+        _ = try? store.mutate { try $0.pet(bat.speciesID, dayKey: DayKey.make(.now)) }
+        let levelAfter = Friendship.level(forEXP: store.state.collection[bat.speciesID]?.friendshipEXP ?? 0)
+        if levelAfter > levelBefore { Haptics.success() } else { Haptics.light() }
+        petCount += 1
+        reaction = .happy
+        reactionTask?.cancel()
+        reactionTask = Task { @MainActor in
+            try? await Task.sleep(for: .seconds(1.6))
+            if !Task.isCancelled { reaction = nil }
+        }
+    }
+
+    private func hatch(_ egg: ActiveEgg) {
+        let isFirst = store.state.history.isEmpty
+        // Save the hatch first, then animate: quitting mid-animation never loses the bat.
+        guard let result = try? store.mutate({ try $0.hatch(now: .now) }) else {
+            Haptics.failure()
+            return
+        }
+        let id = result.record.speciesID
+        store.analytics.log(isFirst ? .firstHatch : .batCollected, properties: [
+            "species": id,
+            "rarity": Roster.species(id)?.rarity.rawValue ?? "",
+            "shiny": result.record.isShiny ? "true" : "false",
+        ])
+        if result.record.outcome == .duplicate {
+            store.analytics.log(.duplicateFriendship, properties: ["species": id])
+        }
+        hatching = HatchPresentation(result: result, egg: egg.type, startRevealed: false)
     }
 }
 
+/// Next-egg chooser, shown after every hatch.
 struct EggPickerView: View {
     @Environment(GameStore.self) private var store
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
-        List {
-            Section("Choose your next egg") {
-                ForEach(EggType.allCases.filter(\.isPickable), id: \.self) { type in
-                    let available = store.state.pickableEggs.contains(type)
-                    Button {
-                        start(type)
-                    } label: {
-                        HStack {
-                            EggSprite(type: type, state: .calm, size: 28)
-                            VStack(alignment: .leading) {
-                                Text(type.displayName)
-                                Text(available ? "\(type.targetSteps.formatted()) steps" : "Full unlock")
-                                    .font(.caption2)
-                                    .foregroundStyle(.secondary)
+        NavigationStack {
+            ScrollView {
+                VStack(spacing: 6) {
+                    ForEach(EggType.allCases.filter(\.isPickable), id: \.self) { type in
+                        let available = store.state.pickableEggs.contains(type)
+                        Button {
+                            start(type)
+                        } label: {
+                            HStack(spacing: BatwalkSpacing.sm) {
+                                EggIcon(type: type, size: 26)
+                                VStack(alignment: .leading, spacing: 1) {
+                                    Text(type.displayName).font(BatwalkFont.caption)
+                                    Text(available ? "\(type.targetSteps.formatted()) steps" : "Full unlock")
+                                        .font(BatwalkFont.micro)
+                                        .foregroundStyle(BatwalkColor.textSecondaryDark)
+                                }
+                                Spacer(minLength: 0)
+                                if !available {
+                                    Image(systemName: "lock.fill")
+                                        .font(.system(size: 10))
+                                        .foregroundStyle(BatwalkColor.textSecondaryDark)
+                                }
                             }
+                            .foregroundStyle(.white)
+                            .batwalkGlassCard(padding: 8, radius: 14)
+                            .opacity(available ? 1 : 0.55)
                         }
+                        .buttonStyle(PressableStyle())
+                        .disabled(!available)
                     }
-                    .disabled(!available)
                 }
+                .padding(.horizontal, 2)
             }
+            .navigationTitle("Next Egg")
+            .watchPageBackground()
         }
     }
 
@@ -187,36 +230,7 @@ struct EggPickerView: View {
             try store.mutate { try $0.startEgg(type, seed: UInt64.random(in: .min ... .max), now: .now) }
             dismiss()
         } catch {
-            WKInterfaceDevice.current().play(.failure)
-        }
-    }
-}
-
-/// The cozy cave from the concept board, tinted for Day / Dusk / Night (PRD §2.3),
-/// dimmed so the bat or egg stays the brightest thing on screen (PRD §3.4).
-struct SkyBackground: View {
-    let time: TimeOfDay
-
-    var body: some View {
-        ZStack {
-            LinearGradient(colors: colors, startPoint: .top, endPoint: .bottom)
-            if assetExists("bg_home") {
-                Image("bg_home")
-                    .interpolation(.none)
-                    .resizable()
-                    .scaledToFill()
-                    .opacity(0.55)
-                    .overlay(LinearGradient(colors: colors.map { $0.opacity(0.55) }, startPoint: .top, endPoint: .bottom))
-            }
-        }
-        .ignoresSafeArea()
-    }
-
-    private var colors: [Color] {
-        switch time {
-        case .day: return [Color(red: 0.25, green: 0.33, blue: 0.5), Color(red: 0.12, green: 0.16, blue: 0.25)]
-        case .dusk: return [Color(red: 0.55, green: 0.3, blue: 0.45), Color(red: 0.15, green: 0.1, blue: 0.25)]
-        case .night: return [Color(red: 0.05, green: 0.06, blue: 0.18), .black]
+            Haptics.failure()
         }
     }
 }

@@ -65,6 +65,35 @@ for egg, deg in egg_tints.items():
         base = Image.open(os.path.join(tmp, frame + '.png'))
         assets[f'egg_{egg}_{state}'] = tint(base, deg, 0.8 if egg == 'starter' else 1.0) if deg else base
 
+# Fruit icon: a 16x16 pixel strawberry in the board's palette (the board has no
+# clean, isolated fruit to cut out). Interim until the artist's fruit set lands.
+FRUIT = [
+    "......oo.oo.....",
+    ".....oGGoGGo....",
+    "....oGgGGGgGo...",
+    "...ooGGooGGoo...",
+    "..oRRoooooooRo..",
+    ".oRRRRRRRRRRRRo.",
+    ".oRrRRRyRRRrRRo.",
+    "oRRRRyRRRRRRyRRo",
+    "oRRrRRRRrRRRRRRo",
+    "oRRRRRyRRRRyRrRo",
+    ".oRyRRRRRrRRRRo.",
+    ".oRRRrRRRRRyRRo.",
+    "..oRRRRyRRRRRo..",
+    "...oRRRRRRrRo...",
+    "....ooRRRRoo....",
+    "......oooo......",
+]
+PAL = {'o': (58, 20, 34, 255), 'G': (96, 170, 72, 255), 'g': (60, 120, 52, 255),
+       'R': (232, 72, 92, 255), 'r': (196, 48, 72, 255), 'y': (255, 226, 140, 255)}
+fruit = Image.new('RGBA', (16, 16), (0, 0, 0, 0))
+for y, row in enumerate(FRUIT):
+    for x, c in enumerate(row):
+        if c in PAL:
+            fruit.putpixel((x, y), PAL[c])
+assets['fruit_strawberry'] = fruit
+
 shutil.rmtree(CATALOG, ignore_errors=True)
 os.makedirs(CATALOG)
 with open(os.path.join(CATALOG, 'Contents.json'), 'w') as fh:

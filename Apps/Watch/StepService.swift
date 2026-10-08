@@ -24,6 +24,12 @@ final class StepService {
         }
     }
 
+    /// Whether the system would still show the permission sheet (Settings › Health Access).
+    func authorizationRequestStatus() async -> HKAuthorizationRequestStatus {
+        guard isAvailable else { return .unknown }
+        return (try? await healthStore.statusForAuthorizationRequest(toShare: [], read: [stepType])) ?? .unknown
+    }
+
     /// Cumulative steps for the local calendar day containing `day`.
     /// nil means "query failed — don't ingest anything".
     func dailyTotal(for day: Date, calendar: Calendar = .current) async -> Int? {
@@ -85,6 +91,7 @@ extension GameStore {
             combined.eggBecameReady = combined.eggBecameReady || update.eggBecameReady
         }
         if combined.eggBecameReady {
+            Haptics.notify()
             analytics.log(.eggComplete, properties: ["egg": state.egg?.type.rawValue ?? ""])
         }
         return combined

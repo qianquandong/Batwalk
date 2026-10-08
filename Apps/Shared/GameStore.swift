@@ -119,7 +119,7 @@ final class GameStore {
     /// Apply a save pushed from the Watch. WatchConnectivity's application
     /// context always carries the Watch's latest state, so it simply wins.
     func applyMirror(_ data: Data) {
-        guard role == .phone,
+        guard role == .phone, !isDemo,
               let incoming = try? JSONDecoder().decode(GameState.self, from: data) else { return }
         state = incoming
     }

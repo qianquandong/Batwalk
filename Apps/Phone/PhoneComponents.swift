@@ -1,0 +1,263 @@
+import SwiftUI
+import BatwalkCore
+
+// iPhone-only reusable components (UI_REDESIGN_TASKS P5).
+
+/// Large rounded page header used instead of the default navigation title.
+struct PhoneHeader: View {
+    let title: String
+    var trailing: String? = nil
+
+    var body: some View {
+        HStack(alignment: .firstTextBaseline) {
+            Text(title)
+                .font(BatwalkFont.rounded(.largeTitle, weight: .bold))
+                .foregroundStyle(BatwalkColor.textPrimaryLight)
+                .lineLimit(1)
+                .minimumScaleFactor(0.7)
+            Spacer()
+            if let trailing {
+                Text(trailing)
+                    .font(BatwalkFont.rounded(.subheadline, weight: .semibold))
+                    .foregroundStyle(BatwalkColor.textSecondaryLight)
+            }
+        }
+        .accessibilityAddTraits(.isHeader)
+    }
+}
+
+/// Two-option pill control (Normal | Shiny) in brand purple.
+struct SegmentedPill<Value: Hashable>: View {
+    let options: [(Value, String)]
+    @Binding var selection: Value
+    @Namespace private var ns
+
+    var body: some View {
+        HStack(spacing: 4) {
+            ForEach(options.indices, id: \.self) { index in
+                let value = options[index].0
+                let label = options[index].1
+                Button {
+                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) { selection = value }
+                } label: {
+                    Text(label)
+                        .font(BatwalkFont.rounded(.subheadline, weight: .semibold))
+                        .foregroundStyle(selection == value ? .white : BatwalkColor.textSecondaryLight)
+                        .frame(maxWidth: .infinity, minHeight: 34)
+                        .background {
+                            if selection == value {
+                                Capsule().fill(BatwalkGradient.button)
+                                    .matchedGeometryEffect(id: "pill", in: ns)
+                            }
+                        }
+                }
+                .buttonStyle(.plain)
+                .accessibilityAddTraits(selection == value ? .isSelected : [])
+            }
+        }
+        .padding(4)
+        .background(Capsule().fill(BatwalkColor.lightTint))
+    }
+}
+
+/// Unlocked Batpedia card: art on lavender, name, rarity chip, ★ for the companion.
+struct BatCard: View {
+    let species: Species
+    let shiny: Bool
+    var isCompanion = false
+
+    var body: some View {
+        VStack(spacing: 6) {
+            ZStack {
+                RoundedRectangle(cornerRadius: 14, style: .continuous).fill(BatwalkGradient.lightArt)
+                BatSprite(speciesID: species.id, shiny: shiny, mood: .awake, size: 70)
+            }
+            .frame(height: 84)
+            .overlay(alignment: .topTrailing) {
+                if isCompanion {
+                    Image(systemName: "star.fill")
+                        .font(.system(size: 11, weight: .bold))
+                        .foregroundStyle(BatwalkColor.rarityLegendary)
+                        .padding(6)
+                }
+            }
+            HStack(spacing: 4) {
+                Circle().fill(species.rarity.color).frame(width: 6, height: 6)
+                Text(species.name)
+                    .font(BatwalkFont.rounded(.caption, weight: .semibold))
+                    .foregroundStyle(BatwalkColor.textPrimaryLight)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.75)
+            }
+        }
+        .padding(6)
+        .background(RoundedRectangle(cornerRadius: 18, style: .continuous).fill(BatwalkColor.lightCard))
+        .overlay(
+            RoundedRectangle(cornerRadius: 18, style: .continuous)
+                .strokeBorder(isCompanion ? BatwalkColor.purple.opacity(0.55) : BatwalkColor.purple.opacity(0.12),
+                              lineWidth: isCompanion ? 2 : 1)
+        )
+        .shadow(color: BatwalkColor.purple.opacity(isCompanion ? 0.18 : 0.08), radius: 8, y: 3)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("\(species.name), \(species.rarity.displayName)\(shiny ? ", Shiny" : "")\(isCompanion ? ", companion" : "")")
+    }
+}
+
+/// Locked Batpedia card: soft lavender, "?", number.
+struct LockedBatCard: View {
+    let number: Int
+
+    var body: some View {
+        VStack(spacing: 4) {
+            Text("?")
+                .font(.system(size: 34, weight: .bold, design: .rounded))
+                .foregroundStyle(BatwalkColor.softLavender)
+            Text("#\(number)")
+                .font(BatwalkFont.rounded(.caption2, weight: .semibold))
+                .foregroundStyle(BatwalkColor.textSecondaryLight)
+        }
+        .frame(maxWidth: .infinity)
+        .frame(height: 120)
+        .background(RoundedRectangle(cornerRadius: 18, style: .continuous).fill(BatwalkColor.lockedBatLight))
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("Bat number \(number), not discovered yet")
+    }
+}
+
+/// Compact stat tile (History, 2×2).
+struct StatCard<Icon: View>: View {
+    let title: String
+    let value: String
+    @ViewBuilder var icon: () -> Icon
+
+    var body: some View {
+        HStack(spacing: 10) {
+            icon()
+                .frame(width: 36, height: 36)
+                .background(Circle().fill(BatwalkColor.lightTint))
+            VStack(alignment: .leading, spacing: 1) {
+                Text(title)
+                    .font(BatwalkFont.rounded(.caption, weight: .medium))
+                    .foregroundStyle(BatwalkColor.textSecondaryLight)
+                Text(value)
+                    .font(BatwalkFont.rounded(.title3, weight: .bold))
+                    .foregroundStyle(BatwalkColor.textPrimaryLight)
+                    .monospacedDigit()
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.7)
+            }
+            Spacer(minLength: 0)
+        }
+        .batwalkLightCard(padding: 12, radius: 18)
+        .accessibilityElement(children: .combine)
+    }
+}
+
+/// Labelled information row (Bat Detail).
+struct BatInfoRow<Icon: View, Detail: View>: View {
+    let title: String
+    var value: String? = nil
+    @ViewBuilder var icon: () -> Icon
+    @ViewBuilder var detail: () -> Detail
+
+    var body: some View {
+        HStack(alignment: .center, spacing: 12) {
+            icon()
+                .frame(width: 34, height: 34)
+                .background(Circle().fill(BatwalkColor.lightTint))
+            VStack(alignment: .leading, spacing: 4) {
+                HStack {
+                    Text(title)
+                        .font(BatwalkFont.rounded(.subheadline, weight: .semibold))
+                        .foregroundStyle(BatwalkColor.textPrimaryLight)
+                    Spacer()
+                    if let value {
+                        Text(value)
+                            .font(BatwalkFont.rounded(.subheadline, weight: .semibold))
+                            .foregroundStyle(BatwalkColor.textSecondaryLight)
+                    }
+                }
+                detail()
+            }
+        }
+        .padding(.vertical, 10)
+        .accessibilityElement(children: .combine)
+    }
+}
+
+extension BatInfoRow where Detail == EmptyView {
+    init(title: String, value: String? = nil, @ViewBuilder icon: @escaping () -> Icon) {
+        self.init(title: title, value: value, icon: icon, detail: { EmptyView() })
+    }
+}
+
+/// Hatch history row: thumbnail, name, variant + egg chips, date / time.
+struct HatchHistoryRow: View {
+    let record: HatchRecord
+
+    var body: some View {
+        HStack(spacing: 12) {
+            ZStack {
+                RoundedRectangle(cornerRadius: 12, style: .continuous).fill(BatwalkGradient.lightArt)
+                BatSprite(speciesID: record.speciesID, shiny: record.isShiny, mood: .awake, size: 40)
+            }
+            .frame(width: 50, height: 50)
+            VStack(alignment: .leading, spacing: 4) {
+                HStack(spacing: 4) {
+                    Text(Roster.species(record.speciesID)?.name ?? record.speciesID)
+                        .font(BatwalkFont.rounded(.subheadline, weight: .semibold))
+                        .foregroundStyle(BatwalkColor.textPrimaryLight)
+                        .lineLimit(1)
+                    if record.outcome != .duplicate {
+                        Text("New!")
+                            .font(BatwalkFont.rounded(.caption2, weight: .bold))
+                            .foregroundStyle(BatwalkColor.pinkAccent)
+                    }
+                }
+                HStack(spacing: 4) {
+                    VariantChip(shiny: record.isShiny, dark: false)
+                    ChipView(text: record.eggType.displayName, color: BatwalkColor.purple, dark: false)
+                }
+            }
+            Spacer(minLength: 4)
+            VStack(alignment: .trailing, spacing: 2) {
+                Text(record.hatchedAt.formatted(date: .abbreviated, time: .omitted))
+                Text(record.hatchedAt.formatted(date: .omitted, time: .shortened))
+            }
+            .font(BatwalkFont.rounded(.caption2, weight: .medium))
+            .foregroundStyle(BatwalkColor.textSecondaryLight)
+        }
+        .batwalkLightCard(padding: 10, radius: 18)
+        .accessibilityElement(children: .combine)
+    }
+}
+
+/// "??? · Not discovered yet" placeholder row.
+struct UndiscoveredRow: View {
+    var body: some View {
+        HStack(spacing: 12) {
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .fill(BatwalkColor.lockedBatLight)
+                .frame(width: 50, height: 50)
+                .overlay(EggIcon(size: 22).opacity(0.35))
+            VStack(alignment: .leading, spacing: 2) {
+                Text("???").font(BatwalkFont.rounded(.subheadline, weight: .semibold))
+                Text("Not discovered yet").font(BatwalkFont.rounded(.caption, weight: .medium))
+            }
+            .foregroundStyle(BatwalkColor.textSecondaryLight.opacity(0.7))
+            Spacer()
+        }
+        .padding(10)
+        .background(RoundedRectangle(cornerRadius: 18, style: .continuous).fill(Color.white.opacity(0.55)))
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("Not discovered yet")
+    }
+}
+
+/// Light-theme empty state wrapper.
+struct PhoneEmptyState: View {
+    var body: some View {
+        BatwalkEmptyState(title: "No bats here yet!",
+                          message: "Open Batwalk on your Apple Watch and walk to hatch your first bat.")
+    }
+}

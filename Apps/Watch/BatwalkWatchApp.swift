@@ -22,6 +22,13 @@ struct BatwalkWatchApp: App {
             store.loadDemo(demo) // screenshot scenario: no HealthKit, no sync
             return
         }
+        // iPhone → Watch requests (e.g. "Set as Companion"); the Watch stays the only writer.
+        PhoneSync.shared.onReceiveCommand = { command in
+            if let id = command[PhoneSync.setCompanionKey], store.state.collection[id] != nil {
+                _ = try? store.mutate { try $0.setCompanion(id) }
+                store.analytics.log(.companionChanged, properties: ["species": id, "source": "phone"])
+            }
+        }
         PhoneSync.shared.activate()
         // Registered at launch, not in a view's .task: a HealthKit background wake
         // may never render the UI, so the observer must exist without it.
@@ -60,10 +67,7 @@ struct BatwalkWatchApp: App {
         guard !store.isDemo else { return }
         store.load() // pick up a CloudKit restore if one arrived (also while still on onboarding)
         guard store.state.hasStarted else { return }
-        let update = await store.syncSteps(using: steps)
-        if update.eggBecameReady {
-            WKInterfaceDevice.current().play(.success) // hatch-ready haptic (PRD §2.2)
-        }
+        await store.syncSteps(using: steps) // plays the egg-ready haptic (PRD §2.2)
     }
 
     @MainActor
@@ -83,7 +87,10 @@ enum HatchNotifier {
         _ = try? await UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound])
     }
 
+    static let enabledKey = "batwalk.notifications"
+
     static func postHatchReady(companionName: String?) async {
+        guard UserDefaults.standard.object(forKey: enabledKey) as? Bool ?? true else { return }
         let content = UNMutableNotificationContent()
         content.title = "Ready to hatch!"
         content.body = companionName.map { "\($0) is curious what's inside your egg." } ?? "Something is wiggling in your egg."

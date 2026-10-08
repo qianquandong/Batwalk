@@ -20,7 +20,7 @@ concurrency:
 jobs:
   screenshots:
     runs-on: macos-15
-    timeout-minutes: 45
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
 
@@ -46,8 +46,25 @@ jobs:
             CODE_SIGNING_ALLOWED=NO \
             build
 
-      - name: Capture scenarios
-        run: scripts/capture-screens.sh "$RUNNER_TEMP/out/screens"
+      - name: Capture Watch scenarios
+        run: scripts/capture-screens.sh watch "$RUNNER_TEMP/out/screens/watch"
+
+      - name: Boot an iPhone simulator
+        run: scripts/phone-sim.sh
+
+      - name: Build iPhone app for the simulator
+        run: |
+          scripts/ci-xcodebuild.sh \
+            -project Batwalk.xcodeproj \
+            -scheme BatwalkPhone \
+            -configuration Debug \
+            -destination "id=$PHONE_SIM" \
+            -derivedDataPath build \
+            CODE_SIGNING_ALLOWED=NO \
+            build
+
+      - name: Capture iPhone scenarios
+        run: SIM="$PHONE_SIM" scripts/capture-screens.sh phone "$RUNNER_TEMP/out/screens/phone"
 
       - name: Publish to screenshots-output branch
         env:

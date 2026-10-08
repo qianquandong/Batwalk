@@ -300,4 +300,18 @@ final class PresentationTests: XCTestCase {
         XCTAssertEqual(Friendship.progressToNext(exp: 175), 0.5, accuracy: 0.001)
         XCTAssertEqual(Friendship.progressToNext(exp: 5_000), 1)
     }
+
+    func testFriendshipLevelProgressLabels() {
+        XCTAssertEqual(Friendship.levelProgress(exp: 20).current, 20)
+        XCTAssertEqual(Friendship.levelProgress(exp: 20).span, 100)
+        XCTAssertEqual(Friendship.levelProgress(exp: 175).current, 75)
+        XCTAssertEqual(Friendship.levelProgress(exp: 175).span, 150)
+        XCTAssertEqual(Friendship.levelProgress(exp: 1_500).current, 500)
+        XCTAssertNil(Friendship.levelProgress(exp: 1_500).span)
+    }
+
+    func testFavoriteFruitIsLoreOnly() {
+        XCTAssertEqual(Roster.species("mochi")?.favoriteFruit, "Berry")
+        XCTAssertNil(Roster.species("cocoa")?.favoriteFruit)
+    }
 }

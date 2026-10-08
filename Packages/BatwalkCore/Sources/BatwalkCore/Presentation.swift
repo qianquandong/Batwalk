@@ -60,6 +60,15 @@ public enum Friendship {
         return min(level, maxLevel)
     }
 
+    /// EXP earned inside the current level, and the EXP that level spans
+    /// (nil at max level) — for "20 / 100" style labels.
+    public static func levelProgress(exp: Int, tuning: Tuning = .default) -> (current: Int, span: Int?) {
+        let current = Friendship.level(forEXP: exp, tuning: tuning)
+        let lower = tuning.friendshipThresholds[current - 1]
+        guard current < maxLevel, current < tuning.friendshipThresholds.count else { return (exp - lower, nil) }
+        return (exp - lower, tuning.friendshipThresholds[current] - lower)
+    }
+
     /// Progress toward the next level in [0, 1]; 1 at max level.
     public static func progressToNext(exp: Int, tuning: Tuning = .default) -> Double {
         let current = Friendship.level(forEXP: exp, tuning: tuning)

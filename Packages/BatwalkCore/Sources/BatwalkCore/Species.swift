@@ -41,14 +41,18 @@ public struct Species: Identifiable, Hashable, Codable, Sendable {
     public let hook: String
     /// Part of the free tier.
     public let isFree: Bool
+    /// Display-only lore from the concept board. Does not affect Friendship gain.
+    public let favoriteFruit: String?
 
-    public init(id: String, number: Int, name: String, rarity: Rarity, hook: String, isFree: Bool = false) {
+    public init(id: String, number: Int, name: String, rarity: Rarity, hook: String,
+                isFree: Bool = false, favoriteFruit: String? = nil) {
         self.id = id
         self.number = number
         self.name = name
         self.rarity = rarity
         self.hook = hook
         self.isFree = isFree
+        self.favoriteFruit = favoriteFruit
     }
 }
 
@@ -56,7 +60,7 @@ public struct Species: Identifiable, Hashable, Codable, Sendable {
 public enum Roster {
     public static let all: [Species] = [
         Species(id: "mochi", number: 1, name: "Mochi Bat", rarity: .common,
-                hook: "Round, sleepy, friendly starter mascot", isFree: true),
+                hook: "Round, sleepy, friendly starter mascot", isFree: true, favoriteFruit: "Berry"),
         Species(id: "cocoa", number: 2, name: "Cocoa Bat", rarity: .common,
                 hook: "Chocolate brown, calm, wraps in wings", isFree: true),
         Species(id: "long-ear", number: 3, name: "Long Ear Bat", rarity: .common,
@@ -72,7 +76,7 @@ public enum Roster {
         Species(id: "pebble", number: 8, name: "Pebble Bat", rarity: .common,
                 hook: "Stone-like round sleeper"),
         Species(id: "strawberry", number: 9, name: "Strawberry Bat", rarity: .uncommon,
-                hook: "Pink/red, strawberry motif, cheerful"),
+                hook: "Pink/red, strawberry motif, cheerful", favoriteFruit: "Strawberry"),
         Species(id: "blossom", number: 10, name: "Blossom Bat", rarity: .uncommon,
                 hook: "Soft pink, petal particles"),
         Species(id: "moss", number: 11, name: "Moss Bat", rarity: .uncommon,
@@ -84,7 +88,7 @@ public enum Roster {
         Species(id: "cloud", number: 14, name: "Cloud Bat", rarity: .uncommon,
                 hook: "Fluffy white-gray, dreamy"),
         Species(id: "moonwing", number: 15, name: "Moonwing", rarity: .rare,
-                hook: "Deep blue, moon motifs, mysterious"),
+                hook: "Deep blue, moon motifs, mysterious", favoriteFruit: "Moon Berry"),
         Species(id: "golden", number: 16, name: "Golden Bat", rarity: .rare,
                 hook: "Gold accents, confident sparkle"),
         Species(id: "crystal", number: 17, name: "Crystal Bat", rarity: .rare,
@@ -92,7 +96,7 @@ public enum Roster {
         Species(id: "vampire", number: 18, name: "Vampire Bat", rarity: .rare,
                 hook: "Cute black/red cape, dramatic not scary"),
         Species(id: "galaxy", number: 19, name: "Galaxy Bat", rarity: .legendary,
-                hook: "Starfield body, premium particles"),
+                hook: "Starfield body, premium particles", favoriteFruit: "Star Fruit"),
         Species(id: "eclipse", number: 20, name: "Eclipse Bat", rarity: .legendary,
                 hook: "Black/gold halo, silent and rare"),
     ]

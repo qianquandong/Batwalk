@@ -99,8 +99,6 @@ struct BatSprite: View {
     var mood: BatMood = .awake
     var size: CGFloat = 96
 
-    @State private var bob = false
-
     var body: some View {
         Group {
             if let art = SpriteResolver.bat(speciesID, mood: mood, shiny: shiny) {
@@ -116,10 +114,26 @@ struct BatSprite: View {
             }
         }
         .frame(width: size, height: size)
-        .offset(y: bob ? -size * 0.03 : size * 0.03)
-        .animation(.easeInOut(duration: mood == .sleeping ? 2.4 : 1.2).repeatForever(autoreverses: true), value: bob)
-        .onAppear { bob = true }
         .accessibilityLabel(Roster.species(speciesID)?.name ?? "Bat")
+    }
+}
+
+/// The character as hero: idle float (2.4 s), ear twitch (6–10 s), happy bounce
+/// on `bounceTrigger`. All motion respects Reduce Motion and stops off screen.
+struct BatHeroView: View {
+    let speciesID: String
+    var shiny = false
+    var mood: BatMood = .awake
+    var size: CGFloat = 110
+    var bounceTrigger = 0
+    var glow: Color? = nil
+
+    var body: some View {
+        BatSprite(speciesID: speciesID, shiny: shiny, mood: mood, size: size)
+            .shadow(color: (glow ?? .clear).opacity(0.5), radius: size * 0.12)
+            .earTwitch(mood != .sleeping)
+            .happyBounce(trigger: bounceTrigger)
+            .idleFloat()
     }
 }
 
@@ -193,11 +207,15 @@ private struct Triangle: Shape {
     }
 }
 
+/// Egg with progress-driven motion (PRD §3.5): calm → occasional shake →
+/// cracks → frequent rattle. Static with Reduce Motion or `animated: false`.
 struct EggSprite: View {
     let type: EggType
     let state: EggVisualState
     var size: CGFloat = 96
+    var animated = true
 
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var wiggle = false
 
     private var wiggleDegrees: Double {
@@ -205,7 +223,7 @@ struct EggSprite: View {
         case .calm: return 0
         case .shaking: return 3
         case .cracked: return 5
-        case .rattling, .ready: return 9
+        case .rattling, .ready: return 8
         }
     }
 
@@ -217,19 +235,27 @@ struct EggSprite: View {
         }
     }
 
+    private var moves: Bool { animated && !reduceMotion && state != .calm }
+
     var body: some View {
         Group {
             if let name = SpriteResolver.egg(type, state: state) {
                 Image(name).interpolation(.none).resizable().scaledToFit()
-                    .shadow(color: state == .ready ? .yellow.opacity(0.8) : .clear, radius: size * 0.12)
             } else {
                 PlaceholderEgg(type: type, cracked: state == .cracked || state == .rattling || state == .ready)
             }
         }
         .frame(width: size * 0.8, height: size)
-        .rotationEffect(.degrees(wiggle ? wiggleDegrees : -wiggleDegrees), anchor: .bottom)
-        .animation(state == .calm ? nil : Animation.easeInOut(duration: wiggleDuration).repeatForever(autoreverses: true), value: wiggle)
-        .onAppear { wiggle = true }
+        .rotationEffect(.degrees(moves && wiggle ? wiggleDegrees : (moves ? -wiggleDegrees : 0)), anchor: .bottom)
+        .onAppear {
+            guard moves else { return }
+            withAnimation(.easeInOut(duration: wiggleDuration).repeatForever(autoreverses: true)) { wiggle = true }
+        }
+        .onDisappear {
+            var t = Transaction()
+            t.disablesAnimations = true
+            withTransaction(t) { wiggle = false }
+        }
         .accessibilityLabel(type.displayName)
     }
 }

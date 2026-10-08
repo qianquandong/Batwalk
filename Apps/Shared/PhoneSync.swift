@@ -9,8 +9,25 @@ final class PhoneSync: NSObject, WCSessionDelegate {
 
     /// Called on the main actor with the Watch's encoded `GameState`.
     var onReceiveSave: (@MainActor (Data) -> Void)?
+    /// Watch only: requests from the iPhone, applied by the Watch (the only writer).
+    var onReceiveCommand: (@MainActor ([String: String]) -> Void)?
 
+    static let setCompanionKey = "setCompanion"
     private static let saveKey = "save"
+
+    enum SendResult { case sent, noWatchApp, unavailable }
+
+    /// iPhone → Watch request. `transferUserInfo` is queued and delivered even
+    /// when the Watch app isn't running.
+    @discardableResult
+    func send(command: [String: String]) -> SendResult {
+        guard WCSession.isSupported(), WCSession.default.activationState == .activated else { return .unavailable }
+        #if os(iOS)
+        guard WCSession.default.isPaired, WCSession.default.isWatchAppInstalled else { return .noWatchApp }
+        #endif
+        WCSession.default.transferUserInfo(command)
+        return .sent
+    }
 
     func activate() {
         guard WCSession.isSupported() else { return }
@@ -35,6 +52,13 @@ final class PhoneSync: NSObject, WCSessionDelegate {
     func session(_ session: WCSession, didReceiveApplicationContext applicationContext: [String: Any]) {
         if let data = applicationContext[Self.saveKey] as? Data {
             deliver(data)
+        }
+    }
+
+    func session(_ session: WCSession, didReceiveUserInfo userInfo: [String: Any] = [:]) {
+        let command = userInfo.compactMapValues { $0 as? String }
+        Task { @MainActor in
+            self.onReceiveCommand?(command)
         }
     }
 
