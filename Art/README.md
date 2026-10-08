@@ -12,6 +12,7 @@ cuts sprites out of the board and regenerates `Apps/Shared/Sprites.xcassets`:
 
 - **Mochi, Strawberry, Moonwing, Galaxy**: awake · sleeping · playing (fly) · happy (pet) · eating; Mochi/Strawberry also drowsy
 - **Eggs**: calm · shaking · cracked, recoloured per egg type (starter cream, tiny lavender, forest pink, moon indigo, crystal cyan)
+- **Large portraits** (~200 px) of the same four bats are used for the awake and happy poses — the sharpest art on the board
 - **Home background** (the cave) and the **app icon** (Mochi portrait)
 
 Species without art yet are drawn as a recoloured Mochi, and Shiny is a hue

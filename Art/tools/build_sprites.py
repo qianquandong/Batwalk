@@ -22,6 +22,17 @@ assets = {}  # asset name -> PIL image
 for f in os.listdir(tmp):
     if f.startswith('bat_'):
         assets[f[:-4]] = Image.open(os.path.join(tmp, f))
+# Large portraits (~200 px) are much sharper on the Watch than the 50 px row
+# sprites, so they become the hero poses: awake (night home) and happy (reveal, pet).
+ptmp = tempfile.mkdtemp()
+subprocess.run([sys.executable, '-I', os.path.join(ROOT, 'Art', 'tools', 'extract_portraits.py'), BOARD, ptmp],
+               check=True, stdout=subprocess.DEVNULL)
+for f in os.listdir(ptmp):
+    sp = f[:-4]
+    portrait = Image.open(os.path.join(ptmp, f))
+    assets[f'bat_{sp}_awake'] = portrait
+    assets[f'bat_{sp}_happy'] = portrait
+shutil.rmtree(ptmp)
 assets['bat_mochi_drowsy'] = Image.open(os.path.join(tmp, 'expr_mochi_0.png'))
 assets['bat_strawberry_drowsy'] = Image.open(os.path.join(tmp, 'expr_strawberry_1.png'))
 assets['bg_home'] = Image.open(os.path.join(tmp, 'bg_home.png'))
