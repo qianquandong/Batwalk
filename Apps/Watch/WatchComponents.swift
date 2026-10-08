@@ -23,7 +23,7 @@ struct BatwalkStatRow<Icon: View>: View {
             }
         }
         .foregroundStyle(.white)
-        .batwalkGlassCard(padding: 10, radius: 14)
+        .batwalkGlassCard(padding: 8, radius: 14)
         .accessibilityElement(children: .combine)
     }
 }
@@ -40,7 +40,7 @@ struct FeedButton: View {
                 Text("Feed (\(fruit))")
             }
         }
-        .buttonStyle(BatwalkPrimaryButtonStyle(minHeight: 40))
+        .buttonStyle(BatwalkPrimaryButtonStyle(minHeight: 36))
         .disabled(fruit == 0)
         .accessibilityLabel("Feed")
         .accessibilityValue("\(fruit) fruit")

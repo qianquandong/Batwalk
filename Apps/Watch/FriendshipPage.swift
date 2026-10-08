@@ -19,19 +19,19 @@ struct FriendshipPage: View {
                 if let companion = store.state.companion {
                     TimelineView(.everyMinute) { context in
                         let time = DemoMode.timeOfDay(at: context.date)
-                        VStack(spacing: 4) {
+                        VStack(spacing: 2) {
                             ZStack {
                                 BatHeroView(
                                     speciesID: companion.speciesID,
                                     shiny: companion.showsShiny,
                                     mood: reaction ?? BatMood.resting(at: time),
-                                    size: 82,
+                                    size: 70,
                                     bounceTrigger: bounce
                                 )
                                 HeartBurst(trigger: hearts)
                                 FruitToss(trigger: fruitToss)
                             }
-                            .frame(height: 86)
+                            .frame(height: 60)
                             .contentShape(Rectangle())
                             .onTapGesture { pet(companion) }
                             .accessibilityAddTraits(.isButton)
@@ -47,9 +47,9 @@ struct FriendshipPage: View {
 
                             FriendshipProgressView(exp: companion.friendshipEXP)
                                 .padding(.horizontal, BatwalkSpacing.xs)
+                                .padding(.top, 2)
 
                             FeedButton(fruit: store.state.fruit) { feed(companion) }
-                                .padding(.top, BatwalkSpacing.xs)
 
                             if store.state.fruit == 0 {
                                 Text("Walk to find fruit")

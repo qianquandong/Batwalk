@@ -16,7 +16,8 @@ struct BatwalkGlassCard: ViewModifier {
             .padding(padding)
             .background(
                 RoundedRectangle(cornerRadius: radius, style: .continuous)
-                    .fill(Color.white.opacity(0.07))
+                    .fill(Color(hex: 0x1A1F3D).opacity(0.86))
+                    .overlay(RoundedRectangle(cornerRadius: radius, style: .continuous).fill(Color.white.opacity(0.05)))
             )
             .overlay(
                 RoundedRectangle(cornerRadius: radius, style: .continuous)
@@ -322,10 +323,10 @@ struct NightSkyBackground: View {
             let x = rng.nextUnit() * size.width
             let y = rng.nextUnit() * size.height * (scenery ? 0.62 : 1)
             let r = 0.6 + rng.nextUnit() * 1.1
-            let alpha = (time == .day ? 0.25 : 0.55) + rng.nextUnit() * 0.35
+            let alpha = (time == .day ? 0.25 : (scenery ? 0.55 : 0.3)) + rng.nextUnit() * (scenery ? 0.35 : 0.25)
             let rect = CGRect(x: x, y: y, width: r * 2, height: r * 2)
             context.fill(Path(ellipseIn: rect), with: .color(.white.opacity(alpha)))
-            if i % 9 == 0 {
+            if scenery && i % 9 == 0 {
                 // a few four-point sparkles
                 var p = Path()
                 let s = r * 3.2

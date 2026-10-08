@@ -54,7 +54,7 @@ struct HomeView: View {
 
     private func companionScene(_ companion: OwnedBat, time: TimeOfDay) -> some View {
         GeometryReader { geo in
-            let batSize = min(geo.size.width * 0.66, geo.size.height * 0.55)
+            let batSize = min(geo.size.width * 0.92, geo.size.height * 0.72)
             VStack(spacing: BatwalkSpacing.xs) {
                 Spacer(minLength: 0)
                 BatHeroView(

@@ -21,6 +21,7 @@ struct CollectionPage: View {
                             .font(BatwalkFont.caption)
                             .monospacedDigit()
                             .foregroundStyle(BatwalkColor.textSecondaryDark)
+                            .padding(.trailing, 10)
                     }
                     LazyVGrid(columns: columns, spacing: 6) {
                         ForEach(Roster.all) { species in

@@ -25,7 +25,7 @@ struct HatchReadyView: View {
                 ZStack {
                     Circle()
                         .fill(BatwalkGradient.hatchGlow)
-                        .frame(width: stage * 1.25, height: stage * 1.25)
+                        .frame(width: stage * 1.02, height: stage * 1.02)
                         .scaleEffect(glowing ? 1.08 : 0.94)
                         .opacity(glowing ? 1 : 0.75)
                     SparkleField(count: 5, spread: stage * 0.5)
@@ -124,12 +124,12 @@ struct HatchSequenceView: View {
                     Circle()
                         .fill(RadialGradient(colors: [(special ? rarity.color : BatwalkColor.purpleGlow).opacity(special ? 0.75 : 0.45), .clear],
                                              center: .center, startRadius: 4, endRadius: 64))
-                        .frame(width: 128, height: 128)
+                        .frame(width: 110, height: 110)
                     if special { SparkleField(count: 6, color: record.isShiny ? BatwalkColor.rarityShiny : rarity.color, spread: 50) }
-                    BatSprite(speciesID: record.speciesID, shiny: record.isShiny, mood: .happy, size: 92)
+                    BatSprite(speciesID: record.speciesID, shiny: record.isShiny, mood: .happy, size: 84)
                         .scaleEffect(revealScale)
                 }
-                .frame(height: 112)
+                .frame(height: 92)
                 Text(species?.name ?? "New bat")
                     .font(BatwalkFont.headline)
                     .foregroundStyle(.white)

@@ -21,7 +21,7 @@ struct UnlockView: View {
     var body: some View {
         NavigationStack {
             ScrollView {
-                VStack(spacing: BatwalkSpacing.lg) {
+                VStack(spacing: BatwalkSpacing.md) {
                     hero
 
                     VStack(spacing: 6) {
@@ -35,13 +35,13 @@ struct UnlockView: View {
                             .multilineTextAlignment(.center)
                     }
 
-                    VStack(alignment: .leading, spacing: 12) {
+                    VStack(alignment: .leading, spacing: 8) {
                         ForEach(benefits, id: \.1) { symbol, text in
                             HStack(spacing: 12) {
                                 Image(systemName: symbol)
                                     .font(.system(size: 15, weight: .semibold))
                                     .foregroundStyle(BatwalkColor.purple)
-                                    .frame(width: 30, height: 30)
+                                    .frame(width: 28, height: 28)
                                     .background(Circle().fill(BatwalkColor.lightTint))
                                 Text(text)
                                     .font(BatwalkFont.rounded(.subheadline, weight: .medium))
@@ -50,7 +50,7 @@ struct UnlockView: View {
                             }
                         }
                     }
-                    .batwalkLightCard(padding: 16, radius: 22)
+                    .batwalkLightCard(padding: 14, radius: 22)
 
                     if purchases.isUnlocked {
                         unlockedCard
@@ -107,13 +107,13 @@ struct UnlockView: View {
             NightSkyBackground(time: .night, scenery: false).opacity(0.35)
             SparkleField(count: 6, spread: 120)
             HStack(alignment: .bottom, spacing: -18) {
-                BatSprite(speciesID: "moonwing", mood: .awake, size: 92)
-                BatHeroView(speciesID: "mochi", mood: .happy, size: 150)
-                BatSprite(speciesID: "galaxy", mood: .awake, size: 92)
+                BatSprite(speciesID: "moonwing", mood: .awake, size: 78)
+                BatHeroView(speciesID: "mochi", mood: .happy, size: 124)
+                BatSprite(speciesID: "galaxy", mood: .awake, size: 78)
             }
             .padding(.top, 20)
         }
-        .frame(height: 240)
+        .frame(height: 190)
         .clipShape(RoundedRectangle(cornerRadius: 28, style: .continuous))
         .accessibilityHidden(true)
     }

@@ -12,19 +12,19 @@ struct ProgressPage: View {
     var body: some View {
         NavigationStack {
             ScrollView {
-                VStack(spacing: BatwalkSpacing.sm) {
+                VStack(spacing: 6) {
                     if let egg = store.state.egg {
-                        BatwalkProgressRing(progress: egg.progress, lineWidth: 9) {
+                        BatwalkProgressRing(progress: egg.progress, lineWidth: 8) {
                             VStack(spacing: 2) {
                                 Text("\(Int((egg.progress * 100).rounded(.down)))%")
-                                    .font(BatwalkFont.rounded(.title2, weight: .bold))
+                                    .font(BatwalkFont.rounded(.title3, weight: .bold))
                                     .monospacedDigit()
                                     .foregroundStyle(.white)
-                                EggIcon(type: egg.type, size: 18)
+                                EggIcon(type: egg.type, size: 14)
                             }
                         }
-                        .frame(width: 98, height: 98)
-                        .padding(.top, BatwalkSpacing.xs)
+                        .frame(width: 78, height: 78)
+                        .padding(.top, 2)
 
                         Text(egg.isReady ? "Ready to hatch!" : "\(egg.stepsRemaining.formatted()) steps to hatch")
                             .font(BatwalkFont.rounded(.footnote, weight: .semibold))
