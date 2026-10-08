@@ -12,7 +12,7 @@ struct HomeView: View {
 
     var body: some View {
         TimelineView(.everyMinute) { context in
-            let time = TimeOfDay.at(context.date)
+            let time = DemoMode.timeOfDay(at: context.date)
             ZStack {
                 SkyBackground(time: time)
                 content(time: time)
@@ -26,6 +26,9 @@ struct HomeView: View {
         }
         .sheet(isPresented: $showEggPicker) {
             EggPickerView()
+        }
+        .onAppear {
+            if let demo = DemoMode.reveal { reveal = RevealItem(result: demo) }
         }
     }
 
@@ -189,13 +192,24 @@ struct EggPickerView: View {
     }
 }
 
-/// Day = soft sky, Dusk = sunset, Night = deep blue with stars (PRD §2.3).
+/// The cozy cave from the concept board, tinted for Day / Dusk / Night (PRD §2.3),
+/// dimmed so the bat or egg stays the brightest thing on screen (PRD §3.4).
 struct SkyBackground: View {
     let time: TimeOfDay
 
     var body: some View {
-        LinearGradient(colors: colors, startPoint: .top, endPoint: .bottom)
-            .ignoresSafeArea()
+        ZStack {
+            LinearGradient(colors: colors, startPoint: .top, endPoint: .bottom)
+            if assetExists("bg_home") {
+                Image("bg_home")
+                    .interpolation(.none)
+                    .resizable()
+                    .scaledToFill()
+                    .opacity(0.55)
+                    .overlay(LinearGradient(colors: colors.map { $0.opacity(0.55) }, startPoint: .top, endPoint: .bottom))
+            }
+        }
+        .ignoresSafeArea()
     }
 
     private var colors: [Color] {

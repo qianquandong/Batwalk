@@ -30,12 +30,14 @@ that runs on a real Apple Watch.
 
 ## M2 — Art integration
 
-- [ ] Commission / finalise concept board → `Art/concept-board.png`
+- [x] Concept board in repo → `Art/concept-board.png`
+- [x] Interim sprites cut from the board (4 species × 5 poses, 5 egg colours × 3 states, cave background, app icon) — `Art/tools/build_sprites.py`
+- [x] Watch simulator screenshots in CI (`screenshots` workflow, DemoMode scenarios)
 - [ ] Mochi, Cocoa, Long Ear full animation sets (free tier first)
 - [ ] Egg sprites × 5 types × 5 states
 - [ ] Sprite-sheet playback component (frame timing, battery-conscious)
 - [ ] Remaining 17 species + Shiny palettes
-- [ ] Real app icon
+- [ ] Final app icon (interim: Mochi portrait from the board)
 
 ## M3 — Alpha (10–20 testers)
 

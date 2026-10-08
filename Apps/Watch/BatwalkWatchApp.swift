@@ -18,6 +18,10 @@ struct BatwalkWatchApp: App {
         self.container = container
         let store = GameStore(container: container, role: .watch)
         _store = State(initialValue: store)
+        if let demo = DemoMode.makeState() {
+            store.loadDemo(demo) // screenshot scenario: no HealthKit, no sync
+            return
+        }
         PhoneSync.shared.activate()
         // Registered at launch, not in a view's .task: a HealthKit background wake
         // may never render the UI, so the observer must exist without it.
@@ -33,7 +37,7 @@ struct BatwalkWatchApp: App {
                 .environment(store)
                 .environment(purchases)
                 .task {
-                    purchases.start()
+                    if !store.isDemo { purchases.start() }
                 }
                 // View-level onChange: reliably tracks @Observable reads (Scene-level may not).
                 .onChange(of: purchases.hasCheckedEntitlements) { _, checked in
@@ -53,6 +57,7 @@ struct BatwalkWatchApp: App {
 
     @MainActor
     private static func foregroundSync(store: GameStore, steps: StepService) async {
+        guard !store.isDemo else { return }
         store.load() // pick up a CloudKit restore if one arrived (also while still on onboarding)
         guard store.state.hasStarted else { return }
         let update = await store.syncSteps(using: steps)

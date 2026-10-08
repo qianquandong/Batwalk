@@ -3,7 +3,20 @@
 Approved direction: **polished 2D pixel art**, cute + cozy + slightly mysterious,
 never horror (PRD §3). Readability at real Watch size beats detail.
 
-Put the approved concept board here as `concept-board.png`.
+The approved concept board is [`concept-board.png`](concept-board.png).
+
+### Interim sprites (cut from the board)
+
+Until the artist's sprite sheets arrive, `python3 Art/tools/build_sprites.py`
+cuts sprites out of the board and regenerates `Apps/Shared/Sprites.xcassets`:
+
+- **Mochi, Strawberry, Moonwing, Galaxy**: awake · sleeping · playing (fly) · happy (pet) · eating; Mochi/Strawberry also drowsy
+- **Eggs**: calm · shaking · cracked, recoloured per egg type (starter cream, tiny lavender, forest pink, moon indigo, crystal cyan)
+- **Home background** (the cave) and the **app icon** (Mochi portrait)
+
+Species without art yet are drawn as a recoloured Mochi, and Shiny is a hue
+shift — both handled by `SpriteResolver` in `Apps/Shared/Sprites.swift`.
+Dropping a real `bat_<id>_<mood>.png` into the catalog overrides the fallback.
 
 ## Naming contract (the code looks these up by name)
 

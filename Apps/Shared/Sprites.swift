@@ -18,7 +18,50 @@ enum SpriteName {
     }
 }
 
-private func assetExists(_ name: String) -> Bool {
+/// Resolves which image to show, falling back gracefully while art is incomplete:
+/// exact pose → a related pose of the same species → Mochi recoloured for this
+/// species (keeps every bat on-style) → nil (vector placeholder).
+enum SpriteResolver {
+    struct Resolved {
+        let name: String
+        /// Hue rotation applied when borrowing another species' art or faking Shiny.
+        let hueDegrees: Double
+    }
+
+    private static let moodFallbacks: [BatMood: [BatMood]] = [
+        .sleeping: [.sleeping, .drowsy, .awake],
+        .drowsy: [.drowsy, .sleeping, .awake],
+        .awake: [.awake, .happy],
+        .happy: [.happy, .awake],
+        .eating: [.eating, .happy, .awake],
+        .playing: [.playing, .awake],
+    ]
+
+    static func bat(_ speciesID: String, mood: BatMood, shiny: Bool) -> Resolved? {
+        let moods = moodFallbacks[mood] ?? [mood]
+        if shiny {
+            for m in moods where assetExists(SpriteName.bat(speciesID, mood: m, shiny: true)) {
+                return Resolved(name: SpriteName.bat(speciesID, mood: m, shiny: true), hueDegrees: 0)
+            }
+        }
+        let shinyShift: Double = shiny ? 150 : 0
+        for m in moods where assetExists(SpriteName.bat(speciesID, mood: m, shiny: false)) {
+            return Resolved(name: SpriteName.bat(speciesID, mood: m, shiny: false), hueDegrees: shinyShift)
+        }
+        let number = Double(Roster.species(speciesID)?.number ?? 1)
+        let speciesShift = speciesID == "mochi" ? 0 : (number * 47).truncatingRemainder(dividingBy: 360)
+        for m in moods where assetExists(SpriteName.bat("mochi", mood: m, shiny: false)) {
+            return Resolved(name: SpriteName.bat("mochi", mood: m, shiny: false), hueDegrees: speciesShift + shinyShift)
+        }
+        return nil
+    }
+
+    static func egg(_ type: EggType, state: EggVisualState) -> String? {
+        [SpriteName.egg(type, state: state), "egg_forest_\(state.rawValue)"].first(where: assetExists)
+    }
+}
+
+func assetExists(_ name: String) -> Bool {
     #if canImport(UIKit)
     return UIImage(named: name) != nil
     #else
@@ -47,12 +90,12 @@ struct BatSprite: View {
 
     var body: some View {
         Group {
-            let name = SpriteName.bat(speciesID, mood: mood, shiny: shiny)
-            if assetExists(name) {
-                Image(name)
+            if let art = SpriteResolver.bat(speciesID, mood: mood, shiny: shiny) {
+                Image(art.name)
                     .interpolation(.none) // crisp pixel art
                     .resizable()
                     .scaledToFit()
+                    .hueRotation(.degrees(art.hueDegrees))
             } else {
                 PlaceholderBat(color: SpeciesPalette.body(speciesID, shiny: shiny), mood: mood)
             }
@@ -161,9 +204,9 @@ struct EggSprite: View {
 
     var body: some View {
         Group {
-            let name = SpriteName.egg(type, state: state)
-            if assetExists(name) {
+            if let name = SpriteResolver.egg(type, state: state) {
                 Image(name).interpolation(.none).resizable().scaledToFit()
+                    .shadow(color: state == .ready ? .yellow.opacity(0.8) : .clear, radius: size * 0.12)
             } else {
                 PlaceholderEgg(type: type, cracked: state == .cracked || state == .rattling || state == .ready)
             }

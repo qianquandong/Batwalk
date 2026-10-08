@@ -183,7 +183,7 @@ Example: Moonwing → Normal ✅ / Shiny ⬜. Twenty species therefore create up
 
 > **Approved visual direction.** The Batwalk concept board is the approved visual reference for MVP production. Character proportions, palette mood, pixel density, Watch presentation, day/night behavior, and animation tone should all derive from this board.
 >
-> 📌 Add the board to the repo as [`Art/concept-board.png`](../Art/) — it was embedded in the original PRD file but not included in the text export.
+> ![Batwalk concept board](../Art/concept-board.png)
 
 ### 3.1 Visual Language
 

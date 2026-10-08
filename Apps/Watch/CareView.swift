@@ -13,7 +13,7 @@ struct CareView: View {
     var body: some View {
         if let companion = store.state.companion {
             TimelineView(.everyMinute) { context in
-                let time = TimeOfDay.at(context.date)
+                let time = DemoMode.timeOfDay(at: context.date)
                 VStack(spacing: 6) {
                     BatSprite(
                         speciesID: companion.speciesID,

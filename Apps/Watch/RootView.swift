@@ -6,14 +6,16 @@ struct RootView: View {
     @Environment(GameStore.self) private var store
     let steps: StepService
 
+    @State private var page = DemoMode.page
+
     var body: some View {
         if store.state.hasStarted {
-            TabView {
-                HomeView()
-                WalkView()
+            TabView(selection: $page) {
+                HomeView().tag(0)
+                WalkView().tag(1)
                 if store.state.companion != nil {
-                    CareView()
-                    BatsView()
+                    CareView().tag(2)
+                    BatsView().tag(3)
                 }
             }
             .tabViewStyle(.verticalPage)

@@ -1,0 +1,64 @@
+name: Screenshots
+
+# Runs the Watch app in the Apple Watch simulator and screenshots every
+# DemoMode scenario. Results are force-pushed to the `screenshots-output`
+# branch (screens/*.png) so they can be viewed on GitHub or fetched with git.
+# Start: Actions › Screenshots › Run workflow, or push to the `screenshots` branch.
+
+on:
+  push:
+    branches: [screenshots]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: screenshots
+  cancel-in-progress: true
+
+jobs:
+  screenshots:
+    runs-on: macos-15
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Select Xcode 26+
+        run: scripts/select-xcode.sh
+
+      - name: Generate project
+        run: |
+          brew install xcodegen
+          xcodegen generate
+
+      - name: Boot an Apple Watch simulator
+        run: scripts/watch-sim.sh
+
+      - name: Build Watch app for the simulator
+        run: |
+          scripts/ci-xcodebuild.sh \
+            -project Batwalk.xcodeproj \
+            -scheme BatwalkWatch \
+            -configuration Debug \
+            -destination "id=$SIM" \
+            -derivedDataPath build \
+            CODE_SIGNING_ALLOWED=NO \
+            build
+
+      - name: Capture scenarios
+        run: scripts/capture-screens.sh "$RUNNER_TEMP/out/screens"
+
+      - name: Publish to screenshots-output branch
+        env:
+          TOKEN: ${{ github.token }}
+        run: |
+          cd "$RUNNER_TEMP/out"
+          printf '# Watch screenshots\n\nFrom %s (%s)\n' "$GITHUB_SHA" "$(date -u +%FT%TZ)" > README.md
+          git init -q -b screenshots-output
+          git config user.name "batwalk-ci"
+          git config user.email "batwalk-ci@users.noreply.github.com"
+          git add .
+          git commit -qm "Watch screenshots for ${GITHUB_SHA::7}"
+          git push -qf "https://x-access-token:${TOKEN}@github.com/${GITHUB_REPOSITORY}.git" screenshots-output
+          echo "::notice::Screenshots pushed to the screenshots-output branch"
