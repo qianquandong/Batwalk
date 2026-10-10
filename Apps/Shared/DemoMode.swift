@@ -26,7 +26,7 @@ enum HealthStatus: Equatable {
 /// Without the argument this file does nothing.
 enum DemoMode {
     // The capture script reads these two lines — keep each list on one line.
-    static let watchScenarios = ["first-egg", "home", "home-day", "hatch-ready", "reveal-rare", "progress-61", "progress-100", "friendship-1", "fruit-available", "friendship-5", "collection-1", "collection-rare", "settings", "health-error"] // scenarios:watch
+    static let watchScenarios = ["first-egg", "home", "home-day", "home-cocoa", "home-long-ear", "hatch-ready", "reveal-rare", "progress-61", "progress-100", "friendship-1", "friendship-2", "friendship-3", "friendship-4", "fruit-available", "friendship-5", "collection-1", "collection-rare", "settings", "health-error"] // scenarios:watch
     static let phoneScenarios = ["phone-batpedia", "phone-batpedia-rare", "phone-detail", "phone-history", "phone-unlock", "phone-stats", "phone-empty"] // scenarios:phone
 
     static let scenario: String? = {
@@ -100,6 +100,14 @@ enum DemoMode {
         _ = try? state.hatch(now: now) // Mochi, the starter
 
         switch scenario {
+        case "home-cocoa":
+            hatch(.tiny, "cocoa")
+            try? state.setCompanion("cocoa")
+            boardEgg()
+        case "home-long-ear":
+            hatch(.forest, "long-ear")
+            try? state.setCompanion("long-ear")
+            boardEgg()
         case "home-day":
             timeOverride = .day
             boardEgg()
@@ -128,6 +136,11 @@ enum DemoMode {
         case "friendship-5":
             page = 2
             for _ in 0..<26 { hatch(.tiny, "mochi") } // duplicates → Friendship EXP
+            boardEgg()
+        case "friendship-2", "friendship-3", "friendship-4":
+            page = 2
+            let duplicates = scenario == "friendship-2" ? 3 : scenario == "friendship-3" ? 7 : 13
+            for _ in 0..<duplicates { hatch(.tiny, "mochi") }
             boardEgg()
         case "collection-1":
             page = 3

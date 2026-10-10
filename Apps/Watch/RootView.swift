@@ -15,7 +15,7 @@ struct RootView: View {
             ScrollView {
                 VStack(spacing: 12) {
                     Image(systemName: "externaldrive.badge.exclamationmark").font(.title)
-                    Text("Your progress is safe").font(.headline)
+                    Text("Save needs attention").font(.headline)
                     Text(store.lastError ?? "Please try opening your save again.").font(.caption)
                     Button("Try again") { store.load() }
                     if let backup = store.availableBackup {

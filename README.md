@@ -46,7 +46,7 @@ GitHub's macOS runners. One-time setup (all doable in a phone browser):
 
 1. **App Store Connect › Users and Access › Integrations › App Store Connect API** → generate a *Team key* with the **Admin** role. Download the `.p8` (only possible once) and note the **Key ID** and **Issuer ID**.
 2. **GitHub › repo Settings › Secrets and variables › Actions** → add `ASC_KEY_ID`, `ASC_ISSUER_ID`, `ASC_KEY_P8` (the whole `.p8` text).
-3. **Actions › TestFlight › Run workflow** with *upload* **off** (or push to the `testflight-archive` branch) — this registers the App IDs, App Group and iCloud container.
+3. Follow **[Signing](docs/SIGNING.md)** to register App Groups and the iCloud container in the developer portal. An App Store Connect API key does not perform that setup. Run **TestFlight** with *upload* **off** to validate the signed archive first.
 4. **App Store Connect › Apps › + New App** → iOS, bundle ID `com.aimanjack.batwalk`, SKU `batwalk`.
 5. Run the workflow again with *upload* **on** (or push to the `testflight` branch). Install from the **TestFlight** app on iPhone; the Watch app installs to the paired Apple Watch.
 
@@ -54,7 +54,7 @@ GitHub's macOS runners. One-time setup (all doable in a phone browser):
 
 Signing is preset to the **AI Man Jack LLC** team (`GB24TMUMQ5`, in `Config/Base.xcconfig`).
 
-Requirements: a Mac with **Xcode 16+**, [XcodeGen](https://github.com/yonaskolb/XcodeGen), an Apple Watch on watchOS 10+ (or the simulator).
+Requirements: a Mac with **Xcode 26+** (CI currently uses stable Xcode 26.3), [XcodeGen](https://github.com/yonaskolb/XcodeGen), an Apple Watch on watchOS 10+ (or the simulator).
 
 ```bash
 git clone https://github.com/qianquandong/batwalk.git
@@ -75,7 +75,7 @@ so the $1.99 unlock can be tested without App Store Connect.
 
 ### Before running on real devices
 
-With automatic signing, Xcode registers the bundle IDs, App Group, iCloud container and HealthKit capability on the first device build — sign in to Xcode with the AI Man Jack LLC account. Only the in-app purchase must be created by hand in App Store Connect (until then, `Batwalk.storekit` covers testing):
+Sign in to Xcode with the AI Man Jack LLC account. Register the capabilities described in [Signing](docs/SIGNING.md) before enabling them. The default project keeps live widget sharing and cloud backup disabled until that setup is complete. Create the in-app purchase in App Store Connect; `Batwalk.storekit` covers local testing:
 
 | Thing | ID |
 |---|---|
@@ -92,12 +92,18 @@ If you change an identifier, change it in `project.yml` **and** `Apps/Shared/Sha
 
 ## How it works (one paragraph)
 
-The Watch reads one number from HealthKit — today's cumulative Step Count — when
-it becomes active and at most hourly in the background. `StepLedger` credits only
-the increase since it last looked, so re-reading is always safe (midnight, DST,
-force-quit, restore). Credited steps fill the current egg; extra steps are banked
+The Watch reads daily cumulative Step Count in one HealthKit batch on foreground
+and system-delivered background updates (requested hourly, delivery is not guaranteed).
+It reconciles the last seven days plus any unprocessed absence, credits each positive
+daily increase once, and retries a failed batch without advancing past it. Accounting
+keeps its original time zone across travel to avoid splitting the same steps twice.
+Collection restore starts a fresh daily baseline. Credited steps fill the current egg; extra steps are banked
 for the next one. When an egg is full the Watch taps your wrist; you tap to hatch.
-The outcome was fixed by a seed when the egg was created, so it can't be rerolled.
+The species and variant are sealed when the egg is created, so purchases, refunds,
+and later tuning changes cannot reroll it. Complete step saves are local; the optional
+private CloudKit backup contains collection metadata only.
+
+See [release readiness and remaining device checks](docs/RELEASE_READINESS.md).
 Duplicates turn into Friendship EXP. The whole game state is one Codable value,
 saved by the Watch to SwiftData, mirrored to iCloud, and pushed to the iPhone.
 See [ADR 0001](docs/decisions/0001-architecture.md).

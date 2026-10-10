@@ -20,6 +20,7 @@ final class GameStore {
     private(set) var isDemo = false
     @ObservationIgnored var analytics: AnalyticsSink = NoopAnalytics()
     @ObservationIgnored private let context: ModelContext
+    @ObservationIgnored private let container: ModelContainer
     @ObservationIgnored private var record: SaveRecord?
     @ObservationIgnored private let archive: SaveArchive
     @ObservationIgnored private let commit: (ModelContext) throws -> Void
@@ -28,6 +29,7 @@ final class GameStore {
     init(container: ModelContainer, role: Role, archive: SaveArchive? = nil,
          commit: @escaping (ModelContext) throws -> Void = { try $0.save() },
          onCommit: ((Data) -> Void)? = nil) {
+        self.container = container
         context = container.mainContext
         context.autosaveEnabled = false
         self.role = role
