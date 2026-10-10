@@ -117,7 +117,9 @@ struct BatDetailPage: View {
         }
         .background(BatwalkColor.lightBackground)
         .ignoresSafeArea(edges: .top)
-        .toolbarBackground(.hidden, for: .navigationBar)
+        .toolbar(.visible, for: .navigationBar)
+        .toolbarBackground(BatwalkColor.deepNight, for: .navigationBar)
+        .toolbarBackground(.visible, for: .navigationBar)
         .toolbarColorScheme(.dark, for: .navigationBar)
         .onChange(of: store.state.companionID) { _, _ in sendResult = nil }
     }
