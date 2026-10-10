@@ -1,5 +1,6 @@
 import SwiftUI
 import HealthKit
+import UserNotifications
 import BatwalkCore
 
 /// Settings (board: Watch › 6. Settings): companion, notifications, Health access,
@@ -11,6 +12,8 @@ struct SettingsView: View {
 
     @AppStorage(HatchNotifier.enabledKey) private var notificationsOn = true
     @State private var health: HealthStatus = .noData
+    @State private var notificationStatus: UNAuthorizationStatus = .notDetermined
+    @State private var confirmRestore = false
 
     var body: some View {
         NavigationStack {
@@ -41,6 +44,11 @@ struct SettingsView: View {
                     }
                     .tint(BatwalkColor.purple)
                     .batwalkGlassCard(padding: 8, radius: 14)
+
+                    if notificationsOn && notificationStatus == .denied {
+                        Text("Notifications are blocked in device settings.")
+                            .font(BatwalkFont.micro).foregroundStyle(BatwalkColor.warning)
+                    }
 
                     NavigationLink(value: SettingsRoute.health) {
                         HStack(spacing: BatwalkSpacing.sm) {
@@ -84,6 +92,10 @@ struct SettingsView: View {
                         Text(error).font(BatwalkFont.micro).foregroundStyle(BatwalkColor.warning)
                     }
                     NavigationLink("Privacy & data") { PrivacyView() }.font(BatwalkFont.caption)
+                    if let backup = store.availableBackup, backup.collection.count > store.state.collection.count {
+                        Button("Restore \(backup.collection.count) backed-up bats") { confirmRestore = true }
+                            .font(BatwalkFont.caption)
+                    }
 
                     Text(versionText)
                         .font(BatwalkFont.micro)
@@ -102,9 +114,25 @@ struct SettingsView: View {
             }
             .watchPageBackground()
         }
-        .task { health = await HealthAccessView.currentStatus(steps: steps, state: store.state) }
+        .task {
+            health = await HealthAccessView.currentStatus(steps: steps, state: store.state)
+            notificationStatus = await UNUserNotificationCenter.current().notificationSettings().authorizationStatus
+        }
+        .alert("Restore collection?", isPresented: $confirmRestore) {
+            Button("Cancel", role: .cancel) {}
+            Button("Restore") {
+                if let backup = store.availableBackup { try? store.restore(backup) }
+            }
+        } message: {
+            Text("This replaces the collection on this Watch. Bats and friendship are restored; your current egg and step accounting start fresh.")
+        }
         .onChange(of: notificationsOn) { _, on in
-            if on { Task { await HatchNotifier.requestPermission() } }
+            if on {
+                Task {
+                    await HatchNotifier.requestPermission()
+                    notificationStatus = await UNUserNotificationCenter.current().notificationSettings().authorizationStatus
+                }
+            }
         }
     }
 

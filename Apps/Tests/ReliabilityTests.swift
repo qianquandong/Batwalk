@@ -109,7 +109,7 @@ final class AppReliabilityTests: XCTestCase {
     }
 
     @MainActor
-    func testDiskReloadKeepsRenameWithUnchangedStepAndHatchCounts() async throws {
+    func testReloadKeepsRenameWithUnchangedStepAndHatchCounts() async throws {
         let (store, container) = try makeStore()
         try store.mutate { $0.start(seed: 1, now: .now); $0.ingestSteps(dayKey: "2026-10-09", dailyTotal: 2_000) }
         try store.mutate { try $0.hatch(now: .now) }
@@ -172,6 +172,39 @@ final class AppReliabilityTests: XCTestCase {
         XCTAssertTrue(store.recoveryRequired)
         XCTAssertThrowsError(try store.mutate { $0.start(seed: 1, now: .now) })
         XCTAssertEqual(try container.mainContext.fetch(FetchDescriptor<SaveRecord>()).first?.payload, payload)
+    }
+
+    @MainActor
+    func testExistingSingleStoreReopensWithSeparatedBackupConfiguration() async throws {
+        let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+        addTeardownBlock { try? FileManager.default.removeItem(at: directory) }
+        let url = directory.appendingPathComponent("default.store")
+        var original = GameState(); original.start(seed: 1, now: .now)
+        original.ingestSteps(dayKey: "2026-10-09", dailyTotal: 1_250)
+        var legacy = try XCTUnwrap(JSONSerialization.jsonObject(with: JSONEncoder().encode(original)) as? [String: Any])
+        for key in ["schemaVersion", "saveID", "revision", "needsStepBaseline"] { legacy.removeValue(forKey: key) }
+        let payload = try JSONSerialization.data(withJSONObject: legacy)
+        try autoreleasepool {
+            let schema = Schema([SaveRecord.self])
+            let container = try ModelContainer(for: schema,
+                configurations: ModelConfiguration(schema: schema, url: url, cloudKitDatabase: .none))
+            container.mainContext.insert(SaveRecord(payload: payload, updatedAt: .now, writer: "watch"))
+            try container.mainContext.save()
+        }
+        let container = Persistence.makeContainer(localURL: url)
+        XCTAssertFalse(Persistence.storageUnavailable)
+        let store = GameStore(container: container, role: .watch,
+            archive: SaveArchive(name: "migration", directory: directory.appendingPathComponent("recovery")), onCommit: { _ in })
+        XCTAssertTrue(store.state.hasStarted)
+        XCTAssertEqual(store.state.egg?.creditedSteps, 1_250)
+        XCTAssertEqual(store.state.lifetimeCreditedSteps, 1_250)
+        try store.mutate { $0.setUnlocked(true) }
+        let stored = try JSONDecoder().decode(GameState.self,
+            from: XCTUnwrap(container.mainContext.fetch(FetchDescriptor<SaveRecord>()).first?.payload))
+        XCTAssertEqual(stored.schemaVersion, 2)
+        XCTAssertEqual(stored.revision, 1)
+        XCTAssertEqual(try url.deletingLastPathComponent().resourceValues(forKeys: [.isExcludedFromBackupKey]).isExcludedFromBackup, true)
     }
 }
 

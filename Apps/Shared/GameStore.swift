@@ -87,9 +87,16 @@ final class GameStore {
             }
             // Keep conflicting/corrupt rows available for recovery.
             let backups = try context.fetch(FetchDescriptor<CollectionBackupRecord>())
-            availableBackup = backups.sorted { $0.updatedAt > $1.updatedAt }.compactMap {
-                try? JSONDecoder().decode(CollectionBackup.self, from: $0.payload)
-            }.first(where: { $0.version == 1 && $0.hasStarted })
+            availableBackup = backups.compactMap { row -> (CollectionBackup, Date)? in
+                guard let backup = try? JSONDecoder().decode(CollectionBackup.self, from: row.payload),
+                      backup.version == 1, backup.hasStarted else { return nil }
+                return (backup, row.updatedAt)
+            }.sorted { a, b in
+                if a.0.saveID == b.0.saveID { return a.0.revision > b.0.revision }
+                if a.0.collection.count != b.0.collection.count { return a.0.collection.count > b.0.collection.count }
+                if a.0.history.count != b.0.history.count { return a.0.history.count > b.0.history.count }
+                return a.1 > b.1
+            }.first?.0
             if role == .watch, !state.hasStarted, !recoveryRequired, let backup = availableBackup {
                 try restore(backup)
             }

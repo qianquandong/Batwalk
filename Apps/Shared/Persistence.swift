@@ -23,22 +23,29 @@ final class CollectionBackupRecord {
 enum Persistence {
     static var storageUnavailable = false
 
-    static func makeContainer() -> ModelContainer {
+    static func makeContainer(localURL: URL? = nil) -> ModelContainer {
         storageUnavailable = false
         let localSchema = Schema([SaveRecord.self])
         let backupSchema = Schema([CollectionBackupRecord.self])
         let schema = Schema([SaveRecord.self, CollectionBackupRecord.self])
         // The original default.store URL stays unchanged. App Groups share only
         // the widget snapshot, and SaveRecord is never configured for CloudKit.
-        let local = ModelConfiguration(schema: localSchema, cloudKitDatabase: .none)
-        let backups = ModelConfiguration("CollectionBackup", schema: backupSchema,
-            cloudKitDatabase: SharedConfig.cloudBackupEnabled ? .private(SharedConfig.cloudKitContainer) : .none)
+        let local = localURL.map { ModelConfiguration(schema: localSchema, url: $0, cloudKitDatabase: .none) }
+            ?? ModelConfiguration(schema: localSchema, cloudKitDatabase: .none)
+        let cloud: ModelConfiguration.CloudKitDatabase = SharedConfig.cloudBackupEnabled ? .private(SharedConfig.cloudKitContainer) : .none
+        let backups = localURL.map {
+            ModelConfiguration("CollectionBackup", schema: backupSchema,
+                url: $0.deletingLastPathComponent().appendingPathComponent("CollectionBackup.store"), cloudKitDatabase: cloud)
+        } ?? ModelConfiguration("CollectionBackup", schema: backupSchema, cloudKitDatabase: cloud)
         do {
             try excludeFromBackup(local.url)
             let container = try ModelContainer(for: schema, configurations: local, backups)
             return container
         } catch {
-            let fallback = ModelConfiguration("CollectionBackup", schema: backupSchema, cloudKitDatabase: .none)
+            let fallback = localURL.map {
+                ModelConfiguration("CollectionBackup", schema: backupSchema,
+                    url: $0.deletingLastPathComponent().appendingPathComponent("CollectionBackup.store"), cloudKitDatabase: .none)
+            } ?? ModelConfiguration("CollectionBackup", schema: backupSchema, cloudKitDatabase: .none)
             do {
                 try excludeFromBackup(local.url)
                 let container = try ModelContainer(for: schema, configurations: local, fallback)
