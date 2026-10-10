@@ -10,7 +10,20 @@ struct RootView: View {
     @State private var page = DemoMode.page
 
     var body: some View {
-        if store.state.hasStarted {
+        Group {
+        if store.recoveryRequired {
+            ScrollView {
+                VStack(spacing: 12) {
+                    Image(systemName: "externaldrive.badge.exclamationmark").font(.title)
+                    Text("Your progress is safe").font(.headline)
+                    Text(store.lastError ?? "Please try opening your save again.").font(.caption)
+                    Button("Try again") { store.load() }
+                    if let backup = store.availableBackup {
+                        Button("Restore \(backup.collection.count) bats") { try? store.restore(backup) }
+                    }
+                }.padding()
+            }
+        } else if store.state.hasStarted {
             TabView(selection: $page) {
                 HomeView().tag(0)
                 ProgressPage(page: $page).tag(1)
@@ -24,6 +37,13 @@ struct RootView: View {
         } else {
             OnboardingView(steps: steps)
         }
+        }
+        .alert("Progress update", isPresented: Binding(
+            get: { store.lastError != nil && !store.recoveryRequired },
+            set: { if !$0 { store.clearError() } }
+        )) {
+            Button("OK") { store.clearError() }
+        } message: { Text(store.lastError ?? "") }
     }
 }
 
@@ -73,11 +93,11 @@ struct OnboardingView: View {
         Task { @MainActor in
             let granted = await steps.requestAuthorization()
             store.analytics.log(.stepPermissionResult, properties: ["completed": granted ? "true" : "false"])
-            store.mutate { $0.start(seed: UInt64.random(in: .min ... .max), now: .now) }
+            do { try store.mutate { $0.start(seed: UInt64.random(in: .min ... .max), now: .now) } }
+            catch { isWorking = false; return }
             // Credit steps already earned today (PRD §2.2 step 6).
             await store.syncSteps(using: steps)
             store.analytics.log(.onboardingComplete, properties: [:])
-            await HatchNotifier.requestPermission()
             isWorking = false
         }
     }

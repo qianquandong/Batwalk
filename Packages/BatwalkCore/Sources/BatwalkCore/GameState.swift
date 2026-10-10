@@ -26,6 +26,8 @@ public struct ActiveEgg: Codable, Equatable, Sendable {
     public let seed: UInt64
     public var creditedSteps: Int
     public let startedAt: Date
+    public var frozenSpeciesID: String? = nil
+    public var frozenIsShiny: Bool? = nil
 
     public var progress: Double { min(1, Double(creditedSteps) / Double(type.targetSteps)) }
     public var isReady: Bool { creditedSteps >= type.targetSteps }
@@ -77,9 +79,12 @@ public enum GameError: Error, Equatable, Sendable {
 /// The whole save file. A value type with pure, deterministic mutations so every
 /// rule is unit-tested; the apps only persist it and render it.
 public struct GameState: Codable, Equatable, Sendable {
-    public static let currentSchemaVersion = 1
+    public static let currentSchemaVersion = 2
 
     public var schemaVersion = GameState.currentSchemaVersion
+    public private(set) var saveID = UUID()
+    public private(set) var revision: UInt64 = 0
+    public private(set) var needsStepBaseline = false
     public private(set) var hasStarted = false
     public private(set) var egg: ActiveEgg?
     /// Steps earned while no egg was incubating, applied to the next egg.
@@ -102,6 +107,53 @@ public struct GameState: Codable, Equatable, Sendable {
 
     public init() {}
 
+    private enum CodingKeys: String, CodingKey {
+        case schemaVersion, saveID, revision, needsStepBaseline, hasStarted, egg, bankedSteps
+        case ledger, collection, companionID, fruit, fruitProgressSteps, isUnlocked, history, petLog, lifetimeCreditedSteps
+    }
+
+    public init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        let version = try c.decodeIfPresent(Int.self, forKey: .schemaVersion) ?? 1
+        guard version <= Self.currentSchemaVersion else {
+            throw DecodingError.dataCorruptedError(forKey: .schemaVersion, in: c, debugDescription: "This save needs a newer Batwalk version.")
+        }
+        schemaVersion = Self.currentSchemaVersion
+        saveID = try c.decodeIfPresent(UUID.self, forKey: .saveID) ?? UUID()
+        revision = try c.decodeIfPresent(UInt64.self, forKey: .revision) ?? 0
+        needsStepBaseline = try c.decodeIfPresent(Bool.self, forKey: .needsStepBaseline) ?? false
+        hasStarted = try c.decodeIfPresent(Bool.self, forKey: .hasStarted) ?? false
+        egg = try c.decodeIfPresent(ActiveEgg.self, forKey: .egg)
+        bankedSteps = try c.decodeIfPresent(Int.self, forKey: .bankedSteps) ?? 0
+        ledger = try c.decodeIfPresent(StepLedger.self, forKey: .ledger) ?? StepLedger()
+        collection = try c.decodeIfPresent([String: OwnedBat].self, forKey: .collection) ?? [:]
+        companionID = try c.decodeIfPresent(String.self, forKey: .companionID)
+        fruit = try c.decodeIfPresent(Int.self, forKey: .fruit) ?? 0
+        fruitProgressSteps = try c.decodeIfPresent(Int.self, forKey: .fruitProgressSteps) ?? 0
+        isUnlocked = try c.decodeIfPresent(Bool.self, forKey: .isUnlocked) ?? false
+        history = try c.decodeIfPresent([HatchRecord].self, forKey: .history) ?? []
+        petLog = try c.decodeIfPresent([String: PetDay].self, forKey: .petLog) ?? [:]
+        lifetimeCreditedSteps = try c.decodeIfPresent(Int.self, forKey: .lifetimeCreditedSteps) ?? 0
+        // v1 eggs are sealed once during migration, before any entitlement refresh.
+        if var current = egg, current.frozenSpeciesID == nil {
+            let roll = HatchEngine.roll(egg: current.type, seed: current.seed, isUnlocked: isUnlocked || !current.type.isFree)
+            current.frozenSpeciesID = roll.species.id
+            current.frozenIsShiny = roll.isShiny
+            egg = current
+        }
+    }
+
+    public mutating func advanceRevision() { revision += 1 }
+
+    public mutating func beginStepTracking(on day: String, timeZone: String) {
+        ledger.beginTracking(on: day, timeZone: timeZone)
+    }
+
+    public mutating func establishStepBaseline(day: String, total: Int, timeZone: String) {
+        ledger.establishBaseline(dayKey: day, total: total, timeZone: timeZone)
+        needsStepBaseline = false
+    }
+
     // MARK: - Derived
 
     public var companion: OwnedBat? { companionID.flatMap { collection[$0] } }
@@ -111,6 +163,7 @@ public struct GameState: Codable, Equatable, Sendable {
     /// Used to pick between two saves after an iCloud restore races a fresh
     /// install: the save with more hatches wins, then more lifetime steps.
     public func isRicher(than other: GameState) -> Bool {
+        if saveID == other.saveID { return revision > other.revision }
         if history.count != other.history.count { return history.count > other.history.count }
         return lifetimeCreditedSteps > other.lifetimeCreditedSteps
     }
@@ -127,6 +180,15 @@ public struct GameState: Codable, Equatable, Sendable {
         guard !hasStarted else { return }
         hasStarted = true
         egg = ActiveEgg(type: .starter, seed: seed, creditedSteps: 0, startedAt: now)
+        freezeEgg(tuning: .default)
+    }
+
+    private mutating func freezeEgg(tuning: Tuning) {
+        guard var current = egg else { return }
+        let roll = HatchEngine.roll(egg: current.type, seed: current.seed, isUnlocked: isUnlocked, tuning: tuning)
+        current.frozenSpeciesID = roll.species.id
+        current.frozenIsShiny = roll.isShiny
+        egg = current
     }
 
     // MARK: - Steps
@@ -179,7 +241,12 @@ public struct GameState: Codable, Equatable, Sendable {
         // An egg started under the full unlock keeps its paid pool even if the
         // entitlement later reads as false (refund, restore not yet run).
         let paidPool = isUnlocked || !current.type.isFree
-        let roll = HatchEngine.roll(egg: current.type, seed: current.seed, isUnlocked: paidPool, tuning: tuning)
+        let roll: HatchRoll
+        if let id = current.frozenSpeciesID, let species = Roster.species(id), let shiny = current.frozenIsShiny {
+            roll = HatchRoll(species: species, isShiny: shiny)
+        } else {
+            roll = HatchEngine.roll(egg: current.type, seed: current.seed, isUnlocked: paidPool, tuning: tuning)
+        }
         let id = roll.species.id
 
         let outcome: HatchOutcome
@@ -227,10 +294,11 @@ public struct GameState: Codable, Equatable, Sendable {
 
     /// Start the next egg. Banked steps are applied immediately.
     @discardableResult
-    public mutating func startEgg(_ type: EggType, seed: UInt64, now: Date) throws -> StepUpdate {
+    public mutating func startEgg(_ type: EggType, seed: UInt64, now: Date, tuning: Tuning = .default) throws -> StepUpdate {
         guard egg == nil else { throw GameError.eggAlreadyIncubating }
         guard type.isPickable, isUnlocked || type.isFree else { throw GameError.eggLocked(type) }
         egg = ActiveEgg(type: type, seed: seed, creditedSteps: 0, startedAt: now)
+        freezeEgg(tuning: tuning)
 
         let banked = bankedSteps
         bankedSteps = 0
@@ -297,5 +365,23 @@ public struct GameState: Codable, Equatable, Sendable {
     /// $1.99 one-time unlock (or Restore Purchase). Idempotent.
     public mutating func setUnlocked(_ unlocked: Bool) {
         isUnlocked = unlocked
+    }
+
+    public mutating func restoreCollection(_ backup: CollectionBackup) {
+        saveID = backup.saveID
+        revision = backup.revision
+        hasStarted = backup.hasStarted
+        collection = backup.collection
+        companionID = backup.companionID.flatMap { collection[$0] == nil ? nil : $0 }
+        history = backup.history
+        fruit = backup.fruit
+        egg = nil
+        bankedSteps = 0
+        ledger = StepLedger()
+        petLog = [:]
+        fruitProgressSteps = 0
+        lifetimeCreditedSteps = 0
+        needsStepBaseline = true
+        // StoreKit, rather than a backup, remains the authority for purchases.
     }
 }

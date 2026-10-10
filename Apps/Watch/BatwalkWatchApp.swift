@@ -48,11 +48,11 @@ struct BatwalkWatchApp: App {
                 }
                 // View-level onChange: reliably tracks @Observable reads (Scene-level may not).
                 .onChange(of: purchases.hasCheckedEntitlements) { _, checked in
-                    if checked { store.mutate { $0.setUnlocked(purchases.isUnlocked) } }
+                    if checked { try? store.mutate { $0.setUnlocked(purchases.isUnlocked) } }
                 }
                 .onChange(of: purchases.isUnlocked) { _, unlocked in
                     guard purchases.hasCheckedEntitlements else { return }
-                    store.mutate { $0.setUnlocked(unlocked) }
+                    try? store.mutate { $0.setUnlocked(unlocked) }
                 }
         }
         .modelContainer(container)

@@ -2,98 +2,93 @@ import Foundation
 import HealthKit
 import BatwalkCore
 
-/// Reads Step Count only (PRD §4.5). No GPS, no workout session, no
-/// second-by-second polling (PRD §4.7): the app reads daily totals when it
-/// becomes active, and HealthKit background delivery wakes it at most hourly.
-final class StepService {
+@MainActor
+final class StepService: StepTotalReader {
     private let healthStore = HKHealthStore()
     private let stepType = HKQuantityType(.stepCount)
     private var observer: HKObserverQuery?
-
     var isAvailable: Bool { HKHealthStore.isHealthDataAvailable() }
 
-    /// Returns whether the permission sheet completed. HealthKit never reveals
-    /// whether *read* access was granted — a denied user simply reads 0 steps.
     func requestAuthorization() async -> Bool {
         guard isAvailable else { return false }
         do {
             try await healthStore.requestAuthorization(toShare: [], read: [stepType])
-            return true
-        } catch {
-            return false
-        }
+            return true // completion is not proof of read permission
+        } catch { return false }
     }
 
-    /// Whether the system would still show the permission sheet (Settings › Health Access).
     func authorizationRequestStatus() async -> HKAuthorizationRequestStatus {
         guard isAvailable else { return .unknown }
         return (try? await healthStore.statusForAuthorizationRequest(toShare: [], read: [stepType])) ?? .unknown
     }
 
-    /// Cumulative steps for the local calendar day containing `day`.
-    /// nil means "query failed — don't ingest anything".
-    func dailyTotal(for day: Date, calendar: Calendar = .current) async -> Int? {
-        let start = calendar.startOfDay(for: day)
-        guard let end = calendar.date(byAdding: .day, value: 1, to: start) else { return nil }
+    func totals(from start: Date, through end: Date, calendar: Calendar) async throws -> [DailyStepTotal] {
+        guard isAvailable else { throw QueryError.unavailable }
         let predicate = HKQuery.predicateForSamples(withStart: start, end: end, options: .strictStartDate)
         let store = healthStore
-        let type = stepType
-
-        return await withCheckedContinuation { continuation in
-            let query = HKStatisticsQuery(
-                quantityType: type,
-                quantitySamplePredicate: predicate,
-                options: .cumulativeSum
-            ) { _, statistics, error in
-                if let sum = statistics?.sumQuantity() {
-                    continuation.resume(returning: Int(sum.doubleValue(for: .count())))
-                } else if let hkError = error as? HKError, hkError.code == .errorNoData {
-                    continuation.resume(returning: 0)
-                } else if error == nil {
-                    continuation.resume(returning: 0)
-                } else {
-                    continuation.resume(returning: nil)
+        return try await withCheckedThrowingContinuation { continuation in
+            let completion = QueryCompletion(continuation)
+            let query = HKStatisticsCollectionQuery(quantityType: stepType, quantitySamplePredicate: predicate,
+                options: .cumulativeSum, anchorDate: start, intervalComponents: DateComponents(day: 1))
+            query.initialResultsHandler = { _, collection, error in
+                defer { store.stop(query) }
+                if let error { completion.finish(.failure(error)); return }
+                guard let collection else { completion.finish(.failure(QueryError.unavailable)); return }
+                var readings: [DailyStepTotal] = []
+                var day = start
+                while day < end {
+                    let total = collection.statistics(for: day)?.sumQuantity()?.doubleValue(for: .count()) ?? 0
+                    readings.append(DailyStepTotal(day: DayKey.make(day, calendar: calendar), total: max(0, Int(total))))
+                    guard let next = calendar.date(byAdding: .day, value: 1, to: day) else { break }
+                    day = next
                 }
+                completion.finish(.success(readings))
             }
             store.execute(query)
+            // Bound background work so the observer completion is always called.
+            DispatchQueue.global().asyncAfter(deadline: .now() + 20) {
+                if completion.finish(.failure(QueryError.timeout)) { store.stop(query) }
+            }
         }
     }
 
-    /// Hourly background delivery → keeps the complication and Hatch Ready notice fresh.
     func startObserving(onChange: @escaping @Sendable () async -> Void) {
         guard isAvailable, observer == nil else { return }
         let query = HKObserverQuery(sampleType: stepType, predicate: nil) { _, completion, error in
             guard error == nil else { completion(); return }
-            Task {
-                await onChange()
-                completion()
-            }
+            Task { await onChange(); completion() }
         }
         observer = query
         healthStore.execute(query)
-        healthStore.enableBackgroundDelivery(for: stepType, frequency: .hourly) { _, _ in }
+        healthStore.enableBackgroundDelivery(for: stepType, frequency: .hourly) { success, error in
+            if !success || error != nil { print("[health] Background delivery unavailable; foreground reconciliation remains active.") }
+        }
+    }
+
+    enum QueryError: Error { case unavailable, timeout }
+}
+
+private final class QueryCompletion: @unchecked Sendable {
+    private let lock = NSLock()
+    private var continuation: CheckedContinuation<[DailyStepTotal], Error>?
+    init(_ continuation: CheckedContinuation<[DailyStepTotal], Error>) { self.continuation = continuation }
+    @discardableResult
+    func finish(_ result: Result<[DailyStepTotal], Error>) -> Bool {
+        lock.lock()
+        let current = continuation
+        continuation = nil
+        lock.unlock()
+        guard let current else { return false }
+        current.resume(with: result)
+        return true
     }
 }
 
 extension GameStore {
-    /// Pull HealthKit totals for every day the ledger hasn't fully seen, oldest first.
     @discardableResult
     func syncSteps(using service: StepService, now: Date = .now) async -> StepUpdate {
-        var combined = StepUpdate()
-        let calendar = Calendar.current
-        let days = DayKey.daysToSync(lastKey: state.ledger.dayKey, now: now, calendar: calendar)
-        for day in days {
-            guard let total = await service.dailyTotal(for: day, calendar: calendar) else { continue }
-            let key = DayKey.make(day, calendar: calendar)
-            let update = mutate { $0.ingestSteps(dayKey: key, dailyTotal: total) }
-            combined.creditedSteps += update.creditedSteps
-            combined.fruitEarned += update.fruitEarned
-            combined.eggBecameReady = combined.eggBecameReady || update.eggBecameReady
-        }
-        if combined.eggBecameReady {
-            Haptics.notify()
-            analytics.log(.eggComplete, properties: ["egg": state.egg?.type.rawValue ?? ""])
-        }
-        return combined
+        let result = await StepSyncCoordinator.shared.sync(store: self, reader: service, now: now) ?? StepUpdate()
+        if result.eggBecameReady { Haptics.notify() }
+        return result
     }
 }

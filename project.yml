@@ -133,3 +133,15 @@ targets:
     #   aps-environment: development
     scheme:
       storeKitConfiguration: Config/Batwalk.storekit
+      testTargets: [BatwalkAppTests]
+
+  BatwalkAppTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources: [Apps/Tests]
+    dependencies:
+      - target: BatwalkPhone
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.aimanjack.batwalk.tests
+        GENERATE_INFOPLIST_FILE: YES

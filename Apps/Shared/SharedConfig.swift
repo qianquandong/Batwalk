@@ -11,5 +11,6 @@ enum SharedConfig {
     /// Connect API key can't create them. Until then, saves stay on the Watch
     /// and the complication shows a static face. Flip together with the
     /// entitlements in project.yml (see docs/SIGNING.md).
-    static let iCloudAndAppGroupEnabled = false
+    static let appGroupEnabled = false
+    static let cloudBackupEnabled = false
 }

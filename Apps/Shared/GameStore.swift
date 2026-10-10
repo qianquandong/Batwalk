@@ -6,129 +6,185 @@ import BatwalkCore
 import WidgetKit
 #endif
 
-/// Owns the in-memory `GameState` and persists it.
-///
-/// - On the **Watch** the store is authoritative: every mutation is saved locally
-///   (SwiftData → CloudKit), pushed to the iPhone over WatchConnectivity, and
-///   summarised for the complication.
-/// - On the **iPhone** the store is a read-only mirror: it loads the CloudKit
-///   copy and applies whatever the Watch sends. It never writes the save, so the
-///   two devices can never produce conflicting saves.
 @MainActor
 @Observable
 final class GameStore {
     enum Role { case watch, phone }
-
     private(set) var state = GameState()
     let role: Role
-
-    private let context: ModelContext
-    @ObservationIgnored private var record: SaveRecord?
-    /// In-memory demo (screenshots): never loads, saves, or syncs.
-    @ObservationIgnored private(set) var isDemo = false
+    private(set) var lastError: String?
+    private(set) var recoveryRequired = false
+    private(set) var availableBackup: CollectionBackup?
+    private(set) var lastSyncAt: Date?
+    private(set) var isDemo = false
     @ObservationIgnored var analytics: AnalyticsSink = NoopAnalytics()
+    @ObservationIgnored private let context: ModelContext
+    @ObservationIgnored private var record: SaveRecord?
+    @ObservationIgnored private let archive: SaveArchive
+    @ObservationIgnored private let commit: (ModelContext) throws -> Void
+    @ObservationIgnored private let onCommit: ((Data) -> Void)?
 
-    init(container: ModelContainer, role: Role) {
-        self.context = container.mainContext
+    init(container: ModelContainer, role: Role, archive: SaveArchive? = nil,
+         commit: @escaping (ModelContext) throws -> Void = { try $0.save() },
+         onCommit: ((Data) -> Void)? = nil) {
+        context = container.mainContext
+        context.autosaveEnabled = false
         self.role = role
+        self.archive = archive ?? SaveArchive(name: role == .watch ? "watch" : "phone")
+        self.commit = commit
+        self.onCommit = onCommit
         load()
     }
 
-    // MARK: Loading
-
-    /// Loads the richest save on disk. After a CloudKit restore races a fresh
-    /// install there can briefly be two rows; the richer one wins and the other is removed.
     func load() {
         guard !isDemo else { return }
-        let records = (try? context.fetch(FetchDescriptor<SaveRecord>())) ?? []
-        var best: (record: SaveRecord, state: GameState)?
-        let decoder = JSONDecoder()
-        for candidate in records {
-            guard let decoded = try? decoder.decode(GameState.self, from: candidate.payload) else { continue }
-            if best == nil || decoded.isRicher(than: best!.state) {
-                best = (candidate, decoded)
-            }
+        guard !Persistence.storageUnavailable else {
+            recoveryRequired = true
+            lastError = "Your save is temporarily unavailable. Your files have been kept safe. Please restart Batwalk and try again."
+            return
         }
-
-        if let best {
-            // Never replace a richer in-memory state with a poorer disk copy.
-            if best.state.isRicher(than: state) || !state.hasStarted {
-                state = best.state
+        do {
+            let records = try context.fetch(FetchDescriptor<SaveRecord>())
+            if records.contains(where: { candidate in
+                let json = (try? JSONSerialization.jsonObject(with: candidate.payload)) as? [String: Any]
+                return (json?["schemaVersion"] as? Int ?? 1) > GameState.currentSchemaVersion
+            }) {
+                recoveryRequired = true
+                lastError = "This save was made by a newer Batwalk. Update the app to open it. Your files have been kept safe."
+                return
             }
-            record = best.record
-            if role == .watch {
-                for other in records where other !== best.record { context.delete(other) }
-                try? context.save()
+            let decoded = records.compactMap { candidate -> (SaveRecord, GameState)? in
+                guard let value = try? JSONDecoder().decode(GameState.self, from: candidate.payload) else { return nil }
+                return (candidate, value)
             }
+            let best = decoded.sorted { a, b in
+                if a.1.saveID == b.1.saveID, a.1.revision != b.1.revision { return a.1.revision > b.1.revision }
+                if a.1.history.count != b.1.history.count { return a.1.history.count > b.1.history.count }
+                if a.1.lifetimeCreditedSteps != b.1.lifetimeCreditedSteps { return a.1.lifetimeCreditedSteps > b.1.lifetimeCreditedSteps }
+                return a.0.updatedAt > b.0.updatedAt
+            }.first
+            if let best {
+                if !state.hasStarted || best.1.isRicher(than: state) { state = best.1 }
+                record = best.0
+                recoveryRequired = false
+            } else if let recovered = archive.load() {
+                state = recovered
+                recoveryRequired = false
+                if role == .watch { try persistRecovered() }
+            } else if !records.isEmpty {
+                recoveryRequired = true
+                lastError = "Your save could not be opened. It has been kept safe. Try again or restore a collection backup."
+            }
+            // Keep conflicting/corrupt rows available for recovery.
+            let backups = try context.fetch(FetchDescriptor<CollectionBackupRecord>())
+            availableBackup = backups.sorted { $0.updatedAt > $1.updatedAt }.compactMap {
+                try? JSONDecoder().decode(CollectionBackup.self, from: $0.payload)
+            }.first(where: { $0.version == 1 && $0.hasStarted })
+            if role == .watch, !state.hasStarted, !recoveryRequired, let backup = availableBackup {
+                try restore(backup)
+            }
+        } catch {
+            recoveryRequired = true
+            lastError = "Your save is temporarily unavailable. Please try again."
         }
     }
 
-    // MARK: Mutating (Watch only)
-
-    /// Apply a rule from BatwalkCore and persist the result.
     @discardableResult
-    func mutate<T>(_ body: (inout GameState) throws -> T) rethrows -> T {
-        precondition(role == .watch, "The iPhone mirror never mutates the save")
-        let result = try body(&state)
-        persist()
+    func mutate<T>(_ body: (inout GameState) throws -> T) throws -> T {
+        precondition(role == .watch, "The iPhone mirror never mutates the game")
+        guard !recoveryRequired else { throw StoreError.recoveryRequired }
+        var next = state
+        let result = try body(&next)
+        guard next != state else { return result }
+        if isDemo { state = next; return result }
+        next.advanceRevision()
+        let data = try JSONEncoder().encode(next)
+        let candidate = record ?? SaveRecord(payload: data, updatedAt: .now, writer: "watch")
+        if record == nil { context.insert(candidate) }
+        candidate.payload = data
+        candidate.updatedAt = .now
+        do { try commit(context) }
+        catch {
+            context.rollback()
+            lastError = "This change could not be saved. Your previous progress is safe. Please try again."
+            throw error
+        }
+        record = candidate
+        state = next // publish only after the local transaction commits
+        lastError = nil
+        do { try archive.save(data) } catch {
+            lastError = "Your progress is saved. The extra recovery copy will be retried."
+        }
+        writeCollectionBackup()
+        if let onCommit { onCommit(data) } else {
+            PhoneSync.shared.push(save: data)
+            refreshComplication()
+        }
         return result
     }
 
-    /// Replace the state with a demo scenario that is never persisted.
-    func loadDemo(_ demo: GameState) {
-        isDemo = true
-        state = demo
+    private func persistRecovered() throws {
+        let data = try JSONEncoder().encode(state)
+        let recovered = SaveRecord(payload: data, updatedAt: .now, writer: "watch")
+        context.insert(recovered)
+        do { try commit(context); record = recovered }
+        catch { context.rollback(); throw error }
     }
 
-    private func persist() {
-        guard !isDemo else { return }
-        guard let data = try? JSONEncoder().encode(state) else { return }
-        if let record {
-            record.payload = data
-            record.updatedAt = .now
-        } else {
-            let new = SaveRecord(payload: data, updatedAt: .now, writer: "watch")
-            context.insert(new)
-            record = new
-        }
-        try? context.save()
-
-        PhoneSync.shared.push(save: data)
-        writeComplicationSnapshot()
+    func restore(_ backup: CollectionBackup) throws {
+        guard backup.version == 1, !Persistence.storageUnavailable else { throw StoreError.unsupportedBackup }
+        let wasBlocked = recoveryRequired
+        recoveryRequired = false
+        do {
+            try mutate { $0.restoreCollection(backup) }
+            availableBackup = nil
+        } catch { recoveryRequired = wasBlocked; throw error }
     }
 
-    private func writeComplicationSnapshot() {
-        let companion = state.companion
-        let snapshot = ComplicationSnapshot(
-            companionName: companion?.displayName,
-            companionSpeciesID: companion?.speciesID,
-            eggProgress: state.egg?.progress,
-            eggStepsRemaining: state.egg?.stepsRemaining,
-            isEggReady: state.isEggReady,
-            updatedAt: .now
-        )
-        guard snapshot.withoutTimestamp != ComplicationSnapshot.load().withoutTimestamp else { return }
-        snapshot.save()
-        #if canImport(WidgetKit)
-        WidgetCenter.shared.reloadAllTimelines()
-        #endif
-    }
+    func loadDemo(_ demo: GameState) { isDemo = true; state = demo }
+    func clearError() { lastError = nil }
 
-    // MARK: Mirror (iPhone)
-
-    /// Apply a save pushed from the Watch. WatchConnectivity's application
-    /// context always carries the Watch's latest state, so it simply wins.
     func applyMirror(_ data: Data) {
         guard role == .phone, !isDemo,
               let incoming = try? JSONDecoder().decode(GameState.self, from: data) else { return }
-        state = incoming
+        if incoming.saveID == state.saveID, incoming.revision < state.revision { return }
+        do {
+            try archive.save(data)
+            state = incoming
+            lastSyncAt = .now
+            recoveryRequired = false
+            lastError = nil
+        } catch { lastError = "Your Watch data arrived, but the offline copy could not be saved." }
     }
-}
 
-private extension ComplicationSnapshot {
-    var withoutTimestamp: ComplicationSnapshot {
-        var copy = self
-        copy.updatedAt = .distantPast
-        return copy
+    func refreshComplication() {
+        guard !isDemo, role == .watch, SharedConfig.appGroupEnabled else { return }
+        let snapshot = ComplicationSnapshot(companionName: state.companion?.displayName,
+            companionSpeciesID: state.companion?.speciesID, eggProgress: state.egg?.progress,
+            eggStepsRemaining: state.egg?.stepsRemaining, isEggReady: state.isEggReady, updatedAt: .now)
+        snapshot.save()
+        #if canImport(WidgetKit)
+        WidgetCenter.shared.reloadTimelines(ofKind: "BatwalkComplication")
+        #endif
     }
+
+    private func writeCollectionBackup() {
+        guard SharedConfig.cloudBackupEnabled, role == .watch else { return }
+        do {
+            let payload = try JSONEncoder().encode(CollectionBackup(state: state))
+            let rows = try context.fetch(FetchDescriptor<CollectionBackupRecord>())
+            let existing = rows.first { $0.saveID == state.saveID.uuidString }
+            let backup = existing ?? CollectionBackupRecord()
+            if existing == nil { context.insert(backup) }
+            backup.saveID = state.saveID.uuidString
+            backup.payload = payload
+            backup.updatedAt = .now
+            try commit(context)
+        } catch {
+            context.rollback()
+            lastError = "Your progress is saved on this Watch. Collection backup will be retried."
+        }
+    }
+
+    enum StoreError: Error { case recoveryRequired, unsupportedBackup }
 }
