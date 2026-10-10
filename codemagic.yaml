@@ -1,4 +1,4 @@
-# Independent of GitHub Actions. Both workflows are manual to conserve minutes.
+# Independent of GitHub Actions. All workflows are manual to conserve minutes.
 # Use a personal Codemagic account and the M2 instance for the included free tier.
 workflows:
   batwalk-verify:
@@ -95,3 +95,47 @@ workflows:
       - build/reports/toolchain.txt
       - build/screens/watch/*.png
       - /tmp/batwalk-ci-logs/*.log
+
+  batwalk-testflight:
+    name: Batwalk · TestFlight (iPhone + Watch)
+    instance_type: mac_mini_m2
+    max_build_duration: 45
+    # This integration must be explicitly authorized and connected in Codemagic.
+    integrations:
+      app_store_connect: Batwalk TestFlight
+    environment:
+      xcode: "26.3"
+      vars:
+        APP_STORE_APPLE_ID: "6819895282"
+        RUNNER_TEMP: /tmp/batwalk-testflight-logs
+    scripts:
+      - name: Check Apple access and select the next TestFlight build number
+        script: bash scripts/codemagic-testflight-preflight.sh
+      - name: Prepare Xcode and generate project
+        script: bash scripts/codemagic-prepare.sh
+      - name: Test game rules and release checks
+        script: |
+          set -euo pipefail
+          swift test --package-path Packages/BatwalkCore 2>&1 | tee build/reports/core-tests.log
+          python3 -m unittest discover -s scripts/tests -p 'test_*.py'
+      - name: Boot iPhone simulator
+        script: bash scripts/phone-sim.sh
+      - name: Test application reliability before archive
+        script: |
+          set -euo pipefail
+          bash scripts/ci-xcodebuild.sh -project Batwalk.xcodeproj -scheme BatwalkPhone \
+            -configuration Debug -destination "platform=iOS Simulator,id=$PHONE_SIM" \
+            -derivedDataPath build -resultBundlePath build/reports/AppTests.xcresult \
+            CODE_SIGNING_ALLOWED=NO test
+          xcrun simctl shutdown "$PHONE_SIM"
+      - name: Archive, inspect and upload iPhone plus Watch to TestFlight
+        script: bash scripts/codemagic-testflight.sh
+    artifacts:
+      - build/reports/toolchain.txt
+      - build/reports/*.log
+      - build/reports/*.json
+      - build/reports/*.plist
+      - build/reports/*.xcresult
+      - /tmp/batwalk-testflight-logs/*.log
+    # Upload happens in the final gated script, using Xcode cloud signing.
+    # There is no automatic App Store submission, external beta review or invite.

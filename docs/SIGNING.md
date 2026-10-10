@@ -67,11 +67,44 @@ absence. The phone must never become a game-save writer.
 
 ## Archive and TestFlight
 
-The workflow runs core and app regression tests before archive. It uses secrets
-`ASC_KEY_ID`, `ASC_ISSUER_ID`, and `ASC_KEY_P8`, and the configured team
-`GB24TMUMQ5`. Run with upload off first to validate a signed archive. Then inspect
-embedded entitlements and privacy manifests before enabling upload. The current
-PR does not trigger an archive, upload, or merge.
+### Codemagic
+
+Run `batwalk-testflight` manually on the intended commit. It uses the existing
+Batwalk App Store Connect record `6819895282` and team `GB24TMUMQ5`, and includes
+the iPhone app, Watch app and Watch widget. It has no automatic trigger. The
+unsigned CI fallback remains a separate workflow and cannot publish builds.
+
+Connect an explicitly authorized App Store Connect integration named
+`Batwalk TestFlight` in the Codemagic personal account. Codemagic injects its key
+identifier, issuer ID and private key. Keep the private key out of Git, build
+artifacts and logs. Apple team API keys apply across the team's apps; their
+permissions cannot be restricted to this repository by the workflow name.
+
+The preflight reads the latest TestFlight build number from Apple and increments
+it, failing if Apple access is unavailable. Run only one publishing build at a
+time to avoid two runs choosing the same number. Core tests, release checks and
+hosted app tests must pass before archive. Optional App Groups and CloudKit stay
+off until their portal registration and device behavior have been verified.
+
+The archive is initially ad hoc signed, following the existing successful GitHub
+upload method. Before upload, the release check verifies all three embedded
+bundles, matching versions, device platforms, companion linkage, privacy
+manifests and Watch HealthKit entitlements. Xcode then uses cloud-managed
+distribution signing during export with `Config/ExportOptions.plist` and uploads
+to App Store Connect. The temporary private-key file is removed on script exit.
+An archive check alone does not establish a valid distribution signature.
+
+After upload, confirm Apple processing has finished and the build is available
+to the intended internal tester in TestFlight. Upload success alone is not proof
+of installability. This workflow does not submit an App Store release, request
+external beta review, invite testers or expire existing builds.
+
+### Existing GitHub workflow
+
+`.github/workflows/testflight.yml` uses `ASC_KEY_ID`, `ASC_ISSUER_ID` and
+`ASC_KEY_P8`. Its older run-number counter must be reconciled with Apple's latest
+build before returning to GitHub for uploads after Codemagic. With upload off it
+only validates an ad hoc archive; distribution signing happens during export.
 
 StoreKit adapter tests use a fake backend for deterministic purchase states.
 The local `Config/Batwalk.storekit` and real sandbox/TestFlight purchase, pending
