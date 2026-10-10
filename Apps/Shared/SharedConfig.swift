@@ -6,10 +6,11 @@ enum SharedConfig {
     static let cloudKitContainer = "iCloud.com.aimanjack.batwalk"
     static let fullUnlockProductID = "com.aimanjack.batwalk.fullunlock"
 
-    /// iCloud backup + App Group (complication data) need an App Group and an
+    /// Cloud collection backup and live widgets are independent capabilities.
+    /// They need an App Group and an
     /// iCloud container created by hand in the developer portal — an App Store
     /// Connect API key can't create them. Until then, saves stay on the Watch
-    /// and the complication shows a static face. Flip together with the
+    /// and the complication opens the app. Enable each with its corresponding
     /// entitlements in project.yml (see docs/SIGNING.md).
     static let appGroupEnabled = false
     static let cloudBackupEnabled = false

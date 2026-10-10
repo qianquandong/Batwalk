@@ -52,6 +52,23 @@ public enum BatMood: String, Codable, CaseIterable, Sendable {
 public enum Friendship {
     public static let maxLevel = 5
 
+    /// Permanent, deterministic cosmetics; no rare drop or purchase required.
+    public static func keepsake(forEXP exp: Int, tuning: Tuning = .default) -> String? {
+        switch level(forEXP: exp, tuning: tuning) {
+        case 2: return "Heart charm"
+        case 3: return "Forest charm"
+        case 4: return "Star charm"
+        case 5: return "Best friend crown"
+        default: return nil
+        }
+    }
+
+    public static func nextKeepsake(forEXP exp: Int, tuning: Tuning = .default) -> String? {
+        let next = level(forEXP: exp, tuning: tuning)
+        guard next < maxLevel, next < tuning.friendshipThresholds.count else { return nil }
+        return keepsake(forEXP: tuning.friendshipThresholds[next], tuning: tuning)
+    }
+
     public static func level(forEXP exp: Int, tuning: Tuning = .default) -> Int {
         var level = 1
         for (index, threshold) in tuning.friendshipThresholds.enumerated() where exp >= threshold {

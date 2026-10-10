@@ -14,17 +14,42 @@ struct ComplicationSnapshot: Codable, Equatable {
 
     private static let key = "complicationSnapshot"
 
+    func isStale(at date: Date) -> Bool {
+        updatedAt == .distantPast || date.timeIntervalSince(updatedAt) >= 2 * 60 * 60
+    }
+
+    var destination: URL {
+        URL(string: "batwalk://\(isEggReady ? "hatch" : eggProgress == nil ? "home" : "progress")")!
+    }
+
     static func load() -> ComplicationSnapshot {
-        guard let defaults = UserDefaults(suiteName: SharedConfig.appGroup),
+        guard SharedConfig.appGroupEnabled,
+              let defaults = UserDefaults(suiteName: SharedConfig.appGroup),
               let data = defaults.data(forKey: key),
               let snapshot = try? JSONDecoder().decode(ComplicationSnapshot.self, from: data)
         else { return .empty }
         return snapshot
     }
 
-    func save() {
-        guard let defaults = UserDefaults(suiteName: SharedConfig.appGroup),
-              let data = try? JSONEncoder().encode(self) else { return }
+    @discardableResult
+    func save() -> Bool {
+        guard SharedConfig.appGroupEnabled,
+              let defaults = UserDefaults(suiteName: SharedConfig.appGroup),
+              let data = try? JSONEncoder().encode(self) else { return false }
+        let previous = Self.load()
+        // Persist freshness on every read, but reload only for visible changes or
+        // the transition from a stale snapshot to fresh data.
+        var comparable = previous
+        comparable.updatedAt = updatedAt
+        let needsReload = comparable != self || previous.isStale(at: updatedAt)
         defaults.set(data, forKey: Self.key)
+        // The shared summary also contains Health-derived progress.
+        if let root = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: SharedConfig.appGroup) {
+            var preferences = root.appendingPathComponent("Library/Preferences", isDirectory: true)
+            try? FileManager.default.createDirectory(at: preferences, withIntermediateDirectories: true)
+            var values = URLResourceValues(); values.isExcludedFromBackup = true
+            try? preferences.setResourceValues(values)
+        }
+        return needsReload
     }
 }

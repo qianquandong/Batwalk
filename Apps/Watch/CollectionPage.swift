@@ -107,7 +107,7 @@ struct BatDetailView: View {
                             .padding(.vertical, 4)
                     } else {
                         Button("Make Companion") {
-                            _ = try? store.mutate { try $0.setCompanion(speciesID) }
+                            do { try store.mutate { try $0.setCompanion(speciesID) } } catch { Haptics.failure(); return }
                             store.analytics.log(.companionChanged, properties: ["species": speciesID])
                             Haptics.light()
                         }

@@ -61,7 +61,7 @@ struct UnlockView: View {
                         } label: {
                             VStack(spacing: 2) {
                                 Text("Unlock All Bats")
-                                Text("\(purchases.product?.displayPrice ?? "$1.99") · One-time purchase")
+                                Text(purchases.product.map { "\($0.displayPrice) · One-time purchase" } ?? (store.isDemo ? "$1.99 · Preview" : "Loading price…"))
                                     .font(BatwalkFont.rounded(.caption, weight: .medium))
                                     .opacity(0.9)
                             }
@@ -74,6 +74,8 @@ struct UnlockView: View {
                             Text(purchases.lastError == nil ? "Connecting to the App Store…" : "The App Store isn't reachable right now.")
                                 .font(BatwalkFont.caption)
                                 .foregroundStyle(BatwalkColor.textSecondaryLight)
+                            Button("Retry App Store") { Task { await purchases.loadProduct() } }
+                                .disabled(purchases.isLoadingProduct)
                         }
                     }
 
@@ -84,6 +86,10 @@ struct UnlockView: View {
                     if let error = purchases.lastError {
                         Text(error).font(BatwalkFont.caption).foregroundStyle(.red).multilineTextAlignment(.center)
                     }
+                    if let message = purchases.message {
+                        Text(message).font(BatwalkFont.caption).foregroundStyle(BatwalkColor.textSecondaryLight).multilineTextAlignment(.center)
+                    }
+                    NavigationLink("Privacy & data") { PrivacyView() }
 
                     Label("Thank you for supporting Batwalk!", systemImage: "heart.fill")
                         .font(BatwalkFont.caption)

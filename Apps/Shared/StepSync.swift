@@ -70,10 +70,10 @@ final class StepSyncCoordinator {
                 combined.fruitEarned += update.fruitEarned
                 combined.eggBecameReady = combined.eggBecameReady || update.eggBecameReady
                 status = .updated(total: total, at: now)
-                store.refreshComplication()
+                store.recordStepRead(at: now)
             } catch {
                 status = .failed
-                return nil
+                return combined.creditedSteps > 0 || combined.eggBecameReady ? combined : nil
             }
         } while resyncRequested
         return combined

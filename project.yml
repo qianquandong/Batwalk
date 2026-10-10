@@ -80,6 +80,7 @@ targets:
       - Apps/Complication
       - Apps/Shared/ComplicationSnapshot.swift
       - Apps/Shared/SharedConfig.swift
+      - Apps/Shared/PrivacyInfo.xcprivacy
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.aimanjack.batwalk.watchkitapp.widget
@@ -145,3 +146,5 @@ targets:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.aimanjack.batwalk.tests
         GENERATE_INFOPLIST_FILE: YES
+        TEST_HOST: "$(BUILT_PRODUCTS_DIR)/Batwalk.app/Batwalk"
+        BUNDLE_LOADER: "$(TEST_HOST)"

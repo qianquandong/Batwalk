@@ -5,8 +5,18 @@ import BatwalkCore
 enum HealthStatus: Equatable {
     case connected
     case notSetUp
-    /// Asked before, but no steps have arrived today.
+    case noData
+    /// The latest query failed. Zero steps never implies denied access.
     case needsAttention
+
+    var label: String {
+        switch self {
+        case .connected: return "Steps received"
+        case .notSetUp: return "Not set up"
+        case .noData: return "No steps received yet"
+        case .needsAttention: return "Update failed"
+        }
+    }
 }
 
 /// Visual-QA scenarios (UI_REDESIGN_TASKS P11), selected with a launch argument:

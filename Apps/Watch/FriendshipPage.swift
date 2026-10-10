@@ -26,7 +26,8 @@ struct FriendshipPage: View {
                                     shiny: companion.showsShiny,
                                     mood: reaction ?? BatMood.resting(at: time),
                                     size: 70,
-                                    bounceTrigger: bounce
+                                    bounceTrigger: bounce,
+                                    friendshipEXP: companion.friendshipEXP
                                 )
                                 HeartBurst(trigger: hearts)
                                 FruitToss(trigger: fruitToss)
@@ -48,6 +49,12 @@ struct FriendshipPage: View {
                             FriendshipProgressView(exp: companion.friendshipEXP)
                                 .padding(.horizontal, BatwalkSpacing.xs)
                                 .padding(.top, 2)
+                            if let reward = Friendship.keepsake(forEXP: companion.friendshipEXP) {
+                                Text("Unlocked: \(reward)").font(BatwalkFont.micro).foregroundStyle(BatwalkColor.pinkAccent)
+                            }
+                            if let next = Friendship.nextKeepsake(forEXP: companion.friendshipEXP) {
+                                Text("Next: \(next)").font(BatwalkFont.micro).foregroundStyle(BatwalkColor.textSecondaryDark)
+                            }
 
                             FeedButton(fruit: store.state.fruit) { feed(companion) }
 
@@ -69,7 +76,8 @@ struct FriendshipPage: View {
 
     private func pet(_ bat: OwnedBat) {
         let before = Friendship.level(forEXP: bat.friendshipEXP)
-        _ = try? store.mutate { try $0.pet(bat.speciesID, dayKey: DayKey.make(.now)) }
+        do { _ = try store.mutate { try $0.pet(bat.speciesID, dayKey: DayKey.make(.now)) } }
+        catch { Haptics.failure(); return }
         celebrate(levelBefore: before, speciesID: bat.speciesID)
     }
 

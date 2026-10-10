@@ -61,6 +61,9 @@ enum SpriteResolver {
         for m in moods where assetExists(SpriteName.bat(speciesID, mood: m, shiny: false)) {
             return Resolved(name: SpriteName.bat(speciesID, mood: m, shiny: false), hueDegrees: shinyShift)
         }
+        // These free companions have distinct silhouettes and palettes rather
+        // than borrowing the mascot. Dedicated artist assets still take precedence.
+        if speciesID == "cocoa" || speciesID == "long-ear" { return nil }
         let (hue, sat, bright) = borrowedTint[speciesID] ?? (0, 1, 0)
         for m in moods where assetExists(SpriteName.bat("mochi", mood: m, shiny: false)) {
             return Resolved(name: SpriteName.bat("mochi", mood: m, shiny: false),
@@ -109,6 +112,8 @@ struct BatSprite: View {
                     .hueRotation(.degrees(art.hueDegrees))
                     .saturation(art.saturation)
                     .brightness(art.brightness)
+            } else if speciesID == "cocoa" || speciesID == "long-ear" {
+                FreeBatArtwork(longEars: speciesID == "long-ear", shiny: shiny, mood: mood)
             } else {
                 PlaceholderBat(color: SpeciesPalette.body(speciesID, shiny: shiny), mood: mood)
             }
@@ -127,6 +132,7 @@ struct BatHeroView: View {
     var size: CGFloat = 110
     var bounceTrigger = 0
     var glow: Color? = nil
+    var friendshipEXP = 0
 
     var body: some View {
         BatSprite(speciesID: speciesID, shiny: shiny, mood: mood, size: size)
@@ -134,6 +140,66 @@ struct BatHeroView: View {
             .earTwitch(mood != .sleeping)
             .happyBounce(trigger: bounceTrigger)
             .idleFloat()
+            .overlay(alignment: .bottomTrailing) {
+                let level = Friendship.level(forEXP: friendshipEXP)
+                if level >= 2 {
+                    Image(systemName: level == 5 ? "crown.fill" : level == 4 ? "star.fill" : level == 3 ? "leaf.fill" : "heart.fill")
+                        .font(.system(size: max(10, size * 0.13), weight: .bold))
+                        .foregroundStyle(level == 5 ? Color.yellow : level == 3 ? Color.green : BatwalkColor.pinkAccent)
+                        .padding(4)
+                        .background(Circle().fill(Color.black.opacity(0.65)))
+                        .accessibilityLabel(Friendship.keepsake(forEXP: friendshipEXP) ?? "")
+                }
+            }
+    }
+}
+
+/// Small code-native pixel drawings with separate silhouettes for the free roster.
+private struct FreeBatArtwork: View {
+    let longEars: Bool
+    let shiny: Bool
+    let mood: BatMood
+
+    var body: some View {
+        Canvas { context, size in
+            let unit = min(size.width, size.height) / 24
+            let origin = CGPoint(x: (size.width - unit * 24) / 2, y: (size.height - unit * 24) / 2)
+            let outline = Color(red: 0.17, green: 0.12, blue: 0.23)
+            let body = longEars ? (shiny ? Color(red: 0.68, green: 0.54, blue: 0.88) : Color(red: 0.92, green: 0.82, blue: 0.62))
+                : (shiny ? Color(red: 0.38, green: 0.65, blue: 0.79) : Color(red: 0.47, green: 0.27, blue: 0.20))
+            let accent = longEars ? Color(red: 0.45, green: 0.68, blue: 0.61) : Color(red: 0.85, green: 0.59, blue: 0.37)
+            func block(_ x: Int, _ y: Int, _ w: Int, _ h: Int, _ color: Color) {
+                let rect = CGRect(x: origin.x + CGFloat(x) * unit, y: origin.y + CGFloat(y) * unit,
+                    width: CGFloat(w) * unit, height: CGFloat(h) * unit)
+                context.fill(Path(rect), with: .color(color), style: FillStyle(antialiased: false))
+            }
+            let tucked = mood == .sleeping || mood == .drowsy
+            for left in [true, false] {
+                let wing = left ? (tucked ? 6 : 1) : (tucked ? 15 : 17)
+                block(wing, 12, tucked ? 3 : 6, 5, outline)
+                block(wing + 1, 13, tucked ? 2 : 4, 3, body)
+                if !tucked { block(left ? 3 : 18, 11, 3, 1, outline); block(left ? 2 : 19, 17, 2, 1, outline) }
+                let ear = left ? 7 : 14
+                block(ear, longEars ? 1 : 7, 3, longEars ? 11 : 5, outline)
+                block(ear + 1, longEars ? 2 : 8, 1, longEars ? 8 : 3, accent)
+            }
+            block(8, 10, 8, 11, outline)
+            block(7, 12, 10, 7, outline)
+            block(8, 12, 8, 7, body)
+            block(9, 11, 6, 9, body)
+            block(10, 17, 4, 2, accent)
+            if tucked {
+                block(9, 14, 2, 1, outline); block(13, 14, 2, 1, outline)
+            } else {
+                block(9, 13, 2, 3, outline); block(13, 13, 2, 3, outline)
+                block(9, 13, 1, 1, .white); block(13, 13, 1, 1, .white)
+            }
+            if mood == .happy || mood == .eating {
+                block(8, 16, 1, 1, .pink); block(15, 16, 1, 1, .pink)
+            }
+            block(11, 16, 2, 1, outline)
+        }
+        .accessibilityHidden(true)
     }
 }
 

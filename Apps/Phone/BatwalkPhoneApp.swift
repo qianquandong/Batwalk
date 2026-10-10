@@ -34,7 +34,10 @@ struct BatwalkPhoneApp: App {
                 .tint(BatwalkColor.purple)
                 .task { if !store.isDemo { purchases.start() } }
                 .onChange(of: scenePhase) { _, phase in
-                    if phase == .active { store.load() } // pick up CloudKit changes
+                    if phase == .active {
+                        store.load()
+                        if !store.isDemo { Task { await purchases.refreshEntitlements() } }
+                    }
                 }
         }
         .modelContainer(container)

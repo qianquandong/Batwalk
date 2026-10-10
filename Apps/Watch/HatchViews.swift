@@ -138,7 +138,7 @@ struct HatchSequenceView: View {
                     .font(BatwalkFont.micro)
                     .foregroundStyle(BatwalkColor.textSecondaryDark)
                     .multilineTextAlignment(.center)
-                Button("Continue", action: onDone)
+                Button("Start next egg", action: onDone)
                     .buttonStyle(BatwalkPrimaryButtonStyle(minHeight: 36))
                     .padding(.top, 4)
             }

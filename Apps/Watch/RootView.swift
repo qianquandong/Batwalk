@@ -26,7 +26,7 @@ struct RootView: View {
         } else if store.state.hasStarted {
             TabView(selection: $page) {
                 HomeView().tag(0)
-                ProgressPage(page: $page).tag(1)
+                ProgressPage(page: $page, steps: steps).tag(1)
                 if store.state.companion != nil {
                     FriendshipPage().tag(2)
                     CollectionPage().tag(3)
@@ -37,6 +37,10 @@ struct RootView: View {
         } else {
             OnboardingView(steps: steps)
         }
+        }
+        .onOpenURL { url in
+            guard let route = WatchRoute(url: url) else { return }
+            page = route == .progress ? 1 : 0
         }
         .alert("Progress update", isPresented: Binding(
             get: { store.lastError != nil && !store.recoveryRequired },

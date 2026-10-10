@@ -20,10 +20,11 @@ struct SnapshotProvider: TimelineProvider {
     }
 
     func getTimeline(in context: Context, completion: @escaping (Timeline<SnapshotEntry>) -> Void) {
-        let entry = SnapshotEntry(date: .now, snapshot: .load())
-        // The app pushes reloads on change; this is just a safety refresh.
-        let next = Calendar.current.date(byAdding: .hour, value: 1, to: .now) ?? .now.addingTimeInterval(3600)
-        completion(Timeline(entries: [entry], policy: .after(next)))
+        let snapshot = ComplicationSnapshot.load()
+        let entry = SnapshotEntry(date: .now, snapshot: snapshot)
+        let expiry = snapshot.updatedAt.addingTimeInterval(2 * 60 * 60)
+        let entries = expiry > .now ? [entry, SnapshotEntry(date: expiry, snapshot: snapshot)] : [entry]
+        completion(Timeline(entries: entries, policy: .never))
     }
 }
 
@@ -31,24 +32,27 @@ struct BatwalkComplicationView: View {
     @Environment(\.widgetFamily) private var family
     let entry: SnapshotEntry
 
-    private var progress: Double { entry.snapshot.isEggReady ? 1 : (entry.snapshot.eggProgress ?? 0) }
+    private var stale: Bool { entry.snapshot.isStale(at: entry.date) }
+    private var progress: Double { stale ? 0 : entry.snapshot.isEggReady ? 1 : (entry.snapshot.eggProgress ?? 0) }
 
     private var shortLine: String {
         let s = entry.snapshot
+        if !SharedConfig.appGroupEnabled { return "Open Batwalk" }
+        if stale { return "Open to update" }
         if s.isEggReady { return "Ready to hatch!" }
         if let remaining = s.eggStepsRemaining { return "\(remaining.formatted()) to hatch" }
         return s.companionName ?? "Batwalk"
     }
 
     var body: some View {
-        switch family {
+        Group { switch family {
         case .accessoryCircular:
             Gauge(value: progress) {
                 Image(systemName: "moon.stars.fill")
             }
             .gaugeStyle(.accessoryCircularCapacity)
         case .accessoryCorner:
-            Image(systemName: entry.snapshot.isEggReady ? "sparkles" : "moon.stars.fill")
+            Image(systemName: !stale && entry.snapshot.isEggReady ? "sparkles" : "moon.stars.fill")
                 .widgetLabel {
                     Gauge(value: progress) { EmptyView() }
                 }
@@ -58,11 +62,14 @@ struct BatwalkComplicationView: View {
             VStack(alignment: .leading, spacing: 2) {
                 Text(entry.snapshot.companionName ?? "Batwalk").font(.headline)
                 Text(shortLine).font(.caption)
-                if entry.snapshot.eggProgress != nil {
+                if entry.snapshot.eggProgress != nil && !stale {
                     ProgressView(value: progress)
                 }
             }
         }
+        }
+        .widgetURL(entry.snapshot.destination)
+        .privacySensitive()
     }
 }
 

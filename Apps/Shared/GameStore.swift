@@ -16,6 +16,7 @@ final class GameStore {
     private(set) var recoveryRequired = false
     private(set) var availableBackup: CollectionBackup?
     private(set) var lastSyncAt: Date?
+    private(set) var lastStepReadAt: Date?
     private(set) var isDemo = false
     @ObservationIgnored var analytics: AnalyticsSink = NoopAnalytics()
     @ObservationIgnored private let context: ModelContext
@@ -65,7 +66,8 @@ final class GameStore {
             }.first
             if let best {
                 if !state.hasStarted || best.1.isRicher(than: state) { state = best.1 }
-                record = best.0
+                // Only point writes at the record whose state we actually selected.
+                if state.saveID == best.1.saveID { record = best.0 }
                 recoveryRequired = false
             } else if let recovered = archive.load() {
                 state = recovered
@@ -161,12 +163,15 @@ final class GameStore {
         guard !isDemo, role == .watch, SharedConfig.appGroupEnabled else { return }
         let snapshot = ComplicationSnapshot(companionName: state.companion?.displayName,
             companionSpeciesID: state.companion?.speciesID, eggProgress: state.egg?.progress,
-            eggStepsRemaining: state.egg?.stepsRemaining, isEggReady: state.isEggReady, updatedAt: .now)
-        snapshot.save()
+            eggStepsRemaining: state.egg?.stepsRemaining, isEggReady: state.isEggReady,
+            updatedAt: lastStepReadAt ?? .distantPast)
+        guard snapshot.save() else { return }
         #if canImport(WidgetKit)
         WidgetCenter.shared.reloadTimelines(ofKind: "BatwalkComplication")
         #endif
     }
+
+    func recordStepRead(at date: Date) { lastStepReadAt = date; refreshComplication() }
 
     private func writeCollectionBackup() {
         guard SharedConfig.cloudBackupEnabled, role == .watch else { return }

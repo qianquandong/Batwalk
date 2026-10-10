@@ -25,7 +25,7 @@ struct BatwalkWatchApp: App {
         // iPhone → Watch requests (e.g. "Set as Companion"); the Watch stays the only writer.
         PhoneSync.shared.onReceiveCommand = { command in
             if let id = command[PhoneSync.setCompanionKey], store.state.collection[id] != nil {
-                _ = try? store.mutate { try $0.setCompanion(id) }
+                do { try store.mutate { try $0.setCompanion(id) } } catch { return }
                 store.analytics.log(.companionChanged, properties: ["species": id, "source": "phone"])
             }
         }
@@ -58,7 +58,7 @@ struct BatwalkWatchApp: App {
         .modelContainer(container)
         .onChange(of: scenePhase) { _, phase in
             guard phase == .active else { return }
-            Task { await Self.foregroundSync(store: store, steps: steps) }
+            Task { await purchases.refreshEntitlements(); await Self.foregroundSync(store: store, steps: steps) }
         }
     }
 
@@ -68,6 +68,7 @@ struct BatwalkWatchApp: App {
         store.load() // pick up a CloudKit restore if one arrived (also while still on onboarding)
         guard store.state.hasStarted else { return }
         await store.syncSteps(using: steps) // plays the egg-ready haptic (PRD §2.2)
+        if let save = try? JSONEncoder().encode(store.state) { PhoneSync.shared.push(save: save) }
     }
 
     @MainActor

@@ -28,7 +28,16 @@ struct HomeView: View {
             // Straight into choosing the next egg — keeps the loop moving (PRD §2.1).
             if store.state.egg == nil { showEggPicker = true }
         }) { presentation in
-            HatchSequenceView(presentation: presentation) { hatching = nil }
+            HatchSequenceView(presentation: presentation) {
+                if store.state.pickableEggs == [.tiny], store.state.egg == nil {
+                    do { try store.mutate { try $0.startEgg(.tiny, seed: UInt64.random(in: .min ... .max), now: .now) } }
+                    catch { return }
+                }
+                hatching = nil
+                if store.state.history.count == 1 && !store.isDemo {
+                    Task { await HatchNotifier.requestPermission() }
+                }
+            }
         }
         .sheet(isPresented: $showEggPicker) { EggPickerView() }
         .onAppear {
@@ -62,7 +71,8 @@ struct HomeView: View {
                     shiny: companion.showsShiny,
                     mood: reaction ?? BatMood.resting(at: time),
                     size: batSize,
-                    bounceTrigger: petCount
+                    bounceTrigger: petCount,
+                    friendshipEXP: companion.friendshipEXP
                 )
                 .overlay { HeartBurst(trigger: petCount) }
                 .contentShape(Rectangle())
@@ -149,7 +159,8 @@ struct HomeView: View {
 
     private func pet(_ bat: OwnedBat) {
         let levelBefore = Friendship.level(forEXP: bat.friendshipEXP)
-        _ = try? store.mutate { try $0.pet(bat.speciesID, dayKey: DayKey.make(.now)) }
+        do { _ = try store.mutate { try $0.pet(bat.speciesID, dayKey: DayKey.make(.now)) } }
+        catch { Haptics.failure(); return }
         let levelAfter = Friendship.level(forEXP: store.state.collection[bat.speciesID]?.friendshipEXP ?? 0)
         if levelAfter > levelBefore { Haptics.success() } else { Haptics.light() }
         petCount += 1
@@ -204,6 +215,11 @@ struct EggPickerView: View {
                                     Text(available ? "\(type.targetSteps.formatted()) steps" : "Full unlock")
                                         .font(BatwalkFont.micro)
                                         .foregroundStyle(BatwalkColor.textSecondaryDark)
+                                    if available {
+                                        Text(type.pool(isUnlocked: store.state.isUnlocked).compactMap { Roster.species($0)?.name }.joined(separator: ", "))
+                                            .font(BatwalkFont.micro)
+                                            .foregroundStyle(BatwalkColor.textSecondaryDark)
+                                    }
                                 }
                                 Spacer(minLength: 0)
                                 if !available {

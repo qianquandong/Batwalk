@@ -10,7 +10,7 @@ struct SettingsView: View {
     let steps: StepService
 
     @AppStorage(HatchNotifier.enabledKey) private var notificationsOn = true
-    @State private var health: HealthStatus = .connected
+    @State private var health: HealthStatus = .noData
 
     var body: some View {
         NavigationStack {
@@ -77,6 +77,13 @@ struct SettingsView: View {
                     }
                     .buttonStyle(PressableStyle())
                     .disabled(purchases.isBusy)
+                    if let message = purchases.message {
+                        Text(message).font(BatwalkFont.micro).foregroundStyle(BatwalkColor.textSecondaryDark)
+                    }
+                    if let error = purchases.lastError {
+                        Text(error).font(BatwalkFont.micro).foregroundStyle(BatwalkColor.warning)
+                    }
+                    NavigationLink("Privacy & data") { PrivacyView() }.font(BatwalkFont.caption)
 
                     Text(versionText)
                         .font(BatwalkFont.micro)
@@ -108,17 +115,14 @@ struct SettingsView: View {
     }
 
     private var healthLabel: String {
-        switch health {
-        case .connected: return "Connected"
-        case .notSetUp: return "Not set up"
-        case .needsAttention: return "Needs attention"
-        }
+        health.label
     }
 
     private var healthColor: Color {
         switch health {
         case .connected: return BatwalkColor.success
         case .notSetUp, .needsAttention: return BatwalkColor.warning
+        case .noData: return BatwalkColor.textSecondaryDark
         }
     }
 
@@ -146,7 +150,7 @@ struct HealthAccessView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: BatwalkSpacing.sm) {
-                Label(status == .connected ? "Connected" : status == .notSetUp ? "Not set up" : "Needs attention",
+                Label(status.label,
                       systemImage: status == .connected ? "checkmark.circle.fill" : "exclamationmark.circle.fill")
                     .font(BatwalkFont.headline)
                     .foregroundStyle(status == .connected ? BatwalkColor.success : BatwalkColor.warning)
@@ -156,12 +160,12 @@ struct HealthAccessView: View {
                     .foregroundStyle(BatwalkColor.textSecondaryDark)
 
                 if status != .connected {
-                    Text("No steps have arrived today. If you've been walking, open Health on your iPhone › Sharing › Apps › Batwalk and turn on Steps.")
+                    Text("An empty result can mean no recorded steps or limited Health access. If you've been walking, check Batwalk's Step Count access in the Health app on your iPhone.")
                         .font(BatwalkFont.micro)
                         .foregroundStyle(.white)
                         .batwalkGlassCard(padding: 8, radius: 14)
 
-                    Button("Allow Step Count") {
+                    Button("Check Step Count") {
                         isWorking = true
                         Task { @MainActor in
                             _ = await steps.requestAuthorization()
@@ -186,9 +190,10 @@ struct HealthAccessView: View {
     static func currentStatus(steps: StepService, state: GameState) async -> HealthStatus {
         if let demo = DemoMode.healthStatus { return demo }
         if await steps.authorizationRequestStatus() == .shouldRequest { return .notSetUp }
-        // Today's total, not lifetime: if Steps access is later turned off in Health,
-        // the status must stop saying "Connected".
-        let today = state.ledger.dayKey == DayKey.make(.now) ? state.ledger.lastDailyTotal : 0
-        return today > 0 ? .connected : .needsAttention
+        switch StepSyncCoordinator.shared.status {
+        case .updated(let total, _): return total > 0 ? .connected : .noData
+        case .failed: return .needsAttention
+        case .idle, .updating: return .noData
+        }
     }
 }
