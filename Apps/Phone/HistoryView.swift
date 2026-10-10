@@ -6,13 +6,22 @@ import BatwalkCore
 struct HistoryView: View {
     @Environment(GameStore.self) private var store
 
+    @State private var settings = false
     private let columns = Array(repeating: GridItem(.flexible(), spacing: 12), count: 2)
 
     var body: some View {
         NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: BatwalkSpacing.lg) {
-                    PhoneHeader(title: "History")
+                    HStack {
+                        PhoneHeader(title: "Journal")
+                        Button { settings = true } label: {
+                            Image(systemName: "gearshape").frame(width: 44, height: 44)
+                        }.accessibilityLabel("Settings")
+                    }
+                    Text("Little meetings, remembered.")
+                        .font(BatwalkFont.body).foregroundStyle(BatwalkColor.textSecondaryLight)
+                    PhoneSyncStatus()
 
                     LazyVGrid(columns: columns, spacing: 12) {
                         StatCard(title: "Bats Found", value: "\(state.collection.count) / \(Roster.all.count)") {
@@ -29,7 +38,7 @@ struct HistoryView: View {
                         }
                     }
 
-                    Text("Hatch Timeline")
+                    Text("Your little arrivals")
                         .font(BatwalkFont.rounded(.title3, weight: .bold))
                         .foregroundStyle(BatwalkColor.textPrimaryLight)
                         .accessibilityAddTraits(.isHeader)
@@ -54,6 +63,7 @@ struct HistoryView: View {
             }
             .background(BatwalkColor.lightBackground.ignoresSafeArea())
             .toolbar(.hidden, for: .navigationBar)
+            .sheet(isPresented: $settings) { PhoneSettingsView() }
         }
     }
 

@@ -281,6 +281,7 @@ struct BatSilhouette: View {
 struct NightSkyBackground: View {
     var time: TimeOfDay = .night
     var scenery = true
+    var groundLevel: CGFloat = 0.72
 
     private var colors: [Color] {
         switch time {
@@ -295,7 +296,10 @@ struct NightSkyBackground: View {
             LinearGradient(colors: colors, startPoint: .top, endPoint: .bottom)
             Canvas { context, size in
                 drawStars(in: &context, size: size)
-                if scenery { drawGlade(in: &context, size: size) }
+                if scenery {
+                    drawTrees(in: &context, size: size)
+                    drawGlade(in: &context, size: size)
+                }
             }
         }
         .ignoresSafeArea()
@@ -320,19 +324,47 @@ struct NightSkyBackground: View {
         }
     }
 
+    /// Static stepped silhouettes keep the centre quiet and cost no animation timers.
+    private func drawTrees(in context: inout GraphicsContext, size: CGSize) {
+        let u: CGFloat = 4
+        func block(_ x: CGFloat, _ y: CGFloat, _ w: CGFloat, _ h: CGFloat, _ color: Color) {
+            context.fill(Path(CGRect(x: (x / u).rounded(.down) * u, y: (y / u).rounded(.down) * u,
+                                     width: max(u, (w / u).rounded(.down) * u), height: max(u, h))),
+                         with: .color(color), style: FillStyle(antialiased: false))
+        }
+        for side in [CGFloat(0), CGFloat(1)] {
+            let edge = side == 0 ? size.width * 0.04 : size.width * 0.93
+            let floor = size.height * groundLevel
+            block(edge, size.height * 0.12, u * 2, floor - size.height * 0.12,
+                  BatwalkColor.accent.opacity(0.24))
+            for tier in 0..<7 {
+                let width = u * CGFloat(3 + tier % 3)
+                let x = side == 0 ? edge - u : edge - width + u * 2
+                block(x, size.height * 0.12 + CGFloat(tier) * u * 3, width, u * 3,
+                      BatwalkColor.accentSoft.opacity(tier % 2 == 0 ? 0.12 : 0.08))
+            }
+            for tier in 0..<4 {
+                let x = side == 0 ? size.width * 0.12 : size.width * 0.82
+                let width = u * CGFloat(2 + tier * 2)
+                block(x - width / 2, floor - CGFloat(5 - tier) * u * 4, width, u * 4,
+                      BatwalkColor.accent.opacity(0.12))
+            }
+        }
+    }
+
     private func drawGlade(in context: inout GraphicsContext, size: CGSize) {
         let unit: CGFloat = 4
         for column in 0..<Int((size.width / unit).rounded(.up)) {
             let x = CGFloat(column) * unit
             let arch = sin(Double(x / size.width) * .pi)
-            let top = ((size.height * 0.72 - CGFloat(arch) * 10) / unit).rounded(.down) * unit
+            let top = ((size.height * groundLevel - CGFloat(arch) * 10) / unit).rounded(.down) * unit
             context.fill(Path(CGRect(x: x, y: top, width: unit, height: size.height - top)),
                          with: .color(BatwalkColor.accent.opacity(0.20)))
         }
         // Two small stepped leaves frame the character without a busy skyline.
         for side in [CGFloat(0.07), CGFloat(0.90)] {
             let x = (size.width * side / unit).rounded(.down) * unit
-            let y = (size.height * 0.64 / unit).rounded(.down) * unit
+            let y = (size.height * (groundLevel - 0.08) / unit).rounded(.down) * unit
             for (dx, dy, width, height) in [(0, 0, 1, 5), (-1, 1, 1, 2), (1, -1, 1, 2), (-2, 0, 1, 1), (2, -2, 1, 1)] {
                 context.fill(Path(CGRect(x: x + CGFloat(dx) * unit, y: y + CGFloat(dy) * unit,
                                         width: CGFloat(width) * unit, height: CGFloat(height) * unit)),

@@ -27,25 +27,26 @@ struct FriendshipPage: View {
                                     speciesID: companion.speciesID,
                                     shiny: companion.showsShiny,
                                     mood: reaction ?? BatMood.resting(at: time),
-                                    size: 70,
+                                    size: 94,
                                     bounceTrigger: bounce,
                                     friendshipEXP: companion.friendshipEXP,
-                                    animationRequest: animationRequest
+                                    animationRequest: animationRequest,
+                                    showsKeepsake: false
                                 )
                                 HeartBurst(trigger: hearts)
                                 FruitToss(trigger: fruitToss)
                             }
-                            .frame(height: 60)
+                            .frame(height: 94)
                             .contentShape(Rectangle())
                             .onTapGesture { pet(companion) }
                             .accessibilityAddTraits(.isButton)
                             .accessibilityHint(BatMood.resting(at: time) == .awake ? "Pet \(companion.displayName)" : "Wake \(companion.displayName)")
 
-                            Text(companion.displayName)
+                            Text(companion.companionTitle)
                                 .font(BatwalkFont.headline)
                                 .foregroundStyle(.white)
                                 .lineLimit(1)
-                            Text("Friendship Lv. \(Friendship.level(forEXP: companion.friendshipEXP))")
+                            Text("Friendship · Lv. \(Friendship.level(forEXP: companion.friendshipEXP))")
                                 .font(BatwalkFont.caption)
                                 .foregroundStyle(BatwalkColor.rose)
 
@@ -81,8 +82,8 @@ struct FriendshipPage: View {
                     }
                 }
             }
-            .navigationTitle("Friendship")
-            .watchPageBackground()
+            .navigationTitle("")
+            .watchPageBackground(.night, scenery: true)
         }
         .onChange(of: pageVisible) { _, visible in if !visible { clearReaction() } }
         .onChange(of: store.state.companionID) { _, _ in clearReaction() }

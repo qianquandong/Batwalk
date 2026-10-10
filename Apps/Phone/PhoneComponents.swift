@@ -60,65 +60,63 @@ struct SegmentedPill<Value: Hashable>: View {
     }
 }
 
-/// Unlocked Batpedia card: art on lavender, name, rarity chip, ★ for the companion.
+/// Existing portraits retain their individual proportions; no alternate character art.
 struct BatCard: View {
     let species: Species
     let shiny: Bool
     var isCompanion = false
 
     var body: some View {
-        VStack(spacing: 6) {
-            ZStack {
-                RoundedRectangle(cornerRadius: 14, style: .continuous).fill(BatwalkGradient.lightArt)
-                BatSprite(speciesID: species.id, shiny: shiny, mood: .awake, size: 70)
+        VStack(alignment: .leading, spacing: 10) {
+            GeometryReader { geometry in
+                BatSprite(speciesID: species.id, shiny: shiny, size: min(160, geometry.size.width))
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
-            .frame(height: 84)
-            .overlay(alignment: .topTrailing) {
-                if isCompanion {
-                    Image(systemName: "star.fill")
-                        .font(.system(size: 11, weight: .bold))
-                        .foregroundStyle(BatwalkColor.rarityLegendary)
-                        .padding(6)
-                }
+            .frame(height: 148)
+            HStack(alignment: .firstTextBaseline, spacing: 8) {
+                Text(String(format: "%02d", species.number))
+                    .foregroundStyle(BatwalkColor.textSecondaryLight)
+                Text(species.name.replacingOccurrences(of: " Bat", with: ""))
+                    .fontWeight(.semibold)
+                    .fixedSize(horizontal: false, vertical: true)
             }
-            HStack(spacing: 4) {
-                Circle().fill(species.rarity.color).frame(width: 6, height: 6)
-                Text(species.name)
-                    .font(BatwalkFont.rounded(.caption, weight: .semibold))
-                    .foregroundStyle(BatwalkColor.textPrimaryLight)
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.75)
+            .font(BatwalkFont.caption)
+            if isCompanion {
+                Label("On Watch", systemImage: "applewatch")
+                    .font(BatwalkFont.micro)
+                    .padding(.horizontal, 8).padding(.vertical, 4)
+                    .background(BatwalkColor.accentSoft.opacity(0.55), in: Capsule())
+            } else {
+                Text(species.rarity.displayName)
+                    .font(BatwalkFont.micro).foregroundStyle(BatwalkColor.textSecondaryLight)
+                    .padding(.vertical, 4)
             }
         }
-        .padding(6)
-        .background(RoundedRectangle(cornerRadius: 18, style: .continuous).fill(BatwalkColor.lightCard))
-        .overlay(
-            RoundedRectangle(cornerRadius: 18, style: .continuous)
-                .strokeBorder(isCompanion ? BatwalkColor.accent.opacity(0.55) : BatwalkColor.accent.opacity(0.12),
-                              lineWidth: isCompanion ? 2 : 1)
-        )
-        .shadow(color: BatwalkColor.accent.opacity(isCompanion ? 0.18 : 0.08), radius: 8, y: 3)
+        .foregroundStyle(BatwalkColor.textPrimaryLight)
+        .padding(12)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(BatwalkColor.lightTint.opacity(0.45), in: RoundedRectangle(cornerRadius: 20))
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel("\(species.name), \(species.rarity.displayName)\(shiny ? ", Shiny" : "")\(isCompanion ? ", companion" : "")")
+        .accessibilityLabel("\(species.name), \(species.rarity.displayName)\(shiny ? ", Shiny" : "")\(isCompanion ? ", on your Watch" : "")")
     }
 }
 
-/// Locked Batpedia card: soft lavender, "?", number.
 struct LockedBatCard: View {
     let number: Int
-
     var body: some View {
-        VStack(spacing: 4) {
-            Text("?")
-                .font(.system(size: 34, weight: .bold, design: .rounded))
-                .foregroundStyle(BatwalkColor.sage)
-            Text("#\(number)")
-                .font(BatwalkFont.rounded(.caption2, weight: .semibold))
-                .foregroundStyle(BatwalkColor.textSecondaryLight)
+        VStack(alignment: .leading, spacing: 10) {
+            ZStack {
+                BatSilhouette(size: 80, color: BatwalkColor.textSecondaryLight.opacity(0.25))
+                Text("?").font(BatwalkFont.title).foregroundStyle(BatwalkColor.lightCard)
+            }
+            .frame(maxWidth: .infinity).frame(height: 148)
+            Text(String(format: "%02d", number)).font(BatwalkFont.caption)
+            Text("Undiscovered").font(BatwalkFont.micro).padding(.vertical, 4)
         }
-        .frame(maxWidth: .infinity)
-        .frame(height: 120)
-        .background(RoundedRectangle(cornerRadius: 18, style: .continuous).fill(BatwalkColor.lockedBatLight))
+        .foregroundStyle(BatwalkColor.textSecondaryLight)
+        .padding(12)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(BatwalkColor.lightTint.opacity(0.3), in: RoundedRectangle(cornerRadius: 20))
         .accessibilityElement(children: .ignore)
         .accessibilityLabel("Bat number \(number), not discovered yet")
     }

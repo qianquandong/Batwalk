@@ -37,10 +37,10 @@ struct FeedButton: View {
         Button(action: action) {
             HStack(spacing: 6) {
                 FruitIcon(size: 16)
-                Text("Feed (\(fruit))")
+                Text("Feed · \(fruit)")
             }
         }
-        .buttonStyle(BatwalkPrimaryButtonStyle(minHeight: 36))
+        .buttonStyle(BatwalkPrimaryButtonStyle(minHeight: 44))
         .disabled(fruit == 0)
         .accessibilityLabel("Feed")
         .accessibilityValue("\(fruit) fruit")

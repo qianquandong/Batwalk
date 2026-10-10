@@ -21,7 +21,8 @@ struct BatwalkPhoneApp: App {
             store.loadDemo(demo) // screenshot scenario: no sync, no StoreKit
             return
         }
-        PhoneSync.shared.onReceiveSave = { data in store.applyMirror(data) }
+        PhoneSync.shared.onReceiveSave = { data, date in store.applyMirror(data, updatedAt: date) }
+        PhoneSync.shared.onReceiveReceipt = { receipt in store.receiveCompanionReceipt(receipt) }
         PhoneSync.shared.activate()
     }
 
@@ -36,6 +37,7 @@ struct BatwalkPhoneApp: App {
                 .onChange(of: scenePhase) { _, phase in
                     if phase == .active {
                         store.load()
+                        store.refreshHandoff()
                         if !store.isDemo { Task { await purchases.refreshEntitlements() } }
                     }
                 }
@@ -45,26 +47,27 @@ struct BatwalkPhoneApp: App {
 }
 
 enum PhoneTab: Int, Hashable {
-    case batpedia, history, stats, unlock
+    case companion, batpedia, journal
 }
 
 struct PhoneRootView: View {
-    @State private var tab = PhoneTab(rawValue: DemoMode.page) ?? .batpedia
+    @State private var tab = PhoneTab(rawValue: DemoMode.page) ?? .companion
+    @State private var settings = DemoMode.scenario == "phone-unlock"
 
     var body: some View {
         TabView(selection: $tab) {
+            CompanionView(tab: $tab)
+                .environment(\.batPageVisible, tab == .companion)
+                .tabItem { Label("Companion", systemImage: "house") }
+                .tag(PhoneTab.companion)
             BatpediaView()
+                .environment(\.batPageVisible, tab == .batpedia)
                 .tabItem { Label("Batpedia", systemImage: "book.closed.fill") }
                 .tag(PhoneTab.batpedia)
             HistoryView()
-                .tabItem { Label("History", systemImage: "clock.fill") }
-                .tag(PhoneTab.history)
-            StatsView(tab: $tab)
-                .tabItem { Label("Stats", systemImage: "chart.bar.fill") }
-                .tag(PhoneTab.stats)
-            UnlockView()
-                .tabItem { Label("Unlock", systemImage: "sparkles") }
-                .tag(PhoneTab.unlock)
+                .tabItem { Label("Journal", systemImage: "text.book.closed") }
+                .tag(PhoneTab.journal)
         }
+        .sheet(isPresented: $settings) { PhoneSettingsView() }
     }
 }

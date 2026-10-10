@@ -31,6 +31,10 @@ workflows:
             -configuration Debug -destination "platform=iOS Simulator,id=$PHONE_SIM" \
             -derivedDataPath build -resultBundlePath build/reports/AppTests.xcresult \
             CODE_SIGNING_ALLOWED=NO test
+      - name: Capture iPhone companion and handoff states
+        script: |
+          set -euo pipefail
+          SIM="$PHONE_SIM" bash scripts/capture-screens.sh phone build/screens/phone
       - name: Switch to Watch simulator
         script: |
           set -euo pipefail
@@ -44,7 +48,7 @@ workflows:
       - name: Capture the three pilots and Friendship
         script: |
           set -euo pipefail
-          for scenario in pilot-mochi pilot-sticky pilot-walker friendship-4; do
+          for scenario in pilot-mochi pilot-sticky pilot-walker friendship-4 first-egg hatch-ready progress-61; do
             BATWALK_SCREEN_SCENARIO="$scenario" bash scripts/capture-screens.sh watch build/screens/watch
           done
           xcrun simctl shutdown "$SIM"
@@ -61,6 +65,7 @@ workflows:
       - build/reports/*.log
       - build/reports/*.xcresult
       - build/screens/watch/*.png
+      - build/screens/phone/*.png
       - /tmp/batwalk-ci-logs/*.log
 
   batwalk-watch-screenshots:

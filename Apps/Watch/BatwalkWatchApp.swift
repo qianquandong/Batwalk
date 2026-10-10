@@ -29,6 +29,10 @@ struct BatwalkWatchApp: App {
                 store.analytics.log(.companionChanged, properties: ["species": id, "source": "phone"])
             }
         }
+        PhoneSync.shared.onReceiveRequest = { request in
+            let receipt = store.applyCompanionRequest(request)
+            PhoneSync.shared.reply(receipt, save: try? JSONEncoder().encode(store.state))
+        }
         PhoneSync.shared.activate()
         // Registered at launch, not in a view's .task: a HealthKit background wake
         // may never render the UI, so the observer must exist without it.

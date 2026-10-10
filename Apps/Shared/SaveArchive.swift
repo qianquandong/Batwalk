@@ -30,6 +30,35 @@ struct SaveArchive {
 
     private struct Visits: Codable { let saveID: UUID; let memory: BatVisitMemory }
 
+    struct PhoneMetadata: Codable {
+        var lastSyncAt: Date?
+        var saveID: UUID?
+        var revision: UInt64?
+        var handoff = CompanionHandoff()
+    }
+
+    func savePhoneMetadata(_ value: PhoneMetadata) throws {
+        try prepareDirectory()
+        try JSONEncoder().encode(value).write(to: directory.appendingPathComponent("phone-sync.json"),
+            options: [.atomic, .completeFileProtectionUntilFirstUserAuthentication])
+    }
+
+    func loadPhoneMetadata() -> PhoneMetadata? {
+        guard let data = try? Data(contentsOf: directory.appendingPathComponent("phone-sync.json")) else { return nil }
+        return try? JSONDecoder().decode(PhoneMetadata.self, from: data)
+    }
+
+    func saveReceipts(_ receipts: [CompanionChangeReceipt]) throws {
+        try prepareDirectory()
+        try JSONEncoder().encode(receipts).write(to: directory.appendingPathComponent("companion-receipts.json"),
+            options: [.atomic, .completeFileProtectionUntilFirstUserAuthentication])
+    }
+
+    func loadReceipts() -> [CompanionChangeReceipt] {
+        guard let data = try? Data(contentsOf: directory.appendingPathComponent("companion-receipts.json")) else { return [] }
+        return (try? JSONDecoder().decode([CompanionChangeReceipt].self, from: data)) ?? []
+    }
+
     /// Step watermarks are Health-derived. Keep them beside the protected local
     /// save, excluded from backup, rather than in UserDefaults or CloudKit.
     func saveVisits(_ memory: BatVisitMemory, saveID: UUID) throws {

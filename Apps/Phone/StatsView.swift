@@ -56,7 +56,7 @@ struct StatsView: View {
                             .foregroundStyle(BatwalkColor.textPrimaryLight)
                         Spacer()
                         Button {
-                            tab = .history
+                            tab = .journal
                         } label: {
                             HStack(spacing: 2) { Text("See All"); Image(systemName: "chevron.right") }
                                 .font(BatwalkFont.rounded(.subheadline, weight: .semibold))

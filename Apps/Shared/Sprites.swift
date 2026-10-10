@@ -155,6 +155,7 @@ struct BatHeroView: View {
     var glow: Color? = nil
     var friendshipEXP = 0
     var animationRequest: BatAnimationRequest? = nil
+    var showsKeepsake = true
 
     var body: some View {
         Group {
@@ -173,7 +174,7 @@ struct BatHeroView: View {
             .shadow(color: (glow ?? .clear).opacity(0.5), radius: size * 0.12)
             .overlay(alignment: .bottomTrailing) {
                 let level = Friendship.level(forEXP: friendshipEXP)
-                if level >= 2 {
+                if showsKeepsake && level >= 2 {
                     Image(systemName: level == 5 ? "crown.fill" : level == 4 ? "star.fill" : level == 3 ? "leaf.fill" : "heart.fill")
                         .font(.system(size: max(10, size * 0.13), weight: .bold))
                         .foregroundStyle(level == 5 ? Color.yellow : level == 3 ? Color.green : BatwalkColor.rose)

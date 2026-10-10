@@ -16,6 +16,9 @@ final class GameStore {
     private(set) var recoveryRequired = false
     private(set) var availableBackup: CollectionBackup?
     private(set) var lastSyncAt: Date?
+    private(set) var companionHandoff = CompanionHandoff()
+    private(set) var companionRequestError: String?
+    private(set) var companionArrival: String?
     private(set) var lastStepReadAt: Date?
     private(set) var isDemo = false
     @ObservationIgnored var analytics: AnalyticsSink = NoopAnalytics()
@@ -39,6 +42,11 @@ final class GameStore {
         self.commit = commit
         self.onCommit = onCommit
         load()
+        if role == .phone, let metadata = self.archive.loadPhoneMetadata() {
+            if metadata.saveID == state.saveID, metadata.revision == state.revision { lastSyncAt = metadata.lastSyncAt }
+            companionHandoff = metadata.handoff
+            refreshHandoff()
+        }
     }
 
     func load() {
@@ -174,20 +182,104 @@ final class GameStore {
         } catch { recoveryRequired = wasBlocked; throw error }
     }
 
-    func loadDemo(_ demo: GameState) { isDemo = true; state = demo }
+    func loadDemo(_ demo: GameState) {
+        isDemo = true; state = demo
+        if role == .phone {
+            lastSyncAt = demo.hasStarted ? .now.addingTimeInterval(DemoMode.scenario == "phone-stale" ? -7200 : 0) : nil
+            if DemoMode.scenario == "phone-pending" {
+                companionHandoff.begin(CompanionChangeRequest(speciesID: "sticky", saveID: demo.saveID))
+            }
+        }
+    }
     func clearError() { lastError = nil }
 
-    func applyMirror(_ data: Data) {
+    func applyMirror(_ data: Data, updatedAt: Date? = nil) {
         guard role == .phone, !isDemo,
               let incoming = try? JSONDecoder().decode(GameState.self, from: data) else { return }
         if incoming.saveID == state.saveID, incoming.revision < state.revision { return }
         do {
             try archive.save(data)
+            let changed = state != incoming
             state = incoming
-            lastSyncAt = .now
+            if let updatedAt { lastSyncAt = min(updatedAt, .now) }
+            else if changed || lastSyncAt == nil { lastSyncAt = .now }
+            companionHandoff.reconcile(with: state)
+            persistPhoneMetadata()
             recoveryRequired = false
             lastError = nil
         } catch { lastError = "Your Watch data arrived, but the offline copy could not be saved." }
+    }
+
+    /// Persist the intent before handing it to the system queue. The phone never edits GameState.
+    func chooseCompanion(_ speciesID: String, send: ((CompanionChangeRequest) -> PhoneSync.SendResult)? = nil) {
+        guard role == .phone else { return }
+        refreshHandoff()
+        guard !companionHandoff.isWaiting, state.collection[speciesID] != nil,
+              state.companionID != speciesID else { return }
+        let previous = companionHandoff
+        let request = CompanionChangeRequest(speciesID: speciesID, saveID: state.saveID)
+        companionHandoff.begin(request)
+        companionRequestError = nil
+        do { if !isDemo { try archive.savePhoneMetadata(phoneMetadata) } }
+        catch {
+            companionHandoff = previous
+            companionRequestError = "Your request could not be saved. Please try again."
+            return
+        }
+        let result = isDemo ? .sent : (send?(request) ?? PhoneSync.shared.send(request: request))
+        if result != .sent {
+            companionHandoff = previous
+            companionRequestError = result == .noWatchApp
+                ? "Install Batwalk on your paired Apple Watch, then try again."
+                : "Watch connection is starting. Open both apps, then try again."
+            persistPhoneMetadata()
+        }
+    }
+
+    func receiveCompanionReceipt(_ receipt: CompanionChangeReceipt) {
+        guard role == .phone, !isDemo else { return }
+        companionHandoff.receive(receipt, state: state)
+        persistPhoneMetadata()
+    }
+
+    func refreshHandoff() {
+        guard role == .phone else { return }
+        let before = companionHandoff
+        companionHandoff.reconcile(with: state)
+        if before != companionHandoff { persistPhoneMetadata() }
+    }
+
+    /// Return a result even for unchanged selections and failed saves; the phone must not hang.
+    func applyCompanionRequest(_ request: CompanionChangeRequest, now: Date = .now) -> CompanionChangeReceipt {
+        precondition(role == .watch)
+        var receipts = isDemo ? [] : archive.loadReceipts().filter { $0.request.expiresAt > now }
+        if let previous = receipts.first(where: { $0.request.id == request.id }) { return previous }
+        let outcome: CompanionChangeOutcome
+        if now >= request.expiresAt { outcome = .expired }
+        else if request.saveID != state.saveID { outcome = .saveChanged }
+        else if state.collection[request.speciesID] == nil { outcome = .notOwned }
+        else {
+            do {
+                try mutate { try $0.setCompanion(request.speciesID) }
+                companionArrival = request.speciesID
+                outcome = .applied
+            } catch { outcome = .saveFailed }
+        }
+        let receipt = CompanionChangeReceipt(request: request, outcome: outcome, revision: state.revision)
+        receipts.append(receipt)
+        if !isDemo { try? archive.saveReceipts(receipts) }
+        return receipt
+    }
+
+    private var phoneMetadata: SaveArchive.PhoneMetadata {
+        SaveArchive.PhoneMetadata(lastSyncAt: lastSyncAt, saveID: state.saveID,
+                                  revision: state.revision, handoff: companionHandoff)
+    }
+
+    private func persistPhoneMetadata() {
+        guard !isDemo else { return }
+        do { try archive.savePhoneMetadata(phoneMetadata) }
+        catch { companionRequestError = "The latest connection status could not be saved. Open both apps to refresh it." }
     }
 
     func refreshComplication() {

@@ -10,6 +10,7 @@ struct HomeView: View {
     @Environment(\.isLuminanceReduced) private var luminanceReduced
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
+    @Environment(\.dynamicTypeSize) private var typeSize
     @State private var hatching: HatchPresentation?
     @State private var showEggPicker = false
     @State private var petCount = 0
@@ -18,17 +19,18 @@ struct HomeView: View {
     @State private var demoRevealShown = false
     @State private var animationRequest: BatAnimationRequest?
     @State private var heroVisible = false
+    @State private var showArrival = false
 
     var body: some View {
         NavigationStack {
             TimelineView(.everyMinute) { context in
                 let time = DemoMode.timeOfDay(at: context.date)
                 VStack(alignment: .leading, spacing: 4) {
-                    Text(store.state.isEggReady ? "Ready!" : "Batwalk")
-                        .font(BatwalkFont.rounded(.subheadline, weight: .semibold))
-                        .foregroundStyle(BatwalkColor.cloud)
-                        .padding(.horizontal, BatwalkSpacing.sm)
-                        .accessibilityAddTraits(.isHeader)
+                    if store.state.companion == nil || store.state.isEggReady {
+                        Text(store.state.isEggReady ? "Ready!" : "Batwalk")
+                            .font(BatwalkFont.headline).foregroundStyle(BatwalkColor.cloud)
+                            .padding(.horizontal, 8).accessibilityAddTraits(.isHeader)
+                    }
                     content(time: time)
                 }
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -70,6 +72,12 @@ struct HomeView: View {
             welcomeCompanion()
         }
         .onDisappear { clearReaction() }
+        .task(id: store.companionArrival) {
+            guard store.companionArrival != nil else { return }
+            showArrival = true
+            try? await Task.sleep(for: .seconds(3))
+            showArrival = false
+        }
     }
 
     @ViewBuilder
@@ -79,7 +87,11 @@ struct HomeView: View {
             HatchReadyView(egg: egg) { hatch(egg) }
                 .batwalkAppear()
         } else if let companion = state.companion {
-            companionScene(companion, time: time)
+            if typeSize.isAccessibilitySize {
+                ScrollView { companionScene(companion, time: time).frame(height: 360) }
+            } else {
+                companionScene(companion, time: time)
+            }
         } else if let egg = state.egg {
             firstEggScene(egg)
         }
@@ -87,8 +99,19 @@ struct HomeView: View {
 
     private func companionScene(_ companion: OwnedBat, time: TimeOfDay) -> some View {
         GeometryReader { geo in
-            let batSize = min(geo.size.width * 0.92, geo.size.height * 0.72)
-            VStack(spacing: BatwalkSpacing.xs) {
+            let batSize = min(geo.size.width * 0.80, geo.size.height * 0.52)
+            VStack(spacing: 3) {
+                NavigationLink(value: companion.speciesID) {
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(companion.companionTitle)
+                            .font(BatwalkFont.rounded(.title3, weight: .bold))
+                            .lineLimit(1).minimumScaleFactor(0.75)
+                        Label("Lv. \(Friendship.level(forEXP: companion.friendshipEXP))", systemImage: "heart.fill")
+                            .font(BatwalkFont.micro).foregroundStyle(BatwalkColor.rose)
+                    }
+                    .foregroundStyle(BatwalkColor.cloud)
+                    .frame(maxWidth: .infinity, minHeight: 40, alignment: .leading)
+                }.buttonStyle(.plain)
                 Spacer(minLength: 0)
                 BatHeroView(
                     speciesID: companion.speciesID,
@@ -97,7 +120,8 @@ struct HomeView: View {
                     size: batSize,
                     bounceTrigger: petCount,
                     friendshipEXP: companion.friendshipEXP,
-                    animationRequest: animationRequest
+                    animationRequest: animationRequest,
+                    showsKeepsake: false
                 )
                 .onAppear { heroVisible = true; welcomeCompanion() }
                 .onDisappear { heroVisible = false; clearReaction() }
@@ -107,24 +131,12 @@ struct HomeView: View {
                 .accessibilityAddTraits(.isButton)
                 .accessibilityHint(BatMood.resting(at: time) == .awake ? "Pet \(companion.displayName)" : "Wake \(companion.displayName)")
                 Spacer(minLength: 0)
-                VStack(spacing: 5) {
-                    NavigationLink(value: companion.speciesID) {
-                        HStack(spacing: 4) {
-                            Text(companion.displayName)
-                                .font(BatwalkFont.headline)
-                                .lineLimit(1)
-                                .minimumScaleFactor(0.8)
-                            Image(systemName: "chevron.right")
-                                .font(.system(size: 10, weight: .bold))
-                                .foregroundStyle(BatwalkColor.textSecondaryDark)
-                        }
-                        .foregroundStyle(.white)
-                        .frame(maxWidth: .infinity)
-                    }
-                    .buttonStyle(.plain)
-                    progressPill
-                }
-                .batwalkGlassCard(padding: 10)
+                Text(showArrival ? "\(companion.companionTitle) is here" : (BatMood.resting(at: time) == .awake ? "Tap to pet" : "Tap to wake"))
+                    .font(BatwalkFont.micro).foregroundStyle(BatwalkColor.textSecondaryDark)
+                    .opacity(luminanceReduced ? 0 : 1)
+                    .accessibilityHidden(true)
+                progressPill.padding(.top, 5)
+
             }
             .padding(.horizontal, BatwalkSpacing.xs)
             .frame(width: geo.size.width, height: geo.size.height)
@@ -135,24 +147,8 @@ struct HomeView: View {
     @ViewBuilder
     private var progressPill: some View {
         if let egg = store.state.egg {
-            VStack(spacing: 6) {
-                Text("\(egg.stepsRemaining.formatted()) steps to hatch")
-                    .font(BatwalkFont.caption)
-                    .monospacedDigit()
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.8)
-                GeometryReader { geo in
-                    ZStack(alignment: .leading) {
-                        Capsule().fill(BatwalkColor.cloud.opacity(0.12))
-                        Capsule().fill(BatwalkColor.accentSoft)
-                            .frame(width: geo.size.width * egg.progress)
-                    }
-                }
-                .frame(height: 4)
-            }
-            .foregroundStyle(BatwalkColor.textSecondaryDark)
-            .frame(maxWidth: .infinity)
-            .accessibilityElement(children: .combine)
+            HatchProgressSummary(egg: egg, compact: true)
+                .padding(.horizontal, 2)
         } else {
             Button {
                 showEggPicker = true

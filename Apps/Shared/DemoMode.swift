@@ -27,7 +27,7 @@ enum HealthStatus: Equatable {
 enum DemoMode {
     // The capture script reads these two lines — keep each list on one line.
     static let watchScenarios = ["first-egg", "home", "home-day", "home-cocoa", "home-long-ear", "hatch-ready", "reveal-rare", "progress-61", "progress-100", "friendship-1", "friendship-2", "friendship-3", "friendship-4", "fruit-available", "friendship-5", "collection-1", "collection-rare", "settings", "health-error", "pilot-mochi", "pilot-sticky", "pilot-walker"] // scenarios:watch
-    static let phoneScenarios = ["phone-batpedia", "phone-batpedia-rare", "phone-detail", "phone-history", "phone-unlock", "phone-stats", "phone-empty"] // scenarios:phone
+    static let phoneScenarios = ["phone-companion", "phone-batpedia", "phone-batpedia-rare", "phone-detail", "phone-pending", "phone-confirmed", "phone-stale", "phone-first-egg", "phone-egg-ready", "phone-history", "phone-unlock", "phone-stats", "phone-empty"] // scenarios:phone
 
     static let scenario: String? = {
         let args = ProcessInfo.processInfo.arguments
@@ -40,7 +40,7 @@ enum DemoMode {
     /// Forced Day / Dusk / Night (nil = real clock).
     private(set) static var timeOverride: TimeOfDay?
     /// Watch: 0 Home · 1 Progress · 2 Friendship · 3 Bats · 4 Settings.
-    /// iPhone: 0 Batpedia · 1 History · 2 Stats · 3 Unlock.
+    /// iPhone: 0 Companion · 1 Batpedia · 2 Journal. Purchases live in Settings.
     private(set) static var page = 0
     /// Hatch result shown as the reveal on launch.
     private(set) static var reveal: HatchResult?
@@ -88,7 +88,7 @@ enum DemoMode {
         state.setUnlocked(true)
         state.start(seed: 1, now: now)
 
-        if scenario == "first-egg" {
+        if scenario == "first-egg" || scenario == "phone-first-egg" {
             walk(1_230)
             return state
         }
@@ -164,22 +164,26 @@ enum DemoMode {
             page = 4
             healthStatus = .needsAttention
             boardEgg()
-        case "phone-batpedia":
-            page = 0
+        case "phone-companion", "phone-batpedia", "phone-detail", "phone-pending", "phone-confirmed", "phone-stale":
+            for _ in 0..<13 { hatch(.tiny, "mochi") }
+            for _ in 0..<8 { hatch(.tiny, "sticky") }
+            hatch(.crystal, "walker")
+            try? state.setCompanion(scenario == "phone-confirmed" ? "sticky" : "mochi")
+            page = ["phone-batpedia", "phone-detail", "phone-pending", "phone-confirmed"].contains(scenario) ? 1 : 0
+            if ["phone-detail", "phone-pending", "phone-confirmed"].contains(scenario) { detailSpecies = "sticky" }
             boardEgg()
         case "phone-batpedia-rare":
-            page = 0
+            page = 1
             addCollection()
             boardEgg()
-        case "phone-detail":
-            page = 0
-            detailSpecies = "mochi"
-            boardEgg()
+        case "phone-egg-ready":
+            try? state.startEgg(.tiny, seed: 7, now: now)
+            walk(2_500)
         case "phone-history":
-            page = 1
+            page = 2
             boardEgg()
         case "phone-unlock":
-            page = 3
+            page = 0
             state.setUnlocked(false)
             boardEgg()
         case "phone-stats":
