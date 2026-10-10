@@ -115,18 +115,19 @@ struct HatchSequenceView: View {
     }
 
     private var reveal: some View {
-        ScrollView {
+        VStack(spacing: 6) {
+            ScrollView {
             VStack(spacing: 4) {
                 ZStack {
                     Circle()
                         .fill(RadialGradient(colors: [(special ? rarity.color : BatwalkColor.purpleGlow).opacity(special ? 0.75 : 0.45), .clear],
                                              center: .center, startRadius: 4, endRadius: 64))
-                        .frame(width: 110, height: 110)
-                    if special { SparkleField(count: 6, color: record.isShiny ? BatwalkColor.rarityShiny : rarity.color, spread: 50) }
-                    BatSprite(speciesID: record.speciesID, shiny: record.isShiny, mood: .happy, size: 84)
+                        .frame(width: 90, height: 90)
+                    if special { SparkleField(count: 6, color: record.isShiny ? BatwalkColor.rarityShiny : rarity.color, spread: 42) }
+                    BatSprite(speciesID: record.speciesID, shiny: record.isShiny, mood: .happy, size: 70)
                         .scaleEffect(revealScale)
                 }
-                .frame(height: 92)
+                .frame(height: 76)
                 Text(species?.name ?? "New bat")
                     .font(BatwalkFont.headline)
                     .foregroundStyle(.white)
@@ -140,8 +141,9 @@ struct HatchSequenceView: View {
                     .multilineTextAlignment(.center)
             }
             .padding(.horizontal, BatwalkSpacing.sm)
-        }
-        .safeAreaInset(edge: .bottom) {
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .clipped()
             Button("Start next egg", action: onDone)
                 .buttonStyle(BatwalkPrimaryButtonStyle(minHeight: 40))
                 .padding(.horizontal, BatwalkSpacing.sm)
