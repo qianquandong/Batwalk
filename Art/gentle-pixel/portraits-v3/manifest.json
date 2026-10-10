@@ -1,0 +1,968 @@
+{
+  "version": "character-first-v3",
+  "rendering": "C Gentle pixel",
+  "status": "32 original character portrait concepts; not animation or runtime sprite assets",
+  "generator": "built-in image_gen",
+  "rosterSource": "qianquandong/Batwalk PR #2, ca4f65472e6167b281270c9f8b3ba8768c3d9141",
+  "scope": "Normal portraits only. The Chinese labels are working art labels; stable IDs remain unchanged.",
+  "characters": [
+    {
+      "number": 1,
+      "id": "mochi",
+      "displayLabel": "麻薯蝠",
+      "concept": "把翅膀当小被子的害羞麻薯",
+      "portrait": "portraits/01-mochi.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "sha256": "2e0f5faa37de6cd9e5c3722085690586626903e9a86d69bed8822139b37840c5",
+      "actionReferences": [
+        {
+          "name": "Thumb Ear-Wash",
+          "id": "thumb-ear-wash",
+          "chinese": "舔爪洗耳"
+        },
+        {
+          "name": "Wing Eye-Mask",
+          "id": "wing-eye-mask",
+          "chinese": "翅膀眼罩"
+        },
+        {
+          "name": "Cartwheel Landing",
+          "id": "cartwheel-landing",
+          "chinese": "侧翻倒挂"
+        }
+      ]
+    },
+    {
+      "number": 2,
+      "id": "cocoa",
+      "displayLabel": "可可蝠",
+      "concept": "把大家裹进翅膀里的毯子阿姨",
+      "portrait": "portraits/02-cocoa.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "sha256": "f2112c2c9203b46ea62770b0e3a0c5f0a1f1a90050756f9c5224e80cb14dacd7",
+      "actionReferences": [
+        {
+          "name": "Sunrise Doze",
+          "id": "sunrise-doze",
+          "chinese": "日出打盹"
+        },
+        {
+          "name": "Wattle Wiggle",
+          "id": "wattle-wiggle",
+          "chinese": "肉垂晃晃"
+        },
+        {
+          "name": "Crèche Babysitter",
+          "id": "creche-babysitter",
+          "chinese": "托儿所保姆"
+        }
+      ]
+    },
+    {
+      "number": 3,
+      "id": "long-ear",
+      "displayLabel": "长耳蝠",
+      "concept": "一直在偷听世界的小雷达",
+      "portrait": "portraits/03-long-ear.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "sha256": "3c73163c6c2708d6506689bd1620563d37bdba317bcdff73362bdbb7a3a4cb93",
+      "actionReferences": [
+        {
+          "name": "Ram-Horn Ears",
+          "id": "ram-horn-ears",
+          "chinese": "羊角卷耳"
+        },
+        {
+          "name": "Ladybird Listen",
+          "id": "ladybird-listen",
+          "chinese": "偷听瓢虫"
+        },
+        {
+          "name": "Butterfly Hover",
+          "id": "butterfly-hover",
+          "chinese": "蝴蝶悬停"
+        }
+      ]
+    },
+    {
+      "number": 4,
+      "id": "fruit",
+      "displayLabel": "果果蝠",
+      "concept": "两边脸颊都藏着午饭的小馋鬼",
+      "portrait": "portraits/04-fruit.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "sha256": "87d0206d735b9ffa4cb6cccc4b19fd0148b470915dd3c96e6733e7ccb0ffdb8c",
+      "actionReferences": [
+        {
+          "name": "Fruit Hug",
+          "id": "fruit-hug",
+          "chinese": "护食抱果"
+        },
+        {
+          "name": "Spat Pop",
+          "id": "spat-pop",
+          "chinese": "吐果渣"
+        },
+        {
+          "name": "Squabble Squeaks",
+          "id": "squabble-squeaks",
+          "chinese": "吱吱拌嘴"
+        }
+      ]
+    },
+    {
+      "number": 5,
+      "id": "cave",
+      "displayLabel": "洞穴蝠",
+      "concept": "住在自己斗篷里的小门房",
+      "portrait": "portraits/05-cave.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "sha256": "24b0c3918f5d081f64585be59f8a573c4fba96b6ff0bb4b95b065a806ef719d8",
+      "actionReferences": [
+        {
+          "name": "Plum Wrap",
+          "id": "plum-wrap",
+          "chinese": "李子团"
+        },
+        {
+          "name": "Peek Twist",
+          "id": "peek-twist",
+          "chinese": "扭身偷看"
+        },
+        {
+          "name": "Find-You Call",
+          "id": "find-you-call",
+          "chinese": "呼唤找宝宝"
+        }
+      ]
+    },
+    {
+      "number": 6,
+      "id": "sleepy",
+      "displayLabel": "困困蝠",
+      "concept": "醒到一半就忘了为什么醒的小枕头",
+      "portrait": "portraits/06-sleepy.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "sha256": "682682314104436e90298861755d282cfbdb363dee5037a116b8a9ee0821f4f0",
+      "actionReferences": [
+        {
+          "name": "One Big Breath",
+          "id": "one-big-breath",
+          "chinese": "一大口呼吸"
+        },
+        {
+          "name": "Groggy Wake",
+          "id": "groggy-wake",
+          "chinese": "迷糊醒"
+        },
+        {
+          "name": "Pitcher Plant Bed",
+          "id": "pitcher-plant-bed",
+          "chinese": "猪笼草睡袋"
+        }
+      ]
+    },
+    {
+      "number": 7,
+      "id": "dust",
+      "displayLabel": "尘尘蝠",
+      "concept": "总把自己摔成毛球的新手",
+      "portrait": "portraits/07-dust.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "sha256": "abafd9d2871c8466600955eb7655dd6ba0283be077005eb7380df05fb3167e38",
+      "actionReferences": [
+        {
+          "name": "Flap Practice",
+          "id": "flap-practice",
+          "chinese": "拍翅练习"
+        },
+        {
+          "name": "Drop Start",
+          "id": "drop-start",
+          "chinese": "松手起飞"
+        },
+        {
+          "name": "Almost Landing",
+          "id": "almost-landing",
+          "chinese": "差点着陆"
+        }
+      ]
+    },
+    {
+      "number": 8,
+      "id": "pebble",
+      "displayLabel": "卵石蝠",
+      "concept": "一本正经假装自己是石头的小偷",
+      "portrait": "portraits/08-pebble.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "sha256": "be5520530fa53c94648492833b59630e513fe9b6515604d6f5a745571a84f35c",
+      "actionReferences": [
+        {
+          "name": "Crack Squeeze",
+          "id": "crack-squeeze",
+          "chinese": "挤石缝"
+        },
+        {
+          "name": "Bandit Peek",
+          "id": "bandit-peek",
+          "chinese": "小偷面罩"
+        },
+        {
+          "name": "New Rock Every Day",
+          "id": "new-rock-every-day",
+          "chinese": "每天换石头"
+        }
+      ]
+    },
+    {
+      "number": 9,
+      "id": "strawberry",
+      "displayLabel": "草莓蝠",
+      "concept": "觉得自己马上要成熟的小浆果",
+      "portrait": "portraits/09-strawberry.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "sha256": "791c76707686a66eea1c3b31839612060364202b2d8e79fa840c7f7d47d3c6f3",
+      "actionReferences": [
+        {
+          "name": "One-Foot Sway",
+          "id": "one-foot-sway",
+          "chinese": "单脚摇摆"
+        },
+        {
+          "name": "Tail Blanket",
+          "id": "tail-blanket",
+          "chinese": "尾巴毯子"
+        },
+        {
+          "name": "Berry Bunch",
+          "id": "berry-bunch",
+          "chinese": "一串草莓"
+        }
+      ]
+    },
+    {
+      "number": 10,
+      "id": "blossom",
+      "displayLabel": "花花蝠",
+      "concept": "花还没开就开始神气的小园丁",
+      "portrait": "portraits/10-blossom.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "sha256": "44503d6b8e992634efad996878cb5fab416e0e9955dd2d4021abe24aee50f47c",
+      "actionReferences": [
+        {
+          "name": "Brush-Tongue Sip",
+          "id": "brush-tongue-sip",
+          "chinese": "刷子舌吸蜜"
+        },
+        {
+          "name": "Pollen Sneeze",
+          "id": "pollen-sneeze",
+          "chinese": "花粉喷嚏"
+        },
+        {
+          "name": "Flower Patrol",
+          "id": "flower-patrol",
+          "chinese": "花丛巡逻"
+        }
+      ]
+    },
+    {
+      "number": 11,
+      "id": "moss",
+      "displayLabel": "苔藓蝠",
+      "concept": "把小芽当宝贝养的小花园",
+      "portrait": "portraits/11-moss.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "sha256": "e8aa3ab3423747c5685c34644180fa6706eb69183a99bb285538c6bc6019559c",
+      "actionReferences": [
+        {
+          "name": "Moss Hideout",
+          "id": "moss-hideout",
+          "chinese": "苔藓藏身"
+        },
+        {
+          "name": "Let-Go Drop",
+          "id": "let-go-drop",
+          "chinese": "松手俯冲"
+        },
+        {
+          "name": "Sprout Planting",
+          "id": "sprout-planting",
+          "chinese": "种下小芽"
+        }
+      ]
+    },
+    {
+      "number": 12,
+      "id": "sunset",
+      "displayLabel": "晚霞蝠",
+      "concept": "每天催太阳下班的小旋风",
+      "portrait": "portraits/12-sunset.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "sha256": "fa99be4a02ef76eff627473a4c5ca30fa60f447fb778ff5b01fc3e8fb5a1d5d3",
+      "actionReferences": [
+        {
+          "name": "Sunset Compass",
+          "id": "sunset-compass",
+          "chinese": "落日指南针"
+        },
+        {
+          "name": "Crowd Dodge",
+          "id": "crowd-dodge",
+          "chinese": "混进蝠群"
+        },
+        {
+          "name": "Batnado",
+          "id": "batnado",
+          "chinese": "蝙蝠龙卷风"
+        }
+      ]
+    },
+    {
+      "number": 13,
+      "id": "snow",
+      "displayLabel": "雪雪蝠",
+      "concept": "把自己裹成冬衣的怕冷旅人",
+      "portrait": "portraits/13-snow.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "sha256": "6ca072381f1f5ed48dbefce48335702b99db3b1e74cd93a708b6f0b8eb86c3ad",
+      "actionReferences": [
+        {
+          "name": "Frost Beads",
+          "id": "frost-beads",
+          "chinese": "结霜水珠"
+        },
+        {
+          "name": "Sleeping Bag",
+          "id": "sleeping-bag",
+          "chinese": "尾巴睡袋"
+        },
+        {
+          "name": "Great Migration",
+          "id": "great-migration",
+          "chinese": "大迁徙"
+        }
+      ]
+    },
+    {
+      "number": 14,
+      "id": "cloud",
+      "displayLabel": "云云蝠",
+      "concept": "随时会忘记自己降落了的小云团",
+      "portrait": "portraits/14-cloud.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "sha256": "b3b4049e95253b1c5e3ffbd9df02aac7e4db613d33c9893710311574c658a80e",
+      "actionReferences": [
+        {
+          "name": "Radar Bloom",
+          "id": "radar-bloom",
+          "chinese": "雷达云团"
+        },
+        {
+          "name": "Gust Surf",
+          "id": "gust-surf",
+          "chinese": "乘风冲浪"
+        },
+        {
+          "name": "Sky-High Snack",
+          "id": "sky-high-snack",
+          "chinese": "云端加餐"
+        }
+      ]
+    },
+    {
+      "number": 15,
+      "id": "moonwing",
+      "displayLabel": "月翼蝠",
+      "concept": "裹着一弯月牙的安静夜游者",
+      "portrait": "portraits/15-moonwing.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "sha256": "117c804ed40523baa83245efea3ec8d9051047a6eff24a36942bd5c9b892df3a",
+      "actionReferences": [
+        {
+          "name": "Moon Shy",
+          "id": "moon-shy",
+          "chinese": "害羞月亮"
+        },
+        {
+          "name": "Katydid Hush",
+          "id": "katydid-hush",
+          "chinese": "嘘——螽斯"
+        },
+        {
+          "name": "Termite-Mound Den",
+          "id": "termite-mound-den",
+          "chinese": "白蚁丘小窝"
+        }
+      ]
+    },
+    {
+      "number": 16,
+      "id": "golden",
+      "displayLabel": "金金蝠",
+      "concept": "总觉得自己最闪亮的小绒球",
+      "portrait": "portraits/16-golden.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "sha256": "3857a0892118bdddb72cf2d3d214b015b2c8e91a4178dcdb763bdaba25e369ee",
+      "actionReferences": [
+        {
+          "name": "Nest Blend",
+          "id": "nest-blend",
+          "chinese": "鸟巢隐身"
+        },
+        {
+          "name": "Web Pluck",
+          "id": "web-pluck",
+          "chinese": "蛛网摘点心"
+        },
+        {
+          "name": "Nest Party",
+          "id": "nest-party",
+          "chinese": "鸟巢派对"
+        }
+      ]
+    },
+    {
+      "number": 17,
+      "id": "crystal",
+      "displayLabel": "水晶蝠",
+      "concept": "看起来硬邦邦其实很胆小的玻璃糖",
+      "portrait": "portraits/17-crystal.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "sha256": "73c1a6a5f7326f495f2152d5e89365ecff54e8490c4d65d8dea9c0b6d01fb101",
+      "actionReferences": [
+        {
+          "name": "Blacklight Glow",
+          "id": "blacklight-glow",
+          "chinese": "紫外荧光"
+        },
+        {
+          "name": "Wind Hairs",
+          "id": "wind-hairs",
+          "chinese": "感风绒毛"
+        },
+        {
+          "name": "Crystal Mend",
+          "id": "crystal-mend",
+          "chinese": "水晶自愈"
+        }
+      ]
+    },
+    {
+      "number": 18,
+      "id": "vampire",
+      "displayLabel": "吸血蝠",
+      "concept": "很有仪式感地把大份晚餐让给你的小伯爵",
+      "portrait": "portraits/18-vampire.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "sha256": "213084a97229a57a03ab38440a14276c68bb2fae855579a4883615a31cf5b315",
+      "actionReferences": [
+        {
+          "name": "Gorilla Gallop",
+          "id": "gorilla-gallop",
+          "chinese": "猩猩式奔跑"
+        },
+        {
+          "name": "Grooming Buddy",
+          "id": "grooming-buddy",
+          "chinese": "互相梳毛"
+        },
+        {
+          "name": "Share Dinner",
+          "id": "share-dinner",
+          "chinese": "分享晚餐"
+        }
+      ]
+    },
+    {
+      "number": 19,
+      "id": "galaxy",
+      "displayLabel": "星系蝠",
+      "concept": "把回家路线记在肚子里的星图精灵",
+      "portrait": "portraits/19-galaxy.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "sha256": "fb06f0eccf5bc3314661b8766a8a0df9cf255adb591d99d7e8019ac0ba280ad4",
+      "actionReferences": [
+        {
+          "name": "Star-Map Hatch",
+          "id": "star-map-hatch",
+          "chinese": "星图孵化"
+        },
+        {
+          "name": "Shortcut Map",
+          "id": "shortcut-map",
+          "chinese": "抄近路地图"
+        },
+        {
+          "name": "Inner Compass",
+          "id": "inner-compass",
+          "chinese": "体内罗盘"
+        },
+        {
+          "name": "Migration Trail",
+          "id": "migration-trail",
+          "chinese": "迁徙轨迹"
+        },
+        {
+          "name": "Storm Surf",
+          "id": "storm-surf",
+          "chinese": "风暴冲浪"
+        }
+      ]
+    },
+    {
+      "number": 20,
+      "id": "eclipse",
+      "displayLabel": "日蚀蝠",
+      "concept": "白天也会迷路的日环小守夜人",
+      "portrait": "portraits/20-eclipse.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "sha256": "c9f239b6b13354e34097b0b51b782212690ce26b29534ebaf9ad186b635a23f2",
+      "actionReferences": [
+        {
+          "name": "Totality Hatch",
+          "id": "totality-hatch",
+          "chinese": "全食孵化"
+        },
+        {
+          "name": "Whisper Sonar",
+          "id": "whisper-sonar",
+          "chinese": "耳语声呐"
+        },
+        {
+          "name": "Halo Ears",
+          "id": "halo-ears",
+          "chinese": "光环耳朵"
+        },
+        {
+          "name": "Old-Wood Hideaway",
+          "id": "old-wood-hideaway",
+          "chinese": "古木藏身"
+        },
+        {
+          "name": "Midday Dusk",
+          "id": "midday-dusk",
+          "chinese": "正午黄昏"
+        }
+      ]
+    },
+    {
+      "number": 21,
+      "id": "bumblebee",
+      "displayLabel": "大黄蜂蝠",
+      "concept": "装作很威风的小冲锋队长",
+      "portrait": "portraits/21-bumblebee.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "sha256": "1cc6efec575aab94c633f4cfae9855e2e61d2d3dc6d9b8c4dc8d1b3b61913a2c",
+      "actionReferences": [
+        {
+          "name": "Moth Hover",
+          "id": "moth-hover",
+          "chinese": "飞蛾悬停"
+        },
+        {
+          "name": "Warm Dome",
+          "id": "warm-dome",
+          "chinese": "找暖窝"
+        },
+        {
+          "name": "Thirty-Minute Dash",
+          "id": "thirty-minute-dash",
+          "chinese": "三十分钟冲刺"
+        }
+      ]
+    },
+    {
+      "number": 22,
+      "id": "sticky",
+      "displayLabel": "吸盘蝠",
+      "concept": "背着卷叶睡袋的迷糊旅行家",
+      "portrait": "portraits/22-sticky.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "sha256": "f4d7d9b00b95b4137514ee50bf7182e56fb8ef3dd986167b55a713dd881fd8d1",
+      "actionReferences": [
+        {
+          "name": "Head-Up Nap",
+          "id": "head-up-nap",
+          "chinese": "头朝上午睡"
+        },
+        {
+          "name": "Leaf Chorus",
+          "id": "leaf-chorus",
+          "chinese": "叶子合唱"
+        },
+        {
+          "name": "Moving Day",
+          "id": "moving-day",
+          "chinese": "搬家日"
+        }
+      ]
+    },
+    {
+      "number": 23,
+      "id": "marshmallow",
+      "displayLabel": "棉花糖蝠",
+      "concept": "抱着无花果发呆的小饭团",
+      "portrait": "portraits/23-marshmallow.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "sha256": "da03105a41de00705969893289af3f44156a89f3698f375e017a54502bc58397",
+      "actionReferences": [
+        {
+          "name": "Leaf Tent",
+          "id": "leaf-tent",
+          "chinese": "叶子帐篷"
+        },
+        {
+          "name": "Green Glow",
+          "id": "green-glow",
+          "chinese": "绿光染色"
+        },
+        {
+          "name": "Fig Yellow",
+          "id": "fig-yellow",
+          "chinese": "无花果变黄"
+        }
+      ]
+    },
+    {
+      "number": 24,
+      "id": "honk",
+      "displayLabel": "喇叭蝠",
+      "concept": "开口前就已经很吵的小合唱团长",
+      "portrait": "portraits/24-honk.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "sha256": "22d4029ddfb064f64ed5a5a4df4125d050083f0e4daf668ad1a453a37645481a",
+      "actionReferences": [
+        {
+          "name": "Nose Wrap",
+          "id": "nose-wrap",
+          "chinese": "翅膀包鼻子"
+        },
+        {
+          "name": "Happy Buzz",
+          "id": "happy-buzz",
+          "chinese": "开心嗡嗡"
+        },
+        {
+          "name": "Honk Concert",
+          "id": "honk-concert",
+          "chinese": "喇叭音乐会"
+        }
+      ]
+    },
+    {
+      "number": 25,
+      "id": "ember",
+      "displayLabel": "彩蝠",
+      "concept": "躲进落叶就开始赖床的小橘灯",
+      "portrait": "portraits/25-ember.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "sha256": "d0e31120e36ee34776e30314aa27bf5a3bb8377c558f9b1e7a7b4ed0da26e372",
+      "actionReferences": [
+        {
+          "name": "Banana-Leaf Curl",
+          "id": "banana-leaf-curl",
+          "chinese": "香蕉叶卷"
+        },
+        {
+          "name": "Slow-Mo Wake",
+          "id": "slow-mo-wake",
+          "chinese": "慢动作醒来"
+        },
+        {
+          "name": "Tail Net",
+          "id": "tail-net",
+          "chinese": "尾巴捕虫网"
+        }
+      ]
+    },
+    {
+      "number": 26,
+      "id": "nectar",
+      "displayLabel": "花蜜蝠",
+      "concept": "喝饮料永远比别人慢半拍的吸管嘴",
+      "portrait": "portraits/26-nectar.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "sha256": "60e3f52b473d711150d3b403d6bf289d553f2897914c16716007f8141accf1d1",
+      "actionReferences": [
+        {
+          "name": "Hummingbird Hover",
+          "id": "hummingbird-hover",
+          "chinese": "蜂鸟悬停"
+        },
+        {
+          "name": "Mop Tongue",
+          "id": "mop-tongue",
+          "chinese": "拖把舌头"
+        },
+        {
+          "name": "Straw Test",
+          "id": "straw-test",
+          "chinese": "吸管测试"
+        }
+      ]
+    },
+    {
+      "number": 27,
+      "id": "tube-nose",
+      "displayLabel": "管鼻蝠",
+      "concept": "用两个小鼻筒认真研究世界的老先生",
+      "portrait": "portraits/27-tube-nose.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "sha256": "e58bfe70b36d964ac0f98a53484b18cc427f6c31f8d01b30ed09acf0332c7712",
+      "actionReferences": [
+        {
+          "name": "Dead-Leaf Disguise",
+          "id": "dead-leaf-disguise",
+          "chinese": "枯叶伪装"
+        },
+        {
+          "name": "Stereo Sniff",
+          "id": "stereo-sniff",
+          "chinese": "立体声嗅嗅"
+        },
+        {
+          "name": "Sideways Fig",
+          "id": "sideways-fig",
+          "chinese": "侧挂吃无花果"
+        }
+      ]
+    },
+    {
+      "number": 28,
+      "id": "polka",
+      "displayLabel": "斑点蝠",
+      "concept": "把耳朵围成蝴蝶结的安静演员",
+      "portrait": "portraits/28-polka.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "sha256": "26e8de9186813b17563ed07c0c47e98c8168786768b66b2eeca7155f21661d10",
+      "actionReferences": [
+        {
+          "name": "Ear Scarf",
+          "id": "ear-scarf",
+          "chinese": "耳朵围巾"
+        },
+        {
+          "name": "Hear-Me Chirp",
+          "id": "hear-me-chirp",
+          "chinese": "听得见的叫声"
+        },
+        {
+          "name": "Same-Route Loop",
+          "id": "same-route-loop",
+          "chinese": "老路线绕圈"
+        }
+      ]
+    },
+    {
+      "number": 29,
+      "id": "wrinkle",
+      "displayLabel": "皱脸蝠",
+      "concept": "随时把下巴拉上来遮脸的小包子",
+      "portrait": "portraits/29-wrinkle.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "sha256": "21b7c59365633e1e4bf6f3eb45514a55754765ab61311da0f75473bfbf0bc964",
+      "actionReferences": [
+        {
+          "name": "Wingtip Rub",
+          "id": "wingtip-rub",
+          "chinese": "搓翅尖"
+        },
+        {
+          "name": "Shy Mask",
+          "id": "shy-mask",
+          "chinese": "害羞面罩"
+        },
+        {
+          "name": "Whistle Lunge",
+          "id": "whistle-lunge",
+          "chinese": "口哨猛扑"
+        }
+      ]
+    },
+    {
+      "number": 30,
+      "id": "walker",
+      "displayLabel": "步行蝠",
+      "concept": "走路比飞行还认真的森林巡逻员",
+      "portrait": "portraits/30-walker.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "sha256": "f78128731baf06fbed4abee78fea3d0d65ffea1d44c05c4a5e5567f502ee5759",
+      "actionReferences": [
+        {
+          "name": "Leaf-Litter Dig",
+          "id": "leaf-litter-dig",
+          "chinese": "刨落叶"
+        },
+        {
+          "name": "Titter Song",
+          "id": "titter-song",
+          "chinese": "咯咯情歌"
+        },
+        {
+          "name": "Power Walk",
+          "id": "power-walk",
+          "chinese": "健步走"
+        }
+      ]
+    },
+    {
+      "number": 31,
+      "id": "fox",
+      "displayLabel": "狐蝠",
+      "concept": "会给别人扇风的金毛大管家",
+      "portrait": "portraits/31-fox.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "sha256": "6856f21e5146002c37143853f183ef9d5e94f8b263f71fac9fee4d841eec0abf",
+      "actionReferences": [
+        {
+          "name": "Big Sleep",
+          "id": "big-sleep",
+          "chinese": "超级大睡"
+        },
+        {
+          "name": "Wing Fan",
+          "id": "wing-fan",
+          "chinese": "翅膀扇风"
+        },
+        {
+          "name": "Leaf Juice",
+          "id": "leaf-juice",
+          "chinese": "榨叶汁"
+        }
+      ]
+    },
+    {
+      "number": 32,
+      "id": "ghost",
+      "displayLabel": "幽灵蝠",
+      "concept": "把自己当小被单、却很想交朋友的月光客人",
+      "portrait": "portraits/32-ghost.png",
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "sha256": "1b5ecae50f82499ef3a8690e39d028086fbd3b20f887d73c596f69e7424b4cfa",
+      "actionReferences": [
+        {
+          "name": "Moonlit Unveiling",
+          "id": "moonlit-unveiling",
+          "chinese": "月光现身"
+        },
+        {
+          "name": "Dirrup Twitter",
+          "id": "dirrup-twitter",
+          "chinese": "嘀噜嘀噜"
+        },
+        {
+          "name": "Ear Zip",
+          "id": "ear-zip",
+          "chinese": "拉链耳朵"
+        },
+        {
+          "name": "Silhouette Watch",
+          "id": "silhouette-watch",
+          "chinese": "看剪影"
+        },
+        {
+          "name": "Cloak Swoop",
+          "id": "cloak-swoop",
+          "chinese": "斗篷俯冲"
+        }
+      ]
+    }
+  ]
+}

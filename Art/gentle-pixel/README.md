@@ -3,6 +3,26 @@
 The owner selected **C · Gentle pixel** to replace the previous visual direction.
 This is the active reference for Watch and iPhone presentation.
 
+## Character direction: 32 independent identities
+
+The owner's follow-up clarified that C specifies the rendering language and cozy
+tone. Each bat needs an independently designed theme, face, body construction,
+resting expression and personality. Changing the mascot's color or stretching its
+body is insufficient. The original action catalog supplies character cues.
+
+[`portraits-v3/roster.png`](portraits-v3/roster.png) presents all 32 new original
+portrait concepts. Individual transparent originals, full generation prompts,
+stable IDs and action references are in [`portraits-v3/`](portraits-v3/).
+This library includes the 12 Oddball IDs from PR #2. Chinese labels are working
+art labels and do not rename the stored species IDs.
+
+These are character-development originals. They have not been converted to a
+shared production pixel grid or animated, and they do not replace the runtime
+pose catalog below. The 64 px review images in the downloadable pack are size
+checks, not hand-cleaned animation assets.
+
+## Current runtime presentation and pose assets
+
 - Coarse, warm, friendly pixel silhouettes; fixed 64 px logical canvases and
   nearest-neighbor rendering at every displayed size.
 - Midnight teal Watch surfaces, cream text, sage buttons and restrained peach
