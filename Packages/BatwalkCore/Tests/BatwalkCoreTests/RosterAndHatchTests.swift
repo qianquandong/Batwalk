@@ -2,18 +2,47 @@ import XCTest
 @testable import BatwalkCore
 
 final class RosterTests: XCTestCase {
-    func testRosterHas20UniqueSpeciesNumbered1to20() {
-        XCTAssertEqual(Roster.all.count, 20)
-        XCTAssertEqual(Set(Roster.all.map(\.id)).count, 20)
-        XCTAssertEqual(Roster.all.map(\.number), Array(1...20))
+    func testRosterHas32UniqueSpeciesNumbered1to32() {
+        XCTAssertEqual(Roster.all.count, 32)
+        XCTAssertEqual(Set(Roster.all.map(\.id)).count, 32)
+        XCTAssertEqual(Roster.all.map(\.number), Array(1...32))
     }
 
     func testRarityCountsMatchPRD() {
+        // Launch roster 8 / 6 / 4 / 2 (§6) + Oddball Bats 2 / 5 / 4 / 1 (§6.3).
         let counts = Dictionary(grouping: Roster.all, by: \.rarity).mapValues(\.count)
-        XCTAssertEqual(counts[.common], 8)
-        XCTAssertEqual(counts[.uncommon], 6)
-        XCTAssertEqual(counts[.rare], 4)
-        XCTAssertEqual(counts[.legendary], 2)
+        XCTAssertEqual(counts[.common], 10)
+        XCTAssertEqual(counts[.uncommon], 11)
+        XCTAssertEqual(counts[.rare], 8)
+        XCTAssertEqual(counts[.legendary], 3)
+    }
+
+    func testLaunchSpeciesIDsAreUnchanged() {
+        // Save keys and asset names — must never change (CLAUDE.md).
+        XCTAssertEqual(Roster.all.prefix(20).map(\.id), [
+            "mochi", "cocoa", "long-ear", "fruit", "cave", "sleepy", "dust", "pebble",
+            "strawberry", "blossom", "moss", "sunset", "snow", "cloud",
+            "moonwing", "golden", "crystal", "vampire", "galaxy", "eclipse",
+        ])
+    }
+
+    func testOddballBatsArePaidAndHaveARealLifeCousin() {
+        let oddballs = Roster.all.filter { $0.number > 20 }
+        XCTAssertEqual(oddballs.map(\.id), [
+            "bumblebee", "sticky", "marshmallow", "honk", "ember", "nectar",
+            "tube-nose", "polka", "wrinkle", "walker", "fox", "ghost",
+        ])
+        for bat in oddballs {
+            XCTAssertFalse(bat.isFree, "\(bat.id) should need the full unlock")
+            XCTAssertFalse(bat.realLifeCousin?.isEmpty ?? true, "\(bat.id) is missing its real-life cousin")
+        }
+        XCTAssertTrue(Roster.all.prefix(20).allSatisfy { $0.realLifeCousin == nil })
+    }
+
+    func testEachSpeciesAppearsAtMostOncePerEgg() {
+        for egg in EggType.allCases {
+            XCTAssertEqual(egg.pool.count, Set(egg.pool).count, "\(egg) pool has a duplicate")
+        }
     }
 
     func testFreeTierIsMochiCocoaLongEar() {
@@ -101,6 +130,18 @@ final class HatchEngineTests: XCTestCase {
             shinies += 1
         }
         XCTAssertEqual(Double(shinies) / Double(n), 0.005, accuracy: 0.0015)
+    }
+
+    func testPaidTinyEggIsStillAllCommonAndCanYieldOddballs() {
+        let rolls = (UInt64(0)..<5_000).map { HatchEngine.roll(egg: .tiny, seed: $0, isUnlocked: true).species }
+        XCTAssertTrue(rolls.allSatisfy { $0.rarity == .common })
+        XCTAssertTrue(Set(rolls.map(\.id)).isSuperset(of: ["bumblebee", "sticky"]))
+    }
+
+    func testCrystalEggCanYieldWalkerAndGhost() {
+        let seen = Set((UInt64(0)..<20_000).map { HatchEngine.roll(egg: .crystal, seed: $0, isUnlocked: true).species.id })
+        XCTAssertTrue(seen.contains("walker"))
+        XCTAssertTrue(seen.contains("ghost"))
     }
 
     func testMoonEggCanYieldLegendary() {

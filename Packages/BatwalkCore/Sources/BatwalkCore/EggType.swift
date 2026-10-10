@@ -47,14 +47,21 @@ public enum EggType: String, Codable, CaseIterable, Sendable {
         case .starter:
             // First hatch is always the mascot — guaranteed delightful first success.
             return ["mochi"]
+        // Oddball Bats (PRD §6.3) are listed after each egg's launch species.
         case .tiny:
-            return ["mochi", "cocoa", "cave", "sleepy", "pebble"]
+            return ["mochi", "cocoa", "cave", "sleepy", "pebble",
+                    "bumblebee", "sticky"]
         case .forest:
-            return ["long-ear", "fruit", "cave", "dust", "strawberry", "blossom", "moss", "sunset"]
+            // Kept Common + Uncommon only, so Forest odds are unchanged (Q6).
+            return ["long-ear", "fruit", "cave", "dust", "strawberry", "blossom", "moss", "sunset",
+                    "marshmallow", "honk", "ember", "nectar"]
         case .moon:
-            return ["sunset", "moonwing", "vampire", "galaxy", "eclipse"]
+            return ["sunset", "moonwing", "vampire", "galaxy", "eclipse",
+                    "tube-nose", "polka", "wrinkle"]
         case .crystal:
-            return ["snow", "cloud", "golden", "crystal", "galaxy"]
+            // The longest walk (6,000 steps) is where the Walker Bat lives.
+            return ["snow", "cloud", "golden", "crystal", "galaxy",
+                    "walker", "fox", "ghost"]
         }
     }
 

@@ -31,6 +31,7 @@ Until an image exists, the app draws a vector placeholder, so art can land one f
 | Egg | `egg_<eggType>_<state>` | `egg_forest_cracked` |
 
 - `speciesID`: `mochi cocoa long-ear fruit cave sleepy dust pebble strawberry blossom moss sunset snow cloud moonwing golden crystal vampire galaxy eclipse`
+  `bumblebee sticky marshmallow honk ember nectar tube-nose polka wrinkle walker fox ghost` (Oddball Bats, PRD §6.3 — art brief and real-life references in that table)
 - `mood`: `sleeping drowsy awake happy eating playing`
 - `eggType`: `starter tiny forest moon crystal`
 - `state`: `calm shaking cracked rattling ready`

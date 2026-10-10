@@ -2,12 +2,12 @@ import SwiftUI
 import BatwalkCore
 
 /// Collection Stats (board: iPhone › 5. Collection Progress): progress hero,
-/// milestones 5 / 10 / 15 / 20, recent hatches.
+/// milestones 5 / 10 / 20 / all, recent hatches.
 struct StatsView: View {
     @Environment(GameStore.self) private var store
     @Binding var tab: PhoneTab
 
-    private let milestones = [5, 10, 15, 20]
+    private let milestones = [5, 10, 20, Roster.all.count]
 
     var body: some View {
         NavigationStack {

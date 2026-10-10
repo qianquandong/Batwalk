@@ -7,7 +7,7 @@ and its test.
 
 | # | Question | Current behaviour in code | Where |
 |---|---|---|---|
-| **Q1** | **Long Ear Bat is a free species (§6.1), but its primary egg is Forest — a paid egg.** How does a free player get it? | Free players' Tiny Egg yields exactly the three free species: Mochi, Cocoa, Long Ear. Paid players' Tiny Egg uses the roster pool (Mochi, Cocoa, Cave, Sleepy, Pebble). Alternative: swap Long Ear for a Tiny-egg common (e.g. Sleepy) in the free roster. | `EggType.freePool` |
+| **Q1** | **Long Ear Bat is a free species (§6.1), but its primary egg is Forest — a paid egg.** How does a free player get it? | Free players' Tiny Egg yields exactly the three free species: Mochi, Cocoa, Long Ear. Paid players' Tiny Egg uses the roster pool (Mochi, Cocoa, Cave, Sleepy, Pebble, Bumblebee, Sticky). Alternative: swap Long Ear for a Tiny-egg common (e.g. Sleepy) in the free roster. | `EggType.freePool` |
 | **Q2** | How is the next egg chosen after a hatch? | Player picks from the eggs they own access to, right after the reveal. Free = Tiny only. Starter Egg is onboarding-only. | `EggPickerView`, `EggType.isPickable` |
 | **Q3** | What happens to steps walked while an egg is ready, or while no egg is chosen? | They are **banked** and applied to the next egg, capped at 6,000 so a multi-day backlog can't chain-hatch several eggs at once. | `Tuning.maxBankedSteps` |
 | **Q4** | Friendship EXP numbers. | Level thresholds 0 / 100 / 250 / 500 / 1,000. Duplicate: Common 40, Uncommon 60, Rare 100, Legendary 200. Feed +10. Pet +2, first 10 pets per bat per day. | `Tuning` |
@@ -18,6 +18,7 @@ and its test.
 | **Q9** | What do Friendship Lv.2–5 unlock in *code*? | Levels are computed and shown; the unlockable animations need art first. The sprite naming contract has room for them. | `Art/README.md` |
 | **Q10** | Can a free player see Shiny bats? | No — Shiny requires the full unlock (§2.10). A free player's hatches are never Shiny. | `HatchEngine.roll` |
 | **Q11** | Wake interaction during the day. | "Wake" plays the awake animation for ~2 s, then the bat goes back to its time-of-day mood. No penalty either way. | `CareView` |
+| **Q12** | **Do the 12 Oddball Bats (#21–32, PRD §6.3) ship at launch, or as the first content update?** The PRD locks the launch roster at 20, and each bat needs a full art set (§3.2). | All 32 are live in code. Until real art lands they render as recoloured Mochi, like the other 16 bats without art. Shipping later = remove them from `EggType.pool` (keep the IDs reserved). | `Roster.all`, `EggType.pool` |
 
 When a question is answered, update the code + tests, then move the row into the
 "Decided" section below with the date.
