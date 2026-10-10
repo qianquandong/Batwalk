@@ -85,6 +85,17 @@ struct BatDetailPage: View {
                                 Divider()
                                 BatInfoRow(title: "Favorite Fruit", value: fruit) { FruitIcon(size: 18) }
                             }
+                            if let cousin = species.realLifeCousin {
+                                Divider()
+                                BatInfoRow(title: "Real-life Cousin") {
+                                    Image(systemName: "globe.americas.fill").foregroundStyle(BatwalkColor.purple)
+                                } detail: {
+                                    Text(cousin)
+                                        .font(BatwalkFont.rounded(.footnote, weight: .medium))
+                                        .foregroundStyle(BatwalkColor.textSecondaryLight)
+                                        .fixedSize(horizontal: false, vertical: true)
+                                }
+                            }
                             if let first = store.state.history.first(where: { $0.speciesID == speciesID }) {
                                 Divider()
                                 BatInfoRow(title: "Hatch Source", value: first.eggType.displayName) {

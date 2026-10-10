@@ -156,6 +156,8 @@ Duplicates are allowed, but the Collection does not accumulate piles of identica
 | Lv.4 | Special signature animation |
 | Lv.5 | Friendship badge + special expression/accessory |
 
+The species-specific actions behind Lv.2–5 are listed in [`BAT_ACTIONS.md`](BAT_ACTIONS.md).
+
 ### 2.8 Feeding
 
 Walking can occasionally yield simple fruit rewards such as berries or strawberries. Feeding produces a short reaction and contributes modest Friendship progress.
@@ -428,6 +430,33 @@ Recommended free roster: **Mochi Bat, Cocoa Bat, Long Ear Bat.** Free egg types:
 ### 6.2 Current Companion Naming
 
 Species identity remains fixed, but the player can give the owned companion a personal name. Example: Species = Moonwing, Player Name = Luna. The Watch home shows the personal name.
+
+### 6.3 Oddball Bats (roster expansion, #21–32)
+
+Twelve extra species, each a cute Batwalk take on a **real, genuinely strange bat**.
+They keep the cozy art rules (§3): the real animal is only the hook — round body,
+big eyes, never realistic or scary. Batpedia shows each one's *Real-life Cousin*
+as a one-line fun fact. All are Full Unlock content; the free tier is unchanged.
+
+| # | Bat | Rarity | Personality / Visual Hook | Primary Egg | Real-life Cousin |
+|---|---|---|---|---|---|
+| 21 | Bumblebee Bat | Common | Thumb-sized, piggy nose, buzzes when it flies | Tiny | Kitti's hog-nosed bat (~2 g) |
+| 22 | Sticky Bat | Common | Suction-cup thumbs, naps head-up in a rolled leaf | Tiny | Spix's disk-winged bat |
+| 23 | Marshmallow Bat | Uncommon | Snow-white puff, yellow nose/ears, sleeps in a leaf tent | Forest | Honduran white bat |
+| 24 | Honk Bat | Uncommon | Big goofy snout, honks when happy | Forest | Hammer-headed bat |
+| 25 | Ember Bat | Uncommon | Bright orange, black-trimmed wings, hides in dry leaves | Forest | Painted bat |
+| 26 | Nectar Bat | Uncommon | Super-long tongue, blep, always sipping flowers | Forest | Tube-lipped nectar bat |
+| 27 | Tube-Nose Bat | Uncommon | Snorkel nostrils, speckled wings, wise old face | Moon | Tube-nosed fruit bat |
+| 28 | Polka Bat | Rare | Black with three white spots, gigantic pink ears | Moon | Spotted bat |
+| 29 | Wrinkle Bat | Rare | Squishy wrinkly face, hides behind a fluffy chin mask when shy | Moon | Wrinkle-faced bat |
+| 30 | Walker Bat | Rare | Folds its wings and power-walks everywhere — the game's spirit animal | Crystal | NZ lesser short-tailed bat |
+| 31 | Fox Bat | Rare | Huge cloak-like wings, fox face, golden crown of fur | Crystal | Giant golden-crowned flying fox |
+| 32 | Ghost Bat | Legendary | Pale glow, see-through wings, gentle never spooky | Crystal | Australian ghost bat |
+
+Forest stays Common + Uncommon only, so per-egg rarity odds (§4.4) are unchanged;
+each rarity simply has more species to find. With Shiny variants the Batpedia
+grows from 40 to 64 collection targets. Whether these ship at launch or as the
+first content update is open question Q12.
 
 ---
 

@@ -9,7 +9,7 @@ struct UnlockView: View {
     @State private var celebrate = false
 
     private let benefits: [(String, String)] = [
-        ("moon.stars.fill", "Access all 20 bats"),
+        ("moon.stars.fill", "Access all \(Roster.all.count) bats"),
         ("star.fill", "Discover Rare & Legendary bats"),
         ("sparkles", "Find Shiny variants"),
         ("circle.hexagongrid.fill", "Unlock all egg pools"),

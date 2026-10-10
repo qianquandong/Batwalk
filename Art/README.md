@@ -42,9 +42,18 @@ Until an image exists, the app draws a vector placeholder, so art can land one f
 | Egg | `egg_<eggType>_<state>` | `egg_forest_cracked` |
 
 - `speciesID`: `mochi cocoa long-ear fruit cave sleepy dust pebble strawberry blossom moss sunset snow cloud moonwing golden crystal vampire galaxy eclipse`
+  `bumblebee sticky marshmallow honk ember nectar tube-nose polka wrinkle walker fox ghost` (Oddball Bats, PRD §6.3 — art brief and real-life references in that table)
 - `mood`: `sleeping drowsy awake happy eating playing`
 - `eggType`: `starter tiny forest moon crystal`
 - `state`: `calm shaking cracked rattling ready`
+
+### Unique actions
+
+Every bat also has 3 unique actions (Legendaries have 5), unlocked by Friendship.
+The art brief for each one, with the real behaviour it comes from, is in
+[`docs/BAT_ACTIONS.md`](../docs/BAT_ACTIONS.md). Sheet name:
+`bat_<speciesID>_<actionID>_sheet`, e.g. `bat_marshmallow_fig-yellow_sheet`.
+Until a sheet exists, the game plays the universal action instead.
 
 Animated sheets (idle, fly, pet, eat, happy, hatch reveal — PRD §3.2) will use
 `<name>_sheet` with frames laid out horizontally on a fixed logical canvas; the
@@ -53,6 +62,7 @@ playback component arrives in milestone M2.
 ## Deliverable checklist per bat (PRD §3.2, §3.6)
 
 - [ ] Idle · Sleep · Wake/Drowsy · Fly · Pet reaction · Eat · Happy · Hatch reveal
+- [ ] 3 unique actions (Legendary: 5) from `docs/BAT_ACTIONS.md`
 - [ ] Shiny palette (same silhouette)
 - [ ] Transparent PNG, consistent canvas, deterministic frame naming
 - [ ] Preview exported at real Apple Watch scale

@@ -44,6 +44,11 @@ enum SpriteResolver {
         "sunset": (-10, 1.4, 0.05), "snow": (180, 0.2, 0.25), "cloud": (0, 0.1, 0.2),
         "golden": (20, 1.6, 0.1), "crystal": (190, 1.3, 0.05), "vampire": (0, 0.3, -0.25),
         "eclipse": (0, 0, -0.3),
+        // Oddball Bats (PRD §6.3)
+        "bumblebee": (0, 0.6, -0.15), "sticky": (110, 0.8, 0.05), "marshmallow": (0, 0.05, 0.3),
+        "honk": (-15, 1.1, -0.05), "ember": (-10, 1.8, 0.1), "nectar": (300, 0.8, 0.08),
+        "tube-nose": (40, 0.9, 0.08), "polka": (220, 0.4, -0.25), "wrinkle": (0, 0.5, 0.02),
+        "walker": (60, 0.7, -0.02), "fox": (10, 1.3, 0.02), "ghost": (200, 0.15, 0.3),
     ]
 
     private static let moodFallbacks: [BatMood: [BatMood]] = [
