@@ -8,10 +8,7 @@ for name in APP_STORE_CONNECT_KEY_IDENTIFIER APP_STORE_CONNECT_ISSUER_ID APP_STO
     exit 1
   fi
 done
-case "$APP_STORE_CONNECT_PRIVATE_KEY" in
-  *"BEGIN PRIVATE KEY"*) ;;
-  *) echo "The Apple integration does not contain a valid .p8 key." >&2; exit 1 ;;
-esac
+# The CLI validates both PEM contents and Codemagic's @file: integration reference.
 [[ "$APP_STORE_APPLE_ID" =~ ^[0-9]+$ ]] || { echo "APP_STORE_APPLE_ID must be the numeric Batwalk Apple ID." >&2; exit 1; }
 latest=$(app-store-connect get-latest-testflight-build-number "$APP_STORE_APPLE_ID")
 [[ "$latest" =~ ^[0-9]+$ ]] || { echo "Could not read Batwalk's existing integer TestFlight build number." >&2; exit 1; }

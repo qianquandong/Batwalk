@@ -76,7 +76,7 @@ unsigned CI fallback remains a separate workflow and cannot publish builds.
 
 Connect an explicitly authorized App Store Connect integration named
 `Batwalk TestFlight` in the Codemagic personal account. Codemagic injects its key
-identifier, issuer ID and private key. Keep the private key out of Git, build
+identifier, issuer ID and private key (which can be an `@file:` reference). Keep the private key out of Git, build
 artifacts and logs. Apple team API keys apply across the team's apps; their
 permissions cannot be restricted to this repository by the workflow name.
 

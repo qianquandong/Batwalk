@@ -10,7 +10,30 @@ umask 077
 key_dir=$(mktemp -d "${TMPDIR:-/tmp}/batwalk-signing.XXXXXX")
 key_path="$key_dir/AuthKey.p8"
 trap 'rm -f "$key_path"; rmdir "$key_dir"' EXIT
-printf '%s\n' "$APP_STORE_CONNECT_PRIVATE_KEY" > "$key_path"
+# Integration credentials can be a file reference rather than inline PEM text.
+# Resolve without printing either the key or the reference into build logs.
+python3 - "$key_path" <<'PY'
+import os
+import pathlib
+import sys
+
+try:
+    value = os.environ["APP_STORE_CONNECT_PRIVATE_KEY"]
+    if value.startswith("@file:"):
+        value = pathlib.Path(os.path.expandvars(value[6:])).expanduser().read_text()
+    elif value.startswith("@env:"):
+        value = os.environ[value[5:]]
+    if "-----BEGIN PRIVATE KEY-----" not in value:
+        raise ValueError("Unsupported key format")
+    with open(sys.argv[1], "x", encoding="utf-8") as stream:
+        stream.write(value.strip() + "\n")
+except Exception:
+    sys.exit("Could not resolve the Apple integration private key securely.")
+PY
+openssl pkey -in "$key_path" -noout >/dev/null 2>&1 || {
+  echo "The Apple integration key is not valid PEM." >&2
+  exit 1
+}
 archive="$PWD/build/Batwalk.xcarchive"
 
 bash scripts/ci-xcodebuild.sh \
