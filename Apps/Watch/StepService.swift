@@ -7,12 +7,20 @@ final class StepService: StepTotalReader {
     private let healthStore = HKHealthStore()
     private let stepType = HKQuantityType(.stepCount)
     private var observer: HKObserverQuery?
+    private var onStepsChanged: (@Sendable () async -> Void)?
     var isAvailable: Bool { HKHealthStore.isHealthDataAvailable() }
 
     func requestAuthorization() async -> Bool {
         guard isAvailable else { return false }
         do {
             try await healthStore.requestAuthorization(toShare: [], read: [stepType])
+            // The launch-time registration can run before the first permission
+            // dialog. Retry it after that dialog completes, including on Settings.
+            if let onStepsChanged {
+                if let observer { healthStore.stop(observer) }
+                observer = nil
+                startObserving(onChange: onStepsChanged)
+            }
             return true // completion is not proof of read permission
         } catch { return false }
     }
@@ -65,6 +73,7 @@ final class StepService: StepTotalReader {
     }
 
     func startObserving(onChange: @escaping @Sendable () async -> Void) {
+        onStepsChanged = onChange
         guard isAvailable, observer == nil else { return }
         let query = HKObserverQuery(sampleType: stepType, predicate: nil) { _, completion, error in
             guard error == nil else { completion(); return }
