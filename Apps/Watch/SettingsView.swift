@@ -42,7 +42,7 @@ struct SettingsView: View {
                         Label("Notifications", systemImage: "bell.fill")
                             .font(BatwalkFont.caption)
                     }
-                    .tint(BatwalkColor.purple)
+                    .tint(BatwalkColor.accent)
                     .batwalkGlassCard(padding: 8, radius: 14)
 
                     if notificationsOn && notificationStatus == .denied {
@@ -54,7 +54,7 @@ struct SettingsView: View {
                         HStack(spacing: BatwalkSpacing.sm) {
                             Image(systemName: "heart.fill")
                                 .font(.system(size: 14))
-                                .foregroundStyle(BatwalkColor.pinkAccent)
+                                .foregroundStyle(BatwalkColor.rose)
                             VStack(alignment: .leading, spacing: 1) {
                                 Text("Health Access").font(BatwalkFont.caption)
                                 Text(healthLabel)
@@ -75,7 +75,7 @@ struct SettingsView: View {
                         HStack(spacing: BatwalkSpacing.sm) {
                             Image(systemName: purchases.isUnlocked ? "checkmark.seal.fill" : "arrow.clockwise")
                                 .font(.system(size: 13))
-                                .foregroundStyle(purchases.isUnlocked ? BatwalkColor.success : BatwalkColor.softLavender)
+                                .foregroundStyle(purchases.isUnlocked ? BatwalkColor.success : BatwalkColor.sage)
                             Text(purchases.isUnlocked ? "Full unlock active" : "Restore Purchase")
                                 .font(BatwalkFont.caption)
                             Spacer(minLength: 0)

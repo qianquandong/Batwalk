@@ -44,14 +44,14 @@ struct FriendshipPage: View {
                                 .lineLimit(1)
                             Text("Friendship Lv. \(Friendship.level(forEXP: companion.friendshipEXP))")
                                 .font(BatwalkFont.caption)
-                                .foregroundStyle(BatwalkColor.pinkAccent)
+                                .foregroundStyle(BatwalkColor.rose)
 
                             FriendshipProgressView(exp: companion.friendshipEXP)
                                 .padding(.horizontal, BatwalkSpacing.xs)
                                 .padding(.top, 2)
                             FeedButton(fruit: store.state.fruit) { feed(companion) }
                             if let reward = Friendship.keepsake(forEXP: companion.friendshipEXP) {
-                                Text("Unlocked: \(reward)").font(BatwalkFont.micro).foregroundStyle(BatwalkColor.pinkAccent)
+                                Text("Unlocked: \(reward)").font(BatwalkFont.micro).foregroundStyle(BatwalkColor.rose)
                             }
                             if let next = Friendship.nextKeepsake(forEXP: companion.friendshipEXP) {
                                 Text("Next: \(next)").font(BatwalkFont.micro).foregroundStyle(BatwalkColor.textSecondaryDark)

@@ -120,7 +120,7 @@ struct HatchSequenceView: View {
             VStack(spacing: 4) {
                 ZStack {
                     Circle()
-                        .fill(RadialGradient(colors: [(special ? rarity.color : BatwalkColor.purpleGlow).opacity(special ? 0.75 : 0.45), .clear],
+                        .fill(RadialGradient(colors: [(special ? rarity.color : BatwalkColor.accentSoft).opacity(special ? 0.75 : 0.45), .clear],
                                              center: .center, startRadius: 4, endRadius: 64))
                         .frame(width: 90, height: 90)
                     if special { SparkleField(count: 6, color: record.isShiny ? BatwalkColor.rarityShiny : rarity.color, spread: 42) }

@@ -4,11 +4,16 @@ import BatwalkCore
 import UIKit
 #endif
 
-/// Asset naming contract with the pixel artist (see Art/README.md):
+/// Legacy asset naming contract (see Art/README.md). Gentle pixel assets use
+/// a versioned prefix and resolve before these earlier illustrations.
 ///   bat_<speciesID>_<mood>[_shiny]   e.g. bat_moonwing_sleeping_shiny
 ///   egg_<eggType>_<visualState>      e.g. egg_forest_cracked
 /// Until real art lands, a vector placeholder is drawn so every screen works.
 enum SpriteName {
+    static func gentleBat(_ speciesID: String, mood: BatMood, shiny: Bool) -> String {
+        "gentle_bat_\(speciesID)_\(mood.rawValue)" + (shiny ? "_shiny" : "")
+    }
+
     static func bat(_ speciesID: String, mood: BatMood, shiny: Bool) -> String {
         "bat_\(speciesID)_\(mood.rawValue)" + (shiny ? "_shiny" : "")
     }
@@ -52,6 +57,9 @@ enum SpriteResolver {
 
     static func bat(_ speciesID: String, mood: BatMood, shiny: Bool) -> Resolved? {
         let moods = moodFallbacks[mood] ?? [mood]
+        for m in moods where assetExists(SpriteName.gentleBat(speciesID, mood: m, shiny: shiny)) {
+            return Resolved(name: SpriteName.gentleBat(speciesID, mood: m, shiny: shiny), hueDegrees: 0)
+        }
         if shiny {
             for m in moods where assetExists(SpriteName.bat(speciesID, mood: m, shiny: true)) {
                 return Resolved(name: SpriteName.bat(speciesID, mood: m, shiny: true), hueDegrees: 0)
@@ -73,7 +81,9 @@ enum SpriteResolver {
     }
 
     static func egg(_ type: EggType, state: EggVisualState) -> String? {
-        [SpriteName.egg(type, state: state), "egg_forest_\(state.rawValue)"].first(where: assetExists)
+        ["gentle_\(SpriteName.egg(type, state: state))",
+         "gentle_\(SpriteName.egg(type, state: .calm))",
+         SpriteName.egg(type, state: state), "egg_forest_\(state.rawValue)"].first(where: assetExists)
     }
 }
 
@@ -145,7 +155,7 @@ struct BatHeroView: View {
                 if level >= 2 {
                     Image(systemName: level == 5 ? "crown.fill" : level == 4 ? "star.fill" : level == 3 ? "leaf.fill" : "heart.fill")
                         .font(.system(size: max(10, size * 0.13), weight: .bold))
-                        .foregroundStyle(level == 5 ? Color.yellow : level == 3 ? Color.green : BatwalkColor.pinkAccent)
+                        .foregroundStyle(level == 5 ? Color.yellow : level == 3 ? Color.green : BatwalkColor.rose)
                         .padding(4)
                         .background(Circle().fill(Color.black.opacity(0.65)))
                         .accessibilityLabel(Friendship.keepsake(forEXP: friendshipEXP) ?? "")

@@ -6,9 +6,6 @@ import BatwalkCore
 struct UnlockView: View {
     @Environment(PurchaseManager.self) private var purchases
     @Environment(GameStore.self) private var store
-    private let ambient = AmbientMotionReader()
-
-    @State private var ctaGlow = false
     @State private var celebrate = false
 
     private let benefits: [(String, String)] = [
@@ -41,7 +38,7 @@ struct UnlockView: View {
                             HStack(spacing: 12) {
                                 Image(systemName: symbol)
                                     .font(.system(size: 15, weight: .semibold))
-                                    .foregroundStyle(BatwalkColor.purple)
+                                    .foregroundStyle(BatwalkColor.accent)
                                     .frame(width: 28, height: 28)
                                     .background(Circle().fill(BatwalkColor.lightTint))
                                 Text(text)
@@ -67,7 +64,6 @@ struct UnlockView: View {
                             }
                         }
                         .buttonStyle(BatwalkPrimaryButtonStyle(minHeight: 58))
-                        .shadow(color: BatwalkColor.purpleGlow.opacity(ctaGlow ? 0.55 : 0.2), radius: ctaGlow ? 14 : 6)
                         .disabled(purchases.isBusy || (purchases.product == nil && !store.isDemo))
 
                         if purchases.product == nil && !store.isDemo {
@@ -101,12 +97,6 @@ struct UnlockView: View {
             .background(BatwalkColor.lightBackground.ignoresSafeArea())
             .toolbar(.hidden, for: .navigationBar)
         }
-        .task(id: ambient.allowed) {
-            stopMotion { ctaGlow = false }
-            guard ambient.allowed else { return }
-            withAnimation(.easeInOut(duration: 1.6).repeatForever(autoreverses: true)) { ctaGlow = true }
-        }
-        .onDisappear { stopMotion { ctaGlow = false } }
         .onChange(of: purchases.isUnlocked) { _, unlocked in
             guard unlocked else { return }
             Haptics.success()
@@ -117,10 +107,7 @@ struct UnlockView: View {
     /// Hero: dusk sky with the board's four bats. TODO(asset): treasure-chest hero art from the iPhone board.
     private var hero: some View {
         ZStack {
-            LinearGradient(colors: [Color(hex: 0x2A1F5C), Color(hex: 0x7B4FC9), Color(hex: 0xF0D6F5)],
-                           startPoint: .top, endPoint: .bottom)
-            NightSkyBackground(time: .night, scenery: false).opacity(0.35)
-            SparkleField(count: 6, spread: 120)
+            NightSkyBackground(time: .night, scenery: true)
             HStack(alignment: .bottom, spacing: -18) {
                 BatSprite(speciesID: "moonwing", mood: .awake, size: 78)
                 BatHeroView(speciesID: "mochi", mood: .happy, size: 124)
@@ -148,6 +135,6 @@ struct UnlockView: View {
         }
         .frame(maxWidth: .infinity)
         .batwalkLightCard(padding: 20, radius: 22)
-        .overlay { if celebrate { SparkleField(count: 6, color: BatwalkColor.purple, spread: 90) } }
+        .overlay { if celebrate { SparkleField(count: 6, color: BatwalkColor.accent, spread: 90) } }
     }
 }

@@ -140,7 +140,7 @@ struct BatwalkAppear: ViewModifier {
 /// Card / tile unlock: opacity 0 → 1, scale 0.9 → ~1.04 → 1 with a brief glow.
 struct UnlockReveal: ViewModifier {
     let isNew: Bool
-    var glow: Color = BatwalkColor.purpleGlow
+    var glow: Color = BatwalkColor.accentSoft
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var revealed = false
     @State private var glowing = false
@@ -186,7 +186,7 @@ extension View {
     func earTwitch(_ enabled: Bool = true) -> some View { modifier(EarTwitch(enabled: enabled)) }
     func happyBounce(trigger: Int) -> some View { modifier(HappyBounce(trigger: trigger)) }
     func batwalkAppear(delay: Double = 0) -> some View { modifier(BatwalkAppear(delay: delay)) }
-    func unlockReveal(isNew: Bool, glow: Color = BatwalkColor.purpleGlow) -> some View {
+    func unlockReveal(isNew: Bool, glow: Color = BatwalkColor.accentSoft) -> some View {
         modifier(UnlockReveal(isNew: isNew, glow: glow))
     }
     func staggeredAppear(index: Int) -> some View { modifier(StaggeredAppear(index: index)) }

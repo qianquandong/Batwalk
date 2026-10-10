@@ -42,6 +42,7 @@ struct RootView: View {
             guard let route = WatchRoute(url: url) else { return }
             page = route == .progress ? 1 : 0
         }
+        .tint(BatwalkColor.cloud)
         .alert("Progress update", isPresented: Binding(
             get: { store.lastError != nil && !store.recoveryRequired },
             set: { if !$0 { store.clearError() } }

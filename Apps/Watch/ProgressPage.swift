@@ -43,7 +43,7 @@ struct ProgressPage: View {
                     BatwalkStatRow(title: "Today", value: todaySteps.formatted()) {
                         Image(systemName: "figure.walk")
                             .font(.system(size: 13, weight: .semibold))
-                            .foregroundStyle(BatwalkColor.softLavender)
+                            .foregroundStyle(BatwalkColor.sage)
                     }
 
                     if store.state.companion != nil {

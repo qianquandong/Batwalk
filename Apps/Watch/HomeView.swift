@@ -80,7 +80,7 @@ struct HomeView: View {
                 .accessibilityAddTraits(.isButton)
                 .accessibilityHint(BatMood.resting(at: time) == .awake ? "Pet \(companion.displayName)" : "Wake \(companion.displayName)")
                 Spacer(minLength: 0)
-                VStack(spacing: 6) {
+                VStack(spacing: 5) {
                     NavigationLink(value: companion.speciesID) {
                         HStack(spacing: 4) {
                             Text(companion.displayName)
@@ -97,7 +97,7 @@ struct HomeView: View {
                     .buttonStyle(.plain)
                     progressPill
                 }
-                .batwalkGlassCard(padding: 8)
+                .batwalkGlassCard(padding: 10)
             }
             .padding(.horizontal, BatwalkSpacing.xs)
             .frame(width: geo.size.width, height: geo.size.height)
@@ -108,20 +108,23 @@ struct HomeView: View {
     @ViewBuilder
     private var progressPill: some View {
         if let egg = store.state.egg {
-            HStack(spacing: 6) {
-                EggIcon(type: egg.type, size: 16)
+            VStack(spacing: 6) {
                 Text("\(egg.stepsRemaining.formatted()) steps to hatch")
                     .font(BatwalkFont.caption)
                     .monospacedDigit()
                     .lineLimit(1)
                     .minimumScaleFactor(0.8)
+                GeometryReader { geo in
+                    ZStack(alignment: .leading) {
+                        Capsule().fill(BatwalkColor.cloud.opacity(0.12))
+                        Capsule().fill(BatwalkColor.accentSoft)
+                            .frame(width: geo.size.width * egg.progress)
+                    }
+                }
+                .frame(height: 4)
             }
-            .foregroundStyle(.white)
-            .padding(.horizontal, 10)
-            .padding(.vertical, 5)
+            .foregroundStyle(BatwalkColor.textSecondaryDark)
             .frame(maxWidth: .infinity)
-            .background(Capsule().fill(Color.white.opacity(0.08)))
-            .overlay(Capsule().strokeBorder(.white.opacity(0.12), lineWidth: 1))
             .accessibilityElement(children: .combine)
         } else {
             Button {

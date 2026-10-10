@@ -95,7 +95,7 @@ struct BatDetailView: View {
                     VStack(alignment: .leading, spacing: 4) {
                         Text("Friendship Lv. \(Friendship.level(forEXP: bat.friendshipEXP))")
                             .font(BatwalkFont.caption)
-                            .foregroundStyle(BatwalkColor.pinkAccent)
+                            .foregroundStyle(BatwalkColor.rose)
                         FriendshipProgressView(exp: bat.friendshipEXP)
                     }
                     .batwalkGlassCard(padding: 8, radius: 14)
@@ -103,7 +103,7 @@ struct BatDetailView: View {
                     if store.state.companionID == speciesID {
                         Label("Current Companion", systemImage: "heart.fill")
                             .font(BatwalkFont.caption)
-                            .foregroundStyle(BatwalkColor.pinkAccent)
+                            .foregroundStyle(BatwalkColor.rose)
                             .padding(.vertical, 4)
                     } else {
                         Button("Make Companion") {

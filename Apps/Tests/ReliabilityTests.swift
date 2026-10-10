@@ -213,7 +213,7 @@ final class AppReliabilityTests: XCTestCase {
             for mood in [BatMood.sleeping, .awake, .happy] {
                 for shiny in [false, true] {
                     let art = try XCTUnwrap(SpriteResolver.bat(species, mood: mood, shiny: shiny))
-                    XCTAssertEqual(art.name, SpriteName.bat(species, mood: mood, shiny: shiny))
+                    XCTAssertEqual(art.name, SpriteName.gentleBat(species, mood: mood, shiny: shiny))
                     XCTAssertEqual(art.hueDegrees, 0)
                 }
             }

@@ -42,7 +42,7 @@ struct SegmentedPill<Value: Hashable>: View {
                 } label: {
                     Text(label)
                         .font(BatwalkFont.rounded(.subheadline, weight: .semibold))
-                        .foregroundStyle(selection == value ? .white : BatwalkColor.textSecondaryLight)
+                        .foregroundStyle(selection == value ? BatwalkColor.buttonText : BatwalkColor.textSecondaryLight)
                         .frame(maxWidth: .infinity, minHeight: 34)
                         .background {
                             if selection == value {
@@ -94,10 +94,10 @@ struct BatCard: View {
         .background(RoundedRectangle(cornerRadius: 18, style: .continuous).fill(BatwalkColor.lightCard))
         .overlay(
             RoundedRectangle(cornerRadius: 18, style: .continuous)
-                .strokeBorder(isCompanion ? BatwalkColor.purple.opacity(0.55) : BatwalkColor.purple.opacity(0.12),
+                .strokeBorder(isCompanion ? BatwalkColor.accent.opacity(0.55) : BatwalkColor.accent.opacity(0.12),
                               lineWidth: isCompanion ? 2 : 1)
         )
-        .shadow(color: BatwalkColor.purple.opacity(isCompanion ? 0.18 : 0.08), radius: 8, y: 3)
+        .shadow(color: BatwalkColor.accent.opacity(isCompanion ? 0.18 : 0.08), radius: 8, y: 3)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel("\(species.name), \(species.rarity.displayName)\(shiny ? ", Shiny" : "")\(isCompanion ? ", companion" : "")")
     }
@@ -111,7 +111,7 @@ struct LockedBatCard: View {
         VStack(spacing: 4) {
             Text("?")
                 .font(.system(size: 34, weight: .bold, design: .rounded))
-                .foregroundStyle(BatwalkColor.softLavender)
+                .foregroundStyle(BatwalkColor.sage)
             Text("#\(number)")
                 .font(BatwalkFont.rounded(.caption2, weight: .semibold))
                 .foregroundStyle(BatwalkColor.textSecondaryLight)
@@ -211,12 +211,12 @@ struct HatchHistoryRow: View {
                     if record.outcome != .duplicate {
                         Text("New!")
                             .font(BatwalkFont.rounded(.caption2, weight: .bold))
-                            .foregroundStyle(BatwalkColor.pinkAccent)
+                            .foregroundStyle(BatwalkColor.rose)
                     }
                 }
                 HStack(spacing: 4) {
                     VariantChip(shiny: record.isShiny, dark: false)
-                    ChipView(text: record.eggType.displayName, color: BatwalkColor.purple, dark: false)
+                    ChipView(text: record.eggType.displayName, color: BatwalkColor.accent, dark: false)
                 }
             }
             Spacer(minLength: 4)

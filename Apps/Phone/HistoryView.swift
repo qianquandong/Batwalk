@@ -16,16 +16,16 @@ struct HistoryView: View {
 
                     LazyVGrid(columns: columns, spacing: 12) {
                         StatCard(title: "Bats Found", value: "\(state.collection.count) / \(Roster.all.count)") {
-                            BatSilhouette(size: 22, color: BatwalkColor.purple)
+                            BatSilhouette(size: 22, color: BatwalkColor.accent)
                         }
                         StatCard(title: "Shiny Bats", value: "\(state.collection.values.filter(\.hasShiny).count)") {
-                            Image(systemName: "sparkles").foregroundStyle(BatwalkColor.purple)
+                            Image(systemName: "sparkles").foregroundStyle(BatwalkColor.accent)
                         }
                         StatCard(title: "Eggs Hatched", value: "\(state.history.count)") {
                             EggIcon(size: 20)
                         }
                         StatCard(title: "Steps Walked", value: state.lifetimeCreditedSteps.formatted()) {
-                            Image(systemName: "figure.walk").foregroundStyle(BatwalkColor.purple)
+                            Image(systemName: "figure.walk").foregroundStyle(BatwalkColor.accent)
                         }
                     }
 
@@ -71,13 +71,13 @@ private struct TimelineEntry<Content: View>: View {
         HStack(alignment: .top, spacing: 10) {
             VStack(spacing: 0) {
                 Circle()
-                    .fill(muted ? BatwalkColor.softLavender.opacity(0.5) : BatwalkColor.purple)
+                    .fill(muted ? BatwalkColor.sage.opacity(0.5) : BatwalkColor.accent)
                     .frame(width: 10, height: 10)
                     .overlay(Circle().strokeBorder(.white, lineWidth: 2))
                     .padding(.top, 28)
                 if !isLast {
                     Rectangle()
-                        .fill(BatwalkColor.softLavender.opacity(0.6))
+                        .fill(BatwalkColor.sage.opacity(0.6))
                         .frame(width: 2)
                 }
             }

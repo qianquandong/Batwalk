@@ -31,7 +31,7 @@ struct BatwalkPhoneApp: App {
                 .environment(store)
                 .environment(purchases)
                 .preferredColorScheme(.light)
-                .tint(BatwalkColor.purple)
+                .tint(BatwalkColor.accent)
                 .task { if !store.isDemo { purchases.start() } }
                 .onChange(of: scenePhase) { _, phase in
                     if phase == .active {

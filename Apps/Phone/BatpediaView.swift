@@ -77,7 +77,7 @@ struct BatDetailPage: View {
                         VStack(spacing: 0) {
                             BatInfoRow(title: "Friendship Level",
                                        value: "Lv. \(Friendship.level(forEXP: bat.friendshipEXP))") {
-                                Image(systemName: "heart.fill").foregroundStyle(BatwalkColor.pinkAccent)
+                                Image(systemName: "heart.fill").foregroundStyle(BatwalkColor.rose)
                             } detail: {
                                 FriendshipProgressView(exp: bat.friendshipEXP, dark: false)
                             }
@@ -93,12 +93,12 @@ struct BatDetailPage: View {
                             }
                             Divider()
                             BatInfoRow(title: "Hatched", value: bat.firstHatchedAt.formatted(date: .abbreviated, time: .omitted)) {
-                                Image(systemName: "calendar").foregroundStyle(BatwalkColor.purple)
+                                Image(systemName: "calendar").foregroundStyle(BatwalkColor.accent)
                             }
                             if bat.hatchCount > 1 {
                                 Divider()
                                 BatInfoRow(title: "Times Hatched", value: "\(bat.hatchCount)") {
-                                    Image(systemName: "sparkles").foregroundStyle(BatwalkColor.purple)
+                                    Image(systemName: "sparkles").foregroundStyle(BatwalkColor.accent)
                                 }
                             }
                         }
@@ -136,7 +136,7 @@ struct BatDetailPage: View {
                         .lineLimit(1)
                         .minimumScaleFactor(0.7)
                     if store.state.companionID == speciesID {
-                        Image(systemName: "heart.fill").foregroundStyle(BatwalkColor.pinkAccent)
+                        Image(systemName: "heart.fill").foregroundStyle(BatwalkColor.rose)
                     }
                 }
                 HStack(spacing: 6) {
@@ -155,7 +155,7 @@ struct BatDetailPage: View {
         if store.state.companionID == speciesID {
             Label("Current Companion", systemImage: "checkmark.circle.fill")
                 .font(BatwalkFont.headline)
-                .foregroundStyle(BatwalkColor.purple)
+                .foregroundStyle(BatwalkColor.accent)
                 .frame(maxWidth: .infinity, minHeight: 50)
                 .background(Capsule().fill(BatwalkColor.lightTint))
         } else {
