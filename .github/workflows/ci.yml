@@ -46,3 +46,9 @@ jobs:
           scripts/ci-xcodebuild.sh -project Batwalk.xcodeproj -scheme BatwalkPhone \
             -destination "platform=iOS Simulator,id=$device" \
             CODE_SIGNING_ALLOWED=NO test
+      - name: Validate capability-enabled configuration (unsigned)
+        run: |
+          python3 scripts/configure-capabilities.py --app-group --cloud-backup
+          xcodegen generate --spec project.capabilities.json
+          scripts/ci-xcodebuild.sh -project Batwalk.xcodeproj -scheme BatwalkPhone \
+            -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO build

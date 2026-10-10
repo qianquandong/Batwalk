@@ -107,6 +107,43 @@ final class AppReliabilityTests: XCTestCase {
         try Data("corrupt".utf8).write(to: directory.appendingPathComponent("current.json"))
         XCTAssertEqual(archive.load(), previous)
     }
+
+    @MainActor
+    func testDiskReloadKeepsRenameWithUnchangedStepAndHatchCounts() async throws {
+        let (store, container) = try makeStore()
+        try store.mutate { $0.start(seed: 1, now: .now); $0.ingestSteps(dayKey: "2026-10-09", dailyTotal: 2_000) }
+        try store.mutate { try $0.hatch(now: .now) }
+        try store.mutate { try $0.rename("mochi", to: "Midnight") }
+        let reload = GameStore(container: container, role: .watch, onCommit: { _ in })
+        XCTAssertEqual(reload.state.companion?.nickname, "Midnight")
+        XCTAssertEqual(reload.state.revision, store.state.revision)
+    }
+
+    @MainActor
+    func testRestoredCollectionBaselinesInsteadOfRecreditingToday() async throws {
+        let (store, _) = try makeStore()
+        var original = GameState(); original.start(seed: 1, now: .now)
+        original.ingestSteps(dayKey: "2026-10-08", dailyTotal: 2_000)
+        _ = try original.hatch(now: .now)
+        try store.restore(CollectionBackup(state: original))
+        let reader = FakeStepReader(); let sync = StepSyncCoordinator()
+        let result = await sync.sync(store: store, reader: reader)
+        XCTAssertEqual(result?.creditedSteps, 0)
+        XCTAssertEqual(store.state.lifetimeCreditedSteps, 0)
+        XCTAssertFalse(store.state.needsStepBaseline)
+        XCTAssertEqual(store.state.collection.count, 1)
+    }
+
+    func testWidgetFreshnessAndRoutes() throws {
+        let now = Date()
+        let snapshot = ComplicationSnapshot(eggProgress: 0.5, eggStepsRemaining: 500, isEggReady: false, updatedAt: now)
+        XCTAssertFalse(snapshot.isStale(at: now))
+        XCTAssertTrue(snapshot.isStale(at: now.addingTimeInterval(7_201)))
+        XCTAssertEqual(WatchRoute(url: snapshot.destination), .progress)
+        XCTAssertEqual(WatchRoute(url: URL(string: "batwalk://hatch")!), .hatch)
+        XCTAssertNil(WatchRoute(url: URL(string: "https://hatch")!))
+        XCTAssertNil(WatchRoute(url: URL(string: "batwalk://hatch/unexpected")!))
+    }
 }
 
 @MainActor

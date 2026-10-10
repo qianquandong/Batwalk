@@ -9,6 +9,11 @@ on:
   push:
     branches: [screenshots]
   workflow_dispatch:
+    inputs:
+      publish:
+        description: "Also replace screenshots-output (off = downloadable artifact only)"
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -66,7 +71,14 @@ jobs:
       - name: Capture iPhone scenarios
         run: SIM="$PHONE_SIM" scripts/capture-screens.sh phone "$RUNNER_TEMP/out/screens/phone"
 
+      - name: Save review screenshots
+        uses: actions/upload-artifact@v4
+        with:
+          name: batwalk-screenshots
+          path: ${{ runner.temp }}/out/screens
+
       - name: Publish to screenshots-output branch
+        if: ${{ github.event_name == 'push' || inputs.publish }}
         env:
           TOKEN: ${{ github.token }}
         run: |

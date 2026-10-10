@@ -34,14 +34,14 @@ enum Persistence {
         let backups = ModelConfiguration("CollectionBackup", schema: backupSchema,
             cloudKitDatabase: SharedConfig.cloudBackupEnabled ? .private(SharedConfig.cloudKitContainer) : .none)
         do {
+            try excludeFromBackup(local.url)
             let container = try ModelContainer(for: schema, configurations: local, backups)
-            excludeFromBackup(local.url)
             return container
         } catch {
             let fallback = ModelConfiguration("CollectionBackup", schema: backupSchema, cloudKitDatabase: .none)
             do {
+                try excludeFromBackup(local.url)
                 let container = try ModelContainer(for: schema, configurations: local, fallback)
-                excludeFromBackup(local.url)
                 return container
             } catch {
                 let memory = ModelConfiguration(schema: schema, isStoredInMemoryOnly: true, cloudKitDatabase: .none)
@@ -54,7 +54,13 @@ enum Persistence {
         }
     }
 
-    private static func excludeFromBackup(_ url: URL) {
+    private static func excludeFromBackup(_ url: URL) throws {
+        var directory = url.deletingLastPathComponent()
+        try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+        var directoryValues = URLResourceValues(); directoryValues.isExcludedFromBackup = true
+        // Mark the directory before opening SQLite so later WAL/SHM files inherit
+        // exclusion. If this fails, don't create a Health-derived save there.
+        try directory.setResourceValues(directoryValues)
         for suffix in ["", "-wal", "-shm"] {
             var target = URL(fileURLWithPath: url.path + suffix)
             var values = URLResourceValues(); values.isExcludedFromBackup = true

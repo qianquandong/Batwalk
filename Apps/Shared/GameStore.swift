@@ -39,6 +39,12 @@ final class GameStore {
 
     func load() {
         guard !isDemo else { return }
+        if role == .phone, let cached = archive.load() {
+            // The read-only phone cache is newer than any legacy SwiftData row.
+            if !state.hasStarted || cached.isRicher(than: state) { state = cached }
+            recoveryRequired = false
+            return
+        }
         guard !Persistence.storageUnavailable else {
             recoveryRequired = true
             lastError = "Your save is temporarily unavailable. Your files have been kept safe. Please restart Batwalk and try again."
@@ -67,7 +73,7 @@ final class GameStore {
             if let best {
                 if !state.hasStarted || best.1.isRicher(than: state) { state = best.1 }
                 // Only point writes at the record whose state we actually selected.
-                if state.saveID == best.1.saveID { record = best.0 }
+                if state.saveID == best.1.saveID || state == best.1 { record = best.0 }
                 recoveryRequired = false
             } else if let recovered = archive.load() {
                 state = recovered

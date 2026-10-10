@@ -12,6 +12,11 @@ enum SharedConfig {
     /// Connect API key can't create them. Until then, saves stay on the Watch
     /// and the complication opens the app. Enable each with its corresponding
     /// entitlements in project.yml (see docs/SIGNING.md).
-    static let appGroupEnabled = false
-    static let cloudBackupEnabled = false
+    static var appGroupEnabled: Bool { enabled("BatwalkAppGroupEnabled") }
+    static var cloudBackupEnabled: Bool { enabled("BatwalkCloudBackupEnabled") }
+
+    private static func enabled(_ key: String) -> Bool {
+        if let value = Bundle.main.object(forInfoDictionaryKey: key) as? Bool { return value }
+        return (Bundle.main.object(forInfoDictionaryKey: key) as? String)?.uppercased() == "YES"
+    }
 }

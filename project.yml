@@ -22,6 +22,8 @@ settings:
     CURRENT_PROJECT_VERSION: "1"
     CODE_SIGN_STYLE: Automatic
     ENABLE_USER_SCRIPT_SANDBOXING: YES
+    BATWALK_APP_GROUP_ENABLED: "NO"
+    BATWALK_CLOUD_BACKUP_ENABLED: "NO"
 
 packages:
   BatwalkCore:
@@ -53,6 +55,8 @@ targets:
         CFBundleShortVersionString: "$(MARKETING_VERSION)"
         CFBundleVersion: "$(CURRENT_PROJECT_VERSION)"
         WKApplication: true
+        BatwalkAppGroupEnabled: "$(BATWALK_APP_GROUP_ENABLED)"
+        BatwalkCloudBackupEnabled: "$(BATWALK_CLOUD_BACKUP_ENABLED)"
         WKCompanionAppBundleIdentifier: com.aimanjack.batwalk
         WKRunsIndependentlyOfCompanionApp: true
         NSHealthShareUsageDescription: "Your steps hatch your bat. Batwalk only reads your Step Count, and it never leaves your devices."
@@ -95,6 +99,7 @@ targets:
         CFBundleVersion: "$(CURRENT_PROJECT_VERSION)"
         NSExtension:
           NSExtensionPointIdentifier: com.apple.widgetkit-extension
+        BatwalkAppGroupEnabled: "$(BATWALK_APP_GROUP_ENABLED)"
     # entitlements (re-enable with the App Group — docs/SIGNING.md):
     #   com.apple.security.application-groups: [group.com.aimanjack.batwalk]
 
@@ -126,6 +131,8 @@ targets:
         UILaunchScreen: {}
         UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
         ITSAppUsesNonExemptEncryption: false
+        BatwalkAppGroupEnabled: "$(BATWALK_APP_GROUP_ENABLED)"
+        BatwalkCloudBackupEnabled: "$(BATWALK_CLOUD_BACKUP_ENABLED)"
     # entitlements + UIBackgroundModes [remote-notification] come back with
     # iCloud / App Group (docs/SIGNING.md):
     #   com.apple.developer.icloud-container-identifiers: [iCloud.com.aimanjack.batwalk]

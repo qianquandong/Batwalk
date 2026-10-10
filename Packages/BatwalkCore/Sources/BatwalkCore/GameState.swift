@@ -115,23 +115,23 @@ public struct GameState: Codable, Equatable, Sendable {
     public init(from decoder: Decoder) throws {
         let c = try decoder.container(keyedBy: CodingKeys.self)
         let version = try c.decodeIfPresent(Int.self, forKey: .schemaVersion) ?? 1
-        guard version <= Self.currentSchemaVersion else {
+        guard version >= 1 && version <= Self.currentSchemaVersion else {
             throw DecodingError.dataCorruptedError(forKey: .schemaVersion, in: c, debugDescription: "This save needs a newer Batwalk version.")
         }
         schemaVersion = Self.currentSchemaVersion
         saveID = try c.decodeIfPresent(UUID.self, forKey: .saveID) ?? UUID()
         revision = try c.decodeIfPresent(UInt64.self, forKey: .revision) ?? 0
         needsStepBaseline = try c.decodeIfPresent(Bool.self, forKey: .needsStepBaseline) ?? false
-        hasStarted = try c.decodeIfPresent(Bool.self, forKey: .hasStarted) ?? false
+        hasStarted = try c.decode(Bool.self, forKey: .hasStarted)
         egg = try c.decodeIfPresent(ActiveEgg.self, forKey: .egg)
         bankedSteps = try c.decodeIfPresent(Int.self, forKey: .bankedSteps) ?? 0
-        ledger = try c.decodeIfPresent(StepLedger.self, forKey: .ledger) ?? StepLedger()
-        collection = try c.decodeIfPresent([String: OwnedBat].self, forKey: .collection) ?? [:]
+        ledger = try c.decode(StepLedger.self, forKey: .ledger)
+        collection = try c.decode([String: OwnedBat].self, forKey: .collection)
         companionID = try c.decodeIfPresent(String.self, forKey: .companionID)
         fruit = try c.decodeIfPresent(Int.self, forKey: .fruit) ?? 0
         fruitProgressSteps = try c.decodeIfPresent(Int.self, forKey: .fruitProgressSteps) ?? 0
         isUnlocked = try c.decodeIfPresent(Bool.self, forKey: .isUnlocked) ?? false
-        history = try c.decodeIfPresent([HatchRecord].self, forKey: .history) ?? []
+        history = try c.decode([HatchRecord].self, forKey: .history)
         petLog = try c.decodeIfPresent([String: PetDay].self, forKey: .petLog) ?? [:]
         lifetimeCreditedSteps = try c.decodeIfPresent(Int.self, forKey: .lifetimeCreditedSteps) ?? 0
         // v1 eggs are sealed once during migration, before any entitlement refresh.
