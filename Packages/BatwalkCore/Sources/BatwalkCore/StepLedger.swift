@@ -76,8 +76,10 @@ public struct StepLedger: Codable, Equatable, Sendable {
         let c = try decoder.container(keyedBy: CodingKeys.self)
         dayKey = try c.decodeIfPresent(String.self, forKey: .dayKey)
         lastDailyTotal = try c.decodeIfPresent(Int.self, forKey: .lastDailyTotal) ?? 0
+        let legacyDay = dayKey
+        let legacyTotal = lastDailyTotal
         dailyTotals = try c.decodeIfPresent([String: Int].self, forKey: .dailyTotals)
-            ?? dayKey.map { [$0: lastDailyTotal] } ?? [:]
+            ?? legacyDay.map { [$0: legacyTotal] } ?? [:]
         trackingStartDay = try c.decodeIfPresent(String.self, forKey: .trackingStartDay) ?? dayKey
         timeZoneIdentifier = try c.decodeIfPresent(String.self, forKey: .timeZoneIdentifier)
     }
