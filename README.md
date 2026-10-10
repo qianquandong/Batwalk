@@ -39,7 +39,15 @@ docs/                   PRD, roadmap, open questions, ADRs, test plan
 project.yml             XcodeGen spec (the .xcodeproj is generated, not committed)
 ```
 
-## No Mac? Ship to TestFlight from your phone
+## No Mac? Build and preview with Codemagic
+
+The manual workflows in [`codemagic.yaml`](codemagic.yaml) run Watch/iPhone checks
+and capture Watch simulator screenshots on a Codemagic Mac, independently of
+GitHub Actions. No Apple signing credentials are needed for these simulator builds.
+See **[Codemagic setup](docs/CODEMAGIC.md)** to connect this private repository and
+select the branch containing the configuration. The first cloud run is still pending.
+
+## Ship to TestFlight from your phone
 
 `.github/workflows/testflight.yml` archives, cloud-signs and uploads the app on
 GitHub's macOS runners. One-time setup (all doable in a phone browser):

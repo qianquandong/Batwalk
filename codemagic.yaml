@@ -1,0 +1,90 @@
+# Independent of GitHub Actions. Both workflows are manual to conserve minutes.
+# Use a personal Codemagic account and the M2 instance for the included free tier.
+workflows:
+  batwalk-verify:
+    name: Batwalk · Watch + iPhone checks
+    instance_type: mac_mini_m2
+    max_build_duration: 45
+    environment:
+      xcode: "26.3"
+      vars:
+        RUNNER_TEMP: /tmp/batwalk-ci-logs
+    scripts:
+      - name: Prepare Xcode and generate project
+        script: bash scripts/codemagic-prepare.sh
+      - name: Run game-rule tests
+        script: |
+          set -euo pipefail
+          swift test --package-path Packages/BatwalkCore 2>&1 | tee build/reports/core-tests.log
+      - name: Compile Watch app
+        script: |
+          bash scripts/ci-xcodebuild.sh -project Batwalk.xcodeproj -scheme BatwalkWatch \
+            -configuration Debug -destination 'generic/platform=watchOS Simulator' \
+            -derivedDataPath build CODE_SIGNING_ALLOWED=NO build
+      - name: Boot iPhone simulator
+        script: bash scripts/phone-sim.sh
+      - name: Build iPhone and run hosted app tests
+        script: |
+          bash scripts/ci-xcodebuild.sh -project Batwalk.xcodeproj -scheme BatwalkPhone \
+            -configuration Debug -destination "platform=iOS Simulator,id=$PHONE_SIM" \
+            -derivedDataPath build -resultBundlePath build/reports/AppTests.xcresult \
+            CODE_SIGNING_ALLOWED=NO test
+      - name: Switch to Watch simulator
+        script: |
+          set -euo pipefail
+          xcrun simctl shutdown "$PHONE_SIM"
+          bash scripts/watch-sim.sh
+      - name: Build Watch for the selected simulator
+        script: |
+          bash scripts/ci-xcodebuild.sh -project Batwalk.xcodeproj -scheme BatwalkWatch \
+            -configuration Debug -destination "id=$SIM" -derivedDataPath build \
+            CODE_SIGNING_ALLOWED=NO build
+      - name: Capture the three pilots and Friendship
+        script: |
+          set -euo pipefail
+          for scenario in pilot-mochi pilot-sticky pilot-walker friendship-4; do
+            BATWALK_SCREEN_SCENARIO="$scenario" bash scripts/capture-screens.sh watch build/screens/watch
+          done
+          xcrun simctl shutdown "$SIM"
+      - name: Compile optional capabilities without signing
+        script: |
+          set -euo pipefail
+          python3 scripts/configure-capabilities.py --app-group --cloud-backup
+          xcodegen generate --spec project.capabilities.json
+          bash scripts/ci-xcodebuild.sh -project Batwalk.xcodeproj -scheme BatwalkPhone \
+            -configuration Debug -destination 'generic/platform=iOS Simulator' \
+            -derivedDataPath build/capabilities CODE_SIGNING_ALLOWED=NO build
+    artifacts:
+      - build/reports/toolchain.txt
+      - build/reports/*.log
+      - build/reports/*.xcresult
+      - build/screens/watch/*.png
+      - /tmp/batwalk-ci-logs/*.log
+
+  batwalk-watch-screenshots:
+    name: Batwalk · Watch screenshots only
+    instance_type: mac_mini_m2
+    max_build_duration: 30
+    environment:
+      xcode: "26.3"
+      vars:
+        RUNNER_TEMP: /tmp/batwalk-ci-logs
+    scripts:
+      - name: Prepare Xcode and generate project
+        script: bash scripts/codemagic-prepare.sh
+      - name: Boot Watch simulator
+        script: bash scripts/watch-sim.sh
+      - name: Build Watch
+        script: |
+          bash scripts/ci-xcodebuild.sh -project Batwalk.xcodeproj -scheme BatwalkWatch \
+            -configuration Debug -destination "id=$SIM" -derivedDataPath build \
+            CODE_SIGNING_ALLOWED=NO build
+      - name: Capture Watch scenarios
+        script: |
+          set -euo pipefail
+          bash scripts/capture-screens.sh watch build/screens/watch
+          xcrun simctl shutdown "$SIM"
+    artifacts:
+      - build/reports/toolchain.txt
+      - build/screens/watch/*.png
+      - /tmp/batwalk-ci-logs/*.log
