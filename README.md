@@ -45,7 +45,9 @@ The manual workflows in [`codemagic.yaml`](codemagic.yaml) run Watch/iPhone chec
 and capture Watch simulator screenshots on a Codemagic Mac, independently of
 GitHub Actions. No Apple signing credentials are needed for these simulator builds.
 See **[Codemagic setup](docs/CODEMAGIC.md)** to connect this private repository and
-select the branch containing the configuration. The first cloud run is still pending.
+select the branch containing the configuration. A local Codex monitor can start
+the verification workflow when GitHub explicitly blocks CI for billing or minute
+limits; its operating requirements are documented in the same guide.
 
 ## Ship to TestFlight from your phone
 

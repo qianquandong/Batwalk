@@ -16,6 +16,8 @@ workflows:
         script: |
           set -euo pipefail
           swift test --package-path Packages/BatwalkCore 2>&1 | tee build/reports/core-tests.log
+      - name: Test CI fallback detection
+        script: python3 -m unittest discover -s scripts/tests -p 'test_github_ci_fallback.py'
       - name: Compile Watch app
         script: |
           bash scripts/ci-xcodebuild.sh -project Batwalk.xcodeproj -scheme BatwalkWatch \

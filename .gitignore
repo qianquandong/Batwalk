@@ -19,4 +19,8 @@ Packages/BatwalkCore/Package.resolved
 # macOS
 .DS_Store
 
+# Python helper bytecode
+__pycache__/
+*.pyc
+
 # Art source files can be large — keep exports in the repo, sources in Art/source via Git LFS if needed
