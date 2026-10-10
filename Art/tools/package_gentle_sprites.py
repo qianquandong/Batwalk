@@ -15,7 +15,8 @@ ROSTER = "mochi cocoa long-ear fruit cave sleepy dust pebble strawberry blossom 
 def write_asset(name, cell):
     alpha = cell.getchannel("A")
     assert alpha.getbbox(), f"Empty sprite: {name}"
-    assert alpha.getpixel((0, 0)) == 0, f"Opaque backdrop: {name}"
+    # Some exports contain one alpha unit of rounding noise in a clear margin.
+    assert alpha.getpixel((0, 0)) <= 2, f"Opaque backdrop: {name}"
     # These are fixed-canvas renditions, not per-pose bounding-box crops.
     # A 64 px logical canvas keeps all UI sizes on the same coarse pixel grid.
     logical = cell.resize((64, 64), Image.Resampling.NEAREST)
@@ -61,6 +62,15 @@ def main():
             count += 1
     else:
         assert not args.require_complete, "Missing egg/icon sheet"
+    app_icon_path = SOURCE / "app-icon-v2.png"
+    if app_icon_path.exists():
+        app_icon = Image.open(app_icon_path).convert("RGB")
+        app_icon = app_icon.resize((64, 64), Image.Resampling.NEAREST).resize((1024, 1024), Image.Resampling.NEAREST)
+        for platform in ("Watch", "Phone"):
+            destination = ROOT / f"Apps/{platform}/Assets.xcassets/AppIcon.appiconset/icon-1024.png"
+            app_icon.save(destination, optimize=True)
+    else:
+        assert not args.require_complete, "Missing application icon"
     print(f"Packaged {count} Gentle pixel assets")
 
 

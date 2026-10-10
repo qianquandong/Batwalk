@@ -21,7 +21,7 @@
 |---|---|
 | Working title | Batwalk |
 | Core platform | Apple Watch-first; iPhone companion is optional for core gameplay |
-| Visual style | Polished 2D pixel art |
+| Visual style | Gentle pixel: coarse readable 2D pixel characters, midnight teal, cream and sage (2026-10-10) |
 | Mood | Cute + cozy + slightly mysterious; never horror-first |
 | Launch roster | 20 bat species |
 | Hatching cadence | Typically 1–2 bats/day; no hard daily cap |
@@ -181,15 +181,15 @@ Example: Moonwing → Normal ✅ / Shiny ⬜. Twenty species therefore create up
 
 ## 3. Art Direction & Production Spec
 
-> **Approved visual direction.** The Batwalk concept board is the approved visual reference for MVP production. Character proportions, palette mood, pixel density, Watch presentation, day/night behavior, and animation tone should all derive from this board.
+> **Current visual direction — 2026-10-10.** The owner selected **C · Gentle pixel** in the redesign comparison. The active art and interface now use coarse readable pixel silhouettes, warm cream/earth colors, midnight teal surfaces, sage actions, and a sparse still glade. See [the current art specification](../Art/gentle-pixel/README.md). The earlier board below is retained as historical concept material.
 >
 > ![Batwalk concept board](../Art/concept-board.png)
 
 ### 3.1 Visual Language
 
-- **Style:** polished 2D pixel art, not retro-low-detail pixel art.
+- **Style:** Gentle pixel: clear 32–48 px character silhouettes on a fixed 64 px logical canvas; nearest-neighbor rendering, restrained detail, deliberate Normal/Shiny palettes.
 - **Shape language:** round bodies, readable ears, oversized expressive eyes, clear wing silhouettes.
-- **Mood:** cozy night, moonlight, caves, forests, fruit, crystals, soft stars.
+- **Mood:** quiet midnight teal, warm cream, sage, peach, earthy characters; a few still pixel plants/stars. Keep UI surfaces flat and typography native/readable.
 - **Avoid:** gore, realistic bats, horror imagery, overly childish preschool styling.
 - **Priority:** character readability on a small Watch display.
 
@@ -215,7 +215,7 @@ Each launch bat should include, at minimum:
 |---|---|
 | Common | Earthy, simple, warm, immediately lovable |
 | Uncommon | More decorative palettes and thematic props |
-| Rare | Stronger silhouette, magical motifs, more elaborate particles |
+| Rare | Clear magical motifs and distinct palettes; restrained reveal accents |
 | Legendary | Distinctive palette, premium animation, strong "reveal" moment |
 
 ### 3.4 Watch UI Art Rules

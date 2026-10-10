@@ -17,11 +17,18 @@ struct HomeView: View {
         NavigationStack {
             TimelineView(.everyMinute) { context in
                 let time = DemoMode.timeOfDay(at: context.date)
-                content(time: time)
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(store.state.isEggReady ? "Ready!" : "Batwalk")
+                        .font(BatwalkFont.rounded(.subheadline, weight: .semibold))
+                        .foregroundStyle(BatwalkColor.cloud)
+                        .padding(.horizontal, BatwalkSpacing.sm)
+                        .accessibilityAddTraits(.isHeader)
+                    content(time: time)
+                }
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .watchPageBackground(time, scenery: true)
             }
-            .navigationTitle(store.state.isEggReady ? "Ready!" : "Batwalk")
+            .navigationTitle("")
             .navigationDestination(for: String.self) { BatDetailView(speciesID: $0) }
         }
         .fullScreenCover(item: $hatching, onDismiss: {

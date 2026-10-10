@@ -120,3 +120,6 @@ if all(os.path.exists(os.path.join(ROOT, 'Art', 'generated', f'{species}-sheet-v
        for species in ('cocoa', 'long-ear')):
     # The board builder replaces the catalog; always restore the companion sheets.
     runpy.run_path(os.path.join(ROOT, 'Art', 'tools', 'package_free_sprites.py'), run_name='__main__')
+if os.path.exists(os.path.join(ROOT, 'Art', 'gentle-pixel', 'mochi-sheet-v2.png')):
+    # Reapply the current direction after regenerating the legacy catalog/icon.
+    runpy.run_path(os.path.join(ROOT, 'Art', 'tools', 'package_gentle_sprites.py'), run_name='__main__')

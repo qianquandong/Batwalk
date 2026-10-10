@@ -1,34 +1,42 @@
 # Art
 
-Approved direction: **polished 2D pixel art**, cute + cozy + slightly mysterious,
-never horror (PRD §3). Readability at real Watch size beats detail.
+Current direction: **C · Gentle pixel**, selected by the owner on 2026-10-10.
+Coarse readable pixel characters, midnight teal, cream, sage and a sparse glade.
+Readability at real Watch size beats detail. See [the active specification](gentle-pixel/README.md).
 
-The approved concept board is [`concept-board.png`](concept-board.png).
+All 20 species now have dedicated sleeping/awake/happy Normal and Shiny assets,
+alongside matching eggs, fruit and app icons. Sources and generation prompts are
+in [`gentle-pixel/`](gentle-pixel/README.md). Run
+`python3 Art/tools/package_gentle_sprites.py --require-complete` to package them.
+The `gentle_` catalog resolves before earlier art; other moods use related new
+poses. Dedicated animation sheets remain artist production work.
 
-### Interim sprites (cut from the board)
+### Earlier art (retained as a fallback)
 
-Until the artist's sprite sheets arrive, `python3 Art/tools/build_sprites.py`
-cuts sprites out of the board and regenerates `Apps/Shared/Sprites.xcassets`:
+[`concept-board.png`](concept-board.png) and the previous UI boards are historical
+references; they do not define the current visual style.
+
+`python3 Art/tools/build_sprites.py` regenerates the earlier board catalog, then
+reapplies the current Gentle pixel pack:
 
 - **Mochi, Strawberry, Moonwing, Galaxy**: awake · sleeping · playing (fly) · happy (pet) · eating; Mochi/Strawberry also drowsy
 - **Eggs**: calm · shaking · cracked, recoloured per egg type (starter cream, tiny lavender, forest pink, moon indigo, crystal cyan)
 - **Large portraits** (~200 px) of the same four bats are used for the awake and happy poses — the sharpest art on the board
 - **Home background** (the cave) and the **app icon** (Mochi portrait)
 
-**Cocoa and Long Ear** have dedicated sleeping, awake, and happy Normal/Shiny
-sprites that match the mascot's pixel style; source sheets and generation prompts
-are in [`generated/`](generated/README.md). Related-pose fallbacks cover their other
-moods. Other species without art are drawn as a recoloured Mochi, and Shiny is a hue
-shift — both handled by `SpriteResolver` in `Apps/Shared/Sprites.swift`.
-Dropping a real `bat_<id>_<mood>.png` into the catalog overrides the fallback.
+[`generated/`](generated/README.md) retains the previous Cocoa and Long Ear
+sources. Recoloured mascot fallbacks are retained for missing future assets,
+but the shipped 20-species roster resolves dedicated Gentle pixel art first.
 
 ## Naming contract (the code looks these up by name)
 
-Image sets go in `Apps/Watch/Assets.xcassets` and `Apps/Phone/Assets.xcassets`.
+Shared image sets go in `Apps/Shared/Sprites.xcassets`.
 Until an image exists, the app draws a vector placeholder, so art can land one file at a time.
 
 | What | Asset name | Example |
 |---|---|---|
+| Current bat pose | `gentle_bat_<speciesID>_<mood>[_shiny]` | `gentle_bat_mochi_awake` |
+| Current egg | `gentle_egg_<eggType>_<pose>` | `gentle_egg_forest_cracked` |
 | Bat pose | `bat_<speciesID>_<mood>` | `bat_mochi_sleeping` |
 | Shiny bat pose | `bat_<speciesID>_<mood>_shiny` | `bat_moonwing_awake_shiny` |
 | Egg | `egg_<eggType>_<state>` | `egg_forest_cracked` |

@@ -208,8 +208,8 @@ final class AppReliabilityTests: XCTestCase {
     }
 
     @MainActor
-    func testFreeCompanionsHaveDedicatedNormalAndShinyPoses() async throws {
-        for species in ["cocoa", "long-ear"] {
+    func testRosterHasDedicatedGentleNormalAndShinyPoses() async throws {
+        for species in Roster.all.map(\.id) {
             for mood in [BatMood.sleeping, .awake, .happy] {
                 for shiny in [false, true] {
                     let art = try XCTUnwrap(SpriteResolver.bat(species, mood: mood, shiny: shiny))

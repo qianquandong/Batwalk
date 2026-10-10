@@ -81,7 +81,8 @@ enum SpriteResolver {
     }
 
     static func egg(_ type: EggType, state: EggVisualState) -> String? {
-        ["gentle_\(SpriteName.egg(type, state: state))",
+        let pose: EggVisualState = state == .shaking ? .calm : state == .rattling ? .cracked : state
+        return ["gentle_\(SpriteName.egg(type, state: pose))",
          "gentle_\(SpriteName.egg(type, state: .calm))",
          SpriteName.egg(type, state: state), "egg_forest_\(state.rawValue)"].first(where: assetExists)
     }

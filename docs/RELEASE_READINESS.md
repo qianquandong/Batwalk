@@ -1,4 +1,4 @@
-# Batwalk release readiness — 2026-10-09
+# Batwalk release readiness — updated 2026-10-10
 
 This implementation follows the review order: progress reliability, wrist
 experience, rewards/purchases, then release verification. Automated results must
@@ -13,7 +13,7 @@ be read from the PR's latest green CI run; an unsigned build is not a device sig
 | Outcome stability | Species and Shiny result are sealed at egg creation. Legacy eggs seal once during decoding, before StoreKit refresh. Purchases, refunds, and tuning changes cannot reroll an active egg. |
 | Data separation | Full Health-derived saves and recovery copies stay local and are excluded from device backup. Private CloudKit contains only a collection allowlist. Collection restoration drops all step progress and establishes today's baseline before granting new steps. StoreKit alone owns paid access. |
 | Wrist experience | Progress offers update feedback and Health help. Zero data no longer claims permission denial. Free players start the next Tiny Egg with one reveal action; paid players see actual egg pools. Notification permission follows the first hatch. Widgets have freshness/expiry, privacy-sensitive rendering, and deep links; reloads require visible changes or stale-to-fresh data. |
-| Rewards and artwork | Friendship Lv.2–5 earns visible permanent charms/crown, with the next reward shown below the primary Feed action. Cocoa and Long Ear have dedicated Normal/Shiny sleeping, awake, and happy pixel sprites instead of tinted Mochi fallbacks; sheets and generation prompts are retained in `Art/generated`. |
+| Rewards and artwork | Friendship Lv.2–5 earns visible permanent charms/crown, with the next reward shown below Feed. All 20 species have dedicated Gentle pixel sleeping/awake/happy Normal and Shiny art (120 sprites), plus 15 egg states and a strawberry. Matching app icons, midnight-teal/cream/sage interface tokens, flat controls, sparse still scenery and compact Home branding complete the direction. Sources/prompts live in `Art/gentle-pixel`. |
 | Purchases | Localized price from StoreKit; unavailable product retry; pending/cancel/success/restore/no-entitlement feedback; foreground entitlement refresh and revoked entitlement handling. Watch restore displays its result. Fake backend tests cover state transitions, not Apple's purchase UI. |
 | Release checks | Core plus hosted app regression tests, both simulator builds, a capability-enabled unsigned build, screenshot artifacts, privacy manifest in all three bundles, in-app privacy text, and pre-archive test gates. |
 
@@ -26,7 +26,7 @@ be read from the PR's latest green CI run; an unsigned build is not a device sig
 - [ ] On actual paired devices, revoke/regrant Health access, cross midnight/DST, travel across time zones, add late iPhone steps, stay offline, and resume after 14+ days. Record expected daily totals and exactly-once game rewards. HealthKit cannot reveal read-denial directly.
 - [ ] Measure battery and wakeups on a representative older Watch and current model over comparable 8–24 hour periods. Record foreground idle, background, widget use, Always On, and Low Power behavior; do not infer energy use from simulator timing. Verify haptic intensity on wrist.
 - [ ] Complete local StoreKit configuration and sandbox/TestFlight purchase, restore, pending approval, unverified/error, refund/revocation, reinstall, offline verified access, and phone-to-Watch propagation. Fake tests do not substitute for these.
-- [ ] Review the remaining species art and dedicated Shiny variants. Many paid species still use recolored fallback art; do not describe all 20 species as finished original artwork. Commission/export dedicated poses using `Art/README.md`.
+- [ ] Approve the generated Gentle pixel art at real Watch size and complete dedicated animation sheets/layered artist sources. All 20 species have three static Normal/Shiny poses; drowsy/eating/playing still use related poses and native motion. Do not describe this as a complete artist animation package.
 - [ ] Publish an accessible privacy-policy URL and support contact; align App Store privacy labels with actual enabled capabilities and any future analytics. The bundled privacy text is available, but a public policy/support destination has not been supplied.
 - [ ] Inspect a signed archive's three privacy manifests/entitlements, then upload to TestFlight and verify install/upgrade from an existing build. A green unsigned CI run alone does not prove App Store readiness.
 
