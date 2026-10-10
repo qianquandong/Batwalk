@@ -156,6 +156,8 @@ Duplicates are allowed, but the Collection does not accumulate piles of identica
 | Lv.4 | Special signature animation |
 | Lv.5 | Friendship badge + special expression/accessory |
 
+The species-specific actions behind Lv.2–5 are listed in [`BAT_ACTIONS.md`](BAT_ACTIONS.md).
+
 ### 2.8 Feeding
 
 Walking can occasionally yield simple fruit rewards such as berries or strawberries. Feeding produces a short reaction and contributes modest Friendship progress.
@@ -446,7 +448,7 @@ as a one-line fun fact. All are Full Unlock content; the free tier is unchanged.
 | 26 | Nectar Bat | Uncommon | Super-long tongue, blep, always sipping flowers | Forest | Tube-lipped nectar bat |
 | 27 | Tube-Nose Bat | Uncommon | Snorkel nostrils, speckled wings, wise old face | Moon | Tube-nosed fruit bat |
 | 28 | Polka Bat | Rare | Black with three white spots, gigantic pink ears | Moon | Spotted bat |
-| 29 | Wrinkle Bat | Rare | Squishy wrinkly face, pulls a fluffy mask over it to sleep | Moon | Wrinkle-faced bat |
+| 29 | Wrinkle Bat | Rare | Squishy wrinkly face, hides behind a fluffy chin mask when shy | Moon | Wrinkle-faced bat |
 | 30 | Walker Bat | Rare | Folds its wings and power-walks everywhere — the game's spirit animal | Crystal | NZ lesser short-tailed bat |
 | 31 | Fox Bat | Rare | Huge cloak-like wings, fox face, golden crown of fur | Crystal | Giant golden-crowned flying fox |
 | 32 | Ghost Bat | Legendary | Pale glow, see-through wings, gentle never spooky | Crystal | Australian ghost bat |

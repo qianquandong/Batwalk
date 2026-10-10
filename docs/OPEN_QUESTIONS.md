@@ -15,7 +15,6 @@ and its test.
 | **Q6** | Rarity odds per egg. | The PRD's global weights (65 / 25 / 8 / 1.5) are renormalised over the rarities present in each egg's pool. So Tiny is always Common; Forest ≈ 72% Common / 28% Uncommon; Moon ≈ 72% Uncommon / 23% Rare / 4% Legendary; Crystal ≈ 72% Uncommon / 23% Rare / 4% Legendary. Within a rarity, species are equally likely. | `HatchEngine` |
 | **Q7** | Is Eclipse Bat ("Special / Moon") obtainable from a special egg? | Not yet — it's in the Moon pool with Galaxy. A special event egg is a post-MVP idea. | `EggType.pool` |
 | **Q8** | "Bat Awake" notification — when, and opt-in? | Not implemented. Only "Ready to hatch" is posted (from hourly background step sync). Proposal: one optional dusk notification. | `HatchNotifier` |
-| **Q9** | What do Friendship Lv.2–5 unlock in *code*? | Levels are computed and shown; the unlockable animations need art first. The sprite naming contract has room for them. | `Art/README.md` |
 | **Q10** | Can a free player see Shiny bats? | No — Shiny requires the full unlock (§2.10). A free player's hatches are never Shiny. | `HatchEngine.roll` |
 | **Q11** | Wake interaction during the day. | "Wake" plays the awake animation for ~2 s, then the bat goes back to its time-of-day mood. No penalty either way. | `CareView` |
 | **Q12** | **Do the 12 Oddball Bats (#21–32, PRD §6.3) ship at launch, or as the first content update?** The PRD locks the launch roster at 20, and each bat needs a full art set (§3.2). | All 32 are live in code. Until real art lands they render as recoloured Mochi, like the other 16 bats without art. Shipping later = remove them from `EggType.pool` (keep the IDs reserved). | `Roster.all`, `EggType.pool` |
@@ -25,4 +24,6 @@ When a question is answered, update the code + tests, then move the row into the
 
 ## Decided
 
-_None yet._
+| # | Question | Decision | Where | Date |
+|---|---|---|---|---|
+| **Q9** | What do Friendship Lv.2–5 unlock in *code*? | Each bat has species-specific actions taken from real bat behaviour: Lv.2 idle quirk, Lv.3 reaction, Lv.4 signature. Legendaries add their own hatch reveal (Lv.1) and a rare Lv.5 secret. Lv.1 bats use the 5 universal actions. Playback wiring waits for art (M2). See `docs/BAT_ACTIONS.md`. | `ActionCatalog` | 2026-10-10 |
