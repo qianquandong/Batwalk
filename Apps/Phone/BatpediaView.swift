@@ -88,7 +88,7 @@ struct BatDetailPage: View {
                             if let cousin = species.realLifeCousin {
                                 Divider()
                                 BatInfoRow(title: "Real-life Cousin") {
-                                    Image(systemName: "globe.americas.fill").foregroundStyle(BatwalkColor.purple)
+                                    Image(systemName: "globe.americas.fill").foregroundStyle(BatwalkColor.accent)
                                 } detail: {
                                     Text(cousin)
                                         .font(BatwalkFont.rounded(.footnote, weight: .medium))

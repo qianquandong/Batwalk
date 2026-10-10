@@ -21,18 +21,20 @@ if [ $status -ne 0 ]; then
   echo "::warning title=xcodebuild log tail::$(tail -n 70 "$log" | sed -e 's/%/%25/g' -e 's/\r//g' | awk '{printf "%s%%0A", $0}')"
   # Export failures: the useful detail is in Apple's distribution logs.
   logdir=$(grep -oE "/[^ \"']+\.xcdistributionlogs" "$log" | head -n 1)
-  find "${logdir:-${TMPDIR:-/tmp}}" -name "*.log" 2>/dev/null | head -n 5 | while IFS= read -r f; do
-    echo "::warning title=$(basename "$f")::$(grep -iE "error|fail|denied|forbidden|401|403|409|not available|unauthor" "$f" | tail -n 25 | sed -e 's/%/%25/g' | awk '{printf "%s%%0A", $0}')"
-  done
-  find "${TMPDIR:-/tmp}" -name "*.xcdistributionlogs" -maxdepth 3 2>/dev/null | while IFS= read -r dir; do
-    grep -rhoE "(NSLocalizedDescription|NSLocalizedFailureReason|NSLocalizedRecoverySuggestion|NSUnderlyingError|message|detail|title)[\" =:]+[^;}]{8,300}" "$dir" 2>/dev/null \
+  # Only read the distribution directory named by this xcodebuild invocation.
+  # A simulator compile failure has no such directory; don't scan runner logs.
+  if [ -n "$logdir" ] && [ -d "$logdir" ]; then
+    find "$logdir" -name "*.log" 2>/dev/null | head -n 5 | while IFS= read -r f; do
+      echo "::warning title=$(basename "$f")::$(grep -iE "error|fail|denied|forbidden|401|403|409|not available|unauthor" "$f" | tail -n 25 | sed -e 's/%/%25/g' | awk '{printf "%s%%0A", $0}')"
+    done
+    grep -rhoE "(NSLocalizedDescription|NSLocalizedFailureReason|NSLocalizedRecoverySuggestion|NSUnderlyingError|message|detail|title)[\" =:]+[^;}]{8,300}" "$logdir" 2>/dev/null \
       | awk '!seen[$0]++' | head -n 10 \
       | while IFS= read -r line; do echo "::warning::${line}"; done
-  done
+  fi
   if [ -z "$(grep -E 'error' "$log" | head -n 1)" ]; then
     echo "::error::$(tail -n 3 "$log" | tr '\n' ' ')"
   fi
 else
-  grep -E "\*\* (ARCHIVE|EXPORT|BUILD) SUCCEEDED \*\*|Upload succeeded|Uploaded" "$log" || true
+  grep -E "\*\* (ARCHIVE|EXPORT|BUILD|TEST) SUCCEEDED \*\*|Upload succeeded|Uploaded|Executed [0-9]+ tests?, with" "$log" || true
 fi
 exit $status
