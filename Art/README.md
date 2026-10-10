@@ -15,9 +15,10 @@ cuts sprites out of the board and regenerates `Apps/Shared/Sprites.xcassets`:
 - **Large portraits** (~200 px) of the same four bats are used for the awake and happy poses — the sharpest art on the board
 - **Home background** (the cave) and the **app icon** (Mochi portrait)
 
-**Cocoa and Long Ear** now have distinct code-native pixel drawings and intentional
-Shiny palettes in `Sprites.swift`. These are interim art; dedicated catalog assets
-override them. Other species without art are drawn as a recoloured Mochi, and Shiny is a hue
+**Cocoa and Long Ear** have dedicated sleeping, awake, and happy Normal/Shiny
+sprites that match the mascot's pixel style; source sheets and generation prompts
+are in [`generated/`](generated/README.md). Related-pose fallbacks cover their other
+moods. Other species without art are drawn as a recoloured Mochi, and Shiny is a hue
 shift — both handled by `SpriteResolver` in `Apps/Shared/Sprites.swift`.
 Dropping a real `bat_<id>_<mood>.png` into the catalog overrides the fallback.
 

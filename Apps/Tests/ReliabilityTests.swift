@@ -206,6 +206,19 @@ final class AppReliabilityTests: XCTestCase {
         XCTAssertEqual(stored.revision, 1)
         XCTAssertEqual(try url.deletingLastPathComponent().resourceValues(forKeys: [.isExcludedFromBackupKey]).isExcludedFromBackup, true)
     }
+
+    @MainActor
+    func testFreeCompanionsHaveDedicatedNormalAndShinyPoses() async throws {
+        for species in ["cocoa", "long-ear"] {
+            for mood in [BatMood.sleeping, .awake, .happy] {
+                for shiny in [false, true] {
+                    let art = try XCTUnwrap(SpriteResolver.bat(species, mood: mood, shiny: shiny))
+                    XCTAssertEqual(art.name, SpriteName.bat(species, mood: mood, shiny: shiny))
+                    XCTAssertEqual(art.hueDegrees, 0)
+                }
+            }
+        }
+    }
 }
 
 @MainActor

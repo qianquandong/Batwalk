@@ -49,14 +49,13 @@ struct FriendshipPage: View {
                             FriendshipProgressView(exp: companion.friendshipEXP)
                                 .padding(.horizontal, BatwalkSpacing.xs)
                                 .padding(.top, 2)
+                            FeedButton(fruit: store.state.fruit) { feed(companion) }
                             if let reward = Friendship.keepsake(forEXP: companion.friendshipEXP) {
                                 Text("Unlocked: \(reward)").font(BatwalkFont.micro).foregroundStyle(BatwalkColor.pinkAccent)
                             }
                             if let next = Friendship.nextKeepsake(forEXP: companion.friendshipEXP) {
                                 Text("Next: \(next)").font(BatwalkFont.micro).foregroundStyle(BatwalkColor.textSecondaryDark)
                             }
-
-                            FeedButton(fruit: store.state.fruit) { feed(companion) }
 
                             if store.state.fruit == 0 {
                                 Text("Walk to find fruit")
