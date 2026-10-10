@@ -11,7 +11,9 @@ struct RootView: View {
 
     var body: some View {
         Group {
-        if store.recoveryRequired {
+        if DemoMode.scenario == "pilot-lab" {
+            NavigationStack { PilotAnimationLab() }
+        } else if store.recoveryRequired {
             ScrollView {
                 VStack(spacing: 12) {
                     Image(systemName: "externaldrive.badge.exclamationmark").font(.title)
@@ -25,13 +27,13 @@ struct RootView: View {
             }
         } else if store.state.hasStarted {
             TabView(selection: $page) {
-                HomeView().tag(0)
-                ProgressPage(page: $page, steps: steps).tag(1)
+                HomeView().environment(\.batPageVisible, page == 0).tag(0)
+                ProgressPage(page: $page, steps: steps).environment(\.batPageVisible, page == 1).tag(1)
                 if store.state.companion != nil {
-                    FriendshipPage().tag(2)
-                    CollectionPage().tag(3)
+                    FriendshipPage().environment(\.batPageVisible, page == 2).tag(2)
+                    CollectionPage().environment(\.batPageVisible, page == 3).tag(3)
                 }
-                SettingsView(steps: steps).tag(4)
+                SettingsView(steps: steps).environment(\.batPageVisible, page == 4).tag(4)
             }
             .tabViewStyle(.verticalPage)
         } else {

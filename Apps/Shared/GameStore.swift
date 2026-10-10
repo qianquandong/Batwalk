@@ -25,6 +25,8 @@ final class GameStore {
     @ObservationIgnored private let archive: SaveArchive
     @ObservationIgnored private let commit: (ModelContext) throws -> Void
     @ObservationIgnored private let onCommit: ((Data) -> Void)?
+    @ObservationIgnored private var visitSaveID: UUID?
+    @ObservationIgnored private var visits = BatVisitMemory()
 
     init(container: ModelContainer, role: Role, archive: SaveArchive? = nil,
          commit: @escaping (ModelContext) throws -> Void = { try $0.save() },
@@ -138,6 +140,20 @@ final class GameStore {
             refreshComplication()
         }
         return result
+    }
+
+    /// Call only from the visible Home companion. This cosmetic ledger never
+    /// changes game rewards, revisions, sync snapshots or collection backups.
+    func companionVisitEvents(day: String) -> [BatAnimationEvent] {
+        guard role == .watch, let bat = state.companion else { return [] }
+        if visitSaveID != state.saveID {
+            visits = isDemo ? BatVisitMemory() : archive.loadVisits(saveID: state.saveID) ?? BatVisitMemory()
+            visitSaveID = state.saveID
+        }
+        let previous = visits
+        let events = visits.visit(speciesID: bat.speciesID, day: day, creditedSteps: state.lifetimeCreditedSteps)
+        if !isDemo, previous != visits { try? archive.saveVisits(visits, saveID: state.saveID) }
+        return events
     }
 
     private func persistRecovered() throws {

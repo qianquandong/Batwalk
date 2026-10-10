@@ -123,3 +123,5 @@ if all(os.path.exists(os.path.join(ROOT, 'Art', 'generated', f'{species}-sheet-v
 if os.path.exists(os.path.join(ROOT, 'Art', 'gentle-pixel', 'mochi-sheet-v2.png')):
     # Reapply the current direction after regenerating the legacy catalog/icon.
     runpy.run_path(os.path.join(ROOT, 'Art', 'tools', 'package_gentle_sprites.py'), run_name='__main__')
+if os.path.exists(os.path.join(ROOT, 'Art', 'gentle-pixel', 'pilots-v1', 'mochi-sheet-v1.png')):
+    runpy.run_path(os.path.join(ROOT, 'Art', 'tools', 'package_pilot_animations.py'), run_name='__main__')

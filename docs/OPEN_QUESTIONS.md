@@ -15,8 +15,8 @@ and its test.
 | **Q7** | Is Eclipse Bat ("Special / Moon") obtainable from a special egg? | Not yet — it's in the Moon pool with Galaxy. A special event egg is a post-MVP idea. | `EggType.pool` |
 | **Q8** | "Bat Awake" notification — when, and opt-in? | Not implemented. Only "Ready to hatch" is posted (from hourly background step sync). Proposal: one optional dusk notification. | `HatchNotifier` |
 | **Q10** | Can a free player see Shiny bats? | No — Shiny requires the full unlock (§2.10). A free player's hatches are never Shiny. | `HatchEngine.roll` |
-| **Q11** | Wake interaction during the day. | "Wake" plays the awake animation for ~2 s, then the bat goes back to its time-of-day mood. No penalty either way. | `CareView` |
-| **Q12** | **Do the 12 Oddball Bats (#21–32, PRD §6.3) ship at launch, or as the first content update?** The PRD locks the launch roster at 20, and each bat needs a full art set (§3.2). | All 32 are live in code. Until real art lands they render as recoloured Mochi, like the other 16 bats without art. Shipping later = remove them from `EggType.pool` (keep the IDs reserved). | `Roster.all`, `EggType.pool` |
+| **Q11** | Wake interaction during the day. | The three pilots play Pet (~1.65 s) or Eat (~2 s), then return to the time-of-day mood; other bats retain the ~2.5 s reaction. No penalty either way. | `HomeView`, `FriendshipPage` |
+| **Q12** | **Do the 12 Oddball Bats (#21–32, PRD §6.3) ship at launch, or as the first content update?** The PRD locks the launch roster at 20, and each bat needs a full art set (§3.2). | All 32 are live in code and display independent approved portraits. Mochi, Sticky and Walker have 18 clips / 74 frames. Other animation sets and dedicated v3 Shiny palettes are pending. Shipping later = remove the relevant IDs from `EggType.pool` while keeping them reserved. | `Roster.all`, `EggType.pool`, `docs/PILOT_ANIMATIONS.md` |
 
 When a question is answered, update the code + tests, then move the row into the
 "Decided" section below with the date.

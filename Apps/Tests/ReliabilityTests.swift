@@ -208,16 +208,49 @@ final class AppReliabilityTests: XCTestCase {
     }
 
     @MainActor
-    func testRosterHasDedicatedGentleNormalAndShinyPoses() async throws {
+    func testAll32SpeciesResolveTheirOwnApprovedIdentity() async throws {
         for species in Roster.all.map(\.id) {
             for mood in [BatMood.sleeping, .awake, .happy] {
                 for shiny in [false, true] {
                     let art = try XCTUnwrap(SpriteResolver.bat(species, mood: mood, shiny: shiny))
-                    XCTAssertEqual(art.name, SpriteName.gentleBat(species, mood: mood, shiny: shiny))
-                    XCTAssertEqual(art.hueDegrees, 0)
+                    let expected = PilotAnimationCatalog.still(for: species, mood: mood) ?? "portrait_bat_\(species)"
+                    XCTAssertEqual(art.name, expected)
+                    XCTAssertEqual(art.hueDegrees, shiny ? 150 : 0)
                 }
             }
         }
+    }
+
+    @MainActor
+    func testEveryPlayableFrameIsInTheApplicationBundle() async throws {
+        var names: Set<String> = []
+        for species in PilotAnimationCatalog.speciesIDs {
+            let clips = UniversalAction.allCases.compactMap { PilotAnimationCatalog.universal(for: species, action: $0) }
+                + [try XCTUnwrap(PilotAnimationCatalog.signature(for: species, friendshipLevel: 4))]
+            for clip in clips {
+                for frame in clip.frames {
+                    XCTAssertTrue(assetExists(frame.assetName), frame.assetName)
+                    names.insert(frame.assetName)
+                }
+            }
+        }
+        XCTAssertEqual(names.count, 74)
+        for species in Roster.all { XCTAssertTrue(assetExists("portrait_bat_\(species.id)"), species.id) }
+    }
+
+    func testVisitWatermarksStayInProtectedLocalArchiveAndRespectSaveIdentity() throws {
+        let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        addTeardownBlock { try? FileManager.default.removeItem(at: directory) }
+        let archive = SaveArchive(name: "visits", directory: directory)
+        let saveID = UUID()
+        var memory = BatVisitMemory()
+        _ = memory.visit(speciesID: "walker", day: "2026-10-10", creditedSteps: 8000)
+        try archive.saveVisits(memory, saveID: saveID)
+        var restored = try XCTUnwrap(archive.loadVisits(saveID: saveID))
+        XCTAssertEqual(restored.visit(speciesID: "walker", day: "2026-10-10", creditedSteps: 8000), [])
+        XCTAssertNil(archive.loadVisits(saveID: UUID()))
+        XCTAssertNil(archive.load()) // cosmetic data must not be treated as a game save
+        XCTAssertEqual(try directory.resourceValues(forKeys: [.isExcludedFromBackupKey]).isExcludedFromBackup, true)
     }
 }
 

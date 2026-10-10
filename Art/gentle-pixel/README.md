@@ -16,10 +16,10 @@ stable IDs and action references are in [`portraits-v3/`](portraits-v3/).
 This library includes the 12 Oddball IDs from PR #2. Chinese labels are working
 art labels and do not rename the stored species IDs.
 
-These are character-development originals. They have not been converted to a
-shared production pixel grid or animated, and they do not replace the runtime
-pose catalog below. The 64 px review images in the downloadable pack are size
-checks, not hand-cleaned animation assets.
+All 32 portraits are now packaged for runtime display. Mochi, Sticky and Walker
+have [18 animated clips / 74 frames](pilots-v1/README.md) with a 64 px logical
+canvas. The other 29 use their own static portrait. Generated art still needs
+on-device approval and pixel cleanup; new Shiny palettes currently use hue rotation.
 
 ## Current runtime presentation and pose assets
 
@@ -29,11 +29,10 @@ checks, not hand-cleaned animation assets.
   Friendship accents. The iPhone uses warm cream and sage surfaces.
 - Flat cards/buttons, sparse static pixel plants/stars, compact Home branding.
   Keep native Dynamic Type, accessible labels and Reduce Motion behavior.
-- All 20 roster IDs have sleeping, awake and happy sprites in both Normal and
-  Shiny palettes: **120 dedicated images**, plus 15 egg states and a strawberry.
-- Long Ear has a taller ear silhouette; Sleepy has a cap; thematic bats keep
-  their sprout, flower, crescent, crystal, cape or star marks. Shiny assets resolve
-  directly without tinting another species.
+- Three pilot identities have drawn idle/sleep/fly/pet/eat/signature frames. The
+  other 29 keep their approved static identity across moods until animation art lands.
+- The earlier 20-species pose pack (120 Normal/Shiny images) is retained as a
+  historical fallback, alongside the 15 egg states and strawberry still in use.
 
 `*-sheet-v2.png` sources are 3 columns (sleeping / awake / happy) × 2 rows
 (Normal / Shiny). `egg-icons-v2.png` is a row-major 4×4 grid: three states

@@ -7,6 +7,11 @@ every bat's backstory is secretly true. The data lives in `Packages/BatwalkCore/
 
 **Totals:** 32 bats · 5 universal actions · 102 unique actions (29 bats × 3 + 3 Legendaries × 5).
 
+**Playback status (2026-10-10):** Mochi, Sticky and Walker now have their five universal
+clips and one Lv.4 signature each (18 clips / 74 frames). The remaining 99 unique
+actions are design data, not playable animations. Lv.2/3 keepsakes still unlock;
+their unique motion art is pending. See [pilot implementation and review](PILOT_ANIMATIONS.md).
+
 ## What we borrowed from Tamagotchi (and friends)
 
 - **Each character moves in its own way.** On the Tamagotchi 4U, personality forms each have their own special idle

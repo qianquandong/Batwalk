@@ -61,6 +61,12 @@ enum SpriteResolver {
     ]
 
     static func bat(_ speciesID: String, mood: BatMood, shiny: Bool) -> Resolved? {
+        if let still = PilotAnimationCatalog.still(for: speciesID, mood: mood), assetExists(still) {
+            return Resolved(name: still, hueDegrees: shiny ? 150 : 0)
+        }
+        // Approved v3 identities take precedence over earlier pose explorations.
+        let portrait = "portrait_bat_\(speciesID)"
+        if assetExists(portrait) { return Resolved(name: portrait, hueDegrees: shiny ? 150 : 0) }
         let moods = moodFallbacks[mood] ?? [mood]
         for m in moods where assetExists(SpriteName.gentleBat(speciesID, mood: m, shiny: shiny)) {
             return Resolved(name: SpriteName.gentleBat(speciesID, mood: m, shiny: shiny), hueDegrees: 0)
@@ -139,8 +145,7 @@ struct BatSprite: View {
     }
 }
 
-/// The character as hero: idle float (2.4 s), ear twitch (6–10 s), happy bounce
-/// on `bounceTrigger`. All motion respects Reduce Motion and stops off screen.
+/// Pilots use drawn frames. Remaining portraits keep the existing light motion.
 struct BatHeroView: View {
     let speciesID: String
     var shiny = false
@@ -149,13 +154,23 @@ struct BatHeroView: View {
     var bounceTrigger = 0
     var glow: Color? = nil
     var friendshipEXP = 0
+    var animationRequest: BatAnimationRequest? = nil
 
     var body: some View {
-        BatSprite(speciesID: speciesID, shiny: shiny, mood: mood, size: size)
+        Group {
+            if PilotAnimationCatalog.speciesIDs.contains(speciesID) {
+                BatAnimationPlayer(speciesID: speciesID, mood: mood, size: size,
+                    friendshipLevel: Friendship.level(forEXP: friendshipEXP), request: animationRequest)
+                    .hueRotation(.degrees(shiny ? 150 : 0))
+                    .id(speciesID)
+            } else {
+                BatSprite(speciesID: speciesID, shiny: shiny, mood: mood, size: size)
+                    .earTwitch(mood != .sleeping)
+                    .happyBounce(trigger: bounceTrigger)
+                    .idleFloat()
+            }
+        }
             .shadow(color: (glow ?? .clear).opacity(0.5), radius: size * 0.12)
-            .earTwitch(mood != .sleeping)
-            .happyBounce(trigger: bounceTrigger)
-            .idleFloat()
             .overlay(alignment: .bottomTrailing) {
                 let level = Friendship.level(forEXP: friendshipEXP)
                 if level >= 2 {

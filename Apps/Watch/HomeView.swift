@@ -5,6 +5,10 @@ import BatwalkCore
 /// card carries the name and a single progress pill. Tap the bat to pet it.
 struct HomeView: View {
     @Environment(GameStore.self) private var store
+    @Environment(\.scenePhase) private var scenePhase
+    @Environment(\.batPageVisible) private var pageVisible
+    @Environment(\.isLuminanceReduced) private var luminanceReduced
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     @State private var hatching: HatchPresentation?
     @State private var showEggPicker = false
@@ -12,6 +16,8 @@ struct HomeView: View {
     @State private var reaction: BatMood?
     @State private var reactionTask: Task<Void, Never>?
     @State private var demoRevealShown = false
+    @State private var animationRequest: BatAnimationRequest?
+    @State private var heroVisible = false
 
     var body: some View {
         NavigationStack {
@@ -53,6 +59,17 @@ struct HomeView: View {
                 hatching = HatchPresentation(result: demo, egg: demo.record.eggType, startRevealed: true)
             }
         }
+        .onChange(of: scenePhase) { _, _ in welcomeCompanion() }
+        .onChange(of: pageVisible) { _, visible in
+            if visible { welcomeCompanion() } else { clearReaction() }
+        }
+        .onChange(of: luminanceReduced) { _, _ in welcomeCompanion() }
+        .onChange(of: store.state.lifetimeCreditedSteps) { _, _ in welcomeCompanion() }
+        .onChange(of: store.state.companionID) { _, _ in
+            clearReaction()
+            welcomeCompanion()
+        }
+        .onDisappear { clearReaction() }
     }
 
     @ViewBuilder
@@ -79,8 +96,11 @@ struct HomeView: View {
                     mood: reaction ?? BatMood.resting(at: time),
                     size: batSize,
                     bounceTrigger: petCount,
-                    friendshipEXP: companion.friendshipEXP
+                    friendshipEXP: companion.friendshipEXP,
+                    animationRequest: animationRequest
                 )
+                .onAppear { heroVisible = true; welcomeCompanion() }
+                .onDisappear { heroVisible = false; clearReaction() }
                 .overlay { HeartBurst(trigger: petCount) }
                 .contentShape(Rectangle())
                 .onTapGesture { pet(companion) }
@@ -174,6 +194,11 @@ struct HomeView: View {
         let levelAfter = Friendship.level(forEXP: store.state.collection[bat.speciesID]?.friendshipEXP ?? 0)
         if levelAfter > levelBefore { Haptics.success() } else { Haptics.light() }
         petCount += 1
+        if PilotAnimationCatalog.speciesIDs.contains(bat.speciesID) {
+            let unlocked = levelBefore < 4 && levelAfter >= 4
+            animationRequest = BatAnimationRequest(unlocked ? [.pet, .signature] : [.pet])
+            return
+        }
         // Tapping a sleeping / drowsy bat wakes it (CARE: feed · pet · wake, PRD §2.4).
         let resting = BatMood.resting(at: DemoMode.timeOfDay(at: .now))
         reaction = (resting == .sleeping || resting == .drowsy) ? .awake : .happy
@@ -182,6 +207,25 @@ struct HomeView: View {
             try? await Task.sleep(for: .seconds(2.5))
             if !Task.isCancelled { reaction = nil }
         }
+    }
+
+    private func clearReaction() {
+        reactionTask?.cancel()
+        reaction = nil
+        animationRequest = nil
+    }
+
+    private func welcomeCompanion() {
+        guard heroVisible, pageVisible, scenePhase == .active, !luminanceReduced,
+              hatching == nil, !showEggPicker, !store.state.isEggReady,
+              let bat = store.state.companion,
+              PilotAnimationCatalog.speciesIDs.contains(bat.speciesID) else { return }
+        let events = store.companionVisitEvents(day: DayKey.make(.now))
+        let level = Friendship.level(forEXP: bat.friendshipEXP)
+        let playable = events.filter {
+            PilotAnimationCatalog.reaction(for: bat.speciesID, event: $0, friendshipLevel: level) != nil
+        }
+        if !playable.isEmpty && !reduceMotion { animationRequest = BatAnimationRequest(playable) }
     }
 
     private func hatch(_ egg: ActiveEgg) {

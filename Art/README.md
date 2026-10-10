@@ -4,12 +4,16 @@ Current direction: **C · Gentle pixel**, selected by the owner on 2026-10-10.
 Coarse readable pixel characters, midnight teal, cream, sage and a sparse glade.
 Readability at real Watch size beats detail. See [the active specification](gentle-pixel/README.md).
 
-All 20 species now have dedicated sleeping/awake/happy Normal and Shiny assets,
-alongside matching eggs, fruit and app icons. Sources and generation prompts are
-in [`gentle-pixel/`](gentle-pixel/README.md). Run
-`python3 Art/tools/package_gentle_sprites.py --require-complete` to package them.
-The `gentle_` catalog resolves before earlier art; other moods use related new
-poses. Dedicated animation sheets remain artist production work.
+All **32 approved portraits** now resolve in the app. **Mochi, Sticky and Walker**
+have five universal animations and one Lv.4 signature each: **18 clips, 74 frames**.
+See [the pilot pack](gentle-pixel/pilots-v1/README.md) and run
+`python3 Art/tools/package_pilot_animations.py` to reproduce the 64 px frames and
+128 px asset-catalog renditions. Shiny currently uses a hue rotation of the same
+new identity; dedicated v3 Shiny palettes remain pending.
+
+Earlier 20-species Normal/Shiny pose sheets, matching eggs, fruit and app icons
+remain in [`gentle-pixel/`](gentle-pixel/README.md). The resolver prefers pilot
+frames, then approved portraits, then historical `gentle_`/legacy assets.
 
 ### Earlier art (retained as a fallback)
 

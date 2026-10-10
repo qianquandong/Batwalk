@@ -19,6 +19,10 @@ struct SettingsView: View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: 6) {
+                    #if DEBUG
+                    NavigationLink("Animation samples") { PilotAnimationLab() }
+                        .font(BatwalkFont.caption)
+                    #endif
                     if let companion = store.state.companion {
                         NavigationLink(value: SettingsRoute.bat(companion.speciesID)) {
                             HStack(spacing: BatwalkSpacing.sm) {
