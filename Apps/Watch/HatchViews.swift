@@ -138,11 +138,14 @@ struct HatchSequenceView: View {
                     .font(BatwalkFont.micro)
                     .foregroundStyle(BatwalkColor.textSecondaryDark)
                     .multilineTextAlignment(.center)
-                Button("Start next egg", action: onDone)
-                    .buttonStyle(BatwalkPrimaryButtonStyle(minHeight: 36))
-                    .padding(.top, 4)
             }
             .padding(.horizontal, BatwalkSpacing.sm)
+        }
+        .safeAreaInset(edge: .bottom) {
+            Button("Start next egg", action: onDone)
+                .buttonStyle(BatwalkPrimaryButtonStyle(minHeight: 40))
+                .padding(.horizontal, BatwalkSpacing.sm)
+                .padding(.bottom, 4)
         }
     }
 
