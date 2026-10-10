@@ -123,6 +123,7 @@ struct HomeView: View {
                     animationRequest: animationRequest,
                     showsKeepsake: false
                 )
+                .scaleEffect(1.18)
                 .onAppear { heroVisible = true; welcomeCompanion() }
                 .onDisappear { heroVisible = false; clearReaction() }
                 .overlay { HeartBurst(trigger: petCount) }

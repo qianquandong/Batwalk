@@ -68,10 +68,10 @@ struct BatpediaView: View {
             }
             .background(BatwalkColor.lightBackground.ignoresSafeArea())
             .toolbar(.hidden, for: .navigationBar)
-            .toolbar(.visible, for: .tabBar)
             .navigationDestination(for: String.self) { BatDetailPage(speciesID: $0) }
             .sheet(isPresented: $settings) { PhoneSettingsView() }
         }
+        .toolbar(path.isEmpty ? .visible : .hidden, for: .tabBar)
     }
 
     private var foundCount: Int {
@@ -102,8 +102,8 @@ struct BatDetailPage: View {
             if let bat = store.state.collection[speciesID], let species = bat.species {
                 VStack(spacing: 0) {
                     BatHeroView(speciesID: speciesID, shiny: bat.showsShiny, mood: .awake,
-                                size: 190, friendshipEXP: bat.friendshipEXP, showsKeepsake: false)
-                        .frame(maxWidth: .infinity).padding(.vertical, 30)
+                                size: 160, friendshipEXP: bat.friendshipEXP, showsKeepsake: false)
+                        .frame(maxWidth: .infinity).padding(.vertical, 20)
                         .background(NightSkyBackground(time: .night, scenery: true, groundLevel: 0.86))
                         .clipShape(UnevenRoundedRectangle(bottomLeadingRadius: 28, bottomTrailingRadius: 28))
                     VStack(alignment: .leading, spacing: 20) {
@@ -141,7 +141,6 @@ struct BatDetailPage: View {
                                 EggIcon(type: first.eggType, size: 24)
                             } detail: { EmptyView() }
                         }
-                        CurrentCompanionRow()
                         PhoneSyncStatus()
                     }
                     .foregroundStyle(BatwalkColor.textPrimaryLight)
@@ -152,7 +151,12 @@ struct BatDetailPage: View {
         .background(BatwalkColor.lightBackground.ignoresSafeArea())
         .safeAreaInset(edge: .bottom) {
             if store.state.collection[speciesID] != nil {
-                CompanionChangeControl(speciesID: speciesID)
+                VStack(spacing: 10) {
+                    if store.state.companionID != speciesID || store.companionHandoff.isWaiting {
+                        CurrentCompanionRow(compact: true)
+                    }
+                    CompanionChangeControl(speciesID: speciesID)
+                }
                     .padding(.horizontal, 24).padding(.vertical, 12)
                     .background(BatwalkColor.lightBackground)
             }

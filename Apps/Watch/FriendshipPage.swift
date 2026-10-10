@@ -27,7 +27,7 @@ struct FriendshipPage: View {
                                     speciesID: companion.speciesID,
                                     shiny: companion.showsShiny,
                                     mood: reaction ?? BatMood.resting(at: time),
-                                    size: 94,
+                                    size: 82,
                                     bounceTrigger: bounce,
                                     friendshipEXP: companion.friendshipEXP,
                                     animationRequest: animationRequest,
@@ -36,16 +36,12 @@ struct FriendshipPage: View {
                                 HeartBurst(trigger: hearts)
                                 FruitToss(trigger: fruitToss)
                             }
-                            .frame(height: 94)
+                            .frame(height: 70)
                             .contentShape(Rectangle())
                             .onTapGesture { pet(companion) }
                             .accessibilityAddTraits(.isButton)
                             .accessibilityHint(BatMood.resting(at: time) == .awake ? "Pet \(companion.displayName)" : "Wake \(companion.displayName)")
 
-                            Text(companion.companionTitle)
-                                .font(BatwalkFont.headline)
-                                .foregroundStyle(.white)
-                                .lineLimit(1)
                             Text("Friendship · Lv. \(Friendship.level(forEXP: companion.friendshipEXP))")
                                 .font(BatwalkFont.caption)
                                 .foregroundStyle(BatwalkColor.rose)

@@ -26,9 +26,16 @@ struct HatchProgressSummary: View {
                     .font(compact ? BatwalkFont.micro : BatwalkFont.caption)
                     .monospacedDigit()
                     .fixedSize(horizontal: false, vertical: true)
-                ProgressView(value: egg.progress)
-                    .tint(BatwalkColor.accentSoft)
+                GeometryReader { geometry in
+                    ZStack(alignment: .leading) {
+                        Capsule().fill(dark ? BatwalkColor.cloud.opacity(0.14) : BatwalkColor.lockedBatLight)
+                        Capsule().fill(BatwalkColor.accentSoft)
+                            .frame(width: geometry.size.width * max(0, min(1, egg.progress)))
+                    }
+                }
+                    .frame(height: compact ? 4 : 5)
                     .accessibilityLabel("Egg progress")
+                    .accessibilityValue("\(Int(egg.progress * 100)) percent")
             }
         }
         .foregroundStyle(dark ? BatwalkColor.cloud : BatwalkColor.textPrimaryLight)

@@ -11,7 +11,7 @@ struct CompanionView: View {
             ScrollView {
                 VStack(spacing: 0) {
                     hero
-                    VStack(alignment: .leading, spacing: 20) {
+                    VStack(alignment: .leading, spacing: 16) {
                         PhoneSyncStatus()
                         if let bat = store.state.companion {
                             Text("Growing together").font(BatwalkFont.title)
@@ -87,7 +87,7 @@ struct CompanionView: View {
                 Group {
                     if let bat = store.state.companion {
                         BatHeroView(speciesID: bat.speciesID, shiny: bat.showsShiny,
-                                    mood: BatMood.resting(at: time), size: 190,
+                                    mood: BatMood.resting(at: time), size: 170,
                                     friendshipEXP: bat.friendshipEXP, showsKeepsake: false)
                         Label("Lv. \(Friendship.level(forEXP: bat.friendshipEXP))", systemImage: "heart.fill")
                             .font(BatwalkFont.headline)

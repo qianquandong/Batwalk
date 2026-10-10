@@ -70,7 +70,7 @@ struct CompanionChangeControl: View {
 
     private var waitingText: String {
         let name = store.companionHandoff.request.flatMap { store.state.collection[$0.speciesID]?.companionTitle } ?? "Your companion"
-        return "\(name) is waiting to join you. Keep browsing; this updates when your Watch is ready."
+        return "Keep browsing. We'll confirm when \(name) is on your Watch."
     }
 
     private func message(for failure: CompanionChangeOutcome) -> String {
@@ -87,18 +87,19 @@ struct CompanionChangeControl: View {
 
 struct CurrentCompanionRow: View {
     @Environment(GameStore.self) private var store
+    var compact = false
 
     var body: some View {
         if let bat = store.state.companion {
             HStack(spacing: 12) {
-                BatSprite(speciesID: bat.speciesID, shiny: bat.showsShiny, size: 48)
+                BatSprite(speciesID: bat.speciesID, shiny: bat.showsShiny, size: compact ? 32 : 48)
                     .accessibilityHidden(true)
                 Text("On your Watch: \(bat.companionTitle)")
                     .font(BatwalkFont.caption)
                     .foregroundStyle(BatwalkColor.textPrimaryLight)
                 Spacer(minLength: 0)
             }
-            .padding(12)
+            .padding(compact ? 8 : 12)
             .background(BatwalkColor.lightTint.opacity(0.65), in: RoundedRectangle(cornerRadius: 18))
         }
     }
