@@ -7,7 +7,7 @@
 3. Tints the strawberry egg per egg type until each egg has real art.
 Re-run after replacing the board; real artist sprites should replace these files.
 """
-import colorsys, json, os, shutil, subprocess, sys, tempfile
+import colorsys, json, os, runpy, shutil, subprocess, sys, tempfile
 from PIL import Image
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -116,3 +116,7 @@ canvas.resize((256, 256), Image.LANCZOS).save(os.path.join(ROOT, 'Art', 'icon-pl
 
 shutil.rmtree(tmp)
 print(f'{len(assets)} image sets → {os.path.relpath(CATALOG, ROOT)}')
+if all(os.path.exists(os.path.join(ROOT, 'Art', 'generated', f'{species}-sheet-v1.png'))
+       for species in ('cocoa', 'long-ear')):
+    # The board builder replaces the catalog; always restore the companion sheets.
+    runpy.run_path(os.path.join(ROOT, 'Art', 'tools', 'package_free_sprites.py'), run_name='__main__')
