@@ -143,6 +143,35 @@ final class AppReliabilityTests: XCTestCase {
         XCTAssertEqual(WatchRoute(url: URL(string: "batwalk://hatch")!), .hatch)
         XCTAssertNil(WatchRoute(url: URL(string: "https://hatch")!))
         XCTAssertNil(WatchRoute(url: URL(string: "batwalk://hatch/unexpected")!))
+        XCTAssertFalse(PhoneSync.usesFileTransfer(forByteCount: 50_000))
+        XCTAssertTrue(PhoneSync.usesFileTransfer(forByteCount: 50_001))
+    }
+
+    @MainActor
+    func testUnreadableSaveCannotBeOverwrittenWithFreshOnboarding() async throws {
+        let (store, container) = try makeStore()
+        let payload = Data("{}".utf8)
+        container.mainContext.insert(SaveRecord(payload: payload, updatedAt: .now, writer: "watch"))
+        try container.mainContext.save()
+        store.load()
+        XCTAssertTrue(store.recoveryRequired)
+        XCTAssertThrowsError(try store.mutate { $0.start(seed: 1, now: .now) })
+        let rows = try container.mainContext.fetch(FetchDescriptor<SaveRecord>())
+        XCTAssertEqual(rows.count, 1)
+        XCTAssertEqual(rows.first?.payload, payload)
+    }
+
+    @MainActor
+    func testFutureSchemaCannotBeOverwritten() async throws {
+        let (store, container) = try makeStore()
+        var json = try XCTUnwrap(JSONSerialization.jsonObject(with: JSONEncoder().encode(GameState())) as? [String: Any])
+        json["schemaVersion"] = 999
+        let payload = try JSONSerialization.data(withJSONObject: json)
+        container.mainContext.insert(SaveRecord(payload: payload, updatedAt: .now, writer: "watch"))
+        try container.mainContext.save(); store.load()
+        XCTAssertTrue(store.recoveryRequired)
+        XCTAssertThrowsError(try store.mutate { $0.start(seed: 1, now: .now) })
+        XCTAssertEqual(try container.mainContext.fetch(FetchDescriptor<SaveRecord>()).first?.payload, payload)
     }
 }
 

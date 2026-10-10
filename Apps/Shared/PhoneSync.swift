@@ -15,6 +15,8 @@ final class PhoneSync: NSObject, WCSessionDelegate {
 
     static let setCompanionKey = "setCompanion"
     private static let saveKey = "save"
+    static let fileSaveKey = "batwalk-save"
+    static func usesFileTransfer(forByteCount count: Int) -> Bool { count > 50_000 }
     private let pendingLock = NSLock()
     private var pendingSave: Data?
 
@@ -48,7 +50,14 @@ final class PhoneSync: NSObject, WCSessionDelegate {
         pendingLock.lock(); let data = pendingSave; pendingLock.unlock()
         guard let data else { return }
         do {
-            try WCSession.default.updateApplicationContext([Self.saveKey: data])
+            if Self.usesFileTransfer(forByteCount: data.count) {
+                // Long hatch histories must not exceed application-context limits.
+                let file = FileManager.default.temporaryDirectory.appendingPathComponent("batwalk-mirror-\(UUID().uuidString).json")
+                try data.write(to: file, options: [.atomic, .completeFileProtectionUntilFirstUserAuthentication])
+                WCSession.default.transferFile(file, metadata: [Self.fileSaveKey: true])
+            } else {
+                try WCSession.default.updateApplicationContext([Self.saveKey: data])
+            }
             pendingLock.lock()
             if pendingSave == data { pendingSave = nil }
             pendingLock.unlock()
@@ -69,6 +78,25 @@ final class PhoneSync: NSObject, WCSessionDelegate {
         if let data = applicationContext[Self.saveKey] as? Data {
             deliver(data)
         }
+    }
+
+    func session(_ session: WCSession, didReceive file: WCSessionFile) {
+        // The system removes this URL after the delegate returns; copy its bytes now.
+        guard file.metadata?[Self.fileSaveKey] as? Bool == true,
+              let data = try? Data(contentsOf: file.fileURL) else { return }
+        deliver(data)
+    }
+
+    func session(_ session: WCSession, didFinish fileTransfer: WCSessionFileTransfer, error: Error?) {
+        let file = fileTransfer.file.fileURL
+        guard fileTransfer.file.metadata?[Self.fileSaveKey] as? Bool == true,
+              file.lastPathComponent.hasPrefix("batwalk-mirror-") else { return }
+        if error != nil, let data = try? Data(contentsOf: file) {
+            pendingLock.lock()
+            if pendingSave == nil { pendingSave = data }
+            pendingLock.unlock()
+        }
+        try? FileManager.default.removeItem(at: file)
     }
 
     func session(_ session: WCSession, didReceiveUserInfo userInfo: [String: Any] = [:]) {
