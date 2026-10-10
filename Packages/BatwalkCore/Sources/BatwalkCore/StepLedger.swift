@@ -37,9 +37,8 @@ public enum DayKey {
 /// Converts HealthKit's "cumulative steps today" readings into game credit,
 /// exactly once per step.
 ///
-/// HealthKit is asked for one number: today's total step count. The ledger
-/// remembers the last total it saw for its current day and credits only the
-/// increase. That makes every edge case in PRD §4.9 safe:
+/// The platform adapter supplies cumulative totals for each accounting day.
+/// Retained high-water marks credit only positive changes, including late data:
 ///
 /// - **First launch**: today's steps so far are credited immediately (PRD §2.2 step 6).
 /// - **Large jump between launches**: the whole jump is credited once.
@@ -48,9 +47,9 @@ public enum DayKey {
 /// - **App not opened for several days**: the app ingests each missed day's
 ///   total in order (oldest first); a skipped day is simply never credited.
 /// - **Total goes down** (Health data deleted / source changed): credit 0, never negative.
-/// - **Time-zone travel backwards** (an earlier day key reappears): credit 0,
-///   so no step is ever counted twice. Some steps may be under-credited; that is
-///   the intentional trade-off.
+/// - **An unknown old day reappears**: credit 0, so trimmed days cannot be reopened.
+/// - **Travel**: the adapter uses the ledger's original time zone and verifies
+///   statistics bucket boundaries before supplying totals.
 public struct StepLedger: Codable, Equatable, Sendable {
     public private(set) var dayKey: String?
     public private(set) var lastDailyTotal: Int

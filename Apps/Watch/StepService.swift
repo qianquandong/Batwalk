@@ -24,12 +24,15 @@ final class StepService: StepTotalReader {
 
     func totals(from start: Date, through end: Date, calendar: Calendar) async throws -> [DailyStepTotal] {
         guard isAvailable else { throw QueryError.unavailable }
-        let predicate = HKQuery.predicateForSamples(withStart: start, end: end, options: .strictStartDate)
+        let predicate = HKQuery.predicateForSamples(withStart: start, end: end, options: [])
+        var interval = DateComponents(day: 1)
+        interval.calendar = calendar
+        interval.timeZone = calendar.timeZone
         let store = healthStore
         return try await withCheckedThrowingContinuation { continuation in
             let completion = QueryCompletion(continuation)
             let query = HKStatisticsCollectionQuery(quantityType: stepType, quantitySamplePredicate: predicate,
-                options: .cumulativeSum, anchorDate: start, intervalComponents: DateComponents(day: 1))
+                options: .cumulativeSum, anchorDate: start, intervalComponents: interval)
             query.initialResultsHandler = { _, collection, error in
                 defer { store.stop(query) }
                 if let error { completion.finish(.failure(error)); return }
@@ -37,9 +40,18 @@ final class StepService: StepTotalReader {
                 var readings: [DailyStepTotal] = []
                 var day = start
                 while day < end {
-                    let total = collection.statistics(for: day)?.sumQuantity()?.doubleValue(for: .count()) ?? 0
+                    guard let next = calendar.date(byAdding: .day, value: 1, to: day) else {
+                        completion.finish(.failure(QueryError.boundaries)); return
+                    }
+                    let statistics = collection.statistics(for: day)
+                    // If the platform cannot honor these calendar boundaries,
+                    // don't credit overlapping buckets during travel or DST.
+                    if let statistics,
+                       abs(statistics.startDate.timeIntervalSince(day)) > 1 || abs(statistics.endDate.timeIntervalSince(next)) > 1 {
+                        completion.finish(.failure(QueryError.boundaries)); return
+                    }
+                    let total = statistics?.sumQuantity()?.doubleValue(for: .count()) ?? 0
                     readings.append(DailyStepTotal(day: DayKey.make(day, calendar: calendar), total: max(0, Int(total))))
-                    guard let next = calendar.date(byAdding: .day, value: 1, to: day) else { break }
                     day = next
                 }
                 completion.finish(.success(readings))
@@ -65,7 +77,7 @@ final class StepService: StepTotalReader {
         }
     }
 
-    enum QueryError: Error { case unavailable, timeout }
+    enum QueryError: Error { case unavailable, timeout, boundaries }
 }
 
 private final class QueryCompletion: @unchecked Sendable {
