@@ -42,14 +42,14 @@ struct SnapshotProvider: TimelineProvider {
         let now = Date()
         var attributes: [WidgetRelevanceAttribute<Void>] = []
         if snapshot.isEggReady {
-            attributes.append(WidgetRelevanceAttribute(
-                context: .date(interval: DateInterval(start: now, duration: 3 * 60 * 60), kind: .default)))
+            // `date(from:to:)` is the watchOS 11 form; `date(interval:kind:)` only exists from watchOS 26.
+            attributes.append(WidgetRelevanceAttribute(context: .date(from: now, to: now.addingTimeInterval(3 * 60 * 60))))
         }
         if snapshot.companionName != nil,
            let dusk = Calendar.current.nextDate(after: now, matching: DateComponents(hour: snapshot.duskHour, minute: 0),
                                                 matchingPolicy: .nextTime) {
             attributes.append(WidgetRelevanceAttribute(
-                context: .date(interval: DateInterval(start: dusk.addingTimeInterval(-15 * 60), duration: 90 * 60), kind: .scheduled)))
+                context: .date(from: dusk.addingTimeInterval(-15 * 60), to: dusk.addingTimeInterval(75 * 60))))
         }
         return WidgetRelevance(attributes)
     }
