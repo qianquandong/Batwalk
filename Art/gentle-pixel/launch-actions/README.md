@@ -3,6 +3,8 @@
 **20 bats / 64 unique actions / 256 frames**, following [BAT_ACTIONS.md](../../../docs/BAT_ACTIONS.md).
 The approved [portraits-v3](../portraits-v3/roster.png) define each character.
 The three accepted samples retain their source pixels and anchors. Mochi keeps its matching original clips.
+The same review page also includes all [100 universal clips / 400 frames](../portrait-universals-v1/README.md),
+for a launch total of **164 clips / 656 frames**.
 
 - [Interactive review](index.html): original portrait beside the exact runtime PNGs, action selection, 96 px preview, light/dark backgrounds, pause and frame stepping.
 - [Manifest](manifest.json): source and portrait SHA256, crop rectangles, anchors, shared scale, frame names, timings and PNG hashes.
@@ -23,8 +25,8 @@ one scale. Transparent gutters are detected near the grid boundaries to avoid cu
 ears or wings; source positions and alpha are preserved. PNGs are 128 × 128 at 2×.
 
 The previous code-drawn unique pack was discarded. Historical generated universal
-assets are no longer selected by the runtime. Non-pilot universal actions use approved
-portrait stills until matching poses are available. This preview is not a Watch simulator.
+assets are no longer selected by the runtime. Launch universals use approved-portrait
+poses; ten non-pilot wave-two species still use portrait fallbacks. This preview is not a Watch simulator.
 
 Generation and source-pixel checks do not replace human review at real device size.
 No TestFlight upload, release or merge is part of this work.

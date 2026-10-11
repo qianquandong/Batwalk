@@ -38,7 +38,9 @@ jobs:
         run: |
           python3 -m pip install Pillow==11.3.0
           python3 Art/tools/package_portrait_actions.py --check
+          python3 Art/tools/package_portrait_universals.py --check
           node --test Art/tools/gentle_pixel/unique_actions.test.js
+          node --test Art/tools/gentle_pixel/universal_actions.test.js
 
   # Simulator builds need macOS. Standard runners are free for this public
   # repository, so every pull request compiles the Watch and iPhone apps and runs

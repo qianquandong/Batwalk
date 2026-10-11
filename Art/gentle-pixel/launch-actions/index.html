@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="zh-CN">
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Batwalk · 首发 20 只的专属动作</title>
+<title>Batwalk · 首发 20 只的全部动作</title>
 <style>
 :root{color-scheme:light;--paper:#f5efdf;--ink:#304039;--muted:#738074;--line:#d9d8c4;--stage:#f3eedf;--motion:#eaf0e2;--card:#fffdf5}
 *{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.65 system-ui,"Microsoft YaHei",sans-serif}
@@ -23,13 +23,14 @@ body.night{--stage:#192e32;--motion:#203b3d}body.night .label{color:#b3c4be}
 <main>
 <header><div class="brand">BATWALK <span class="eyebrow"> / CHARACTER MOTION · LAUNCH 20</span></div>
 <h1>20 个小性格，都动起来了。</h1>
-<p class="intro">左边是已确认的原立绘，右边播放游戏实际使用的动作帧。换个小动作，看看它怎么害羞、护食、照顾同伴，或笨拙地练习飞行。</p>
+<p class="intro">左边是已确认的原立绘，右边播放游戏实际使用的动作帧。待机、睡觉、飞行、被摸、吃果子都补齐了，也保留每只蝙蝠的专属小性格。</p>
 <div class="toolbar"><button id="play" class="primary">暂停动作</button><button id="next">逐帧查看 →</button><button id="size">手表尺寸 · 96 px</button><button id="theme">深色背景</button><label><span class="hint">角色 </span><select id="filter"><option value="all">全部 20 只</option></select></label></div>
 </header>
+<div class="toolbar" style="margin:0 0 20px"><label>一起看看 <select id="action-filter" aria-label="所有角色的动作"><option value="idle">待机</option><option value="sleep">睡觉</option><option value="fly">飞行</option><option value="pet">被摸</option><option value="eat">吃果子</option><option value="unique">各自的专属动作</option><option value="custom" disabled>各自选择</option></select></label><span class="hint">也可以在每张卡片里单独切换。</span></div>
 <div id="error" hidden role="alert"></div><section id="cards" class="grid" aria-label="20 只蝙蝠原立绘与动作对照"></section>
-<footer>64 个专属动作 · 256 帧。长耳「偷听瓢虫」、果果「抱紧水果」、月翼「躲月亮」沿用你确认的样板。<br>
-每张卡片可切换动作、逐帧对照；深色背景用于检查轮廓。动作采用游戏中的时长，网页会连续重播方便比较，游戏内按触发与等级播放。<br>
-除麻薯等原有试制动画外，尚无匹配通用姿势的角色会保持原立绘。此页是素材预览，不是 Watch 模拟器。</footer>
+<footer>100 个通用动作 / 400 帧 ＋ 64 个专属动作 / 256 帧，共 164 段。原立绘、麻薯的通用动画和已确认的专属样板均保留。<br>
+通用动作从 Lv.1 可用。待机、睡觉沿用游戏内的休息间隔；互动与专属动作在这里连续重播方便比较，游戏内按触发与等级播放。<br>
+可切换动作、暂停、逐帧对照和检查深色轮廓。此页是素材预览，不是 Watch 模拟器；当前仅用于测试。</footer>
 </main>
 <script>
 const root='../../../';
@@ -40,17 +41,19 @@ function loadImage(src){return new Promise((resolve,reject)=>{const im=new Image
 function draw(canvas,im){const ctx=canvas.getContext('2d');ctx.imageSmoothingEnabled=false;ctx.clearRect(0,0,128,128);ctx.drawImage(im,0,0,128,128);}
 function drawPortrait(canvas,im){const scratch=document.createElement('canvas');scratch.width=im.width;scratch.height=im.height;const ctx=scratch.getContext('2d',{willReadFrequently:true});ctx.drawImage(im,0,0);const p=ctx.getImageData(0,0,im.width,im.height).data;let l=im.width,t=im.height,r=0,b=0;for(let y=0;y<im.height;y++)for(let x=0;x<im.width;x++){if(p[(y*im.width+x)*4+3]>16){l=Math.min(l,x);r=Math.max(r,x+1);t=Math.min(t,y);b=Math.max(b,y+1);}}const s=112/Math.max(r-l,b-t);const target=canvas.getContext('2d');target.imageSmoothingEnabled=false;target.drawImage(im,l,t,r-l,b-t,64-(r-l)*s/2,64-(b-t)*s/2,(r-l)*s,(b-t)*s);}
 function paint(m){if(!m.images)return;draw(m.canvas,m.images[m.index]);m.phase.textContent=(m.index+1)+' / 4';m.buttons.forEach((b,i)=>b.setAttribute('aria-pressed',String(i===m.index)));}
-async function choose(m,index){const request=++m.generation;const clip=m.clips[index];const images=await Promise.all(clip.frames.map(n=>loadImage(root+'Apps/Shared/Sprites.xcassets/'+n+'.imageset/sprite.png')));if(request!==m.generation)return;m.clip=clip;m.images=images;m.index=0;m.elapsed=0;m.detail.textContent='Lv.'+clip.unlockLevel+' · '+triggerLabels[clip.trigger];m.source.href=root+clip.source;m.buttons.forEach((b,i)=>draw(b.querySelector('canvas'),images[i]));paint(m);}
+async function choose(m,index){const request=++m.generation;const clip=m.clips[index];const images=await Promise.all(clip.frames.map(n=>loadImage(root+'Apps/Shared/Sprites.xcassets/'+n+'.imageset/sprite.png')));if(request!==m.generation)return;m.clip=clip;m.images=images;m.index=0;m.elapsed=0;m.resting=false;m.detail.textContent=clip.kind==='universal'?'通用 · Lv.1 即可播放':'Lv.'+clip.unlockLevel+' · '+triggerLabels[clip.trigger];m.source.href=root+clip.source;m.buttons.forEach((b,i)=>draw(b.querySelector('canvas'),images[i]));paint(m);}
 function fail(error){const el=document.querySelector('#error');el.hidden=false;el.textContent=error.message;}
 async function init(){
- const [manifest,roster]=await Promise.all([fetch('manifest.json').then(r=>r.json()),fetch('../portraits-v3/manifest.json').then(r=>r.json())]);
+ const [manifest,roster,universals]=await Promise.all([fetch('manifest.json').then(r=>r.json()),fetch('../portraits-v3/manifest.json').then(r=>r.json()),fetch('../portrait-universals-v1/manifest.json').then(r=>r.json())]);
  for(const bat of roster.characters.filter(b=>b.number<=20)){
-  const clips=manifest.clips.filter(c=>c.speciesID===bat.id), card=document.createElement('article');card.className='card';card.dataset.character=bat.id;
+  const clips=[...universals.clips,...manifest.clips].filter(c=>c.speciesID===bat.id), card=document.createElement('article');card.className='card';card.dataset.character=bat.id;
   card.innerHTML='<div class="card-head"><span class="num">'+String(bat.number).padStart(2,'0')+'</span><h2>'+bat.displayLabel+'</h2></div><p class="concept">'+bat.concept+'</p><select class="actions" aria-label="'+bat.displayLabel+'动作">'+clips.map((c,i)=>'<option value="'+i+'">'+c.chinese+' · Lv.'+c.unlockLevel+'</option>').join('')+'</select><div class="comparison"><div class="stage"><div class="label">已确认 · 原立绘</div><canvas class="large original" width="128" height="128" role="img" aria-label="'+bat.displayLabel+'原立绘"></canvas></div><div class="stage motion"><div class="label">游戏动作 · 4 帧</div><canvas class="large animated" width="128" height="128" role="img" aria-label="'+bat.displayLabel+'动作"></canvas></div></div><div class="details"><span class="trigger"></span><span class="phase"></span></div><div class="frames">'+[0,1,2,3].map(i=>'<button class="frame" aria-label="第 '+(i+1)+' 帧"><canvas width="128" height="128"></canvas><span>0'+(i+1)+'</span></button>').join('')+'</div><div class="foot"><a class="source" target="_blank" rel="noopener">查看原始动作帧表 ↗</a><a href="../portraits-v3/'+bat.portrait+'" target="_blank" rel="noopener">原立绘 ↗</a></div>';
   document.querySelector('#cards').append(card);
   const m={id:bat.id,card,clips,generation:0,index:0,elapsed:0,visible:true,canvas:card.querySelector('.animated'),phase:card.querySelector('.phase'),detail:card.querySelector('.trigger'),source:card.querySelector('.source'),buttons:[...card.querySelectorAll('.frame')]};models.push(m);
-  const select=card.querySelector('.actions');select.addEventListener('change',()=>choose(m,Number(select.value)).catch(fail));
-  m.buttons.forEach((b,i)=>b.addEventListener('click',()=>{setPlay(false);m.index=i;m.elapsed=0;paint(m);}));
+  const select=card.querySelector('.actions');
+  select.innerHTML=['universal','unique'].map(kind=>'<optgroup label="'+(kind==='universal'?'通用动作 · Lv.1':'专属动作')+'">'+clips.map((c,i)=>({c,i})).filter(({c})=>(c.kind==='universal')===(kind==='universal')).map(({c,i})=>'<option value="'+i+'">'+c.chinese+(kind==='universal'?'':' · Lv.'+c.unlockLevel)+'</option>').join('')+'</optgroup>').join('');
+  select.addEventListener('change',()=>{document.querySelector('#action-filter').value='custom';choose(m,Number(select.value)).catch(fail);});
+  m.buttons.forEach((b,i)=>b.addEventListener('click',()=>{setPlay(false);m.index=i;m.elapsed=0;m.resting=false;paint(m);}));
   drawPortrait(card.querySelector('.original'),await loadImage('../portraits-v3/'+bat.portrait));
   await choose(m,0);
   const option=document.createElement('option');option.value=bat.id;option.textContent=String(bat.number).padStart(2,'0')+' '+bat.displayLabel;document.querySelector('#filter').append(option);
@@ -58,9 +61,10 @@ async function init(){
  const observer=new IntersectionObserver(entries=>entries.forEach(e=>{const m=models.find(m=>m.card===e.target);m.visible=e.isIntersecting;}));models.forEach(m=>observer.observe(m.card));
  window.reviewReady=true;setPlay(playing);requestAnimationFrame(loop);
 }
-function loop(now){const dt=Math.min(now-tick,100);tick=now;if(playing&&!document.hidden)models.filter(m=>m.visible&&!m.card.hidden).forEach(m=>{m.elapsed+=dt;if(m.elapsed>=m.clip.seconds[m.index]*1000){m.elapsed=0;m.index=(m.index+1)%4;paint(m);}});requestAnimationFrame(loop);}
+function loop(now){const dt=Math.min(now-tick,100);tick=now;if(playing&&!document.hidden)models.filter(m=>m.images&&m.visible&&!m.card.hidden).forEach(m=>{m.elapsed+=dt;const duration=m.resting?m.clip.restSeconds:m.clip.seconds[m.index];if(m.elapsed>=duration*1000){m.elapsed=0;if(m.resting){m.resting=false;}else{m.index=(m.index+1)%4;m.resting=m.index===0&&m.clip.restSeconds>0;}paint(m);}});requestAnimationFrame(loop);}
+document.querySelector('#action-filter').addEventListener('change',async e=>{const action=e.target.value;try{await Promise.all(models.map(m=>{const i=m.clips.findIndex(c=>action==='unique'?c.kind!=='universal':c.actionID===action);m.card.querySelector('.actions').value=String(i);return choose(m,i);}));}catch(error){fail(error);}});
 document.querySelector('#play').addEventListener('click',()=>setPlay(!playing));
-document.querySelector('#next').addEventListener('click',()=>{setPlay(false);models.forEach(m=>{m.index=(m.index+1)%4;m.elapsed=0;paint(m);});});
+document.querySelector('#next').addEventListener('click',()=>{setPlay(false);models.forEach(m=>{m.index=(m.index+1)%4;m.elapsed=0;m.resting=false;paint(m);});});
 document.querySelector('#size').addEventListener('click',e=>{e.target.textContent=document.body.classList.toggle('small-mode')?'恢复放大预览':'手表尺寸 · 96 px';});
 document.querySelector('#theme').addEventListener('click',e=>{e.target.textContent=document.body.classList.toggle('night')?'浅色背景':'深色背景';});
 document.querySelector('#filter').addEventListener('change',e=>models.forEach(m=>{m.card.hidden=e.target.value!=='all'&&m.id!==e.target.value;}));

@@ -18,7 +18,8 @@ art labels and do not rename the stored species IDs.
 
 All 32 portraits are now packaged for runtime display. Mochi, Sticky and Walker
 have [18 animated clips / 74 frames](pilots-v1/README.md) with a 64 px logical
-canvas. The other 29 keep their approved portrait for universal poses until matching animation art exists.
+canvas. The launch 20 now have all [100 universal clips / 400 frames](portrait-universals-v1/README.md).
+The ten remaining non-pilot wave-two bats keep approved portrait stills.
 Launch bats #1–20 now also have [all 64 unique actions](launch-actions/README.md).
 Generated art still needs
 on-device approval and pixel cleanup; new Shiny palettes currently use hue rotation.
@@ -32,7 +33,8 @@ on-device approval and pixel cleanup; new Shiny palettes currently use hue rotat
 - Flat cards/buttons, sparse static pixel plants/stars, compact Home branding.
   Keep native Dynamic Type, accessible labels and Reduce Motion behavior.
 - Three pilot identities retain their original idle/sleep/fly/pet/eat/signature frames.
-  The other 29 use approved portrait stills; launch unique actions use `launch-actions`.
+  The other 19 launch bats use `portrait-universals-v1`; ten wave-two bats use portrait stills.
+  Launch unique actions use `launch-actions`.
   Their source sheets are in `portrait-actions-v1`, with the three accepted samples in `portrait-action-samples-v1`.
 - The earlier 20-species pose pack (120 Normal/Shiny images) is retained as a
   historical fallback, alongside the 15 egg states and strawberry still in use.

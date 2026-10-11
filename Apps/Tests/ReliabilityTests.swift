@@ -238,7 +238,7 @@ final class AppReliabilityTests: XCTestCase {
         XCTAssertEqual(names.count, 74)
         // Universal fallback must retain the approved portrait identity.
         var generated = 0
-        for species in PilotAnimationCatalog.portraitSpeciesIDs {
+        for species in PilotAnimationCatalog.staticFallbackSpeciesIDs {
             for action in UniversalAction.allCases {
                 for frame in try XCTUnwrap(PilotAnimationCatalog.universal(for: species, action: action)).frames {
                     XCTAssertTrue(assetExists(frame.assetName), frame.assetName)
@@ -247,7 +247,19 @@ final class AppReliabilityTests: XCTestCase {
                 }
             }
         }
-        XCTAssertEqual(generated, PilotAnimationCatalog.portraitSpeciesIDs.count * 5)
+        XCTAssertEqual(generated, PilotAnimationCatalog.staticFallbackSpeciesIDs.count * 5)
+        var universalFrames = Set<String>()
+        for species in Roster.catalog where species.number <= 20 {
+            for action in UniversalAction.allCases {
+                let clip = try XCTUnwrap(PilotAnimationCatalog.universal(for: species.id, action: action))
+                XCTAssertEqual(clip.frames.count, 4)
+                for frame in clip.frames {
+                    XCTAssertTrue(assetExists(frame.assetName), frame.assetName)
+                    universalFrames.insert(frame.assetName)
+                }
+            }
+        }
+        XCTAssertEqual(universalFrames.count, 400)
         var launchFrames = Set<String>()
         for species in Roster.catalog where species.number <= 20 {
             for action in ActionCatalog.actions(for: species.id) {

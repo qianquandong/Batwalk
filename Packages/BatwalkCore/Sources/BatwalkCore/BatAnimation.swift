@@ -67,16 +67,24 @@ public enum GeneratedFramePlan {
 /// Only clips with shipped frames belong here. The 102-action design catalog
 /// remains separate so an unlocked idea is never mistaken for playable art.
 ///
-/// Approved portrait-derived unique actions and three matching animated pilots.
-/// Other universal poses remain on the approved portrait until matching art exists.
+/// The launch 20 have five portrait-derived universal clips plus unique actions.
+/// Wave two retains its matching pilots or original portrait fallback.
 public enum PilotAnimationCatalog {
     /// Hand-drawn pilots (Art/gentle-pixel/pilots-v1).
     public static let pilotSpeciesIDs = ["mochi", "sticky", "walker"]
     public static let portraitSpeciesIDs: [String] = Roster.catalog.map(\.id).filter { !pilotSpeciesIDs.contains($0) }
+    public static var staticFallbackSpeciesIDs: [String] {
+        portraitSpeciesIDs.filter { !PortraitUniversalFrames.speciesIDs.contains($0) }
+    }
     /// Every species supported by the player, including portrait-only fallback.
     public static var speciesIDs: [String] { pilotSpeciesIDs + portraitSpeciesIDs }
 
     public static func universal(for speciesID: String, action: UniversalAction) -> BatAnimationClip? {
+        if PortraitUniversalFrames.speciesIDs.contains(speciesID) {
+            let plan = PortraitUniversalFrames.plan(for: action)
+            return clip(speciesID, action.rawValue, indices: Array(plan.seconds.indices),
+                        durations: plan.seconds, rest: plan.rest, prefix: "universal_bat_")
+        }
         if portraitSpeciesIDs.contains(speciesID) {
             // Never switch to the discarded code-drawn identity between gestures.
             return BatAnimationClip(speciesID: speciesID, actionID: action.rawValue,
@@ -84,16 +92,8 @@ public enum PilotAnimationCatalog {
                 restSeconds: action == .idle || action == .sleep ? 4 : 0)
         }
         guard pilotSpeciesIDs.contains(speciesID) else { return nil }
-        let durations: [Double]
-        let rest: Double
-        switch action {
-        case .idle: durations = [2.4, 0.18, 0.18, 0.24]; rest = 4
-        case .sleep: durations = [1.4, 0.4, 0.4, 0.6]; rest = 3.6
-        case .fly: durations = [0.20, 0.20, 0.20, 0.20]; rest = 0
-        case .pet: durations = [0.25, 0.40, 0.55, 0.45]; rest = 0
-        case .eat: durations = [0.40, 0.45, 0.55, 0.60]; rest = 0
-        }
-        return clip(speciesID, action.rawValue, indices: [0, 1, 2, 3], durations: durations, rest: rest)
+        let plan = PortraitUniversalFrames.plan(for: action)
+        return clip(speciesID, action.rawValue, indices: Array(plan.seconds.indices), durations: plan.seconds, rest: plan.rest)
     }
 
     /// Only actions with packaged art are exposed, including the launch roster.

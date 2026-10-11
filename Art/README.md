@@ -16,10 +16,13 @@ new identity; dedicated v3 Shiny palettes remain pending.
 The launch roster (#1–20) additionally has **all 64 designed unique actions**:
 256 frames derived from the approved portraits, including the original Mochi clips.
 The three approved comparison samples are preserved. Character shapes are not redesigned.
+All **100 launch universal clips / 400 frames** are also complete; Mochi's 20 pilot
+frames are preserved and 380 matching frames are added for the other 19 bats.
+See [universal source sheets and packaging](gentle-pixel/portrait-universals-v1/README.md).
 See [the launch pack, source and review](gentle-pixel/launch-actions/README.md).
 
 Earlier 20-species Normal/Shiny pose sheets, matching eggs, fruit and app icons
-remain in [`gentle-pixel/`](gentle-pixel/README.md). The resolver prefers pilot
+remain in [`gentle-pixel/`](gentle-pixel/README.md). The resolver prefers matching universal / pilot
 frames / approved portraits, then historical
 `gentle_`/legacy assets. Unique frames play only for their matching action.
 
