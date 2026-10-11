@@ -1,0 +1,13 @@
+{
+  "selected_concept": "C",
+  "name": "破壳见面",
+  "approved_date": "2026-10-11",
+  "generator": "built-in image_gen",
+  "source": "app-icon-v3.png",
+  "references": [
+    "portraits-v3/portraits/01-mochi.png",
+    "egg-icons-v2.png"
+  ],
+  "prompt": "Use case: stylized-concept. Asset type: Batwalk iPhone and Apple Watch app icon concept. Output exactly one square, opaque, full-bleed 1024x1024 icon artwork. Use the approved reference character faithfully; preserve identity, anatomy, ear asymmetry, facial proportions, distinctive wing forms and original colors. Gentle pixel art with deliberate crisp stepped edges, restrained warm pixel shading, clear dark outlines. Simplify small details for legibility at 48px, keep a bold central silhouette. Keep all essential character features inside the central 76% so both a squircle and circular OS mask work. Fill the entire canvas with background. No text, letters, logo wordmark, UI, device mockup, rounded outer corners, border, watermark, glossy 3D, blur or generic bat redesign.\nReference image 1 is the approved Mochi bat identity. Reference image 2 is only an egg design reference: use the FIRST egg family in its top row, ivory shell with peach spots. Create a joyful hatching icon: the original apricot Mochi peeks out of a large broken ivory egg half with two broad peach spots. Its upright viewer-left ear and folded viewer-right ear must remain identical to the portrait; small dark eyes, familiar peach cheeks, cream cheek/chest marking. One chocolate-brown little wing rests on the cracked rim, the other slightly opens in a greeting. Egg and bat are one compact tall silhouette, face not hidden by shell, no shell fragment on its head. Rich muted terracotta/coral background, warm cream shell providing excellent contrast. Only two simple crack notches, no visual clutter. A single tiny cream pixel sparkle at upper right may express the hatching surprise. The theme reads as discovering a companion, not a chicken, rabbit or generic animal.",
+  "export": "Direct full-image resize to opaque RGB 1024x1024; no redraw, cropping, recoloring, or baked-in corner mask."
+}

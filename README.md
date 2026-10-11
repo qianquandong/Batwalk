@@ -1,4 +1,4 @@
-<p align="center"><img src="Art/icon-placeholder.png" width="128" alt="Batwalk placeholder icon"></p>
+<p align="center"><img src="Art/icon-placeholder.png" width="128" alt="Batwalk app icon — hatching Mochi"></p>
 
 # Batwalk
 
