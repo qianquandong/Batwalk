@@ -75,9 +75,13 @@ Debug 版 Settings → Animation samples：可切三只角色、五个通用动�
 - GitHub 先前的最新 CI 在启动前被账户付款/花费额度限制阻断。Windows 本地没有 Watch
   模拟器；本次不声明真机播放、帧率或能耗已经通过。
 
-## Generated sets for the other 29 species (2026-10-11)
+## Historical generated sets for the other 29 species (2026-10-11)
 
-The pilots stay as they are. Every other species now has a generated Gentle-pixel
+These sets were superseded after the owner reconfirmed the portraits-v3 identities.
+They remain historical assets, but are not selected by the player. Non-pilot
+universal actions use their approved portrait stills until matching art exists.
+
+The earlier pass gave every other species a generated Gentle-pixel
 set — 38 frames each (`gen_bat_…`), 6–8 frames per universal action with the plan in
 `GeneratedFramePlan` — so Day / Dusk / Night, petting and feeding are visible on every
 companion, not only the three pilots. The first generated pass had no signatures;

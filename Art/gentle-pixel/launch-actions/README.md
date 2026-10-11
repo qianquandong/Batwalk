@@ -1,35 +1,30 @@
-# Gentle pixel · Launch personalities
+# Launch portrait actions
 
-**20 bats / 64 unique actions / 500 frames**, following the existing
-[`BAT_ACTIONS.md`](../../../docs/BAT_ACTIONS.md). 496 frames are new; Mochi's
-four-frame cartwheel reuses the original pilot without modification.
+**20 bats / 64 unique actions / 256 frames**, following [BAT_ACTIONS.md](../../../docs/BAT_ACTIONS.md).
+The approved [portraits-v3](../portraits-v3/roster.png) define each character.
+The three accepted samples retain their source pixels and anchors. Mochi keeps its matching original clips.
 
-- [Interactive review](index.html): same PNGs and timing as the application,
-  Watch/iPhone sizes, action filters, pause and single-frame stepping.
-- [Manifest](manifest.json): action IDs, names, tiers, triggers, durations, frame
-  names and PNG hashes. Generated from the original design and choreography.
-- [Runtime / QA](../../../docs/LAUNCH_PERSONALITIES.md).
-- [61 editable pixel scenes](../../tools/gentle_pixel/unique_actions.js): extend
-  the current engine's palettes, body parts and markings with individual gestures.
-- [Mochi source](mochi-extras-v1.png): built-in `image_gen`, preserving its original
-  pilot identity. [Prompt and provenance](prompts.json). Fixed cell crops and nearest
-  scaling preserve alpha; the original source and pilot are kept intact.
-
-Rebuild from the repository root:
+- [Interactive review](index.html): original portrait beside the exact runtime PNGs, action selection, 96 px preview, light/dark backgrounds, pause and frame stepping.
+- [Manifest](manifest.json): source and portrait SHA256, crop rectangles, anchors, shared scale, frame names, timings and PNG hashes.
+- [Source sheets and exact prompts](../portrait-actions-v1/): original generated sheets plus targeted corrections.
+- [Accepted samples](../portrait-action-samples-v1/): Long Ear / Fruit / Moonwing.
+- [Runtime rules](../../../docs/LAUNCH_PERSONALITIES.md): friendship gates, triggers, low-frequency ambient playback, accessibility and preview UI.
 
 ```sh
-python3 Art/tools/package_mochi_extras.py  # Pillow; only for the two Mochi gestures
-node Art/tools/gentle_pixel/export_unique_actions.js
-node Art/tools/gentle_pixel/export_unique_actions.js --check
+python3 -m pip install Pillow==11.3.0
+python3 Art/tools/package_portrait_actions.py
+python3 Art/tools/package_portrait_actions.py --check
 node --test Art/tools/gentle_pixel/unique_actions.test.js
 ```
 
-Open `index.html` locally, or serve the repository with
-`python3 -m http.server 8767 --bind 127.0.0.1` and visit
-`http://127.0.0.1:8767/Art/gentle-pixel/launch-actions/index.html`.
-No publishing or external services are required for the review.
+The packager only crops, translates and uniformly scales; it does not draw, recolor,
+remove backgrounds, deform poses or replace the original portraits. Each clip shares
+one scale. Transparent gutters are detected near the grid boundaries to avoid cutting
+ears or wings; source positions and alpha are preserved. PNGs are 128 × 128 at 2×.
 
-The exporter writes `unique_bat_<species>_<action>_<frame>` assets plus the Swift
-frame plan. It never overwrites universal or pilot frames. Generated art uses
-64×64 logical canvases / 128×128 catalog PNGs with nearest-neighbour sampling.
-The existing Shiny hue rotation is retained. Physical Watch testing remains pending.
+The previous code-drawn unique pack was discarded. Historical generated universal
+assets are no longer selected by the runtime. Non-pilot universal actions use approved
+portrait stills until matching poses are available. This preview is not a Watch simulator.
+
+Generation and source-pixel checks do not replace human review at real device size.
+No TestFlight upload, release or merge is part of this work.

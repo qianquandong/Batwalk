@@ -236,17 +236,18 @@ final class AppReliabilityTests: XCTestCase {
             }
         }
         XCTAssertEqual(names.count, 74)
-        // Generated Gentle-pixel sets: 8 + 8 + 6 + 8 + 8 frames for every other species.
+        // Universal fallback must retain the approved portrait identity.
         var generated = 0
-        for species in PilotAnimationCatalog.generatedSpeciesIDs {
+        for species in PilotAnimationCatalog.portraitSpeciesIDs {
             for action in UniversalAction.allCases {
                 for frame in try XCTUnwrap(PilotAnimationCatalog.universal(for: species, action: action)).frames {
                     XCTAssertTrue(assetExists(frame.assetName), frame.assetName)
+                    XCTAssertEqual(frame.assetName, "portrait_bat_\(species)")
                     generated += 1
                 }
             }
         }
-        XCTAssertEqual(generated, PilotAnimationCatalog.generatedSpeciesIDs.count * 38)
+        XCTAssertEqual(generated, PilotAnimationCatalog.portraitSpeciesIDs.count * 5)
         var launchFrames = Set<String>()
         for species in Roster.catalog where species.number <= 20 {
             for action in ActionCatalog.actions(for: species.id) {
@@ -257,7 +258,7 @@ final class AppReliabilityTests: XCTestCase {
                 }
             }
         }
-        XCTAssertEqual(launchFrames.count, 500)
+        XCTAssertEqual(launchFrames.count, 256)
         for species in Roster.catalog { XCTAssertTrue(assetExists("portrait_bat_\(species.id)"), species.id) }
     }
 

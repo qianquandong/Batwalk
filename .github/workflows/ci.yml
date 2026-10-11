@@ -36,7 +36,8 @@ jobs:
           node-version: '22'
       - name: Verify launch animation art and generated frame plans
         run: |
-          node Art/tools/gentle_pixel/export_unique_actions.js --check
+          python3 -m pip install Pillow==11.3.0
+          python3 Art/tools/package_portrait_actions.py --check
           node --test Art/tools/gentle_pixel/unique_actions.test.js
 
   # Simulator builds need macOS. Standard runners are free for this public

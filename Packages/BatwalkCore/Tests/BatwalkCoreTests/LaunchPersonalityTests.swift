@@ -24,7 +24,7 @@ final class LaunchPersonalityTests: XCTestCase {
             }
         }
         XCTAssertEqual(actions, 64)
-        XCTAssertEqual(frames.count, 500) // 496 new + four original Mochi cartwheel frames.
+        XCTAssertEqual(frames.count, 256) // Four portrait-derived poses per action.
         XCTAssertNil(PilotAnimationCatalog.unique(for: "ghost", actionID: "gift-giver", friendshipLevel: 5))
         XCTAssertNil(PilotAnimationCatalog.unique(for: "cocoa", actionID: "fruit-hug", friendshipLevel: 5))
     }

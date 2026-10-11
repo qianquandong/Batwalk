@@ -14,13 +14,13 @@ See [the pilot pack](gentle-pixel/pilots-v1/README.md) and run
 new identity; dedicated v3 Shiny palettes remain pending.
 
 The launch roster (#1–20) additionally has **all 64 designed unique actions**:
-496 new frames + Mochi's four original cartwheel frames. These extend the current
-editable pixel characters; the pilot identities and all universal frames are unchanged.
+256 frames derived from the approved portraits, including the original Mochi clips.
+The three approved comparison samples are preserved. Character shapes are not redesigned.
 See [the launch pack, source and review](gentle-pixel/launch-actions/README.md).
 
 Earlier 20-species Normal/Shiny pose sheets, matching eggs, fruit and app icons
 remain in [`gentle-pixel/`](gentle-pixel/README.md). The resolver prefers pilot
-frames / generated universal frames, then approved portraits, then historical
+frames / approved portraits, then historical
 `gentle_`/legacy assets. Unique frames play only for their matching action.
 
 ### Earlier art (retained as a fallback)
@@ -80,10 +80,11 @@ playback component arrives in milestone M2.
 - [ ] Preview exported at real Apple Watch scale
 - [ ] Layered source file in `Art/source/` (consider Git LFS)
 
-## Generated animation sets (`gen_bat_<speciesID>_<action>_<n>`)
+## Historical generated animation sets (`gen_bat_<speciesID>_<action>_<n>`)
 
-Every species except the three hand-drawn pilots animates with frames from the
-Gentle-pixel engine (`Art/tools/gentle_pixel/engine.js`): idle 8 · sleep 8 ·
+These exploratory frames are no longer selected by the runtime because their
+character identities differ from the approved portraits. The historical
+Gentle-pixel engine (`Art/tools/gentle_pixel/engine.js`) produces idle 8 · sleep 8 ·
 fly 6 · pet 8 · eat 8 frames on the 64 px canvas, exported at 2× by
 `node Art/tools/gentle_pixel/export_frames.js`. Review sheets, the frame plan and
 how the catalog picks pilot vs generated art: `gentle-pixel/generated-frames/README.md`.

@@ -1,0 +1,678 @@
+{
+  "generator": "built-in image_gen",
+  "scope": "58 actions supplementing three approved samples and three existing Mochi clips; preserve portraits-v3 identities",
+  "characters": [
+    {
+      "id": "cocoa",
+      "number": 2,
+      "name": "可可蝠",
+      "concept": "把大家裹进翅膀里的毯子阿姨",
+      "portrait": "portraits/02-cocoa.png",
+      "actions": [
+        {
+          "actionID": "sunrise-doze",
+          "chinese": "日出打盹",
+          "tier": "idleQuirk",
+          "trigger": "asleep",
+          "summary": "Melts into a deep morning nap, nose bubble and all, then stretches awake."
+        },
+        {
+          "actionID": "wattle-wiggle",
+          "chinese": "肉垂晃晃",
+          "tier": "reaction",
+          "trigger": "pet",
+          "summary": "Its little lip wattles wiggle and its pug nose scrunches."
+        },
+        {
+          "actionID": "creche-babysitter",
+          "chinese": "托儿所保姆",
+          "tier": "signature",
+          "trigger": "idleNight",
+          "summary": "Tucks three tiny pink pups under one wing and rocks them to sleep."
+        }
+      ],
+      "rows": 3,
+      "columns": 4,
+      "prompt": "Use case: identity-preserve. Edit the attached APPROVED Batwalk character portrait into a game sprite animation sheet. The image is the exact model to animate, not a loose inspiration. Preserve its individual character identity, precise face, body proportions, palette, silhouette details and existing accessories. Same Gentle pixel rendering, stepped dark outlines and soft shaded pixel clusters. NO redesign, generic bat replacement, global squash/stretch, text, labels, borders, gradient backdrop, lighting change or 3D style.\nInvariants for 可可蝠: Tall chocolate-brown wrapped-wing cocoon; huge thick caramel furry shawl collar framing small friendly brown face, short pink-lined ears, pug nose with two tiny lip wattles, blushing cheeks, tiny feet. Preserve the tall blanket body and fluffy collar, never a round generic bat.\nOutput one transparent PNG sprite sheet: EXACTLY 4 equal columns and 3 equal rows; total 12 poses. Landscape 4:3 layout with square cells. Aim 2048 by 1536 pixels. EVERY cell contains the SAME CHARACTER at the SAME SCALE and camera distance. Leave at least 12% transparent margin on all four sides of EACH cell, including props/wings. No marks on grid boundaries. Space rows and columns evenly; never allow an ear/prop to enter another cell. Actual alpha transparency. Feet/body keep a consistent local position except explicitly moving actions. All props stay small so the bat remains clearly recognizable at Watch size.\nEach row is a DIFFERENT action below; read each row LEFT TO RIGHT across four successive keyframes: setup, anticipation, main action, settle. Tell the full specified beat, not four duplicate rest poses. Reuse the original neutral character pose closely for setup where appropriate. Change only the body parts relevant to that action. Return towards the original pose at the end when plausible. Use no entire scene backgrounds, only essential tiny action props.\nROW 1 — sunrise-doze: Melts into a deep morning nap, nose bubble and all, then stretches awake.\nROW 2 — wattle-wiggle: Its little lip wattles wiggle and its pug nose scrunches.\nROW 3 — creche-babysitter: Tucks three tiny pink pups under one wing and rocks them to sleep.\nPreserve this exact character throughout all rows, including when turned, concealed or upside-down. Do not add arbitrary costumes/marks/large scenery. For any sleep or concealment, fold existing appendages naturally rather than resizing the bat. For flight, articulate its original wings. When a motion needs a ceiling/branch, show only a tiny local perch well inside the cell. Leave all other pixels transparent.",
+      "status": "planned",
+      "reference": "../portraits-v3/portraits/02-cocoa.png"
+    },
+    {
+      "id": "long-ear",
+      "number": 3,
+      "name": "长耳蝠",
+      "concept": "一直在偷听世界的小雷达",
+      "portrait": "portraits/03-long-ear.png",
+      "actions": [
+        {
+          "actionID": "ram-horn-ears",
+          "chinese": "羊角卷耳",
+          "tier": "idleQuirk",
+          "trigger": "asleep",
+          "summary": "Curls both ears back like ram's horns, then tucks them under its wings."
+        },
+        {
+          "actionID": "butterfly-hover",
+          "chinese": "蝴蝶悬停",
+          "tier": "signature",
+          "trigger": "idleNight",
+          "summary": "Goes quiet, hovers like a butterfly, and plucks a snack off a leaf."
+        }
+      ],
+      "rows": 2,
+      "columns": 4,
+      "prompt": "Use case: identity-preserve. Edit the attached APPROVED Batwalk character portrait into a game sprite animation sheet. The image is the exact model to animate, not a loose inspiration. Preserve its individual character identity, precise face, body proportions, palette, silhouette details and existing accessories. Same Gentle pixel rendering, stepped dark outlines and soft shaded pixel clusters. NO redesign, generic bat replacement, global squash/stretch, text, labels, borders, gradient backdrop, lighting change or 3D style.\nInvariants for 长耳蝠: Tiny mauve oval body, cream heart chest patch, tiny cream wings, huge asymmetric cream-lined ears: viewer-left very tall with curled tip and viewer-right shorter spiral. Preserve their lengths, thickness, asymmetry, the small blushing face and tiny feet. Ears can articulate/coiling for sleep; never shrink the underlying ear design.\nOutput one transparent PNG sprite sheet: EXACTLY 4 equal columns and 2 equal rows; total 8 poses. Landscape 4:2 layout with square cells. Aim 2048 by 1024 pixels. EVERY cell contains the SAME CHARACTER at the SAME SCALE and camera distance. Leave at least 12% transparent margin on all four sides of EACH cell, including props/wings. No marks on grid boundaries. Space rows and columns evenly; never allow an ear/prop to enter another cell. Actual alpha transparency. Feet/body keep a consistent local position except explicitly moving actions. All props stay small so the bat remains clearly recognizable at Watch size.\nEach row is a DIFFERENT action below; read each row LEFT TO RIGHT across four successive keyframes: setup, anticipation, main action, settle. Tell the full specified beat, not four duplicate rest poses. Reuse the original neutral character pose closely for setup where appropriate. Change only the body parts relevant to that action. Return towards the original pose at the end when plausible. Use no entire scene backgrounds, only essential tiny action props.\nROW 1 — ram-horn-ears: Curls both ears back like ram's horns, then tucks them under its wings.\nROW 2 — butterfly-hover: Goes quiet, hovers like a butterfly, and plucks a snack off a leaf.\nPreserve this exact character throughout all rows, including when turned, concealed or upside-down. Do not add arbitrary costumes/marks/large scenery. For any sleep or concealment, fold existing appendages naturally rather than resizing the bat. For flight, articulate its original wings. When a motion needs a ceiling/branch, show only a tiny local perch well inside the cell. Leave all other pixels transparent.",
+      "status": "planned",
+      "reference": "../portraits-v3/portraits/03-long-ear.png"
+    },
+    {
+      "id": "fruit",
+      "number": 4,
+      "name": "果果蝠",
+      "concept": "两边脸颊都藏着午饭的小馋鬼",
+      "portrait": "portraits/04-fruit.png",
+      "actions": [
+        {
+          "actionID": "spat-pop",
+          "chinese": "吐果渣",
+          "tier": "reaction",
+          "trigger": "feed",
+          "summary": "Squishes the fruit, slurps the juice and spits out a tiny pulp pellet: ptoo!"
+        },
+        {
+          "actionID": "squabble-squeaks",
+          "chinese": "吱吱拌嘴",
+          "tier": "signature",
+          "trigger": "walkReturn",
+          "summary": "Squeak-argues with an invisible neighbour over a perch, then scoots over to share."
+        }
+      ],
+      "rows": 2,
+      "columns": 4,
+      "prompt": "Use case: identity-preserve. Edit the attached APPROVED Batwalk character portrait into a game sprite animation sheet. The image is the exact model to animate, not a loose inspiration. Preserve its individual character identity, precise face, body proportions, palette, silhouette details and existing accessories. Same Gentle pixel rendering, stepped dark outlines and soft shaded pixel clusters. NO redesign, generic bat replacement, global squash/stretch, text, labels, borders, gradient backdrop, lighting change or 3D style.\nInvariants for 果果蝠: Orange character with two enormous stuffed round cheeks, small central mischievous face, triangular ears, single tiny fang, little brown feet, olive green wings wrapped around same yellow pear and green leaf. Cheeks do not deflate; no hamster transformation; no new hands.\nOutput one transparent PNG sprite sheet: EXACTLY 4 equal columns and 2 equal rows; total 8 poses. Landscape 4:2 layout with square cells. Aim 2048 by 1024 pixels. EVERY cell contains the SAME CHARACTER at the SAME SCALE and camera distance. Leave at least 12% transparent margin on all four sides of EACH cell, including props/wings. No marks on grid boundaries. Space rows and columns evenly; never allow an ear/prop to enter another cell. Actual alpha transparency. Feet/body keep a consistent local position except explicitly moving actions. All props stay small so the bat remains clearly recognizable at Watch size.\nEach row is a DIFFERENT action below; read each row LEFT TO RIGHT across four successive keyframes: setup, anticipation, main action, settle. Tell the full specified beat, not four duplicate rest poses. Reuse the original neutral character pose closely for setup where appropriate. Change only the body parts relevant to that action. Return towards the original pose at the end when plausible. Use no entire scene backgrounds, only essential tiny action props.\nROW 1 — spat-pop: Squishes the fruit, slurps the juice and spits out a tiny pulp pellet: ptoo!\nROW 2 — squabble-squeaks: Squeak-argues with an invisible neighbour over a perch, then scoots over to share.\nPreserve this exact character throughout all rows, including when turned, concealed or upside-down. Do not add arbitrary costumes/marks/large scenery. For any sleep or concealment, fold existing appendages naturally rather than resizing the bat. For flight, articulate its original wings. When a motion needs a ceiling/branch, show only a tiny local perch well inside the cell. Leave all other pixels transparent.",
+      "status": "planned",
+      "reference": "../portraits-v3/portraits/04-fruit.png"
+    },
+    {
+      "id": "cave",
+      "number": 5,
+      "name": "洞穴蝠",
+      "concept": "住在自己斗篷里的小门房",
+      "portrait": "portraits/05-cave.png",
+      "actions": [
+        {
+          "actionID": "plum-wrap",
+          "chinese": "李子团",
+          "tier": "idleQuirk",
+          "trigger": "asleep",
+          "summary": "Wraps up into a plum-sized ball and sways gently from the ceiling."
+        },
+        {
+          "actionID": "peek-twist",
+          "chinese": "扭身偷看",
+          "tier": "reaction",
+          "trigger": "pet",
+          "summary": "Twists around inside its wings to peek at you before deciding you're safe."
+        },
+        {
+          "actionID": "find-you-call",
+          "chinese": "呼唤找宝宝",
+          "tier": "signature",
+          "trigger": "walkReturn",
+          "summary": "Calls into a crowd of tiny sleeping shapes until one answers, then beams."
+        }
+      ],
+      "rows": 3,
+      "columns": 4,
+      "prompt": "Use case: identity-preserve. Edit the attached APPROVED Batwalk character portrait into a game sprite animation sheet. The image is the exact model to animate, not a loose inspiration. Preserve its individual character identity, precise face, body proportions, palette, silhouette details and existing accessories. Same Gentle pixel rendering, stepped dark outlines and soft shaded pixel clusters. NO redesign, generic bat replacement, global squash/stretch, text, labels, borders, gradient backdrop, lighting change or 3D style.\nInvariants for 洞穴蝠: Purple folded angular wing tent / cloak with long high pointed wing folds, one tall pink-lined ear above the right side, tiny dark face with golden eyes and pink horseshoe snout peeking from a narrow central slit, gray grasping toes. Keep large cloak and very tiny hidden face, no generic exposed bat body.\nOutput one transparent PNG sprite sheet: EXACTLY 4 equal columns and 3 equal rows; total 12 poses. Landscape 4:3 layout with square cells. Aim 2048 by 1536 pixels. EVERY cell contains the SAME CHARACTER at the SAME SCALE and camera distance. Leave at least 12% transparent margin on all four sides of EACH cell, including props/wings. No marks on grid boundaries. Space rows and columns evenly; never allow an ear/prop to enter another cell. Actual alpha transparency. Feet/body keep a consistent local position except explicitly moving actions. All props stay small so the bat remains clearly recognizable at Watch size.\nEach row is a DIFFERENT action below; read each row LEFT TO RIGHT across four successive keyframes: setup, anticipation, main action, settle. Tell the full specified beat, not four duplicate rest poses. Reuse the original neutral character pose closely for setup where appropriate. Change only the body parts relevant to that action. Return towards the original pose at the end when plausible. Use no entire scene backgrounds, only essential tiny action props.\nROW 1 — plum-wrap: Wraps up into a plum-sized ball and sways gently from the ceiling.\nROW 2 — peek-twist: Twists around inside its wings to peek at you before deciding you're safe.\nROW 3 — find-you-call: Calls into a crowd of tiny sleeping shapes until one answers, then beams.\nPreserve this exact character throughout all rows, including when turned, concealed or upside-down. Do not add arbitrary costumes/marks/large scenery. For any sleep or concealment, fold existing appendages naturally rather than resizing the bat. For flight, articulate its original wings. When a motion needs a ceiling/branch, show only a tiny local perch well inside the cell. Leave all other pixels transparent.",
+      "status": "planned",
+      "reference": "../portraits-v3/portraits/05-cave.png"
+    },
+    {
+      "id": "sleepy",
+      "number": 6,
+      "name": "困困蝠",
+      "concept": "醒到一半就忘了为什么醒的小枕头",
+      "portrait": "portraits/06-sleepy.png",
+      "actions": [
+        {
+          "actionID": "one-big-breath",
+          "chinese": "一大口呼吸",
+          "tier": "idleQuirk",
+          "trigger": "asleep",
+          "summary": "Snoozes perfectly still, then takes one enormous, slow breath."
+        },
+        {
+          "actionID": "groggy-wake",
+          "chinese": "迷糊醒",
+          "tier": "reaction",
+          "trigger": "pet",
+          "summary": "Blinks awake, licks a dewdrop off its fur, mumbles, and is asleep again."
+        },
+        {
+          "actionID": "pitcher-plant-bed",
+          "chinese": "猪笼草睡袋",
+          "tier": "signature",
+          "trigger": "newDay",
+          "summary": "Climbs into a pitcher plant like a sleeping bag and settles in."
+        }
+      ],
+      "rows": 3,
+      "columns": 4,
+      "prompt": "Use case: identity-preserve. Edit the attached APPROVED Batwalk character portrait into a game sprite animation sheet. The image is the exact model to animate, not a loose inspiration. Preserve its individual character identity, precise face, body proportions, palette, silhouette details and existing accessories. Same Gentle pixel rendering, stepped dark outlines and soft shaded pixel clusters. NO redesign, generic bat replacement, global squash/stretch, text, labels, borders, gradient backdrop, lighting change or 3D style.\nInvariants for 困困蝠: Squat soft lavender bat with blue drooping nightcap and cream trim/pompom, pink ears, droopy sleepy eyes, big yawning mouth, blue small wings, curled lavender/cream belly blanket, blue toes. Preserve nightcap, sleepy face and blanket curls.\nOutput one transparent PNG sprite sheet: EXACTLY 4 equal columns and 3 equal rows; total 12 poses. Landscape 4:3 layout with square cells. Aim 2048 by 1536 pixels. EVERY cell contains the SAME CHARACTER at the SAME SCALE and camera distance. Leave at least 12% transparent margin on all four sides of EACH cell, including props/wings. No marks on grid boundaries. Space rows and columns evenly; never allow an ear/prop to enter another cell. Actual alpha transparency. Feet/body keep a consistent local position except explicitly moving actions. All props stay small so the bat remains clearly recognizable at Watch size.\nEach row is a DIFFERENT action below; read each row LEFT TO RIGHT across four successive keyframes: setup, anticipation, main action, settle. Tell the full specified beat, not four duplicate rest poses. Reuse the original neutral character pose closely for setup where appropriate. Change only the body parts relevant to that action. Return towards the original pose at the end when plausible. Use no entire scene backgrounds, only essential tiny action props.\nROW 1 — one-big-breath: Snoozes perfectly still, then takes one enormous, slow breath.\nROW 2 — groggy-wake: Blinks awake, licks a dewdrop off its fur, mumbles, and is asleep again.\nROW 3 — pitcher-plant-bed: Climbs into a pitcher plant like a sleeping bag and settles in.\nPreserve this exact character throughout all rows, including when turned, concealed or upside-down. Do not add arbitrary costumes/marks/large scenery. For any sleep or concealment, fold existing appendages naturally rather than resizing the bat. For flight, articulate its original wings. When a motion needs a ceiling/branch, show only a tiny local perch well inside the cell. Leave all other pixels transparent.",
+      "status": "planned",
+      "reference": "../portraits-v3/portraits/06-sleepy.png"
+    },
+    {
+      "id": "dust",
+      "number": 7,
+      "name": "尘尘蝠",
+      "concept": "总把自己摔成毛球的新手",
+      "portrait": "portraits/07-dust.png",
+      "actions": [
+        {
+          "actionID": "flap-practice",
+          "chinese": "拍翅练习",
+          "tier": "idleQuirk",
+          "trigger": "idleNight",
+          "summary": "Hangs and does a burst of frantic wing-flaps, then pants, very proud."
+        },
+        {
+          "actionID": "drop-start",
+          "chinese": "松手起飞",
+          "tier": "reaction",
+          "trigger": "pet",
+          "summary": "Lets go, plops down, remembers to flap, and flutters back up."
+        },
+        {
+          "actionID": "almost-landing",
+          "chinese": "差点着陆",
+          "tier": "signature",
+          "trigger": "walkReturn",
+          "summary": "Tries the upside-down landing, misses, somersaults, then sticks it in a puff of fluff."
+        }
+      ],
+      "rows": 3,
+      "columns": 4,
+      "prompt": "Use case: identity-preserve. Edit the attached APPROVED Batwalk character portrait into a game sprite animation sheet. The image is the exact model to animate, not a loose inspiration. Preserve its individual character identity, precise face, body proportions, palette, silhouette details and existing accessories. Same Gentle pixel rendering, stepped dark outlines and soft shaded pixel clusters. NO redesign, generic bat replacement, global squash/stretch, text, labels, borders, gradient backdrop, lighting change or 3D style.\nInvariants for 尘尘蝠: Scruffy asymmetrical spiky gray fluffball, irregular fur tufts, enormous curled forelock leaning upward, dot eyes, single tiny white fang, cream cheek tufts, tiny dark purple bat wings and feet. Keep distinct tangled jagged outline; do not turn into round smooth generic bat.\nOutput one transparent PNG sprite sheet: EXACTLY 4 equal columns and 3 equal rows; total 12 poses. Landscape 4:3 layout with square cells. Aim 2048 by 1536 pixels. EVERY cell contains the SAME CHARACTER at the SAME SCALE and camera distance. Leave at least 12% transparent margin on all four sides of EACH cell, including props/wings. No marks on grid boundaries. Space rows and columns evenly; never allow an ear/prop to enter another cell. Actual alpha transparency. Feet/body keep a consistent local position except explicitly moving actions. All props stay small so the bat remains clearly recognizable at Watch size.\nEach row is a DIFFERENT action below; read each row LEFT TO RIGHT across four successive keyframes: setup, anticipation, main action, settle. Tell the full specified beat, not four duplicate rest poses. Reuse the original neutral character pose closely for setup where appropriate. Change only the body parts relevant to that action. Return towards the original pose at the end when plausible. Use no entire scene backgrounds, only essential tiny action props.\nROW 1 — flap-practice: Hangs and does a burst of frantic wing-flaps, then pants, very proud.\nROW 2 — drop-start: Lets go, plops down, remembers to flap, and flutters back up.\nROW 3 — almost-landing: Tries the upside-down landing, misses, somersaults, then sticks it in a puff of fluff.\nPreserve this exact character throughout all rows, including when turned, concealed or upside-down. Do not add arbitrary costumes/marks/large scenery. For any sleep or concealment, fold existing appendages naturally rather than resizing the bat. For flight, articulate its original wings. When a motion needs a ceiling/branch, show only a tiny local perch well inside the cell. Leave all other pixels transparent.",
+      "status": "planned",
+      "reference": "../portraits-v3/portraits/07-dust.png"
+    },
+    {
+      "id": "pebble",
+      "number": 8,
+      "name": "卵石蝠",
+      "concept": "一本正经假装自己是石头的小偷",
+      "portrait": "portraits/08-pebble.png",
+      "actions": [
+        {
+          "actionID": "crack-squeeze",
+          "chinese": "挤石缝",
+          "tier": "idleQuirk",
+          "trigger": "asleep",
+          "summary": "Flattens like a pancake and slides into a rock crack until only its mask shows."
+        },
+        {
+          "actionID": "bandit-peek",
+          "chinese": "小偷面罩",
+          "tier": "reaction",
+          "trigger": "pet",
+          "summary": "Pops out of its pebble pile wearing its black bandit mask."
+        },
+        {
+          "actionID": "new-rock-every-day",
+          "chinese": "每天换石头",
+          "tier": "signature",
+          "trigger": "newDay",
+          "summary": "Each new day it hops to a different pebble and settles in."
+        }
+      ],
+      "rows": 3,
+      "columns": 4,
+      "prompt": "Use case: identity-preserve. Edit the attached APPROVED Batwalk character portrait into a game sprite animation sheet. The image is the exact model to animate, not a loose inspiration. Preserve its individual character identity, precise face, body proportions, palette, silhouette details and existing accessories. Same Gentle pixel rendering, stepped dark outlines and soft shaded pixel clusters. NO redesign, generic bat replacement, global squash/stretch, text, labels, borders, gradient backdrop, lighting change or 3D style.\nInvariants for 卵石蝠: Low wide stone-gray head, dark horizontal bandit eye-mask, tiny yellow nose, pointed short ears, small squat gray body and folded charcoal wings, tiny feet. Preserve deadpan mask and existing squat geometry, no stretch or pancake body deformation; use crouching and occlusion to squeeze into cracks.\nOutput one transparent PNG sprite sheet: EXACTLY 4 equal columns and 3 equal rows; total 12 poses. Landscape 4:3 layout with square cells. Aim 2048 by 1536 pixels. EVERY cell contains the SAME CHARACTER at the SAME SCALE and camera distance. Leave at least 12% transparent margin on all four sides of EACH cell, including props/wings. No marks on grid boundaries. Space rows and columns evenly; never allow an ear/prop to enter another cell. Actual alpha transparency. Feet/body keep a consistent local position except explicitly moving actions. All props stay small so the bat remains clearly recognizable at Watch size.\nEach row is a DIFFERENT action below; read each row LEFT TO RIGHT across four successive keyframes: setup, anticipation, main action, settle. Tell the full specified beat, not four duplicate rest poses. Reuse the original neutral character pose closely for setup where appropriate. Change only the body parts relevant to that action. Return towards the original pose at the end when plausible. Use no entire scene backgrounds, only essential tiny action props.\nROW 1 — crack-squeeze: Flattens like a pancake and slides into a rock crack until only its mask shows.\nROW 2 — bandit-peek: Pops out of its pebble pile wearing its black bandit mask.\nROW 3 — new-rock-every-day: Each new day it hops to a different pebble and settles in.\nPreserve this exact character throughout all rows, including when turned, concealed or upside-down. Do not add arbitrary costumes/marks/large scenery. For any sleep or concealment, fold existing appendages naturally rather than resizing the bat. For flight, articulate its original wings. When a motion needs a ceiling/branch, show only a tiny local perch well inside the cell. Leave all other pixels transparent.",
+      "status": "planned",
+      "reference": "../portraits-v3/portraits/08-pebble.png"
+    },
+    {
+      "id": "strawberry",
+      "number": 9,
+      "name": "草莓蝠",
+      "concept": "觉得自己马上要成熟的小浆果",
+      "portrait": "portraits/09-strawberry.png",
+      "actions": [
+        {
+          "actionID": "one-foot-sway",
+          "chinese": "单脚摇摆",
+          "tier": "idleQuirk",
+          "trigger": "asleep",
+          "summary": "Hangs by one foot and twirls in the breeze like a ripe berry."
+        },
+        {
+          "actionID": "tail-blanket",
+          "chinese": "尾巴毯子",
+          "tier": "reaction",
+          "trigger": "pet",
+          "summary": "Wraps itself in its furry tail like a blanket until only its face shows."
+        },
+        {
+          "actionID": "berry-bunch",
+          "chinese": "一串草莓",
+          "tier": "signature",
+          "trigger": "walkReturn",
+          "summary": "Three tiny pups dangle beside it like a bunch of strawberries."
+        }
+      ],
+      "rows": 3,
+      "columns": 4,
+      "prompt": "Use case: identity-preserve. Edit the attached APPROVED Batwalk character portrait into a game sprite animation sheet. The image is the exact model to animate, not a loose inspiration. Preserve its individual character identity, precise face, body proportions, palette, silhouette details and existing accessories. Same Gentle pixel rendering, stepped dark outlines and soft shaded pixel clusters. NO redesign, generic bat replacement, global squash/stretch, text, labels, borders, gradient backdrop, lighting change or 3D style.\nInvariants for 草莓蝠: Actual red heart-shaped strawberry body with pale yellow seeds, leafy green crown and two giant strawberry-leaf ears lined pink, joyful tiny face set into berry, small red bat wings and dark red feet. Keep berry body/seed pattern and leaf-ears; do not replace with pink generic bat.\nOutput one transparent PNG sprite sheet: EXACTLY 4 equal columns and 3 equal rows; total 12 poses. Landscape 4:3 layout with square cells. Aim 2048 by 1536 pixels. EVERY cell contains the SAME CHARACTER at the SAME SCALE and camera distance. Leave at least 12% transparent margin on all four sides of EACH cell, including props/wings. No marks on grid boundaries. Space rows and columns evenly; never allow an ear/prop to enter another cell. Actual alpha transparency. Feet/body keep a consistent local position except explicitly moving actions. All props stay small so the bat remains clearly recognizable at Watch size.\nEach row is a DIFFERENT action below; read each row LEFT TO RIGHT across four successive keyframes: setup, anticipation, main action, settle. Tell the full specified beat, not four duplicate rest poses. Reuse the original neutral character pose closely for setup where appropriate. Change only the body parts relevant to that action. Return towards the original pose at the end when plausible. Use no entire scene backgrounds, only essential tiny action props.\nROW 1 — one-foot-sway: Hangs by one foot and twirls in the breeze like a ripe berry.\nROW 2 — tail-blanket: Wraps itself in its furry tail like a blanket until only its face shows.\nROW 3 — berry-bunch: Three tiny pups dangle beside it like a bunch of strawberries.\nPreserve this exact character throughout all rows, including when turned, concealed or upside-down. Do not add arbitrary costumes/marks/large scenery. For any sleep or concealment, fold existing appendages naturally rather than resizing the bat. For flight, articulate its original wings. When a motion needs a ceiling/branch, show only a tiny local perch well inside the cell. Leave all other pixels transparent.",
+      "status": "planned",
+      "reference": "../portraits-v3/portraits/09-strawberry.png"
+    },
+    {
+      "id": "blossom",
+      "number": 10,
+      "name": "花花蝠",
+      "concept": "花还没开就开始神气的小园丁",
+      "portrait": "portraits/10-blossom.png",
+      "actions": [
+        {
+          "actionID": "brush-tongue-sip",
+          "chinese": "刷子舌吸蜜",
+          "tier": "idleQuirk",
+          "trigger": "idleNight",
+          "summary": "Hovers at a flower and paints out nectar with its brushy tongue."
+        },
+        {
+          "actionID": "pollen-sneeze",
+          "chinese": "花粉喷嚏",
+          "tier": "reaction",
+          "trigger": "pet",
+          "summary": "A pet sends up a puff of pollen from its fur — achoo!"
+        },
+        {
+          "actionID": "flower-patrol",
+          "chinese": "花丛巡逻",
+          "tier": "signature",
+          "trigger": "dusk",
+          "summary": "Shoos a rival off its flower patch, then fluffs up proudly."
+        }
+      ],
+      "rows": 3,
+      "columns": 4,
+      "prompt": "Use case: identity-preserve. Edit the attached APPROVED Batwalk character portrait into a game sprite animation sheet. The image is the exact model to animate, not a loose inspiration. Preserve its individual character identity, precise face, body proportions, palette, silhouette details and existing accessories. Same Gentle pixel rendering, stepped dark outlines and soft shaded pixel clusters. NO redesign, generic bat replacement, global squash/stretch, text, labels, borders, gradient backdrop, lighting change or 3D style.\nInvariants for 花花蝠: Tiny mauve round smiling face surrounded by exactly the original large pink flower petals, slender lime-green leaf body, small pink petal-wings and tiny dangling feet. Maintain flower-head anatomy/petal arrangement and narrow green body. Proud little gardener.\nOutput one transparent PNG sprite sheet: EXACTLY 4 equal columns and 3 equal rows; total 12 poses. Landscape 4:3 layout with square cells. Aim 2048 by 1536 pixels. EVERY cell contains the SAME CHARACTER at the SAME SCALE and camera distance. Leave at least 12% transparent margin on all four sides of EACH cell, including props/wings. No marks on grid boundaries. Space rows and columns evenly; never allow an ear/prop to enter another cell. Actual alpha transparency. Feet/body keep a consistent local position except explicitly moving actions. All props stay small so the bat remains clearly recognizable at Watch size.\nEach row is a DIFFERENT action below; read each row LEFT TO RIGHT across four successive keyframes: setup, anticipation, main action, settle. Tell the full specified beat, not four duplicate rest poses. Reuse the original neutral character pose closely for setup where appropriate. Change only the body parts relevant to that action. Return towards the original pose at the end when plausible. Use no entire scene backgrounds, only essential tiny action props.\nROW 1 — brush-tongue-sip: Hovers at a flower and paints out nectar with its brushy tongue.\nROW 2 — pollen-sneeze: A pet sends up a puff of pollen from its fur — achoo!\nROW 3 — flower-patrol: Shoos a rival off its flower patch, then fluffs up proudly.\nPreserve this exact character throughout all rows, including when turned, concealed or upside-down. Do not add arbitrary costumes/marks/large scenery. For any sleep or concealment, fold existing appendages naturally rather than resizing the bat. For flight, articulate its original wings. When a motion needs a ceiling/branch, show only a tiny local perch well inside the cell. Leave all other pixels transparent.",
+      "status": "planned",
+      "reference": "../portraits-v3/portraits/10-blossom.png"
+    },
+    {
+      "id": "moss",
+      "number": 11,
+      "name": "苔藓蝠",
+      "concept": "把小芽当宝贝养的小花园",
+      "portrait": "portraits/11-moss.png",
+      "actions": [
+        {
+          "actionID": "moss-hideout",
+          "chinese": "苔藓藏身",
+          "tier": "idleQuirk",
+          "trigger": "asleep",
+          "summary": "Burrows into a hanging tuft of Spanish moss, ears poking out."
+        },
+        {
+          "actionID": "let-go-drop",
+          "chinese": "松手俯冲",
+          "tier": "reaction",
+          "trigger": "pet",
+          "summary": "Lets go of the moss, drops straight down, and swoops back up."
+        },
+        {
+          "actionID": "sprout-planting",
+          "chinese": "种下小芽",
+          "tier": "signature",
+          "trigger": "walkReturn",
+          "summary": "Drops a seed as it flies; a tiny sprout pops up behind it."
+        }
+      ],
+      "rows": 3,
+      "columns": 4,
+      "prompt": "Use case: identity-preserve. Edit the attached APPROVED Batwalk character portrait into a game sprite animation sheet. The image is the exact model to animate, not a loose inspiration. Preserve its individual character identity, precise face, body proportions, palette, silhouette details and existing accessories. Same Gentle pixel rendering, stepped dark outlines and soft shaded pixel clusters. NO redesign, generic bat replacement, global squash/stretch, text, labels, borders, gradient backdrop, lighting change or 3D style.\nInvariants for 苔藓蝠: Brown tree-stump bat with root-like feet, dark small face inside draping olive moss bangs, tiny yellow eyes/smile, two tall brown bat ears, small orange/brown wings and the exact two-leaf sprout on top. Keep wooden body, root-feet, thick leafy fringe and protected sprout.\nOutput one transparent PNG sprite sheet: EXACTLY 4 equal columns and 3 equal rows; total 12 poses. Landscape 4:3 layout with square cells. Aim 2048 by 1536 pixels. EVERY cell contains the SAME CHARACTER at the SAME SCALE and camera distance. Leave at least 12% transparent margin on all four sides of EACH cell, including props/wings. No marks on grid boundaries. Space rows and columns evenly; never allow an ear/prop to enter another cell. Actual alpha transparency. Feet/body keep a consistent local position except explicitly moving actions. All props stay small so the bat remains clearly recognizable at Watch size.\nEach row is a DIFFERENT action below; read each row LEFT TO RIGHT across four successive keyframes: setup, anticipation, main action, settle. Tell the full specified beat, not four duplicate rest poses. Reuse the original neutral character pose closely for setup where appropriate. Change only the body parts relevant to that action. Return towards the original pose at the end when plausible. Use no entire scene backgrounds, only essential tiny action props.\nROW 1 — moss-hideout: Burrows into a hanging tuft of Spanish moss, ears poking out.\nROW 2 — let-go-drop: Lets go of the moss, drops straight down, and swoops back up.\nROW 3 — sprout-planting: Drops a seed as it flies; a tiny sprout pops up behind it.\nPreserve this exact character throughout all rows, including when turned, concealed or upside-down. Do not add arbitrary costumes/marks/large scenery. For any sleep or concealment, fold existing appendages naturally rather than resizing the bat. For flight, articulate its original wings. When a motion needs a ceiling/branch, show only a tiny local perch well inside the cell. Leave all other pixels transparent.",
+      "status": "planned",
+      "reference": "../portraits-v3/portraits/11-moss.png"
+    },
+    {
+      "id": "sunset",
+      "number": 12,
+      "name": "晚霞蝠",
+      "concept": "每天催太阳下班的小旋风",
+      "portrait": "portraits/12-sunset.png",
+      "actions": [
+        {
+          "actionID": "sunset-compass",
+          "chinese": "落日指南针",
+          "tier": "idleQuirk",
+          "trigger": "dusk",
+          "summary": "Stares at the sunset glow while a tiny compass needle spins and settles."
+        },
+        {
+          "actionID": "crowd-dodge",
+          "chinese": "混进蝠群",
+          "tier": "reaction",
+          "trigger": "pet",
+          "summary": "Zig-zags into an invisible crowd of friends and pops out the other side."
+        },
+        {
+          "actionID": "batnado",
+          "chinese": "蝙蝠龙卷风",
+          "tier": "signature",
+          "trigger": "dusk",
+          "summary": "Spirals up in a swirling column of silhouette friends, then streams away like a river."
+        }
+      ],
+      "rows": 3,
+      "columns": 4,
+      "prompt": "Use case: identity-preserve. Edit the attached APPROVED Batwalk character portrait into a game sprite animation sheet. The image is the exact model to animate, not a loose inspiration. Preserve its individual character identity, precise face, body proportions, palette, silhouette details and existing accessories. Same Gentle pixel rendering, stepped dark outlines and soft shaded pixel clusters. NO redesign, generic bat replacement, global squash/stretch, text, labels, borders, gradient backdrop, lighting change or 3D style.\nInvariants for 晚霞蝠: Sleek orange/purple bat with dramatic swept upward orange-red flame-shaped forelock, orange face and belly medallion, tall purple wings with orange membranes and long pointed tips, slim energetic body/legs. Keep fire-shaped head crest and contrasting wing construction, not a dragon.\nOutput one transparent PNG sprite sheet: EXACTLY 4 equal columns and 3 equal rows; total 12 poses. Landscape 4:3 layout with square cells. Aim 2048 by 1536 pixels. EVERY cell contains the SAME CHARACTER at the SAME SCALE and camera distance. Leave at least 12% transparent margin on all four sides of EACH cell, including props/wings. No marks on grid boundaries. Space rows and columns evenly; never allow an ear/prop to enter another cell. Actual alpha transparency. Feet/body keep a consistent local position except explicitly moving actions. All props stay small so the bat remains clearly recognizable at Watch size.\nEach row is a DIFFERENT action below; read each row LEFT TO RIGHT across four successive keyframes: setup, anticipation, main action, settle. Tell the full specified beat, not four duplicate rest poses. Reuse the original neutral character pose closely for setup where appropriate. Change only the body parts relevant to that action. Return towards the original pose at the end when plausible. Use no entire scene backgrounds, only essential tiny action props.\nROW 1 — sunset-compass: Stares at the sunset glow while a tiny compass needle spins and settles.\nROW 2 — crowd-dodge: Zig-zags into an invisible crowd of friends and pops out the other side.\nROW 3 — batnado: Spirals up in a swirling column of silhouette friends, then streams away like a river.\nPreserve this exact character throughout all rows, including when turned, concealed or upside-down. Do not add arbitrary costumes/marks/large scenery. For any sleep or concealment, fold existing appendages naturally rather than resizing the bat. For flight, articulate its original wings. When a motion needs a ceiling/branch, show only a tiny local perch well inside the cell. Leave all other pixels transparent.",
+      "status": "planned",
+      "reference": "../portraits-v3/portraits/12-sunset.png"
+    },
+    {
+      "id": "snow",
+      "number": 13,
+      "name": "雪雪蝠",
+      "concept": "把自己裹成冬衣的怕冷旅人",
+      "portrait": "portraits/13-snow.png",
+      "actions": [
+        {
+          "actionID": "frost-beads",
+          "chinese": "结霜水珠",
+          "tier": "idleQuirk",
+          "trigger": "asleep",
+          "summary": "Tiny droplets bead and sparkle all over its fur while it sleeps."
+        },
+        {
+          "actionID": "sleeping-bag",
+          "chinese": "尾巴睡袋",
+          "tier": "reaction",
+          "trigger": "pet",
+          "summary": "Shivers, then zips itself into its furry tail like a sleeping bag."
+        },
+        {
+          "actionID": "great-migration",
+          "chinese": "大迁徙",
+          "tier": "signature",
+          "trigger": "walkReturn",
+          "summary": "Pulls on a tiny scarf and flaps off over the horizon — and back."
+        }
+      ],
+      "rows": 3,
+      "columns": 4,
+      "prompt": "Use case: identity-preserve. Edit the attached APPROVED Batwalk character portrait into a game sprite animation sheet. The image is the exact model to animate, not a loose inspiration. Preserve its individual character identity, precise face, body proportions, palette, silhouette details and existing accessories. Same Gentle pixel rendering, stepped dark outlines and soft shaded pixel clusters. NO redesign, generic bat replacement, global squash/stretch, text, labels, borders, gradient backdrop, lighting change or 3D style.\nInvariants for 雪雪蝠: Pale white furry bat face and pink cheeks peeking from tall blue blanket/wings decorated with white snowflakes, two short pointed ears, existing pink scarf, small pale blue feet. Preserve blanket proportions and snowflake motifs plus scarf; very cold and cozy.\nOutput one transparent PNG sprite sheet: EXACTLY 4 equal columns and 3 equal rows; total 12 poses. Landscape 4:3 layout with square cells. Aim 2048 by 1536 pixels. EVERY cell contains the SAME CHARACTER at the SAME SCALE and camera distance. Leave at least 12% transparent margin on all four sides of EACH cell, including props/wings. No marks on grid boundaries. Space rows and columns evenly; never allow an ear/prop to enter another cell. Actual alpha transparency. Feet/body keep a consistent local position except explicitly moving actions. All props stay small so the bat remains clearly recognizable at Watch size.\nEach row is a DIFFERENT action below; read each row LEFT TO RIGHT across four successive keyframes: setup, anticipation, main action, settle. Tell the full specified beat, not four duplicate rest poses. Reuse the original neutral character pose closely for setup where appropriate. Change only the body parts relevant to that action. Return towards the original pose at the end when plausible. Use no entire scene backgrounds, only essential tiny action props.\nROW 1 — frost-beads: Tiny droplets bead and sparkle all over its fur while it sleeps.\nROW 2 — sleeping-bag: Shivers, then zips itself into its furry tail like a sleeping bag.\nROW 3 — great-migration: Pulls on a tiny scarf and flaps off over the horizon — and back.\nPreserve this exact character throughout all rows, including when turned, concealed or upside-down. Do not add arbitrary costumes/marks/large scenery. For any sleep or concealment, fold existing appendages naturally rather than resizing the bat. For flight, articulate its original wings. When a motion needs a ceiling/branch, show only a tiny local perch well inside the cell. Leave all other pixels transparent.",
+      "status": "planned",
+      "reference": "../portraits-v3/portraits/13-snow.png"
+    },
+    {
+      "id": "cloud",
+      "number": 14,
+      "name": "云云蝠",
+      "concept": "随时会忘记自己降落了的小云团",
+      "portrait": "portraits/14-cloud.png",
+      "actions": [
+        {
+          "actionID": "radar-bloom",
+          "chinese": "雷达云团",
+          "tier": "idleQuirk",
+          "trigger": "idleNight",
+          "summary": "A ring of tiny dots blooms around it like a cloud on a weather radar."
+        },
+        {
+          "actionID": "gust-surf",
+          "chinese": "乘风冲浪",
+          "tier": "reaction",
+          "trigger": "pet",
+          "summary": "A puff of wind catches it and it surfs the gust, ears flapping."
+        },
+        {
+          "actionID": "sky-high-snack",
+          "chinese": "云端加餐",
+          "tier": "signature",
+          "trigger": "walkReturn",
+          "summary": "Rockets up to the clouds, snaps a snack from the wind and zooms back in speed lines."
+        }
+      ],
+      "rows": 3,
+      "columns": 4,
+      "prompt": "Use case: identity-preserve. Edit the attached APPROVED Batwalk character portrait into a game sprite animation sheet. The image is the exact model to animate, not a loose inspiration. Preserve its individual character identity, precise face, body proportions, palette, silhouette details and existing accessories. Same Gentle pixel rendering, stepped dark outlines and soft shaded pixel clusters. NO redesign, generic bat replacement, global squash/stretch, text, labels, borders, gradient backdrop, lighting change or 3D style.\nInvariants for 云云蝠: Horizontal sleepy pale cream/white cloud puff with small face, huge rounded cloud-lobed wings with blue/lavender shading, tall small lavender ears, tiny dangling feet. Wide soft cloud silhouette, always light-colored, no humanoid body.\nOutput one transparent PNG sprite sheet: EXACTLY 4 equal columns and 3 equal rows; total 12 poses. Landscape 4:3 layout with square cells. Aim 2048 by 1536 pixels. EVERY cell contains the SAME CHARACTER at the SAME SCALE and camera distance. Leave at least 12% transparent margin on all four sides of EACH cell, including props/wings. No marks on grid boundaries. Space rows and columns evenly; never allow an ear/prop to enter another cell. Actual alpha transparency. Feet/body keep a consistent local position except explicitly moving actions. All props stay small so the bat remains clearly recognizable at Watch size.\nEach row is a DIFFERENT action below; read each row LEFT TO RIGHT across four successive keyframes: setup, anticipation, main action, settle. Tell the full specified beat, not four duplicate rest poses. Reuse the original neutral character pose closely for setup where appropriate. Change only the body parts relevant to that action. Return towards the original pose at the end when plausible. Use no entire scene backgrounds, only essential tiny action props.\nROW 1 — radar-bloom: A ring of tiny dots blooms around it like a cloud on a weather radar.\nROW 2 — gust-surf: A puff of wind catches it and it surfs the gust, ears flapping.\nROW 3 — sky-high-snack: Rockets up to the clouds, snaps a snack from the wind and zooms back in speed lines.\nPreserve this exact character throughout all rows, including when turned, concealed or upside-down. Do not add arbitrary costumes/marks/large scenery. For any sleep or concealment, fold existing appendages naturally rather than resizing the bat. For flight, articulate its original wings. When a motion needs a ceiling/branch, show only a tiny local perch well inside the cell. Leave all other pixels transparent.",
+      "status": "planned",
+      "reference": "../portraits-v3/portraits/14-cloud.png"
+    },
+    {
+      "id": "moonwing",
+      "number": 15,
+      "name": "月翼蝠",
+      "concept": "裹着一弯月牙的安静夜游者",
+      "portrait": "portraits/15-moonwing.png",
+      "actions": [
+        {
+          "actionID": "katydid-hush",
+          "chinese": "嘘——螽斯",
+          "tier": "reaction",
+          "trigger": "pet",
+          "summary": "Holds a wing to its lips — shh — and a tiny katydid goes quiet too."
+        },
+        {
+          "actionID": "termite-mound-den",
+          "chinese": "白蚁丘小窝",
+          "tier": "signature",
+          "trigger": "asleep",
+          "summary": "Chews a round, cosy den into a mound and curls up inside."
+        }
+      ],
+      "rows": 2,
+      "columns": 4,
+      "prompt": "Use case: identity-preserve. Edit the attached APPROVED Batwalk character portrait into a game sprite animation sheet. The image is the exact model to animate, not a loose inspiration. Preserve its individual character identity, precise face, body proportions, palette, silhouette details and existing accessories. Same Gentle pixel rendering, stepped dark outlines and soft shaded pixel clusters. NO redesign, generic bat replacement, global squash/stretch, text, labels, borders, gradient backdrop, lighting change or 3D style.\nInvariants for 月翼蝠: Tiny navy head with pink inner ears inside huge asymmetrical crescent-shaped wings: outer teal, pale buttery yellow inner membranes, viewer-left tip very tall, viewer-right shorter. These are its own folded wings, NOT separate moon boat. Keep crescent construction, head scale, dark navy feet, quiet introverted expression.\nOutput one transparent PNG sprite sheet: EXACTLY 4 equal columns and 2 equal rows; total 8 poses. Landscape 4:2 layout with square cells. Aim 2048 by 1024 pixels. EVERY cell contains the SAME CHARACTER at the SAME SCALE and camera distance. Leave at least 12% transparent margin on all four sides of EACH cell, including props/wings. No marks on grid boundaries. Space rows and columns evenly; never allow an ear/prop to enter another cell. Actual alpha transparency. Feet/body keep a consistent local position except explicitly moving actions. All props stay small so the bat remains clearly recognizable at Watch size.\nEach row is a DIFFERENT action below; read each row LEFT TO RIGHT across four successive keyframes: setup, anticipation, main action, settle. Tell the full specified beat, not four duplicate rest poses. Reuse the original neutral character pose closely for setup where appropriate. Change only the body parts relevant to that action. Return towards the original pose at the end when plausible. Use no entire scene backgrounds, only essential tiny action props.\nROW 1 — katydid-hush: Holds a wing to its lips — shh — and a tiny katydid goes quiet too.\nROW 2 — termite-mound-den: Chews a round, cosy den into a mound and curls up inside.\nPreserve this exact character throughout all rows, including when turned, concealed or upside-down. Do not add arbitrary costumes/marks/large scenery. For any sleep or concealment, fold existing appendages naturally rather than resizing the bat. For flight, articulate its original wings. When a motion needs a ceiling/branch, show only a tiny local perch well inside the cell. Leave all other pixels transparent.",
+      "status": "planned",
+      "reference": "../portraits-v3/portraits/15-moonwing.png"
+    },
+    {
+      "id": "golden",
+      "number": 16,
+      "name": "金金蝠",
+      "concept": "总觉得自己最闪亮的小绒球",
+      "portrait": "portraits/16-golden.png",
+      "actions": [
+        {
+          "actionID": "nest-blend",
+          "chinese": "鸟巢隐身",
+          "tier": "idleQuirk",
+          "trigger": "asleep",
+          "summary": "Fluffs its gold-tipped fur and vanishes into a hanging bird nest."
+        },
+        {
+          "actionID": "web-pluck",
+          "chinese": "蛛网摘点心",
+          "tier": "reaction",
+          "trigger": "pet",
+          "summary": "Hovers at a dewy spider web and plucks off a snack with a flourish."
+        },
+        {
+          "actionID": "nest-party",
+          "chinese": "鸟巢派对",
+          "tier": "signature",
+          "trigger": "walkReturn",
+          "summary": "The nest wiggles and golden faces pop out one by one — up to twelve."
+        }
+      ],
+      "rows": 3,
+      "columns": 4,
+      "prompt": "Use case: identity-preserve. Edit the attached APPROVED Batwalk character portrait into a game sprite animation sheet. The image is the exact model to animate, not a loose inspiration. Preserve its individual character identity, precise face, body proportions, palette, silhouette details and existing accessories. Same Gentle pixel rendering, stepped dark outlines and soft shaded pixel clusters. NO redesign, generic bat replacement, global squash/stretch, text, labels, borders, gradient backdrop, lighting change or 3D style.\nInvariants for 金金蝠: Golden sunburst fluffy fur ball, long many pointed golden ruff tufts radiating around tiny smug sleepy-eyed face, brown/orange small bat wings and small feet. Preserve round bright sunburst ruff and golden tuft pattern, not an actual sunflower.\nOutput one transparent PNG sprite sheet: EXACTLY 4 equal columns and 3 equal rows; total 12 poses. Landscape 4:3 layout with square cells. Aim 2048 by 1536 pixels. EVERY cell contains the SAME CHARACTER at the SAME SCALE and camera distance. Leave at least 12% transparent margin on all four sides of EACH cell, including props/wings. No marks on grid boundaries. Space rows and columns evenly; never allow an ear/prop to enter another cell. Actual alpha transparency. Feet/body keep a consistent local position except explicitly moving actions. All props stay small so the bat remains clearly recognizable at Watch size.\nEach row is a DIFFERENT action below; read each row LEFT TO RIGHT across four successive keyframes: setup, anticipation, main action, settle. Tell the full specified beat, not four duplicate rest poses. Reuse the original neutral character pose closely for setup where appropriate. Change only the body parts relevant to that action. Return towards the original pose at the end when plausible. Use no entire scene backgrounds, only essential tiny action props.\nROW 1 — nest-blend: Fluffs its gold-tipped fur and vanishes into a hanging bird nest.\nROW 2 — web-pluck: Hovers at a dewy spider web and plucks off a snack with a flourish.\nROW 3 — nest-party: The nest wiggles and golden faces pop out one by one — up to twelve.\nPreserve this exact character throughout all rows, including when turned, concealed or upside-down. Do not add arbitrary costumes/marks/large scenery. For any sleep or concealment, fold existing appendages naturally rather than resizing the bat. For flight, articulate its original wings. When a motion needs a ceiling/branch, show only a tiny local perch well inside the cell. Leave all other pixels transparent.",
+      "status": "planned",
+      "reference": "../portraits-v3/portraits/16-golden.png"
+    },
+    {
+      "id": "crystal",
+      "number": 17,
+      "name": "水晶蝠",
+      "concept": "看起来硬邦邦其实很胆小的玻璃糖",
+      "portrait": "portraits/17-crystal.png",
+      "actions": [
+        {
+          "actionID": "blacklight-glow",
+          "chinese": "紫外荧光",
+          "tier": "idleQuirk",
+          "trigger": "idleNight",
+          "summary": "Its wings flash a soft green glow, as if under a blacklight."
+        },
+        {
+          "actionID": "wind-hairs",
+          "chinese": "感风绒毛",
+          "tier": "reaction",
+          "trigger": "pet",
+          "summary": "Tiny hairs on its wings sparkle as it tests the air."
+        },
+        {
+          "actionID": "crystal-mend",
+          "chinese": "水晶自愈",
+          "tier": "signature",
+          "trigger": "newDay",
+          "summary": "A crack in one crystal wing glimmers and seals itself shut."
+        }
+      ],
+      "rows": 3,
+      "columns": 4,
+      "prompt": "Use case: identity-preserve. Edit the attached APPROVED Batwalk character portrait into a game sprite animation sheet. The image is the exact model to animate, not a loose inspiration. Preserve its individual character identity, precise face, body proportions, palette, silhouette details and existing accessories. Same Gentle pixel rendering, stepped dark outlines and soft shaded pixel clusters. NO redesign, generic bat replacement, global squash/stretch, text, labels, borders, gradient backdrop, lighting change or 3D style.\nInvariants for 水晶蝠: Faceted lavender/ice-blue bat constructed of sharp translucent-looking crystal polygons, huge angular icy wings, multiple upright crystal ear spikes, tiny gentle lavender face, no furry torso. Preserve exact jagged facet geometry and lilac/cyan colors; shy glass-candy personality.\nOutput one transparent PNG sprite sheet: EXACTLY 4 equal columns and 3 equal rows; total 12 poses. Landscape 4:3 layout with square cells. Aim 2048 by 1536 pixels. EVERY cell contains the SAME CHARACTER at the SAME SCALE and camera distance. Leave at least 12% transparent margin on all four sides of EACH cell, including props/wings. No marks on grid boundaries. Space rows and columns evenly; never allow an ear/prop to enter another cell. Actual alpha transparency. Feet/body keep a consistent local position except explicitly moving actions. All props stay small so the bat remains clearly recognizable at Watch size.\nEach row is a DIFFERENT action below; read each row LEFT TO RIGHT across four successive keyframes: setup, anticipation, main action, settle. Tell the full specified beat, not four duplicate rest poses. Reuse the original neutral character pose closely for setup where appropriate. Change only the body parts relevant to that action. Return towards the original pose at the end when plausible. Use no entire scene backgrounds, only essential tiny action props.\nROW 1 — blacklight-glow: Its wings flash a soft green glow, as if under a blacklight.\nROW 2 — wind-hairs: Tiny hairs on its wings sparkle as it tests the air.\nROW 3 — crystal-mend: A crack in one crystal wing glimmers and seals itself shut.\nPreserve this exact character throughout all rows, including when turned, concealed or upside-down. Do not add arbitrary costumes/marks/large scenery. For any sleep or concealment, fold existing appendages naturally rather than resizing the bat. For flight, articulate its original wings. When a motion needs a ceiling/branch, show only a tiny local perch well inside the cell. Leave all other pixels transparent.",
+      "status": "planned",
+      "reference": "../portraits-v3/portraits/17-crystal.png"
+    },
+    {
+      "id": "vampire",
+      "number": 18,
+      "name": "吸血蝠",
+      "concept": "很有仪式感地把大份晚餐让给你的小伯爵",
+      "portrait": "portraits/18-vampire.png",
+      "actions": [
+        {
+          "actionID": "gorilla-gallop",
+          "chinese": "猩猩式奔跑",
+          "tier": "idleQuirk",
+          "trigger": "idleNight",
+          "summary": "Drops to the ground and gallops along on its wings like a tiny gorilla."
+        },
+        {
+          "actionID": "grooming-buddy",
+          "chinese": "互相梳毛",
+          "tier": "reaction",
+          "trigger": "pet",
+          "summary": "Grooms your finger right back — that's how bat friendships start."
+        },
+        {
+          "actionID": "share-dinner",
+          "chinese": "分享晚餐",
+          "tier": "signature",
+          "trigger": "feed",
+          "summary": "Splits its fruit in two and offers you the bigger half."
+        }
+      ],
+      "rows": 3,
+      "columns": 4,
+      "prompt": "Use case: identity-preserve. Edit the attached APPROVED Batwalk character portrait into a game sprite animation sheet. The image is the exact model to animate, not a loose inspiration. Preserve its individual character identity, precise face, body proportions, palette, silhouette details and existing accessories. Same Gentle pixel rendering, stepped dark outlines and soft shaded pixel clusters. NO redesign, generic bat replacement, global squash/stretch, text, labels, borders, gradient backdrop, lighting change or 3D style.\nInvariants for 吸血蝠: Slender tiny theatrical count bat, pale gray face with black swept hair, pink inner ears, thin red/black high-collared cape-wings, gold neck brooch, small black body/feet, orange-yellow fruit in raised wing. Keep refined skinny shape, face markings, cape lining and brooch; cozy, not scary.\nOutput one transparent PNG sprite sheet: EXACTLY 4 equal columns and 3 equal rows; total 12 poses. Landscape 4:3 layout with square cells. Aim 2048 by 1536 pixels. EVERY cell contains the SAME CHARACTER at the SAME SCALE and camera distance. Leave at least 12% transparent margin on all four sides of EACH cell, including props/wings. No marks on grid boundaries. Space rows and columns evenly; never allow an ear/prop to enter another cell. Actual alpha transparency. Feet/body keep a consistent local position except explicitly moving actions. All props stay small so the bat remains clearly recognizable at Watch size.\nEach row is a DIFFERENT action below; read each row LEFT TO RIGHT across four successive keyframes: setup, anticipation, main action, settle. Tell the full specified beat, not four duplicate rest poses. Reuse the original neutral character pose closely for setup where appropriate. Change only the body parts relevant to that action. Return towards the original pose at the end when plausible. Use no entire scene backgrounds, only essential tiny action props.\nROW 1 — gorilla-gallop: Drops to the ground and gallops along on its wings like a tiny gorilla.\nROW 2 — grooming-buddy: Grooms your finger right back — that's how bat friendships start.\nROW 3 — share-dinner: Splits its fruit in two and offers you the bigger half.\nPreserve this exact character throughout all rows, including when turned, concealed or upside-down. Do not add arbitrary costumes/marks/large scenery. For any sleep or concealment, fold existing appendages naturally rather than resizing the bat. For flight, articulate its original wings. When a motion needs a ceiling/branch, show only a tiny local perch well inside the cell. Leave all other pixels transparent.",
+      "status": "planned",
+      "reference": "../portraits-v3/portraits/18-vampire.png"
+    },
+    {
+      "id": "galaxy",
+      "number": 19,
+      "name": "星系蝠",
+      "concept": "把回家路线记在肚子里的星图精灵",
+      "portrait": "portraits/19-galaxy.png",
+      "actions": [
+        {
+          "actionID": "star-map-hatch",
+          "chinese": "星图孵化",
+          "tier": "hatchReveal",
+          "trigger": "hatch",
+          "summary": "The egg cracks into a little constellation map that folds into its body."
+        },
+        {
+          "actionID": "shortcut-map",
+          "chinese": "抄近路地图",
+          "tier": "idleQuirk",
+          "trigger": "idleNight",
+          "summary": "Dotted lines draw a shortcut between twinkling fruit trees."
+        },
+        {
+          "actionID": "inner-compass",
+          "chinese": "体内罗盘",
+          "tier": "reaction",
+          "trigger": "pet",
+          "summary": "The stars fade out — and the compass inside it still points true."
+        },
+        {
+          "actionID": "migration-trail",
+          "chinese": "迁徙轨迹",
+          "tier": "signature",
+          "trigger": "walkReturn",
+          "summary": "Draws today's walk across its starry body as a migration route."
+        },
+        {
+          "actionID": "storm-surf",
+          "chinese": "风暴冲浪",
+          "tier": "secret",
+          "trigger": "rare",
+          "summary": "Rides a warm wind ahead of a storm, streaking across the whole sky."
+        }
+      ],
+      "rows": 5,
+      "columns": 4,
+      "prompt": "Use case: identity-preserve. Edit the attached APPROVED Batwalk character portrait into a game sprite animation sheet. The image is the exact model to animate, not a loose inspiration. Preserve its individual character identity, precise face, body proportions, palette, silhouette details and existing accessories. Same Gentle pixel rendering, stepped dark outlines and soft shaded pixel clusters. NO redesign, generic bat replacement, global squash/stretch, text, labels, borders, gradient backdrop, lighting change or 3D style.\nInvariants for 星系蝠: Large deep navy round pear-shaped star-map torso with clear turquoise/purple spiral galaxy on belly, scattered tiny gold/teal stars, tiny face up left of torso, one tall swept purple ear/wing above right, scalloped dark wing edges and tiny feet. Keep exact asymmetric silhouette, face position and spiral belly map.\nOutput one transparent PNG sprite sheet: EXACTLY 4 equal columns and 5 equal rows; total 20 poses. Landscape 4:5 layout with square cells. Aim 2048 by 2560 pixels. EVERY cell contains the SAME CHARACTER at the SAME SCALE and camera distance. Leave at least 12% transparent margin on all four sides of EACH cell, including props/wings. No marks on grid boundaries. Space rows and columns evenly; never allow an ear/prop to enter another cell. Actual alpha transparency. Feet/body keep a consistent local position except explicitly moving actions. All props stay small so the bat remains clearly recognizable at Watch size.\nEach row is a DIFFERENT action below; read each row LEFT TO RIGHT across four successive keyframes: setup, anticipation, main action, settle. Tell the full specified beat, not four duplicate rest poses. Reuse the original neutral character pose closely for setup where appropriate. Change only the body parts relevant to that action. Return towards the original pose at the end when plausible. Use no entire scene backgrounds, only essential tiny action props.\nROW 1 — star-map-hatch: The egg cracks into a little constellation map that folds into its body.\nROW 2 — shortcut-map: Dotted lines draw a shortcut between twinkling fruit trees.\nROW 3 — inner-compass: The stars fade out — and the compass inside it still points true.\nROW 4 — migration-trail: Draws today's walk across its starry body as a migration route.\nROW 5 — storm-surf: Rides a warm wind ahead of a storm, streaking across the whole sky.\nPreserve this exact character throughout all rows, including when turned, concealed or upside-down. Do not add arbitrary costumes/marks/large scenery. For any sleep or concealment, fold existing appendages naturally rather than resizing the bat. For flight, articulate its original wings. When a motion needs a ceiling/branch, show only a tiny local perch well inside the cell. Leave all other pixels transparent.",
+      "status": "planned",
+      "reference": "../portraits-v3/portraits/19-galaxy.png"
+    },
+    {
+      "id": "eclipse",
+      "number": 20,
+      "name": "日蚀蝠",
+      "concept": "白天也会迷路的日环小守夜人",
+      "portrait": "portraits/20-eclipse.png",
+      "actions": [
+        {
+          "actionID": "totality-hatch",
+          "chinese": "全食孵化",
+          "tier": "hatchReveal",
+          "trigger": "hatch",
+          "summary": "The screen dims to totality and the bat appears inside the golden ring."
+        },
+        {
+          "actionID": "whisper-sonar",
+          "chinese": "耳语声呐",
+          "tier": "idleQuirk",
+          "trigger": "idleNight",
+          "summary": "Sends sonar ripples so tiny that a moth drifts right past without noticing."
+        },
+        {
+          "actionID": "halo-ears",
+          "chinese": "光环耳朵",
+          "tier": "reaction",
+          "trigger": "pet",
+          "summary": "Pulls its joined ears down like a hood, then pops them up into a halo."
+        },
+        {
+          "actionID": "old-wood-hideaway",
+          "chinese": "古木藏身",
+          "tier": "signature",
+          "trigger": "newDay",
+          "summary": "Slips into a crack in an ancient dead tree; only the halo glints."
+        },
+        {
+          "actionID": "midday-dusk",
+          "chinese": "正午黄昏",
+          "tier": "secret",
+          "trigger": "rare",
+          "summary": "In broad daylight the sky darkens; it wakes, peeks out as if dusk came, then shrugs back to sleep."
+        }
+      ],
+      "rows": 5,
+      "columns": 4,
+      "prompt": "Use case: identity-preserve. Edit the attached APPROVED Batwalk character portrait into a game sprite animation sheet. The image is the exact model to animate, not a loose inspiration. Preserve its individual character identity, precise face, body proportions, palette, silhouette details and existing accessories. Same Gentle pixel rendering, stepped dark outlines and soft shaded pixel clusters. NO redesign, generic bat replacement, global squash/stretch, text, labels, borders, gradient backdrop, lighting change or 3D style.\nInvariants for 日蚀蝠: Compact pitch-black round hooded bat surrounded by large split golden ring-like wings, twin tall curved gold rims meeting above, tiny closed gold eyes and small gold line details, black feet. Preserve split hood-ring anatomy and tiny hidden face, not a separate solar disk or a new character.\nOutput one transparent PNG sprite sheet: EXACTLY 4 equal columns and 5 equal rows; total 20 poses. Landscape 4:5 layout with square cells. Aim 2048 by 2560 pixels. EVERY cell contains the SAME CHARACTER at the SAME SCALE and camera distance. Leave at least 12% transparent margin on all four sides of EACH cell, including props/wings. No marks on grid boundaries. Space rows and columns evenly; never allow an ear/prop to enter another cell. Actual alpha transparency. Feet/body keep a consistent local position except explicitly moving actions. All props stay small so the bat remains clearly recognizable at Watch size.\nEach row is a DIFFERENT action below; read each row LEFT TO RIGHT across four successive keyframes: setup, anticipation, main action, settle. Tell the full specified beat, not four duplicate rest poses. Reuse the original neutral character pose closely for setup where appropriate. Change only the body parts relevant to that action. Return towards the original pose at the end when plausible. Use no entire scene backgrounds, only essential tiny action props.\nROW 1 — totality-hatch: The screen dims to totality and the bat appears inside the golden ring.\nROW 2 — whisper-sonar: Sends sonar ripples so tiny that a moth drifts right past without noticing.\nROW 3 — halo-ears: Pulls its joined ears down like a hood, then pops them up into a halo.\nROW 4 — old-wood-hideaway: Slips into a crack in an ancient dead tree; only the halo glints.\nROW 5 — midday-dusk: In broad daylight the sky darkens; it wakes, peeks out as if dusk came, then shrugs back to sleep.\nPreserve this exact character throughout all rows, including when turned, concealed or upside-down. Do not add arbitrary costumes/marks/large scenery. For any sleep or concealment, fold existing appendages naturally rather than resizing the bat. For flight, articulate its original wings. When a motion needs a ceiling/branch, show only a tiny local perch well inside the cell. Leave all other pixels transparent.",
+      "status": "planned",
+      "reference": "../portraits-v3/portraits/20-eclipse.png"
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+{
+  "generator": "built-in image_gen",
+  "repairs": [
+    {
+      "id": "fruit-fix",
+      "species": "fruit",
+      "actions": [
+        "squabble-squeaks"
+      ],
+      "rows": 2,
+      "columns": 2,
+      "prompt": "Use case: identity-preserve. Animate the attached approved Batwalk portrait EXACTLY. Same character identity, original anatomy, palette, body proportions, face, pixel outline and Gentle pixel shaded clusters. No redesign, generic bat, new clothing or new limbs. Transparent PNG with actual alpha. ONE square sheet with EXACTLY 2 columns x 2 rows = 4 sequential poses, read top-left top-right bottom-left bottom-right. Same character size in all cells; entire character and all props inside each cell with 15% clear space on all sides. No text, labels, borders, floor, atmospheric glows or opaque background. Do not resize or distort the character across poses. Four DISTINCT articulated keyframes. Exact input orange bat with enormous round cheeks, tiny central sly face, olive wings, brown feet, the original yellow pear. The bat argues with an INVISIBLE neighbor, then makes room. Draw ONLY ONE BAT in every cell and keep it at identical full size. Frame 1 pear hugged, eyes narrow at empty space on right. Frame 2 mouth opens into a little annoyed squeak, one wing gestures toward that EMPTY space. Frame 3 it realizes it can share, expression softens, both wings hug its pear again, weight shifts to left foot. Frame 4 it has sidestepped a little left, eyes smile toward empty space on right. No second bat or head, no shrink, no clone, no added fruit. Both giant cheeks stay exactly the same size. The original piggish little face and yellow pear are preserved."
+    },
+    {
+      "id": "vampire-fix",
+      "species": "vampire",
+      "actions": [
+        "gorilla-gallop"
+      ],
+      "rows": 2,
+      "columns": 2,
+      "prompt": "Use case: identity-preserve. Animate the attached approved Batwalk portrait EXACTLY. Same character identity, original anatomy, palette, body proportions, face, pixel outline and Gentle pixel shaded clusters. No redesign, generic bat, new clothing or new limbs. Transparent PNG with actual alpha. ONE square sheet with EXACTLY 2 columns x 2 rows = 4 sequential poses, read top-left top-right bottom-left bottom-right. Same character size in all cells; entire character and all props inside each cell with 15% clear space on all sides. No text, labels, borders, floor, atmospheric glows or opaque background. Do not resize or distort the character across poses. Four DISTINCT articulated keyframes. Exact original thin pale-faced count bat with swept black hair, pink inner ears, red-lined black high-collared cape wings, slender black body and feet. For this running action set the fruit aside OFF-CANVAS; remove ONLY held fruit, keep character design unchanged. It runs low like a bat using the knuckle joints of its two original wing-arms, NOT like a human. Frame 1 crouched close to ground, both existing wing-knuckles contacting ground, folded red membranes visible between arm and body. Frame 2 pushes body forward from planted wing-knuckles, little rear feet lifting. Frame 3 airborne low forward gallop with rear feet tucked and wing-knuckles reaching for next landing. Frame 4 lands softly on wing-knuckles with rear feet following and contented original smile. Same scale; four limb positions distinctly differ. EXACTLY 2 wing-arms + 2 hind feet. No extra legs, no gorilla body, no new hands, no sitting still holding fruit."
+    },
+    {
+      "id": "galaxy-fix",
+      "species": "galaxy",
+      "actions": [
+        "star-map-hatch"
+      ],
+      "rows": 2,
+      "columns": 2,
+      "prompt": "Use case: identity-preserve. Animate the attached approved Batwalk portrait EXACTLY. Same character identity, original anatomy, palette, body proportions, face, pixel outline and Gentle pixel shaded clusters. No redesign, generic bat, new clothing or new limbs. Transparent PNG with actual alpha. ONE square sheet with EXACTLY 2 columns x 2 rows = 4 sequential poses, read top-left top-right bottom-left bottom-right. Same character size in all cells; entire character and all props inside each cell with 15% clear space on all sides. No text, labels, borders, floor, atmospheric glows or opaque background. Do not resize or distort the character across poses. Four DISTINCT articulated keyframes. Exact original plump dark navy asymmetric star-map bat with tiny face near upper-left of torso, one sweeping long purple ear, scalloped wings, spiral teal/lavender galaxy on belly and gold stars. Action is its HATCH REVEAL. Frame 1 a small dark navy egg with gold constellation cracks; NO adult bat yet. Frame 2 egg splits into a few small constellation-map fragments, a tiny glimpse of original dark bat face and purple ear emerges. Frame 3 original FULL SIZE bat steps out as the little constellation map folds onto its belly spiral; a few broken egg pieces lie beside its feet. Frame 4 original approved portrait pose almost exactly, same enormous spiral belly, asymmetric ear and tiny face, just one tiny gold sparkle, egg pieces gone. The final bat is the exact approved character, not a generic star bat. Use small crisp solid pixels for effect stars, no haze or backdrop."
+    },
+    {
+      "id": "eclipse-fix",
+      "species": "eclipse",
+      "actions": [
+        "midday-dusk"
+      ],
+      "rows": 2,
+      "columns": 2,
+      "prompt": "Use case: identity-preserve. Animate the attached approved Batwalk portrait EXACTLY. Same character identity, original anatomy, palette, body proportions, face, pixel outline and Gentle pixel shaded clusters. No redesign, generic bat, new clothing or new limbs. Transparent PNG with actual alpha. ONE square sheet with EXACTLY 2 columns x 2 rows = 4 sequential poses, read top-left top-right bottom-left bottom-right. Same character size in all cells; entire character and all props inside each cell with 15% clear space on all sides. No text, labels, borders, floor, atmospheric glows or opaque background. Do not resize or distort the character across poses. Four DISTINCT articulated keyframes. Exact original round pitch-black bat wrapped inside split golden hood-ring wings, joined golden upper tips, tiny gold sleepy eyes and tiny feet. Its characteristic ring silhouette stays exactly the same throughout. Action: confused by a daytime solar eclipse. Draw a SMALL solid gold sun disk near upper-right of each cell, safely away from the bat. Frame 1 sun fully lit, bat asleep eyes closed in original pose. Frame 2 a dark disk partly covers the small sun, bat opens two tiny gold eyes and lifts face slightly. Frame 3 sun nearly covered with thin gold rim, bat leans face out of hood inquisitively, eyes open, one original golden wing rim lifted a little. Frame 4 small sun bright again, bat closes eyes and tucks face back into original hood, sleepy smile. Main bat constant size. Only tiny sun changes illumination; all background remains transparent. No huge aura, no floating crown, no redesign."
+    }
+  ]
+}

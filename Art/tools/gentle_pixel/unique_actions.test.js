@@ -1,47 +1,53 @@
 'use strict';
 const {test}=require('node:test'),assert=require('node:assert/strict');
 const fs=require('fs'),path=require('path'),crypto=require('crypto');
-const U=require('./unique_actions'),E=require('./engine');
 const root=path.resolve(__dirname,'../../..');
 const manifest=require('../../gentle-pixel/launch-actions/manifest.json');
+const portraits=require('../../gentle-pixel/portraits-v3/manifest.json');
+const sha=file=>crypto.createHash('sha256').update(fs.readFileSync(path.join(root,file))).digest('hex');
 
-test('every designed launch action has real, distinct PNG frames at the bundle size',()=>{
-  assert.equal(manifest.clips.length,64);assert.equal(new Set(manifest.clips.map(c=>c.speciesID)).size,20);
+test('64 designed launch actions have 256 distinct packaged RGBA frames',()=>{
+  assert.equal(manifest.clips.length,64);
+  assert.equal(new Set(manifest.clips.map(c=>c.speciesID)).size,20);
   const names=new Set();
   for(const c of manifest.clips){
-    assert.equal(c.frames.length,c.seconds.length);
+    assert.equal(c.frames.length,4);assert.equal(c.seconds.length,4);
     assert.ok(new Set(c.sha256).size>=3,c.speciesID+'/'+c.actionID+' is effectively a still');
+    assert.ok(c.seconds.every(t=>t>=.1&&t<=1.2));
+    assert.ok(c.seconds.reduce((a,b)=>a+b,0)<=3);
     c.frames.forEach((name,i)=>{
-      const png=fs.readFileSync(path.join(root,'Apps/Shared/Sprites.xcassets',name+'.imageset/sprite.png'));
+      const file='Apps/Shared/Sprites.xcassets/'+name+'.imageset/sprite.png';
+      const png=fs.readFileSync(path.join(root,file));
       assert.equal(png.readUInt32BE(16),128,name);assert.equal(png.readUInt32BE(20),128,name);
       assert.equal(png[25],6,'RGBA required');
-      assert.equal(crypto.createHash('sha256').update(png).digest('hex'),c.sha256[i],name);
+      assert.equal(sha(file),c.sha256[i],name);
       assert.ok(!names.has(name));names.add(name);
     });
   }
-  assert.equal(names.size,500);
+  assert.equal(names.size,256);
 });
 
-test('choreography preserves source identities and stays within the sprite canvas',()=>{
-  const before=E.SPECIES.map(s=>JSON.stringify(s));
-  for(const key of Object.keys(U.draw)){
-    for(const {grid,index} of U.frames(key)){
-      assert.equal(grid.p.length,64*64);
-      assert.ok(grid.count()>15,key+'/'+index+' empty');
-      assert.ok(grid.count()<64*64*.8,key+'/'+index+' opaque backdrop');
-      // Nothing is drawn at the crop edge. A one-pixel gutter is mandatory.
-      for(let n=0;n<64;n++)assert.ok(!grid.get(n,0)&&!grid.get(n,63)&&!grid.get(0,n)&&!grid.get(63,n),key+'/'+index+' crop edge');
-      assert.ok(grid.p.every(c=>c===null||/^#[0-9a-f]{6}$/i.test(c)),key+' invalid palette');
+test('every clip traces back to unchanged approved portrait and stored source sheet',()=>{
+  for(const c of manifest.clips){
+    const original=portraits.characters.find(p=>p.id===c.speciesID);
+    assert.equal(c.portraitSHA256,original.sha256,c.speciesID);
+    assert.equal(sha(c.portrait),original.sha256,c.speciesID);
+    assert.ok(c.source&&c.sourceSHA256,c.actionID+' lacks source provenance');
+    assert.equal(sha(c.source),c.sourceSHA256,c.actionID);
+    if(c.speciesID!=='mochi'){
+      assert.equal(c.framing.frames.length,4);
+      assert.ok(c.framing.scale>0);
+      assert.ok(c.framing.frames.every(f=>f.rect.length===4&&f.anchor.length===2));
     }
   }
-  assert.deepEqual(E.SPECIES.map(s=>JSON.stringify(s)),before,'Animating must not mutate other clips');
 });
 
-test('small gestures have genuine changes in body parts or props, not duplicate frames',()=>{
-  for(const key of Object.keys(U.draw)){
-    const frames=U.frames(key);const hashes=frames.map(f=>crypto.createHash('sha256').update(JSON.stringify(f.grid.p)).digest('hex'));
-    assert.ok(new Set(hashes).size>=3,key);
-    assert.ok(frames.every(f=>f.seconds>=.1));
-    assert.ok(frames.reduce((s,f)=>s+f.seconds,0)<=3,key);
+test('the three approved sample sheets remain the exact accepted images',()=>{
+  const samples=require('../../gentle-pixel/portrait-action-samples-v1/manifest.json');
+  for(const sample of samples.characters){
+    const clip=manifest.clips.find(c=>c.speciesID===sample.id&&c.actionID===sample.action);
+    assert.equal(clip.sourceSHA256,sample.sheetSHA256);
+    assert.deepEqual(clip.seconds,sample.frameDurationsMs.map(t=>t/1000));
+    assert.deepEqual(clip.framing.frames.map(f=>f.anchor),sample.frames.map(f=>f.anchor));
   }
 });

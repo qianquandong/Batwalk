@@ -14,16 +14,16 @@ final class BatAnimationTests: XCTestCase {
         XCTAssertNil(PilotAnimationCatalog.universal(for: "missing", action: .idle))
     }
 
-    func testEveryCataloguedSpeciesHasPlayableUniversalActions() {
+    func testEveryCataloguedSpeciesHasAnIdentityPreservingFallback() {
         XCTAssertEqual(Set(PilotAnimationCatalog.speciesIDs), Set(Roster.catalog.map(\.id)))
-        XCTAssertEqual(PilotAnimationCatalog.generatedSpeciesIDs.count, Roster.catalog.count - 3)
-        XCTAssertTrue(PilotAnimationCatalog.generatedSpeciesIDs.allSatisfy { !PilotAnimationCatalog.pilotSpeciesIDs.contains($0) })
-        for species in PilotAnimationCatalog.generatedSpeciesIDs {
+        XCTAssertEqual(PilotAnimationCatalog.portraitSpeciesIDs.count, Roster.catalog.count - 3)
+        XCTAssertTrue(PilotAnimationCatalog.portraitSpeciesIDs.allSatisfy { !PilotAnimationCatalog.pilotSpeciesIDs.contains($0) })
+        for species in PilotAnimationCatalog.portraitSpeciesIDs {
             for level in 1...5 {
                 XCTAssertNotNil(PilotAnimationCatalog.reaction(for: species, event: .pet, friendshipLevel: level))
                 XCTAssertNotNil(PilotAnimationCatalog.reaction(for: species, event: .feed, friendshipLevel: level))
                 if Roster.species(species)!.number > 20 {
-                    // Wave two keeps its universal art; no invented signature frames.
+                    // Wave two keeps its portrait; no invented signature frames.
                     XCTAssertNil(PilotAnimationCatalog.signature(for: species, friendshipLevel: level), species)
                     XCTAssertNil(PilotAnimationCatalog.reaction(for: species, event: .newDay, friendshipLevel: level), species)
                 } else {
@@ -34,29 +34,21 @@ final class BatAnimationTests: XCTestCase {
         }
     }
 
-    func testGeneratedFramesFollowThePlanAndTheExportNaming() throws {
-        for species in PilotAnimationCatalog.generatedSpeciesIDs {
+    func testUniversalFallbackCannotReturnDiscardedCharacterArt() throws {
+        for species in PilotAnimationCatalog.portraitSpeciesIDs {
             for action in UniversalAction.allCases {
-                let plan = GeneratedFramePlan.plan(for: action)
                 let clip = try XCTUnwrap(PilotAnimationCatalog.universal(for: species, action: action))
-                XCTAssertEqual(clip.frames.count, plan.count, "\(species) \(action)")
-                XCTAssertEqual(clip.frames.map(\.seconds), plan.seconds)
-                XCTAssertEqual(clip.restSeconds, plan.rest)
-                XCTAssertEqual(clip.frames.first?.assetName, "gen_bat_\(species)_\(action.rawValue)_0")
-                XCTAssertEqual(clip.frames.last?.assetName, "gen_bat_\(species)_\(action.rawValue)_\(plan.count - 1)")
-                XCTAssertTrue(clip.frames.allSatisfy { $0.seconds >= 0.1 && $0.offsetX == 0 })
-                XCTAssertLessThan(clip.frames.reduce(0) { $0 + $1.seconds }, 4)
+                XCTAssertEqual(clip.frames.count, 1)
+                XCTAssertEqual(clip.frames.first?.assetName, "portrait_bat_\(species)")
+                XCTAssertEqual(clip.actionID, action.rawValue)
+                XCTAssertEqual(clip.frames.first?.offsetX, 0)
+                XCTAssertEqual(clip.restSeconds, action == .idle || action == .sleep ? 4 : 0)
             }
-            XCTAssertEqual(PilotAnimationCatalog.still(for: species, mood: .sleeping), "gen_bat_\(species)_sleep_0")
-            XCTAssertEqual(PilotAnimationCatalog.still(for: species, mood: .awake), "gen_bat_\(species)_idle_0")
+            for mood in [BatMood.sleeping, .drowsy, .awake, .happy, .eating, .playing] {
+                XCTAssertEqual(PilotAnimationCatalog.still(for: species, mood: mood), "portrait_bat_\(species)")
+            }
         }
-        // Ambient loops rest on frame 0 so a visible bat is not a constant animation.
-        XCTAssertGreaterThanOrEqual(GeneratedFramePlan.plan(for: .idle).rest, 1)
-        XCTAssertGreaterThanOrEqual(GeneratedFramePlan.plan(for: .sleep).rest, 0.5)
-        XCTAssertEqual(GeneratedFramePlan.plan(for: .fly).count, 6)
-        XCTAssertEqual(GeneratedFramePlan.plan(for: .pet).count, 8)
     }
-
     func testNaturalTriggersUseTheDesignedSignatureOrUniversalFlyFallback() {
         XCTAssertEqual(PilotAnimationCatalog.reaction(for: "mochi", event: .walkReturn, friendshipLevel: 4)?.actionID, "cartwheel-landing")
         XCTAssertEqual(PilotAnimationCatalog.reaction(for: "walker", event: .walkReturn, friendshipLevel: 4)?.actionID, "power-walk")
