@@ -1,0 +1,30 @@
+Batwalk artwork — Creative Commons Attribution-NonCommercial 4.0 International
+
+Copyright (c) 2026 Jack Qian
+
+The Batwalk artwork is licensed under CC BY-NC 4.0.
+  Summary:    https://creativecommons.org/licenses/by-nc/4.0/
+  Legal code: https://creativecommons.org/licenses/by-nc/4.0/legalcode
+
+The code in this repository is separately licensed under the MIT License
+(see /LICENSE). This file covers the art, not the code.
+
+What this license covers
+- Everything under Art/ except Art/tools/ (the generator is code, MIT):
+  concept boards, style sheets, sprite sheets, the generated frames and
+  their manifests.
+- Every image in the apps' asset catalogs (Apps/**/*.xcassets): bats, eggs,
+  portraits, backgrounds and app icons.
+- The bat character designs and the Gentle pixel style they are drawn in.
+- Frames produced by running Art/tools/gentle_pixel/engine.js on the Batwalk
+  part library are derivatives of this artwork and carry the same license.
+
+You may
+- Copy, share and adapt the art for non-commercial purposes, as long as you
+  credit "Batwalk art by Jack Qian, CC BY-NC 4.0", link to this repository
+  and note any changes you made.
+
+You may not
+- Use the art or the characters in a commercial product or service,
+  including another app or game, without separate permission.
+  To ask, write to jack@aimanjack.com.
