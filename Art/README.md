@@ -1,5 +1,7 @@
 # Art
 
+The artwork is licensed [CC BY-NC 4.0](LICENSE); the tools in `tools/` are MIT like the rest of the code.
+
 Current direction: **C · Gentle pixel**, selected by the owner on 2026-10-10.
 Coarse readable pixel characters, midnight teal, cream, sage and a sparse glade.
 Readability at real Watch size beats detail. See [the active specification](gentle-pixel/README.md).

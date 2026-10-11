@@ -39,15 +39,15 @@ docs/                   PRD, roadmap, open questions, ADRs, test plan
 project.yml             XcodeGen spec (the .xcodeproj is generated, not committed)
 ```
 
-## No Mac? Build and preview with Codemagic
+## CI: every pull request builds on a Mac
 
-The manual workflows in [`codemagic.yaml`](codemagic.yaml) run Watch/iPhone checks
-and capture Watch simulator screenshots on a Codemagic Mac, independently of
-GitHub Actions. No Apple signing credentials are needed for these simulator builds.
-See **[Codemagic setup](docs/CODEMAGIC.md)** to connect the repository and
-select the branch containing the configuration. A local Codex monitor can start
-the verification workflow when GitHub explicitly blocks CI for billing or minute
-limits; its operating requirements are documented in the same guide.
+[`.github/workflows/ci.yml`](.github/workflows/ci.yml) runs the rules tests on Linux,
+then compiles the Watch and iPhone apps, runs the hosted app tests and validates the
+capability-enabled configuration on a GitHub macOS runner — free for this public
+repository. The manual workflows in [`codemagic.yaml`](codemagic.yaml) remain for
+Watch/iPhone simulator screenshots and TestFlight uploads from a Codemagic Mac; see
+**[Codemagic setup](docs/CODEMAGIC.md)**, which also documents the local monitor
+that falls back to Codemagic if GitHub ever blocks CI.
 
 ## Ship to TestFlight from your phone
 

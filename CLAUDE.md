@@ -35,9 +35,9 @@ No Swift toolchain? The core package runs in Docker from any OS:
 docker run --rm -v "$PWD/Packages/BatwalkCore:/work" -w /work swift:5.10-jammy swift test
 ```
 
-CI (`.github/workflows/ci.yml`) runs the core tests on Linux for every PR and the
-simulator builds on macOS for pushes to `main` / manual runs. `codemagic.yaml` holds
-the Mac verification and TestFlight workflows.
+CI (`.github/workflows/ci.yml`) runs the core tests on Linux and then the Watch +
+iPhone simulator builds with the hosted app tests on macOS, for every PR.
+`codemagic.yaml` holds the screenshot and TestFlight workflows.
 
 ## When you resolve an open question
 

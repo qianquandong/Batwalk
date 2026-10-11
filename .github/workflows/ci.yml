@@ -11,8 +11,8 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  # The rules package is pure Swift and runs anywhere. Linux minutes bill at 1×
-  # (macOS at 10×), so every pull request gets this check even on a tight plan.
+  # The rules package is pure Swift and runs anywhere; this is the fastest
+  # signal (about a minute) and gates the macOS build below.
   core-tests:
     name: BatwalkCore tests (Linux)
     runs-on: ubuntu-latest
@@ -32,12 +32,12 @@ jobs:
       - name: Test CI fallback detection
         run: python3 -m unittest discover -s scripts/tests -p 'test_github_ci_fallback.py'
 
-  # Simulator builds need macOS. They run for pushes to main and on demand;
-  # pull requests are verified on Codemagic (codemagic.yaml) so GitHub's macOS
-  # minutes are not spent on every push.
+  # Simulator builds need macOS. Standard runners are free for this public
+  # repository, so every pull request compiles the Watch and iPhone apps and runs
+  # the hosted app tests here. Codemagic (codemagic.yaml) keeps the screenshot
+  # and TestFlight workflows.
   build-apps:
     name: Build Watch + iPhone (simulator, unsigned)
-    if: github.event_name != 'pull_request'
     runs-on: macos-15
     needs: core-tests
     steps:
