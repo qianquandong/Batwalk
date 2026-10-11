@@ -71,3 +71,13 @@ playback component arrives in milestone M2.
 - [ ] Transparent PNG, consistent canvas, deterministic frame naming
 - [ ] Preview exported at real Apple Watch scale
 - [ ] Layered source file in `Art/source/` (consider Git LFS)
+
+## Generated animation sets (`gen_bat_<speciesID>_<action>_<n>`)
+
+Every species except the three hand-drawn pilots animates with frames from the
+Gentle-pixel engine (`Art/tools/gentle_pixel/engine.js`): idle 8 · sleep 8 ·
+fly 6 · pet 8 · eat 8 frames on the 64 px canvas, exported at 2× by
+`node Art/tools/gentle_pixel/export_frames.js`. Review sheets, the frame plan and
+how the catalog picks pilot vs generated art: `gentle-pixel/generated-frames/README.md`.
+The design canvas (Claude Design, "Batwalk Gentle Pixel") shows the same engine's
+roster, animation sets, eggs and Watch screens.

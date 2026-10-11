@@ -26,7 +26,7 @@ enum HealthStatus: Equatable {
 /// Without the argument this file does nothing.
 enum DemoMode {
     // The capture script reads these two lines — keep each list on one line.
-    static let watchScenarios = ["first-egg", "home", "home-day", "home-cocoa", "home-long-ear", "hatch-ready", "reveal-rare", "progress-61", "progress-100", "friendship-1", "friendship-2", "friendship-3", "friendship-4", "fruit-available", "friendship-5", "collection-1", "collection-rare", "free-complete", "settings", "health-error", "pilot-mochi", "pilot-sticky", "pilot-walker"] // scenarios:watch
+    static let watchScenarios = ["first-egg", "home", "home-day", "home-cocoa", "home-long-ear", "hatch-ready", "reveal-rare", "progress-61", "progress-100", "friendship-1", "friendship-2", "friendship-3", "friendship-4", "fruit-available", "friendship-5", "collection-1", "collection-rare", "free-complete", "settings", "health-error", "pilot-mochi", "pilot-sticky", "pilot-walker", "pilot-cocoa", "pilot-long-ear"] // scenarios:watch
     static let phoneScenarios = ["phone-companion", "phone-batpedia", "phone-batpedia-rare", "phone-detail", "phone-pending", "phone-confirmed", "phone-stale", "phone-first-egg", "phone-egg-ready", "phone-history", "phone-unlock", "phone-stats", "phone-empty"] // scenarios:phone
 
     static let scenario: String? = {
@@ -103,7 +103,8 @@ enum DemoMode {
         _ = try? state.hatch(now: now) // Mochi, the starter
 
         switch scenario {
-        case "pilot-mochi", "pilot-sticky", "pilot-walker":
+        case "pilot-mochi", "pilot-sticky", "pilot-walker", "pilot-cocoa", "pilot-long-ear":
+            // The three hand-drawn pilots, and two generated Gentle-pixel sets (the free roster).
             let species = String(scenario.dropFirst("pilot-".count))
             let egg: EggType = species == "walker" ? .crystal : .tiny
             for _ in 0..<14 { hatch(egg, species) }

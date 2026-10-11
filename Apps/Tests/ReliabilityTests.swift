@@ -225,7 +225,7 @@ final class AppReliabilityTests: XCTestCase {
     @MainActor
     func testEveryPlayableFrameIsInTheApplicationBundle() async throws {
         var names: Set<String> = []
-        for species in PilotAnimationCatalog.speciesIDs {
+        for species in PilotAnimationCatalog.pilotSpeciesIDs {
             let clips = UniversalAction.allCases.compactMap { PilotAnimationCatalog.universal(for: species, action: $0) }
                 + [try XCTUnwrap(PilotAnimationCatalog.signature(for: species, friendshipLevel: 4))]
             for clip in clips {
@@ -236,6 +236,17 @@ final class AppReliabilityTests: XCTestCase {
             }
         }
         XCTAssertEqual(names.count, 74)
+        // Generated Gentle-pixel sets: 8 + 8 + 6 + 8 + 8 frames for every other species.
+        var generated = 0
+        for species in PilotAnimationCatalog.generatedSpeciesIDs {
+            for action in UniversalAction.allCases {
+                for frame in try XCTUnwrap(PilotAnimationCatalog.universal(for: species, action: action)).frames {
+                    XCTAssertTrue(assetExists(frame.assetName), frame.assetName)
+                    generated += 1
+                }
+            }
+        }
+        XCTAssertEqual(generated, PilotAnimationCatalog.generatedSpeciesIDs.count * 38)
         for species in Roster.catalog { XCTAssertTrue(assetExists("portrait_bat_\(species.id)"), species.id) }
     }
 

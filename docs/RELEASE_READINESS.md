@@ -28,6 +28,7 @@ be read from the PR's latest green CI run; an unsigned build is not a device sig
 | Step sync | Per-day HealthKit fallback when buckets don't match the ledger's time zone; 45-day lookback cap; NaN/absurd totals sanitised; `Tuning.maxDailySteps`. |
 | Backup | iPhone publishes its collection mirror over WatchConnectivity; a re-paired Watch restores from it (onboarding button, auto when the save is empty). Cloud backup rewritten only on content change. |
 | Analytics | TelemetryDeck sink behind `BATWALK_TELEMETRYDECK_APP_ID` (docs/ANALYTICS.md); privacy text updates itself. |
+| Animation | Generated Gentle-pixel frame sets for the 29 non-pilot species (1,216 frames, 6–8 per action, `GeneratedFramePlan`); pilots unchanged. Verify playback cadence and energy on hardware. |
 | Platform | Siri "Check my egg" (App Intents), iPhone Dark Mode, share card, String Catalog, strict-concurrency warnings, content waves (Oddballs = v1.1). |
 | CI | Core tests on Linux for every PR (1× minutes); macOS builds on `main` / manual; Codemagic for PR Mac checks. |
 
