@@ -24,9 +24,9 @@ body.night{--stage:#192e32;--motion:#203b3d}body.night .label{color:#b3c4be}
 <header><div class="brand">BATWALK <span class="eyebrow"> / CHARACTER MOTION · LAUNCH 20</span></div>
 <h1>20 个小性格，都动起来了。</h1>
 <p class="intro">左边是已确认的原立绘，右边播放游戏实际使用的动作帧。待机、睡觉、飞行、被摸、吃果子都补齐了，也保留每只蝙蝠的专属小性格。</p>
-<div class="toolbar"><button id="play" class="primary">暂停动作</button><button id="next">逐帧查看 →</button><button id="size">手表尺寸 · 96 px</button><button id="theme">深色背景</button><label><span class="hint">角色 </span><select id="filter"><option value="all">全部 20 只</option></select></label></div>
+<div class="toolbar"><button id="play" class="primary">暂停动作</button><button id="next" disabled>逐帧查看 →</button><button id="size">手表尺寸 · 96 px</button><button id="theme">深色背景</button><label><span class="hint">角色 </span><select id="filter" disabled><option value="all">全部 20 只</option></select></label></div>
 </header>
-<div class="toolbar" style="margin:0 0 20px"><label>一起看看 <select id="action-filter" aria-label="所有角色的动作"><option value="idle">待机</option><option value="sleep">睡觉</option><option value="fly">飞行</option><option value="pet">被摸</option><option value="eat">吃果子</option><option value="unique">各自的专属动作</option><option value="custom" disabled>各自选择</option></select></label><span class="hint">也可以在每张卡片里单独切换。</span></div>
+<div class="toolbar" style="margin:0 0 20px"><label>一起看看 <select id="action-filter" aria-label="所有角色的动作" disabled><option value="idle">待机</option><option value="sleep">睡觉</option><option value="fly">飞行</option><option value="pet">被摸</option><option value="eat">吃果子</option><option value="unique">各自的专属动作</option><option value="custom" disabled>各自选择</option></select></label><span class="hint">也可以在每张卡片里单独切换。</span></div>
 <div id="error" hidden role="alert"></div><section id="cards" class="grid" aria-label="20 只蝙蝠原立绘与动作对照"></section>
 <footer>100 个通用动作 / 400 帧 ＋ 64 个专属动作 / 256 帧，共 164 段。原立绘、麻薯的通用动画和已确认的专属样板均保留。<br>
 通用动作从 Lv.1 可用。待机、睡觉沿用游戏内的休息间隔；互动与专属动作在这里连续重播方便比较，游戏内按触发与等级播放。<br>
@@ -35,7 +35,7 @@ body.night{--stage:#192e32;--motion:#203b3d}body.night .label{color:#b3c4be}
 <script>
 const root='../../../';
 const triggerLabels={idleNight:'夜间小习惯',asleep:'白天休息',pet:'摸摸它',feed:'喂食之后',walkReturn:'散步归来',newDay:'新的一天',dusk:'黄昏时分',hatch:'孵化登场',rare:'稀有时刻'};
-let playing=!matchMedia('(prefers-reduced-motion: reduce)').matches, tick=performance.now(), models=[];
+let playing=!matchMedia('(prefers-reduced-motion: reduce)').matches, tick=performance.now(), models=[], ready=false;
 function setPlay(v){playing=v;tick=performance.now();document.querySelector('#play').textContent=v?'暂停动作':'播放动作';}
 function loadImage(src){return new Promise((resolve,reject)=>{const im=new Image();im.onload=()=>resolve(im);im.onerror=()=>reject(new Error('无法读取 '+src));im.src=src;});}
 function draw(canvas,im){const ctx=canvas.getContext('2d');ctx.imageSmoothingEnabled=false;ctx.clearRect(0,0,128,128);ctx.drawImage(im,0,0,128,128);}
@@ -47,7 +47,7 @@ async function choose(m,index){
   const images=await Promise.all(clip.frames.map(n=>loadImage(root+'Apps/Shared/Sprites.xcassets/'+n+'.imageset/sprite.png')));if(request!==m.generation)return;
   m.clip=clip;m.images=images;m.index=0;m.elapsed=0;m.resting=false;m.detail.textContent=clip.kind==='universal'?'通用 · Lv.1 即可播放':'Lv.'+clip.unlockLevel+' · '+triggerLabels[clip.trigger];m.source.href=root+clip.source;m.buttons.forEach((b,i)=>draw(b.querySelector('canvas'),images[i]));paint(m);
  }finally{
-  if(request===m.generation){m.loading=false;m.canvas.removeAttribute('aria-busy');m.buttons.forEach(b=>b.disabled=false);}document.querySelector('#next').disabled=models.some(model=>model.loading);
+  if(request===m.generation){m.loading=false;m.canvas.removeAttribute('aria-busy');m.buttons.forEach(b=>b.disabled=false);}document.querySelector('#next').disabled=!ready||models.some(model=>model.loading);
  }
 }
 function fail(error){const el=document.querySelector('#error');el.hidden=false;el.textContent=error.message;}
@@ -67,7 +67,7 @@ async function init(){
   const option=document.createElement('option');option.value=bat.id;option.textContent=String(bat.number).padStart(2,'0')+' '+bat.displayLabel;document.querySelector('#filter').append(option);
  }
  const observer=new IntersectionObserver(entries=>entries.forEach(e=>{const m=models.find(m=>m.card===e.target);m.visible=e.isIntersecting;}));models.forEach(m=>observer.observe(m.card));
- window.reviewReady=true;setPlay(playing);requestAnimationFrame(loop);
+ ready=true;document.querySelector('#filter').disabled=false;document.querySelector('#action-filter').disabled=false;document.querySelector('#next').disabled=models.some(m=>m.loading);window.reviewReady=true;setPlay(playing);requestAnimationFrame(loop);
 }
 function loop(now){const dt=Math.min(now-tick,100);tick=now;if(playing&&!document.hidden)models.filter(m=>m.images&&!m.loading&&m.visible&&!m.card.hidden).forEach(m=>{m.elapsed+=dt;const duration=m.resting?m.clip.restSeconds:m.clip.seconds[m.index];if(m.elapsed>=duration*1000){m.elapsed=0;if(m.resting){m.resting=false;}else{m.index=(m.index+1)%4;m.resting=m.index===0&&m.clip.restSeconds>0;}paint(m);}});requestAnimationFrame(loop);}
 document.querySelector('#action-filter').addEventListener('change',async e=>{const action=e.target.value;try{await Promise.all(models.map(m=>{const i=m.clips.findIndex(c=>action==='unique'?c.kind!=='universal':c.actionID===action);m.card.querySelector('.actions').value=String(i);return choose(m,i);}));}catch(error){fail(error);}});
