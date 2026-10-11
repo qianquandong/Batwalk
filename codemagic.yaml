@@ -1,6 +1,34 @@
 # Independent of GitHub Actions. All workflows are manual to conserve minutes.
 # Use a personal Codemagic account and the M2 instance for the included free tier.
 workflows:
+  batwalk-watch-playground:
+    name: Batwalk · Interactive Watch simulator
+    instance_type: mac_mini_m2
+    max_build_duration: 45
+    # Manual, unsigned, no Apple integration or publishing steps.
+    # Enable SSH/VNC access in the start-build dialog to use the desktop.
+    environment:
+      xcode: "26.3"
+      vars:
+        RUNNER_TEMP: /tmp/batwalk-playground-logs
+        BATWALK_SESSION_MINUTES: "30"
+    scripts:
+      - name: Prepare Xcode and generate project
+        script: bash scripts/codemagic-prepare.sh
+      - name: Boot Watch simulator
+        script: bash scripts/watch-sim.sh
+      - name: Build Watch for hands-on testing
+        script: |
+          bash scripts/ci-xcodebuild.sh -project Batwalk.xcodeproj -scheme BatwalkWatch \
+            -configuration Debug -destination "id=$SIM" -derivedDataPath build \
+            CODE_SIGNING_ALLOWED=NO build
+      - name: Open Batwalk and keep the simulator available for 30 minutes
+        script: bash scripts/watch-playground.sh
+    artifacts:
+      - build/reports/toolchain.txt
+      - build/reports/watch-simulator-ready.png
+      - /tmp/batwalk-playground-logs/*.log
+
   batwalk-verify:
     name: Batwalk · Watch + iPhone checks
     instance_type: mac_mini_m2
