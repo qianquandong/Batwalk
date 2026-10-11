@@ -28,6 +28,8 @@ struct BatAnimationPlayer: View {
     @Environment(\.batPageVisible) private var pageVisible
     @State private var frameName: String?
     @State private var consumption = BatAnimationConsumption()
+    @State private var ambientMemory = BatAmbientMemory()
+    @State private var observedLevel: Int?
     @State private var offsetX = 0.0
 
     private var active: Bool {
@@ -59,20 +61,39 @@ struct BatAnimationPlayer: View {
                                   level: friendshipLevel, request: request)) {
                 frameName = nil
                 offsetX = 0
-                let events = consumption.take(request, enabled: active)
+                let hasRequest = consumption.consume(request, enabled: active)
+                let newActions = ActionCatalog.actions(for: speciesID).filter {
+                    $0.unlockLevel > (observedLevel ?? friendshipLevel) && $0.unlockLevel <= friendshipLevel
+                }.map(\.id)
+                observedLevel = friendshipLevel
                 guard active else { return }
+                let time: TimeOfDay = mood == .sleeping ? .day : mood == .drowsy ? .dusk : .night
                 do {
-                    for event in events {
-                        if let clip = PilotAnimationCatalog.reaction(for: speciesID, event: event,
-                                                                     friendshipLevel: friendshipLevel) {
+                    if hasRequest || !newActions.isEmpty {
+                        let combined = BatAnimationRequest(hasRequest ? request?.events ?? [] : [],
+                            actionIDs: (hasRequest ? request?.actionIDs ?? [] : []) + newActions)
+                        for clip in PilotAnimationCatalog.clips(for: combined, speciesID: speciesID,
+                                                               friendshipLevel: friendshipLevel) {
+                            ambientMemory.record(clip, time: time, day: DayKey.make(.now))
                             try await play(clip)
                         }
                     }
                     guard let ambient = PilotAnimationCatalog.ambient(for: speciesID, mood: mood) else { return }
+                    var nextBeat = Date.now.addingTimeInterval(8)
                     while !Task.isCancelled {
                         try await play(ambient)
                         frameName = ambient.frames.first?.assetName
+                        offsetX = 0
                         try await Task.sleep(for: .seconds(ambient.restSeconds))
+                        if Date.now >= nextBeat {
+                            let now = Date.now
+                            if let special = ambientMemory.next(speciesID: speciesID, friendshipLevel: friendshipLevel,
+                                time: time, day: DayKey.make(now), minute: Int(now.timeIntervalSince1970 / 60),
+                                rareRoll: Int.random(in: 0..<24)) {
+                                try await play(special)
+                            }
+                            nextBeat = Date.now.addingTimeInterval(16)
+                        }
                     }
                 } catch {
                     // Cancellation belongs to this task only. Do not clear a new

@@ -14,6 +14,7 @@ struct FriendshipPage: View {
     @State private var hearts = 0
     @State private var fruitToss = 0
     @State private var animationRequest: BatAnimationRequest?
+    @State private var moment: BatMomentSelection?
 
     var body: some View {
         NavigationStack {
@@ -33,6 +34,7 @@ struct FriendshipPage: View {
                                     animationRequest: animationRequest,
                                     showsKeepsake: false
                                 )
+                                .environment(\.batPageVisible, pageVisible && moment == nil)
                                 HeartBurst(trigger: hearts)
                                 FruitToss(trigger: fruitToss)
                             }
@@ -50,10 +52,11 @@ struct FriendshipPage: View {
                                 .padding(.horizontal, BatwalkSpacing.xs)
                                 .padding(.top, 2)
                             FeedButton(fruit: store.state.fruit) { feed(companion) }
-                            if let action = PilotAnimationCatalog.signatureAction(for: companion.speciesID) {
+                            ForEach(PilotAnimationCatalog.playableActions(for: companion.speciesID)
+                                .filter { $0.tier != .secret && $0.tier != .hatchReveal }, id: \.id) { action in
                                 let unlocked = Friendship.level(forEXP: companion.friendshipEXP) >= action.unlockLevel
                                 Button(unlocked ? action.name : "Lv. \(action.unlockLevel) · \(action.name)") {
-                                    animationRequest = BatAnimationRequest([.signature])
+                                    moment = BatMomentSelection(action: action)
                                     Haptics.light()
                                 }
                                 .font(BatwalkFont.micro)
@@ -84,6 +87,9 @@ struct FriendshipPage: View {
         .onChange(of: pageVisible) { _, visible in if !visible { clearReaction() } }
         .onChange(of: store.state.companionID) { _, _ in clearReaction() }
         .onDisappear { clearReaction() }
+        .sheet(item: $moment) { selected in
+            if let bat = store.state.companion { BatMomentPreview(bat: bat, action: selected.action) }
+        }
     }
 
     private func pet(_ bat: OwnedBat) {
@@ -111,8 +117,8 @@ struct FriendshipPage: View {
         bounce += 1
         hearts += 1
         if PilotAnimationCatalog.speciesIDs.contains(speciesID) {
-            let unlocked = levelBefore < 4 && after >= 4
-            animationRequest = BatAnimationRequest(unlocked ? [event, .signature] : [event])
+            animationRequest = .interaction(event, speciesID: speciesID,
+                                            levelBefore: levelBefore, levelAfter: after)
             return
         }
         // Tapping a sleeping / drowsy bat wakes it (CARE: feed · pet · wake, PRD §2.4).

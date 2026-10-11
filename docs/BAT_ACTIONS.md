@@ -7,10 +7,14 @@ every bat's backstory is secretly true. The data lives in `Packages/BatwalkCore/
 
 **Totals:** 32 bats · 5 universal actions · 102 unique actions (29 bats × 3 + 3 Legendaries × 5).
 
-**Playback status (2026-10-10):** Mochi, Sticky and Walker now have their five universal
-clips and one Lv.4 signature each (18 clips / 74 frames). The remaining 99 unique
-actions are design data, not playable animations. Lv.2/3 keepsakes still unlock;
-their unique motion art is pending. See [pilot implementation and review](PILOT_ANIMATIONS.md).
+**Playback status (2026-10-11):** All **64 unique actions for launch bats #1–20**
+now have playable art: 256 frames based on the approved portraits and Mochi's existing clips.
+The launch 20 also have all **100 universal clips / 400 frames**, including Mochi's
+preserved pilot art; the other 19 use new matching portrait poses. Wave two keeps two
+animated pilots and ten portrait fallbacks. Sticky and Walker keep their existing
+wave-two signatures, bringing the full catalog to **66 playable / 36 design-only**
+unique actions. See [launch implementation and review](LAUNCH_PERSONALITIES.md)
+and the [interactive frame gallery](../Art/gentle-pixel/launch-actions/index.html).
 
 ## What we borrowed from Tamagotchi (and friends)
 

@@ -1,0 +1,6996 @@
+{
+  "version": 2,
+  "catalogPixels": 128,
+  "artSource": "portraits-v3",
+  "clips": [
+    {
+      "speciesID": "mochi",
+      "actionID": "thumb-ear-wash",
+      "name": "Thumb Ear-Wash",
+      "chinese": "舔爪洗耳",
+      "tier": "idleQuirk",
+      "trigger": "idleNight",
+      "summary": "Licks its thumb and scrubs inside one big ear, then the other.",
+      "unlockLevel": 2,
+      "frames": [
+        "unique_bat_mochi_thumb-ear-wash_0",
+        "unique_bat_mochi_thumb-ear-wash_1",
+        "unique_bat_mochi_thumb-ear-wash_2",
+        "unique_bat_mochi_thumb-ear-wash_3"
+      ],
+      "seconds": [
+        0.4,
+        0.5,
+        0.5,
+        0.4
+      ],
+      "sha256": [
+        "326e0495612013171a6e80c8d962067faf3ca95670fb4b4d8e92b72943f3ba85",
+        "6e28753235ce9496a97b6aa7112dfdb2a11876be0c56345a5efbe9d20fa08b6e",
+        "b60a6010e52755d7e3838c2ea121ce13cbfa37e159b65a7453a4e89952d109b0",
+        "9e1e6afeff193681645e59a05da395bb16e5ce1f1c988fbe6086cbe8e7760d9b"
+      ],
+      "portrait": "Art/gentle-pixel/portraits-v3/portraits/01-mochi.png",
+      "portraitSHA256": "2e0f5faa37de6cd9e5c3722085690586626903e9a86d69bed8822139b37840c5",
+      "source": "Art/gentle-pixel/launch-actions/mochi-extras-v1.png",
+      "sourceSHA256": "cda24d9faa88a5540934e864d14849683dd293bd783ff4e3aeb5961777c27e89"
+    },
+    {
+      "speciesID": "mochi",
+      "actionID": "wing-eye-mask",
+      "name": "Wing Eye-Mask",
+      "chinese": "翅膀眼罩",
+      "tier": "reaction",
+      "trigger": "pet",
+      "summary": "Pulls one wing over its eyes like a sleep mask, then peeks out at you.",
+      "unlockLevel": 3,
+      "frames": [
+        "unique_bat_mochi_wing-eye-mask_0",
+        "unique_bat_mochi_wing-eye-mask_1",
+        "unique_bat_mochi_wing-eye-mask_2",
+        "unique_bat_mochi_wing-eye-mask_3"
+      ],
+      "seconds": [
+        0.3,
+        0.45,
+        0.6,
+        0.4
+      ],
+      "sha256": [
+        "91e82368efdde857d78335df83b71e4f657908bbdeccb500486b7956c5379060",
+        "d32b82e9793564db14a0b13758142301fd5ad6398d1adb0d429129146d33334e",
+        "26f30dd5486a7356a8ae2ec9ae954fa46b892e8e47c9d212d132b713916751d3",
+        "9791d0c189ae1c47a11f56d791be9014c6b1ab430798322d399ceb1c9035affe"
+      ],
+      "portrait": "Art/gentle-pixel/portraits-v3/portraits/01-mochi.png",
+      "portraitSHA256": "2e0f5faa37de6cd9e5c3722085690586626903e9a86d69bed8822139b37840c5",
+      "source": "Art/gentle-pixel/launch-actions/mochi-extras-v1.png",
+      "sourceSHA256": "cda24d9faa88a5540934e864d14849683dd293bd783ff4e3aeb5961777c27e89"
+    },
+    {
+      "speciesID": "mochi",
+      "actionID": "cartwheel-landing",
+      "name": "Cartwheel Landing",
+      "chinese": "侧翻倒挂",
+      "tier": "signature",
+      "trigger": "walkReturn",
+      "summary": "Swoops up, does a half-cartwheel and catches the ceiling feet-first.",
+      "unlockLevel": 4,
+      "frames": [
+        "pilot_bat_mochi_cartwheel-landing_0",
+        "pilot_bat_mochi_cartwheel-landing_1",
+        "pilot_bat_mochi_cartwheel-landing_2",
+        "pilot_bat_mochi_cartwheel-landing_3"
+      ],
+      "seconds": [
+        0.25,
+        0.24,
+        0.24,
+        1.2
+      ],
+      "sha256": [
+        "1acc32af862d3475cb44f9adf30f7350e6fab32e8f0fb488298d89f81b3842ca",
+        "e48a733421cc4a440b6c91b89068673d4186ecc3f40dc707b2df3b966a34d42a",
+        "7a202d89895811ce64126eb65f9dca2bda4ef242bca4d1adb67b9443148357df",
+        "06178d665e146955bae14a652dd4110816922ea42e5fd5f9ce9ef3d8f3cc1a94"
+      ],
+      "portrait": "Art/gentle-pixel/portraits-v3/portraits/01-mochi.png",
+      "portraitSHA256": "2e0f5faa37de6cd9e5c3722085690586626903e9a86d69bed8822139b37840c5",
+      "source": "Art/gentle-pixel/pilots-v1/mochi-sheet-v1.png",
+      "sourceSHA256": "802664f41cc579e3365618580ef93b2bd6092a6c87dd90b7fa298af45e5458d4"
+    },
+    {
+      "speciesID": "cocoa",
+      "actionID": "sunrise-doze",
+      "name": "Sunrise Doze",
+      "chinese": "日出打盹",
+      "tier": "idleQuirk",
+      "trigger": "asleep",
+      "summary": "Melts into a deep morning nap, nose bubble and all, then stretches awake.",
+      "unlockLevel": 2,
+      "frames": [
+        "unique_bat_cocoa_sunrise-doze_0",
+        "unique_bat_cocoa_sunrise-doze_1",
+        "unique_bat_cocoa_sunrise-doze_2",
+        "unique_bat_cocoa_sunrise-doze_3"
+      ],
+      "seconds": [
+        0.65,
+        0.4,
+        0.65,
+        0.7
+      ],
+      "sha256": [
+        "6990882cef90d935d7975f4c6eadbe4dace1b88675975158747f716c6f09257f",
+        "cfcc86dee89e7e32df54e3bb019fc3a9b6e805e861f986aa9f169f35611b4f20",
+        "3d690efc127b2c3c7e56c850d143b2ff0659378f959e2ee111e0aab5586ffac4",
+        "4c4fce8b23985b1860775df94f3b924b034afadc58085c7f54230a70c803957e"
+      ],
+      "portrait": "Art/gentle-pixel/portraits-v3/portraits/02-cocoa.png",
+      "portraitSHA256": "f2112c2c9203b46ea62770b0e3a0c5f0a1f1a90050756f9c5224e80cb14dacd7",
+      "source": "Art/gentle-pixel/portrait-actions-v1/cocoa-sheet-v1.png",
+      "sourceSHA256": "c324f175e8e95512a01221012d8540aa00ce9b692cf5d2455bd176c195ffabe8",
+      "framing": {
+        "scale": 0.3303834808259587,
+        "center": [
+          -17.5,
+          14.0
+        ],
+        "frames": [
+          {
+            "rect": [
+              0,
+              0,
+              362,
+              362
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              68,
+              34,
+              325,
+              356
+            ]
+          },
+          {
+            "rect": [
+              362,
+              0,
+              362,
+              362
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              45,
+              38,
+              333,
+              353
+            ]
+          },
+          {
+            "rect": [
+              724,
+              0,
+              355,
+              362
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              20,
+              34,
+              310,
+              355
+            ]
+          },
+          {
+            "rect": [
+              1079,
+              0,
+              369,
+              362
+            ],
+            "anchor": [
+              188.0,
+              181.0
+            ],
+            "bbox": [
+              1,
+              34,
+              321,
+              355
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "speciesID": "cocoa",
+      "actionID": "wattle-wiggle",
+      "name": "Wattle Wiggle",
+      "chinese": "肉垂晃晃",
+      "tier": "reaction",
+      "trigger": "pet",
+      "summary": "Its little lip wattles wiggle and its pug nose scrunches.",
+      "unlockLevel": 3,
+      "frames": [
+        "unique_bat_cocoa_wattle-wiggle_0",
+        "unique_bat_cocoa_wattle-wiggle_1",
+        "unique_bat_cocoa_wattle-wiggle_2",
+        "unique_bat_cocoa_wattle-wiggle_3"
+      ],
+      "seconds": [
+        0.65,
+        0.4,
+        0.65,
+        0.7
+      ],
+      "sha256": [
+        "b394396422720bcb7dc42c27f47daeeece441df11af9c0c8ddccb1025483de4b",
+        "df516440007c351184441b0477ae3d732e59c83c580b4a03056688e8e24648f3",
+        "7b2749eb16d3053127d9145e6eed8a7ee8e6b3e9c007563a76b44568ae962cae",
+        "499734ea97393c65ce6b37de581a7a031745acc4539d33ed6244a707d3e44903"
+      ],
+      "portrait": "Art/gentle-pixel/portraits-v3/portraits/02-cocoa.png",
+      "portraitSHA256": "f2112c2c9203b46ea62770b0e3a0c5f0a1f1a90050756f9c5224e80cb14dacd7",
+      "source": "Art/gentle-pixel/portrait-actions-v1/cocoa-sheet-v1.png",
+      "sourceSHA256": "c324f175e8e95512a01221012d8540aa00ce9b692cf5d2455bd176c195ffabe8",
+      "framing": {
+        "scale": 0.3510971786833856,
+        "center": [
+          -1.5,
+          -3.5
+        ],
+        "frames": [
+          {
+            "rect": [
+              0,
+              362,
+              362,
+              359
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              68,
+              18,
+              325,
+              337
+            ]
+          },
+          {
+            "rect": [
+              362,
+              362,
+              362,
+              359
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              56,
+              18,
+              313,
+              337
+            ]
+          },
+          {
+            "rect": [
+              724,
+              362,
+              362,
+              359
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              35,
+              18,
+              292,
+              337
+            ]
+          },
+          {
+            "rect": [
+              1086,
+              362,
+              362,
+              359
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              34,
+              18,
+              290,
+              337
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "speciesID": "cocoa",
+      "actionID": "creche-babysitter",
+      "name": "Crèche Babysitter",
+      "chinese": "托儿所保姆",
+      "tier": "signature",
+      "trigger": "idleNight",
+      "summary": "Tucks three tiny pink pups under one wing and rocks them to sleep.",
+      "unlockLevel": 4,
+      "frames": [
+        "unique_bat_cocoa_creche-babysitter_0",
+        "unique_bat_cocoa_creche-babysitter_1",
+        "unique_bat_cocoa_creche-babysitter_2",
+        "unique_bat_cocoa_creche-babysitter_3"
+      ],
+      "seconds": [
+        0.65,
+        0.4,
+        0.65,
+        0.7
+      ],
+      "sha256": [
+        "8ba6cd84947a3f10e1c685432700f2a3a40a40120e9131b9302fa0fc42538da6",
+        "e0978348c67b51cf19500b95852feee689c5e20b6f23382eda9a329327c3e05b",
+        "3cbfa8ed459ceb416d2971215a963b88dd4597b800662b78f3be477ef608b0cb",
+        "6a05a5108e14a1ed7bf5a079348352676fd9596f5b395eb775729a899890e123"
+      ],
+      "portrait": "Art/gentle-pixel/portraits-v3/portraits/02-cocoa.png",
+      "portraitSHA256": "f2112c2c9203b46ea62770b0e3a0c5f0a1f1a90050756f9c5224e80cb14dacd7",
+      "source": "Art/gentle-pixel/portrait-actions-v1/cocoa-sheet-v1.png",
+      "sourceSHA256": "c324f175e8e95512a01221012d8540aa00ce9b692cf5d2455bd176c195ffabe8",
+      "framing": {
+        "scale": 0.34782608695652173,
+        "center": [
+          -10.5,
+          -22.0
+        ],
+        "frames": [
+          {
+            "rect": [
+              0,
+              721,
+              362,
+              365
+            ],
+            "anchor": [
+              181.0,
+              184.0
+            ],
+            "bbox": [
+              68,
+              4,
+              325,
+              323
+            ]
+          },
+          {
+            "rect": [
+              362,
+              721,
+              362,
+              365
+            ],
+            "anchor": [
+              181.0,
+              184.0
+            ],
+            "bbox": [
+              34,
+              1,
+              314,
+              323
+            ]
+          },
+          {
+            "rect": [
+              724,
+              721,
+              362,
+              365
+            ],
+            "anchor": [
+              181.0,
+              184.0
+            ],
+            "bbox": [
+              14,
+              2,
+              324,
+              323
+            ]
+          },
+          {
+            "rect": [
+              1086,
+              721,
+              362,
+              365
+            ],
+            "anchor": [
+              181.0,
+              184.0
+            ],
+            "bbox": [
+              34,
+              3,
+              327,
+              323
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "speciesID": "long-ear",
+      "actionID": "ram-horn-ears",
+      "name": "Ram-Horn Ears",
+      "chinese": "羊角卷耳",
+      "tier": "idleQuirk",
+      "trigger": "asleep",
+      "summary": "Curls both ears back like ram's horns, then tucks them under its wings.",
+      "unlockLevel": 2,
+      "frames": [
+        "unique_bat_long-ear_ram-horn-ears_0",
+        "unique_bat_long-ear_ram-horn-ears_1",
+        "unique_bat_long-ear_ram-horn-ears_2",
+        "unique_bat_long-ear_ram-horn-ears_3"
+      ],
+      "seconds": [
+        0.65,
+        0.4,
+        0.65,
+        0.7
+      ],
+      "sha256": [
+        "0b8a4cdc11ba308eda603879927513d560658373e380e1a171f3330e2ab95da8",
+        "532d571f06a6f8ee67b1e4ea5036791f1cd4bcc732bc0a8545e6cd887ee24345",
+        "6949393e03b2b5f3754d02f96abe4622554b271ef5ddaea91e4a05fc481fa70c",
+        "a285d2b1b297fd418b0a560f9224dcb3303fe87e426f4824ca44ffa06c400f62"
+      ],
+      "portrait": "Art/gentle-pixel/portraits-v3/portraits/03-long-ear.png",
+      "portraitSHA256": "3c73163c6c2708d6506689bd1620563d37bdba317bcdff73362bdbb7a3a4cb93",
+      "source": "Art/gentle-pixel/portrait-actions-v1/long-ear-sheet-v1.png",
+      "sourceSHA256": "9f4c30b191ba992f552972fb7d25141dbd03710c4050b32bac099b1c2b1a7fc7",
+      "framing": {
+        "scale": 0.2751842751842752,
+        "center": [
+          26.5,
+          10.75
+        ],
+        "frames": [
+          {
+            "rect": [
+              0,
+              0,
+              444,
+              444
+            ],
+            "anchor": [
+              221.75,
+              221.75
+            ],
+            "bbox": [
+              104,
+              29,
+              421,
+              436
+            ]
+          },
+          {
+            "rect": [
+              444,
+              0,
+              443,
+              444
+            ],
+            "anchor": [
+              221.25,
+              221.75
+            ],
+            "bbox": [
+              75,
+              145,
+              420,
+              432
+            ]
+          },
+          {
+            "rect": [
+              887,
+              0,
+              443,
+              444
+            ],
+            "anchor": [
+              221.75,
+              221.75
+            ],
+            "bbox": [
+              104,
+              219,
+              351,
+              427
+            ]
+          },
+          {
+            "rect": [
+              1330,
+              0,
+              444,
+              444
+            ],
+            "anchor": [
+              222.25,
+              221.75
+            ],
+            "bbox": [
+              98,
+              29,
+              417,
+              435
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "speciesID": "long-ear",
+      "actionID": "ladybird-listen",
+      "name": "Ladybird Listen",
+      "chinese": "偷听瓢虫",
+      "tier": "reaction",
+      "trigger": "pet",
+      "summary": "Freezes, ears swivelling, to follow a ladybird walking across a leaf.",
+      "unlockLevel": 3,
+      "frames": [
+        "unique_bat_long-ear_ladybird-listen_0",
+        "unique_bat_long-ear_ladybird-listen_1",
+        "unique_bat_long-ear_ladybird-listen_2",
+        "unique_bat_long-ear_ladybird-listen_3"
+      ],
+      "seconds": [
+        1.0,
+        0.42,
+        0.7,
+        0.65
+      ],
+      "sha256": [
+        "8c28f9b22ce546c5218193cd96597f6bd6187214de2a2d30609ce8305ebf9d39",
+        "6404d0ce425ba1cde8f6d83d8f651d88e7cdd145a4b496fb055b8678d0edbce8",
+        "86f971a9709e0394348f35a96cf572c39709947071d5cdd29bbd27ddbaef04af",
+        "203706b357871730fd6179adfbfb2469070fa61dfc4b6c310c1205c779dd0e20"
+      ],
+      "portrait": "Art/gentle-pixel/portraits-v3/portraits/03-long-ear.png",
+      "portraitSHA256": "3c73163c6c2708d6506689bd1620563d37bdba317bcdff73362bdbb7a3a4cb93",
+      "source": "Art/gentle-pixel/portrait-action-samples-v1/long-ear-ladybird-listen-v1.png",
+      "sourceSHA256": "9e04e467d6708db4bdf211221ebbfa11adef7cac6c949ce12ecccb5a0985bfa5",
+      "framing": {
+        "scale": 0.18604651162790697,
+        "center": [
+          36.0,
+          -298.0
+        ],
+        "frames": [
+          {
+            "rect": [
+              0,
+              0,
+              627,
+              627
+            ],
+            "bbox": [
+              146,
+              20,
+              588,
+              619
+            ],
+            "anchor": [
+              341.5,
+              618
+            ]
+          },
+          {
+            "rect": [
+              627,
+              0,
+              627,
+              627
+            ],
+            "bbox": [
+              103,
+              19,
+              552,
+              618
+            ],
+            "anchor": [
+              288.5,
+              618
+            ]
+          },
+          {
+            "rect": [
+              0,
+              627,
+              627,
+              627
+            ],
+            "bbox": [
+              201,
+              16,
+              613,
+              601
+            ],
+            "anchor": [
+              345.5,
+              598
+            ]
+          },
+          {
+            "rect": [
+              627,
+              627,
+              627,
+              627
+            ],
+            "bbox": [
+              94,
+              9,
+              551,
+              601
+            ],
+            "anchor": [
+              289.0,
+              601
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "speciesID": "long-ear",
+      "actionID": "butterfly-hover",
+      "name": "Butterfly Hover",
+      "chinese": "蝴蝶悬停",
+      "tier": "signature",
+      "trigger": "idleNight",
+      "summary": "Goes quiet, hovers like a butterfly, and plucks a snack off a leaf.",
+      "unlockLevel": 4,
+      "frames": [
+        "unique_bat_long-ear_butterfly-hover_0",
+        "unique_bat_long-ear_butterfly-hover_1",
+        "unique_bat_long-ear_butterfly-hover_2",
+        "unique_bat_long-ear_butterfly-hover_3"
+      ],
+      "seconds": [
+        0.65,
+        0.4,
+        0.65,
+        0.7
+      ],
+      "sha256": [
+        "2e7c5b3605944e290248c5858cb936e143b175c815d7b72f33fe630ccee989ea",
+        "25a5a60a5585af262e8bafed242d43232960340bd05f4a0f88f326dfa1f69975",
+        "f093ce359a1a4203da7a41bd9c6caf85cfa8145eede3ecab5b611ecefa659a7f",
+        "b88a08f54dce2458555809e27ea8b7ff4a3e4d8bc80744129712794846b75e0c"
+      ],
+      "portrait": "Art/gentle-pixel/portraits-v3/portraits/03-long-ear.png",
+      "portraitSHA256": "3c73163c6c2708d6506689bd1620563d37bdba317bcdff73362bdbb7a3a4cb93",
+      "source": "Art/gentle-pixel/portrait-actions-v1/long-ear-sheet-v1.png",
+      "sourceSHA256": "9f4c30b191ba992f552972fb7d25141dbd03710c4050b32bac099b1c2b1a7fc7",
+      "framing": {
+        "scale": 0.2814070351758794,
+        "center": [
+          36.75,
+          -3.25
+        ],
+        "frames": [
+          {
+            "rect": [
+              0,
+              444,
+              444,
+              443
+            ],
+            "anchor": [
+              221.75,
+              221.25
+            ],
+            "bbox": [
+              103,
+              22,
+              419,
+              417
+            ]
+          },
+          {
+            "rect": [
+              444,
+              444,
+              443,
+              443
+            ],
+            "anchor": [
+              221.25,
+              221.25
+            ],
+            "bbox": [
+              82,
+              19,
+              419,
+              391
+            ]
+          },
+          {
+            "rect": [
+              887,
+              444,
+              443,
+              443
+            ],
+            "anchor": [
+              221.75,
+              221.25
+            ],
+            "bbox": [
+              80,
+              29,
+              437,
+              377
+            ]
+          },
+          {
+            "rect": [
+              1330,
+              444,
+              444,
+              443
+            ],
+            "anchor": [
+              222.25,
+              221.25
+            ],
+            "bbox": [
+              98,
+              24,
+              400,
+              414
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "speciesID": "fruit",
+      "actionID": "fruit-hug",
+      "name": "Fruit Hug",
+      "chinese": "护食抱果",
+      "tier": "idleQuirk",
+      "trigger": "idleNight",
+      "summary": "Hugs a fruit to its chest and glances left and right for snack thieves.",
+      "unlockLevel": 2,
+      "frames": [
+        "unique_bat_fruit_fruit-hug_0",
+        "unique_bat_fruit_fruit-hug_1",
+        "unique_bat_fruit_fruit-hug_2",
+        "unique_bat_fruit_fruit-hug_3"
+      ],
+      "seconds": [
+        1.0,
+        0.42,
+        0.7,
+        0.65
+      ],
+      "sha256": [
+        "44a6a68124c2f3d679ff8844acf6c8bb764b14f3bd7994cdc09558fe802e16af",
+        "62d7de8e0471b436e8a23ee45c423ac34157eb20af812368c9b7f49f0bc8f407",
+        "aae15dbd3a51bba03c1a2452c716f3648da7b5577ba76fd6edc32d4d27c2d23b",
+        "876eaa52363579cb97008f6c7ea03553f5325fb228a87f21236cfaae7d2d3662"
+      ],
+      "portrait": "Art/gentle-pixel/portraits-v3/portraits/04-fruit.png",
+      "portraitSHA256": "87d0206d735b9ffa4cb6cccc4b19fd0148b470915dd3c96e6733e7ccb0ffdb8c",
+      "source": "Art/gentle-pixel/portrait-action-samples-v1/fruit-fruit-hug-v1.png",
+      "sourceSHA256": "b50f034626e6faecfeaa58a2ef6cef794c3e8d8f8f877079c9ced3ff5531e738",
+      "framing": {
+        "scale": 0.19310344827586207,
+        "center": [
+          2.5,
+          -277.5
+        ],
+        "frames": [
+          {
+            "rect": [
+              0,
+              0,
+              627,
+              627
+            ],
+            "bbox": [
+              34,
+              66,
+              612,
+              622
+            ],
+            "anchor": [
+              319.5,
+              621
+            ]
+          },
+          {
+            "rect": [
+              627,
+              0,
+              627,
+              627
+            ],
+            "bbox": [
+              21,
+              65,
+              594,
+              622
+            ],
+            "anchor": [
+              303.0,
+              621
+            ]
+          },
+          {
+            "rect": [
+              0,
+              627,
+              627,
+              627
+            ],
+            "bbox": [
+              40,
+              32,
+              610,
+              585
+            ],
+            "anchor": [
+              324.0,
+              584
+            ]
+          },
+          {
+            "rect": [
+              627,
+              627,
+              627,
+              627
+            ],
+            "bbox": [
+              16,
+              32,
+              592,
+              585
+            ],
+            "anchor": [
+              303.5,
+              585
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "speciesID": "fruit",
+      "actionID": "spat-pop",
+      "name": "Spat Pop",
+      "chinese": "吐果渣",
+      "tier": "reaction",
+      "trigger": "feed",
+      "summary": "Squishes the fruit, slurps the juice and spits out a tiny pulp pellet: ptoo!",
+      "unlockLevel": 3,
+      "frames": [
+        "unique_bat_fruit_spat-pop_0",
+        "unique_bat_fruit_spat-pop_1",
+        "unique_bat_fruit_spat-pop_2",
+        "unique_bat_fruit_spat-pop_3"
+      ],
+      "seconds": [
+        0.65,
+        0.4,
+        0.65,
+        0.7
+      ],
+      "sha256": [
+        "6d0ab09081509dcec10a9840c14a4b326b4cb83958349c5d0b8682dbb2d36898",
+        "2b0e4bb7cc938fb8c1c2340fe298b3d56a8aedb9ee347298ddd0070cecdd777e",
+        "4852f63175dcb0de1f236f79ac08456ee02ff9eeb5744a31d1a9d99368abe93c",
+        "085cdcaa9c53c3a84eb01c12af3c860910ff19d939ad64c504a56cff212193ce"
+      ],
+      "portrait": "Art/gentle-pixel/portraits-v3/portraits/04-fruit.png",
+      "portraitSHA256": "87d0206d735b9ffa4cb6cccc4b19fd0148b470915dd3c96e6733e7ccb0ffdb8c",
+      "source": "Art/gentle-pixel/portrait-actions-v1/fruit-sheet-v1.png",
+      "sourceSHA256": "1c43c4ca9ada6230d162f0bfa425c792855088e3b4aa4a550de64e39fd6098ce",
+      "framing": {
+        "scale": 0.29708222811671087,
+        "center": [
+          -4.75,
+          30.75
+        ],
+        "frames": [
+          {
+            "rect": [
+              0,
+              0,
+              444,
+              444
+            ],
+            "anchor": [
+              221.75,
+              221.75
+            ],
+            "bbox": [
+              51,
+              92,
+              403,
+              422
+            ]
+          },
+          {
+            "rect": [
+              444,
+              0,
+              443,
+              444
+            ],
+            "anchor": [
+              221.25,
+              221.75
+            ],
+            "bbox": [
+              52,
+              87,
+              392,
+              422
+            ]
+          },
+          {
+            "rect": [
+              887,
+              0,
+              443,
+              444
+            ],
+            "anchor": [
+              221.75,
+              221.75
+            ],
+            "bbox": [
+              48,
+              83,
+              375,
+              422
+            ]
+          },
+          {
+            "rect": [
+              1330,
+              0,
+              444,
+              444
+            ],
+            "anchor": [
+              222.25,
+              221.75
+            ],
+            "bbox": [
+              29,
+              84,
+              406,
+              422
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "speciesID": "fruit",
+      "actionID": "squabble-squeaks",
+      "name": "Squabble Squeaks",
+      "chinese": "吱吱拌嘴",
+      "tier": "signature",
+      "trigger": "walkReturn",
+      "summary": "Squeak-argues with an invisible neighbour over a perch, then scoots over to share.",
+      "unlockLevel": 4,
+      "frames": [
+        "unique_bat_fruit_squabble-squeaks_0",
+        "unique_bat_fruit_squabble-squeaks_1",
+        "unique_bat_fruit_squabble-squeaks_2",
+        "unique_bat_fruit_squabble-squeaks_3"
+      ],
+      "seconds": [
+        0.65,
+        0.4,
+        0.65,
+        0.7
+      ],
+      "sha256": [
+        "738920ef85cb2684094aa8431c7ecbbb0610fe5ffe93818d558ad8edc303823a",
+        "4a3e1b0c0bc0f1c5393ddb99e34d0a3e729292f2038a26a4c4973d56f5144f88",
+        "11e661195ff2408ac9b1f3a3ab0944c3c068129dbeb5bce6257dbb4446107d69",
+        "69dc37a21c31f47a353fe3d9178a8c4e1673102d9fdd3b23c5b47b7054555b49"
+      ],
+      "portrait": "Art/gentle-pixel/portraits-v3/portraits/04-fruit.png",
+      "portraitSHA256": "87d0206d735b9ffa4cb6cccc4b19fd0148b470915dd3c96e6733e7ccb0ffdb8c",
+      "source": "Art/gentle-pixel/portrait-actions-v1/fruit-fix-sheet-v1.png",
+      "sourceSHA256": "00c2d1236ef66468bb42ee2207369680533dd308d2e0e61bac5764ef102f32be",
+      "framing": {
+        "scale": 0.18270799347471453,
+        "center": [
+          -15.0,
+          20.5
+        ],
+        "frames": [
+          {
+            "rect": [
+              0,
+              0,
+              627,
+              634
+            ],
+            "anchor": [
+              313.5,
+              313.5
+            ],
+            "bbox": [
+              33,
+              96,
+              592,
+              634
+            ]
+          },
+          {
+            "rect": [
+              627,
+              0,
+              627,
+              634
+            ],
+            "anchor": [
+              313.5,
+              313.5
+            ],
+            "bbox": [
+              13,
+              97,
+              605,
+              632
+            ]
+          },
+          {
+            "rect": [
+              0,
+              634,
+              618,
+              620
+            ],
+            "anchor": [
+              313.5,
+              306.5
+            ],
+            "bbox": [
+              33,
+              27,
+              590,
+              559
+            ]
+          },
+          {
+            "rect": [
+              618,
+              634,
+              636,
+              620
+            ],
+            "anchor": [
+              322.5,
+              306.5
+            ],
+            "bbox": [
+              1,
+              35,
+              552,
+              564
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "speciesID": "cave",
+      "actionID": "plum-wrap",
+      "name": "Plum Wrap",
+      "chinese": "李子团",
+      "tier": "idleQuirk",
+      "trigger": "asleep",
+      "summary": "Wraps up into a plum-sized ball and sways gently from the ceiling.",
+      "unlockLevel": 2,
+      "frames": [
+        "unique_bat_cave_plum-wrap_0",
+        "unique_bat_cave_plum-wrap_1",
+        "unique_bat_cave_plum-wrap_2",
+        "unique_bat_cave_plum-wrap_3"
+      ],
+      "seconds": [
+        0.65,
+        0.4,
+        0.65,
+        0.7
+      ],
+      "sha256": [
+        "ba92a36bd548c417a8bbb0673fbd5f07756a2b250459fcac3eea373604ffd186",
+        "c48fedcd2b1976e2b2cb5c1a1ffd3ebe04c0688350fa204a64f73f9c050cd441",
+        "746934f5e34f413e7aefbd853a0bbfcfb9715b228bad8be047567e59458efc01",
+        "a87fba9ecb1291706aa7868c9b8d3b54c9e7474b634af29f2603b9135cd36ad1"
+      ],
+      "portrait": "Art/gentle-pixel/portraits-v3/portraits/05-cave.png",
+      "portraitSHA256": "24b0c3918f5d081f64585be59f8a573c4fba96b6ff0bb4b95b065a806ef719d8",
+      "source": "Art/gentle-pixel/portrait-actions-v1/cave-sheet-v1.png",
+      "sourceSHA256": "eafa0a803ed3ed508c02bb564e29d81c659c1344a64135106cb6fb3312b57521",
+      "framing": {
+        "scale": 0.36245954692556637,
+        "center": [
+          -2.5,
+          6.5
+        ],
+        "frames": [
+          {
+            "rect": [
+              0,
+              0,
+              362,
+              362
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              79,
+              36,
+              300,
+              342
+            ]
+          },
+          {
+            "rect": [
+              362,
+              0,
+              362,
+              362
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              76,
+              36,
+              304,
+              314
+            ]
+          },
+          {
+            "rect": [
+              724,
+              0,
+              362,
+              362
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              58,
+              33,
+              297,
+              303
+            ]
+          },
+          {
+            "rect": [
+              1086,
+              0,
+              362,
+              362
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              53,
+              33,
+              273,
+              303
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "speciesID": "cave",
+      "actionID": "peek-twist",
+      "name": "Peek Twist",
+      "chinese": "扭身偷看",
+      "tier": "reaction",
+      "trigger": "pet",
+      "summary": "Twists around inside its wings to peek at you before deciding you're safe.",
+      "unlockLevel": 3,
+      "frames": [
+        "unique_bat_cave_peek-twist_0",
+        "unique_bat_cave_peek-twist_1",
+        "unique_bat_cave_peek-twist_2",
+        "unique_bat_cave_peek-twist_3"
+      ],
+      "seconds": [
+        0.65,
+        0.4,
+        0.65,
+        0.7
+      ],
+      "sha256": [
+        "d9a629bd9ec962335557b24887b3df85c78678b1a59bd5d0fed4f79cb0204b98",
+        "b5993c5ce2df8b0f160de4567678e3001967caffc7c562dbff49249940d10c22",
+        "d9eac623be9b9decc4fcb00a002f91d9e03b3b19e7224a95b785f8c864d85fac",
+        "76a763cf2b056717ef21ebd31736f06b1514cdce72b3e155714ad3714b0a7930"
+      ],
+      "portrait": "Art/gentle-pixel/portraits-v3/portraits/05-cave.png",
+      "portraitSHA256": "24b0c3918f5d081f64585be59f8a573c4fba96b6ff0bb4b95b065a806ef719d8",
+      "source": "Art/gentle-pixel/portrait-actions-v1/cave-sheet-v1.png",
+      "sourceSHA256": "eafa0a803ed3ed508c02bb564e29d81c659c1344a64135106cb6fb3312b57521",
+      "framing": {
+        "scale": 0.34890965732087226,
+        "center": [
+          1.5,
+          -6.5
+        ],
+        "frames": [
+          {
+            "rect": [
+              0,
+              362,
+              362,
+              362
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              70,
+              17,
+              310,
+              335
+            ]
+          },
+          {
+            "rect": [
+              362,
+              362,
+              362,
+              362
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              88,
+              14,
+              315,
+              335
+            ]
+          },
+          {
+            "rect": [
+              724,
+              362,
+              362,
+              362
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              54,
+              30,
+              314,
+              335
+            ]
+          },
+          {
+            "rect": [
+              1086,
+              362,
+              362,
+              362
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              50,
+              17,
+              289,
+              335
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "speciesID": "cave",
+      "actionID": "find-you-call",
+      "name": "Find-You Call",
+      "chinese": "呼唤找宝宝",
+      "tier": "signature",
+      "trigger": "walkReturn",
+      "summary": "Calls into a crowd of tiny sleeping shapes until one answers, then beams.",
+      "unlockLevel": 4,
+      "frames": [
+        "unique_bat_cave_find-you-call_0",
+        "unique_bat_cave_find-you-call_1",
+        "unique_bat_cave_find-you-call_2",
+        "unique_bat_cave_find-you-call_3"
+      ],
+      "seconds": [
+        0.65,
+        0.4,
+        0.65,
+        0.7
+      ],
+      "sha256": [
+        "20985d1ee3c07fdbbc25c0304c02ac9ad46a01ede857b845d6e16eda9cdfe7ce",
+        "6497b3ebbe95a7e5018a289b8c3afdef1487758af0fb46c4a27997d330f144a7",
+        "ff4262aa9e5b83dfd54eb7ef40db6f649481992e8c377c6ec1b2b94c14aaee89",
+        "1c26222823e1156b7d4ab86023870347a8e4b9070726a67053885a572b5f580d"
+      ],
+      "portrait": "Art/gentle-pixel/portraits-v3/portraits/05-cave.png",
+      "portraitSHA256": "24b0c3918f5d081f64585be59f8a573c4fba96b6ff0bb4b95b065a806ef719d8",
+      "source": "Art/gentle-pixel/portrait-actions-v1/cave-fix-sheet-v1.png",
+      "sourceSHA256": "e32803d87e5db253677cf35f30dfb6cbae268f77cf55740d2ac983c1373125e3",
+      "framing": {
+        "scale": 0.18181818181818182,
+        "center": [
+          6.5,
+          15.5
+        ],
+        "frames": [
+          {
+            "rect": [
+              0,
+              0,
+              628,
+              627
+            ],
+            "anchor": [
+              313.5,
+              313.5
+            ],
+            "bbox": [
+              42,
+              121,
+              628,
+              614
+            ]
+          },
+          {
+            "rect": [
+              628,
+              0,
+              626,
+              627
+            ],
+            "anchor": [
+              312.5,
+              313.5
+            ],
+            "bbox": [
+              12,
+              122,
+              597,
+              615
+            ]
+          },
+          {
+            "rect": [
+              0,
+              627,
+              627,
+              627
+            ],
+            "anchor": [
+              313.5,
+              313.5
+            ],
+            "bbox": [
+              38,
+              43,
+              625,
+              534
+            ]
+          },
+          {
+            "rect": [
+              627,
+              627,
+              627,
+              627
+            ],
+            "anchor": [
+              313.5,
+              313.5
+            ],
+            "bbox": [
+              12,
+              50,
+              598,
+              532
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "speciesID": "sleepy",
+      "actionID": "one-big-breath",
+      "name": "One Big Breath",
+      "chinese": "一大口呼吸",
+      "tier": "idleQuirk",
+      "trigger": "asleep",
+      "summary": "Snoozes perfectly still, then takes one enormous, slow breath.",
+      "unlockLevel": 2,
+      "frames": [
+        "unique_bat_sleepy_one-big-breath_0",
+        "unique_bat_sleepy_one-big-breath_1",
+        "unique_bat_sleepy_one-big-breath_2",
+        "unique_bat_sleepy_one-big-breath_3"
+      ],
+      "seconds": [
+        0.65,
+        0.4,
+        0.65,
+        0.7
+      ],
+      "sha256": [
+        "65c9ba04d559df9022109c45b2c8b81448478fa1d49da99d8c79f7edeb1d17b2",
+        "94afe6beb0fea06ec3f2c563698d6934b68729bb08c5fd9c3c39f3efe117ee4b",
+        "4cb2c8eb92b06fba28fe13d38fbf95c4d8076d5117090dd8eb9adc79b8c28002",
+        "fe4da5776430d888f8b06f2c084f64710eb3e6b41f0752ba24cd8364e5cbe50a"
+      ],
+      "portrait": "Art/gentle-pixel/portraits-v3/portraits/06-sleepy.png",
+      "portraitSHA256": "682682314104436e90298861755d282cfbdb363dee5037a116b8a9ee0821f4f0",
+      "source": "Art/gentle-pixel/portrait-actions-v1/sleepy-sheet-v1.png",
+      "sourceSHA256": "c81fb05172c2d16557069dff9f2a5a0177515bb72bf337a96f5f6bc745171e18",
+      "framing": {
+        "scale": 0.3284457478005865,
+        "center": [
+          8.5,
+          31.0
+        ],
+        "frames": [
+          {
+            "rect": [
+              0,
+              0,
+              362,
+              362
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              32,
+              73,
+              360,
+              353
+            ]
+          },
+          {
+            "rect": [
+              362,
+              0,
+              362,
+              362
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              36,
+              70,
+              349,
+              353
+            ]
+          },
+          {
+            "rect": [
+              724,
+              0,
+              362,
+              362
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              21,
+              73,
+              358,
+              350
+            ]
+          },
+          {
+            "rect": [
+              1086,
+              0,
+              362,
+              362
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              19,
+              79,
+              343,
+              354
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "speciesID": "sleepy",
+      "actionID": "groggy-wake",
+      "name": "Groggy Wake",
+      "chinese": "迷糊醒",
+      "tier": "reaction",
+      "trigger": "pet",
+      "summary": "Blinks awake, licks a dewdrop off its fur, mumbles, and is asleep again.",
+      "unlockLevel": 3,
+      "frames": [
+        "unique_bat_sleepy_groggy-wake_0",
+        "unique_bat_sleepy_groggy-wake_1",
+        "unique_bat_sleepy_groggy-wake_2",
+        "unique_bat_sleepy_groggy-wake_3"
+      ],
+      "seconds": [
+        0.65,
+        0.4,
+        0.65,
+        0.7
+      ],
+      "sha256": [
+        "e76419ac2428afb49fa947c3f412f6a23b2e97e4841fb08d2104603ade6a0642",
+        "9d13e948a86e3a0993422d0888ce86a904377f5360918f238c5fbd4fba3fb7f6",
+        "57f70bfead0a17e51096a46572687dba168d8540ff3a35fd80eabb6c04d7ffbb",
+        "a0e86d7f1bf42a099a987688d0e50d36590f8417709fe0bbc2f8e6a9517694b5"
+      ],
+      "portrait": "Art/gentle-pixel/portraits-v3/portraits/06-sleepy.png",
+      "portraitSHA256": "682682314104436e90298861755d282cfbdb363dee5037a116b8a9ee0821f4f0",
+      "source": "Art/gentle-pixel/portrait-actions-v1/sleepy-sheet-v1.png",
+      "sourceSHA256": "c81fb05172c2d16557069dff9f2a5a0177515bb72bf337a96f5f6bc745171e18",
+      "framing": {
+        "scale": 0.3333333333333333,
+        "center": [
+          11.0,
+          -3.0
+        ],
+        "frames": [
+          {
+            "rect": [
+              0,
+              362,
+              362,
+              344
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              31,
+              39,
+              360,
+              318
+            ]
+          },
+          {
+            "rect": [
+              362,
+              362,
+              362,
+              344
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              30,
+              37,
+              358,
+              316
+            ]
+          },
+          {
+            "rect": [
+              724,
+              362,
+              362,
+              344
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              31,
+              41,
+              351,
+              318
+            ]
+          },
+          {
+            "rect": [
+              1086,
+              362,
+              362,
+              344
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              24,
+              38,
+              343,
+              319
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "speciesID": "sleepy",
+      "actionID": "pitcher-plant-bed",
+      "name": "Pitcher Plant Bed",
+      "chinese": "猪笼草睡袋",
+      "tier": "signature",
+      "trigger": "newDay",
+      "summary": "Climbs into a pitcher plant like a sleeping bag and settles in.",
+      "unlockLevel": 4,
+      "frames": [
+        "unique_bat_sleepy_pitcher-plant-bed_0",
+        "unique_bat_sleepy_pitcher-plant-bed_1",
+        "unique_bat_sleepy_pitcher-plant-bed_2",
+        "unique_bat_sleepy_pitcher-plant-bed_3"
+      ],
+      "seconds": [
+        0.65,
+        0.4,
+        0.65,
+        0.7
+      ],
+      "sha256": [
+        "c7fed57f8822f321fe23b9b39b991e1012fc4e4dfbe01e72c2116e7660d5acd6",
+        "3197eb99c64ae5e68b3eaae708f7840f9e1faebcb46894254b8a736efbdefbc0",
+        "f5e5ae0d846883b5445ca8ab73ca01d2e1e2e4b3a27260a2ea9d2609a03ebb30",
+        "ddc13cbcfe4e8a0e3da7b119b7dbbd17943c6d55abd78200e8ea14883ea47937"
+      ],
+      "portrait": "Art/gentle-pixel/portraits-v3/portraits/06-sleepy.png",
+      "portraitSHA256": "682682314104436e90298861755d282cfbdb363dee5037a116b8a9ee0821f4f0",
+      "source": "Art/gentle-pixel/portrait-actions-v1/sleepy-sheet-v1.png",
+      "sourceSHA256": "c81fb05172c2d16557069dff9f2a5a0177515bb72bf337a96f5f6bc745171e18",
+      "framing": {
+        "scale": 0.29396325459317585,
+        "center": [
+          39.5,
+          -37.0
+        ],
+        "frames": [
+          {
+            "rect": [
+              0,
+              706,
+              411,
+              380
+            ],
+            "anchor": [
+              181.0,
+              199.0
+            ],
+            "bbox": [
+              30,
+              42,
+              411,
+              298
+            ]
+          },
+          {
+            "rect": [
+              411,
+              706,
+              313,
+              380
+            ],
+            "anchor": [
+              132.0,
+              199.0
+            ],
+            "bbox": [
+              49,
+              1,
+              277,
+              314
+            ]
+          },
+          {
+            "rect": [
+              724,
+              706,
+              362,
+              380
+            ],
+            "anchor": [
+              181.0,
+              199.0
+            ],
+            "bbox": [
+              81,
+              30,
+              331,
+              323
+            ]
+          },
+          {
+            "rect": [
+              1086,
+              706,
+              362,
+              380
+            ],
+            "anchor": [
+              181.0,
+              199.0
+            ],
+            "bbox": [
+              80,
+              31,
+              331,
+              323
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "speciesID": "dust",
+      "actionID": "flap-practice",
+      "name": "Flap Practice",
+      "chinese": "拍翅练习",
+      "tier": "idleQuirk",
+      "trigger": "idleNight",
+      "summary": "Hangs and does a burst of frantic wing-flaps, then pants, very proud.",
+      "unlockLevel": 2,
+      "frames": [
+        "unique_bat_dust_flap-practice_0",
+        "unique_bat_dust_flap-practice_1",
+        "unique_bat_dust_flap-practice_2",
+        "unique_bat_dust_flap-practice_3"
+      ],
+      "seconds": [
+        0.65,
+        0.4,
+        0.65,
+        0.7
+      ],
+      "sha256": [
+        "365d293e9a3dffb75188c8e03f2d5076487c4534c84cb0cd60cfb324de40b9d8",
+        "ce752724d9592d9c3d362c54c1e249769f2af275fb87e713cad60632141a31e0",
+        "62ea314993e9e7c9788546771fcefca0ebba666cf49db8aed982c3cb55abf9c5",
+        "57030bb2d94cd16b444b0ae04173d29af9c2cd2a584ec5244cd87cfbce7d9816"
+      ],
+      "portrait": "Art/gentle-pixel/portraits-v3/portraits/07-dust.png",
+      "portraitSHA256": "abafd9d2871c8466600955eb7655dd6ba0283be077005eb7380df05fb3167e38",
+      "source": "Art/gentle-pixel/portrait-actions-v1/dust-fix-sheet-v1.png",
+      "sourceSHA256": "ae6b38e8138b10711c79b53510768511de9ffbcb2084172b6a6fa6634c82a7fb",
+      "framing": {
+        "scale": 0.35443037974683544,
+        "center": [
+          -1.0,
+          8.5
+        ],
+        "frames": [
+          {
+            "rect": [
+              0,
+              0,
+              362,
+              362
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              66,
+              58,
+              296,
+              316
+            ]
+          },
+          {
+            "rect": [
+              362,
+              0,
+              362,
+              362
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              22,
+              58,
+              331,
+              315
+            ]
+          },
+          {
+            "rect": [
+              724,
+              0,
+              362,
+              362
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              37,
+              58,
+              338,
+              321
+            ]
+          },
+          {
+            "rect": [
+              1086,
+              0,
+              362,
+              362
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              95,
+              58,
+              315,
+              321
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "speciesID": "dust",
+      "actionID": "drop-start",
+      "name": "Drop Start",
+      "chinese": "松手起飞",
+      "tier": "reaction",
+      "trigger": "pet",
+      "summary": "Lets go, plops down, remembers to flap, and flutters back up.",
+      "unlockLevel": 3,
+      "frames": [
+        "unique_bat_dust_drop-start_0",
+        "unique_bat_dust_drop-start_1",
+        "unique_bat_dust_drop-start_2",
+        "unique_bat_dust_drop-start_3"
+      ],
+      "seconds": [
+        0.65,
+        0.4,
+        0.65,
+        0.7
+      ],
+      "sha256": [
+        "d2a661358d796a8cf72ed5e8ca0b0838af5f371b896b35d153c03d8164705e4a",
+        "9c09b4e2c034884724b667316e3f483390cc5c896bc892a221e91c0abb5ac31f",
+        "2cfc7d7b493a7ad695de0d49edf4e3fa885f7f8634f2070f704e12c569c6abe9",
+        "73ef58cb7992b2adce0350210dc27fe124d952fcfd5aae223f8c800bcc85b4c1"
+      ],
+      "portrait": "Art/gentle-pixel/portraits-v3/portraits/07-dust.png",
+      "portraitSHA256": "abafd9d2871c8466600955eb7655dd6ba0283be077005eb7380df05fb3167e38",
+      "source": "Art/gentle-pixel/portrait-actions-v1/dust-fix-sheet-v1.png",
+      "sourceSHA256": "ae6b38e8138b10711c79b53510768511de9ffbcb2084172b6a6fa6634c82a7fb",
+      "framing": {
+        "scale": 0.36721311475409835,
+        "center": [
+          12.5,
+          5.5
+        ],
+        "frames": [
+          {
+            "rect": [
+              0,
+              362,
+              362,
+              362
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              66,
+              40,
+              296,
+              298
+            ]
+          },
+          {
+            "rect": [
+              362,
+              362,
+              362,
+              362
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              71,
+              38,
+              298,
+              334
+            ]
+          },
+          {
+            "rect": [
+              724,
+              362,
+              362,
+              362
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              47,
+              53,
+              340,
+              312
+            ]
+          },
+          {
+            "rect": [
+              1086,
+              362,
+              362,
+              362
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              56,
+              34,
+              321,
+              339
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "speciesID": "dust",
+      "actionID": "almost-landing",
+      "name": "Almost Landing",
+      "chinese": "差点着陆",
+      "tier": "signature",
+      "trigger": "walkReturn",
+      "summary": "Tries the upside-down landing, misses, somersaults, then sticks it in a puff of fluff.",
+      "unlockLevel": 4,
+      "frames": [
+        "unique_bat_dust_almost-landing_0",
+        "unique_bat_dust_almost-landing_1",
+        "unique_bat_dust_almost-landing_2",
+        "unique_bat_dust_almost-landing_3"
+      ],
+      "seconds": [
+        0.65,
+        0.4,
+        0.65,
+        0.7
+      ],
+      "sha256": [
+        "f541362eaae613cf18c2784ea0e528a669ba569b7ff132bc136d418ed841678b",
+        "84022fac329a4ae74021fd826bd06e161c11cb7e1d1887594e3e095afa76d819",
+        "907525b11e43bccf57deaa12dd85bc774aab2382ad0690f2647aea0d6a6ade3d",
+        "b22f96b1fee00d37904ed6d7373796a056a33363c478a980a8122e005130dde6"
+      ],
+      "portrait": "Art/gentle-pixel/portraits-v3/portraits/07-dust.png",
+      "portraitSHA256": "abafd9d2871c8466600955eb7655dd6ba0283be077005eb7380df05fb3167e38",
+      "source": "Art/gentle-pixel/portrait-actions-v1/dust-fix-sheet-v1.png",
+      "sourceSHA256": "ae6b38e8138b10711c79b53510768511de9ffbcb2084172b6a6fa6634c82a7fb",
+      "framing": {
+        "scale": 0.3916083916083916,
+        "center": [
+          5.0,
+          -11.5
+        ],
+        "frames": [
+          {
+            "rect": [
+              0,
+              724,
+              362,
+              362
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              43,
+              29,
+              313,
+              307
+            ]
+          },
+          {
+            "rect": [
+              362,
+              724,
+              362,
+              362
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              54,
+              29,
+              304,
+              307
+            ]
+          },
+          {
+            "rect": [
+              724,
+              724,
+              362,
+              362
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              56,
+              28,
+              329,
+              311
+            ]
+          },
+          {
+            "rect": [
+              1086,
+              724,
+              362,
+              362
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              81,
+              34,
+              305,
+              295
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "speciesID": "pebble",
+      "actionID": "crack-squeeze",
+      "name": "Crack Squeeze",
+      "chinese": "挤石缝",
+      "tier": "idleQuirk",
+      "trigger": "asleep",
+      "summary": "Flattens like a pancake and slides into a rock crack until only its mask shows.",
+      "unlockLevel": 2,
+      "frames": [
+        "unique_bat_pebble_crack-squeeze_0",
+        "unique_bat_pebble_crack-squeeze_1",
+        "unique_bat_pebble_crack-squeeze_2",
+        "unique_bat_pebble_crack-squeeze_3"
+      ],
+      "seconds": [
+        0.65,
+        0.4,
+        0.65,
+        0.7
+      ],
+      "sha256": [
+        "731536e5f47a08d32a534f4a5efa179905432b355acc67bcce2a19beb1dd0261",
+        "ef581e97539ca5dccc4e7b149548ffaf43b613efe70fe007a2ef31bcf7acbda8",
+        "ac78accdb11a13c649d48666dfea43b619b1cc7dcefea1f8f843d2ccf10b801c",
+        "0d6a54a4b31bf8c0d8829f406cee85ea688ca7cabff6219b2e470626dc40c410"
+      ],
+      "portrait": "Art/gentle-pixel/portraits-v3/portraits/08-pebble.png",
+      "portraitSHA256": "be5520530fa53c94648492833b59630e513fe9b6515604d6f5a745571a84f35c",
+      "source": "Art/gentle-pixel/portrait-actions-v1/pebble-sheet-v1.png",
+      "sourceSHA256": "c6137932828ad395bd3c859f537351059170289628f2bb7604a4e8d8fb30c80e",
+      "framing": {
+        "scale": 0.3510971786833856,
+        "center": [
+          -8.5,
+          26.5
+        ],
+        "frames": [
+          {
+            "rect": [
+              0,
+              0,
+              362,
+              362
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              53,
+              72,
+              329,
+              343
+            ]
+          },
+          {
+            "rect": [
+              362,
+              0,
+              362,
+              362
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              30,
+              179,
+              330,
+              337
+            ]
+          },
+          {
+            "rect": [
+              724,
+              0,
+              362,
+              362
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              13,
+              151,
+              332,
+              339
+            ]
+          },
+          {
+            "rect": [
+              1086,
+              0,
+              362,
+              362
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              16,
+              165,
+              330,
+              339
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "speciesID": "pebble",
+      "actionID": "bandit-peek",
+      "name": "Bandit Peek",
+      "chinese": "小偷面罩",
+      "tier": "reaction",
+      "trigger": "pet",
+      "summary": "Pops out of its pebble pile wearing its black bandit mask.",
+      "unlockLevel": 3,
+      "frames": [
+        "unique_bat_pebble_bandit-peek_0",
+        "unique_bat_pebble_bandit-peek_1",
+        "unique_bat_pebble_bandit-peek_2",
+        "unique_bat_pebble_bandit-peek_3"
+      ],
+      "seconds": [
+        0.65,
+        0.4,
+        0.65,
+        0.7
+      ],
+      "sha256": [
+        "321d571d9c24598dcf9ba75a5778da9eb5262cfc03260f09abd29612aeaf7df3",
+        "a7a77a6a39e891cc6ea1c15116a20c1e6064c357d3937dc5aa2bdd943e35bb01",
+        "8037dfea5b92bdc752ca27849aff8336989c1979d9c3b733f649f5e7b691b38e",
+        "fafa27392522c6eee9f8f35ae33a932526dfdb8a5dc3ab93d81ba6c9da20d653"
+      ],
+      "portrait": "Art/gentle-pixel/portraits-v3/portraits/08-pebble.png",
+      "portraitSHA256": "be5520530fa53c94648492833b59630e513fe9b6515604d6f5a745571a84f35c",
+      "source": "Art/gentle-pixel/portrait-actions-v1/pebble-sheet-v1.png",
+      "sourceSHA256": "c6137932828ad395bd3c859f537351059170289628f2bb7604a4e8d8fb30c80e",
+      "framing": {
+        "scale": 0.32558139534883723,
+        "center": [
+          -3.0,
+          8.5
+        ],
+        "frames": [
+          {
+            "rect": [
+              0,
+              362,
+              362,
+              362
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              26,
+              146,
+              350,
+              337
+            ]
+          },
+          {
+            "rect": [
+              362,
+              362,
+              362,
+              362
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              16,
+              87,
+              349,
+              337
+            ]
+          },
+          {
+            "rect": [
+              724,
+              362,
+              362,
+              362
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              23,
+              42,
+              336,
+              334
+            ]
+          },
+          {
+            "rect": [
+              1086,
+              362,
+              362,
+              362
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              6,
+              141,
+              330,
+              337
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "speciesID": "pebble",
+      "actionID": "new-rock-every-day",
+      "name": "New Rock Every Day",
+      "chinese": "每天换石头",
+      "tier": "signature",
+      "trigger": "newDay",
+      "summary": "Each new day it hops to a different pebble and settles in.",
+      "unlockLevel": 4,
+      "frames": [
+        "unique_bat_pebble_new-rock-every-day_0",
+        "unique_bat_pebble_new-rock-every-day_1",
+        "unique_bat_pebble_new-rock-every-day_2",
+        "unique_bat_pebble_new-rock-every-day_3"
+      ],
+      "seconds": [
+        0.65,
+        0.4,
+        0.65,
+        0.7
+      ],
+      "sha256": [
+        "93ed41ebd712f9b29869b006e038fca3dc3419ce1ee479fb974aac13986f0e22",
+        "918771d5c44fbd026c87489756b51a917bfd29df03830afe52c8da5824ef82da",
+        "d0e6f87c186456eb97c5e8488a920e73ef6f4f3fb72c80fc1b2fcccebf19c247",
+        "bf273cb18d3a18b3d2615b9fd139ef8e97c7f10b6aebc46224a6027707f209c0"
+      ],
+      "portrait": "Art/gentle-pixel/portraits-v3/portraits/08-pebble.png",
+      "portraitSHA256": "be5520530fa53c94648492833b59630e513fe9b6515604d6f5a745571a84f35c",
+      "source": "Art/gentle-pixel/portrait-actions-v1/pebble-sheet-v1.png",
+      "sourceSHA256": "c6137932828ad395bd3c859f537351059170289628f2bb7604a4e8d8fb30c80e",
+      "framing": {
+        "scale": 0.3284457478005865,
+        "center": [
+          5.5,
+          -11.5
+        ],
+        "frames": [
+          {
+            "rect": [
+              0,
+              724,
+              362,
+              362
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              57,
+              22,
+              305,
+              332
+            ]
+          },
+          {
+            "rect": [
+              362,
+              724,
+              362,
+              362
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              16,
+              7,
+              342,
+              325
+            ]
+          },
+          {
+            "rect": [
+              724,
+              724,
+              362,
+              362
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              27,
+              69,
+              357,
+              329
+            ]
+          },
+          {
+            "rect": [
+              1086,
+              724,
+              362,
+              362
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              57,
+              22,
+              311,
+              329
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "speciesID": "strawberry",
+      "actionID": "one-foot-sway",
+      "name": "One-Foot Sway",
+      "chinese": "单脚摇摆",
+      "tier": "idleQuirk",
+      "trigger": "asleep",
+      "summary": "Hangs by one foot and twirls in the breeze like a ripe berry.",
+      "unlockLevel": 2,
+      "frames": [
+        "unique_bat_strawberry_one-foot-sway_0",
+        "unique_bat_strawberry_one-foot-sway_1",
+        "unique_bat_strawberry_one-foot-sway_2",
+        "unique_bat_strawberry_one-foot-sway_3"
+      ],
+      "seconds": [
+        0.65,
+        0.4,
+        0.65,
+        0.7
+      ],
+      "sha256": [
+        "27e0ccf4b54f26284fa5b16392a65d6a9be46d99380f430da647b64b86b0d415",
+        "1f117707a585f0a09f6e8cf98239997ac5e798d8c9bb88f6780b9186811814df",
+        "d18979e2be7eead9e62e030a6c37c948e0392514f0cb7b5521f613a4a6a68142",
+        "b9151ea11f39e347f21b989b2eef7e82208c872434c1d45bb3864d755d88a7f0"
+      ],
+      "portrait": "Art/gentle-pixel/portraits-v3/portraits/09-strawberry.png",
+      "portraitSHA256": "791c76707686a66eea1c3b31839612060364202b2d8e79fa840c7f7d47d3c6f3",
+      "source": "Art/gentle-pixel/portrait-actions-v1/strawberry-sheet-v1.png",
+      "sourceSHA256": "724141ec788c72b36d374e0258bf75f10dcb126e10716ad52c81af59a3b80063",
+      "framing": {
+        "scale": 0.32653061224489793,
+        "center": [
+          11.0,
+          6.5
+        ],
+        "frames": [
+          {
+            "rect": [
+              0,
+              0,
+              362,
+              362
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              52,
+              16,
+              302,
+              348
+            ]
+          },
+          {
+            "rect": [
+              362,
+              0,
+              362,
+              362
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              32,
+              16,
+              349,
+              347
+            ]
+          },
+          {
+            "rect": [
+              724,
+              0,
+              362,
+              362
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              49,
+              16,
+              352,
+              359
+            ]
+          },
+          {
+            "rect": [
+              1086,
+              0,
+              362,
+              362
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              57,
+              16,
+              306,
+              348
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "speciesID": "strawberry",
+      "actionID": "tail-blanket",
+      "name": "Tail Blanket",
+      "chinese": "尾巴毯子",
+      "tier": "reaction",
+      "trigger": "pet",
+      "summary": "Wraps itself in its furry tail like a blanket until only its face shows.",
+      "unlockLevel": 3,
+      "frames": [
+        "unique_bat_strawberry_tail-blanket_0",
+        "unique_bat_strawberry_tail-blanket_1",
+        "unique_bat_strawberry_tail-blanket_2",
+        "unique_bat_strawberry_tail-blanket_3"
+      ],
+      "seconds": [
+        0.65,
+        0.4,
+        0.65,
+        0.7
+      ],
+      "sha256": [
+        "07e0423f676b73b010664a072e6ed99c89b8486e967047bc6c07ae195b1b2d1b",
+        "5cc857c21620182f8654f98ffecb3ad5918c82d176c57ff4c62a38c140a2707c",
+        "39dfb89a72957b60c502ab430dda2c54f79c01a33b2050f9348d76f6153fae4a",
+        "f23304a3aeab0312589662e3188f5cec4c39c541c07d203e08e07aad5f7bcbc8"
+      ],
+      "portrait": "Art/gentle-pixel/portraits-v3/portraits/09-strawberry.png",
+      "portraitSHA256": "791c76707686a66eea1c3b31839612060364202b2d8e79fa840c7f7d47d3c6f3",
+      "source": "Art/gentle-pixel/portrait-actions-v1/strawberry-sheet-v1.png",
+      "sourceSHA256": "724141ec788c72b36d374e0258bf75f10dcb126e10716ad52c81af59a3b80063",
+      "framing": {
+        "scale": 0.35443037974683544,
+        "center": [
+          0.0,
+          -15.5
+        ],
+        "frames": [
+          {
+            "rect": [
+              0,
+              362,
+              362,
+              343
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              49,
+              13,
+              339,
+              318
+            ]
+          },
+          {
+            "rect": [
+              362,
+              362,
+              362,
+              343
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              58,
+              19,
+              331,
+              311
+            ]
+          },
+          {
+            "rect": [
+              724,
+              362,
+              362,
+              343
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              62,
+              31,
+              304,
+              315
+            ]
+          },
+          {
+            "rect": [
+              1086,
+              362,
+              362,
+              343
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              23,
+              13,
+              313,
+              318
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "speciesID": "strawberry",
+      "actionID": "berry-bunch",
+      "name": "Berry Bunch",
+      "chinese": "一串草莓",
+      "tier": "signature",
+      "trigger": "walkReturn",
+      "summary": "Three tiny pups dangle beside it like a bunch of strawberries.",
+      "unlockLevel": 4,
+      "frames": [
+        "unique_bat_strawberry_berry-bunch_0",
+        "unique_bat_strawberry_berry-bunch_1",
+        "unique_bat_strawberry_berry-bunch_2",
+        "unique_bat_strawberry_berry-bunch_3"
+      ],
+      "seconds": [
+        0.65,
+        0.4,
+        0.65,
+        0.7
+      ],
+      "sha256": [
+        "1ba3581c4cfe696178afa9a56d22797dc16d88f713315bdb27b61ffa42712cae",
+        "a74ffc01e9345b2bdcf48a2b0cecd6671a3d6c1b9420ddc5e04f0785e5ef5c6d",
+        "b7bb8247340898d937e6888c17585bab3e89f67cde8158b6b95123e89720434c",
+        "fe0f79c00a4283e28655d218410a0b0d493f5ec66fd4e90438fb513525cae148"
+      ],
+      "portrait": "Art/gentle-pixel/portraits-v3/portraits/09-strawberry.png",
+      "portraitSHA256": "791c76707686a66eea1c3b31839612060364202b2d8e79fa840c7f7d47d3c6f3",
+      "source": "Art/gentle-pixel/portrait-actions-v1/strawberry-sheet-v1.png",
+      "sourceSHA256": "724141ec788c72b36d374e0258bf75f10dcb126e10716ad52c81af59a3b80063",
+      "framing": {
+        "scale": 0.32748538011695905,
+        "center": [
+          1.5,
+          -28.0
+        ],
+        "frames": [
+          {
+            "rect": [
+              0,
+              705,
+              362,
+              381
+            ],
+            "anchor": [
+              181.0,
+              200.0
+            ],
+            "bbox": [
+              49,
+              3,
+              339,
+              307
+            ]
+          },
+          {
+            "rect": [
+              362,
+              705,
+              362,
+              381
+            ],
+            "anchor": [
+              181.0,
+              200.0
+            ],
+            "bbox": [
+              19,
+              1,
+              351,
+              286
+            ]
+          },
+          {
+            "rect": [
+              724,
+              705,
+              362,
+              381
+            ],
+            "anchor": [
+              181.0,
+              200.0
+            ],
+            "bbox": [
+              14,
+              5,
+              350,
+              343
+            ]
+          },
+          {
+            "rect": [
+              1086,
+              705,
+              362,
+              381
+            ],
+            "anchor": [
+              181.0,
+              200.0
+            ],
+            "bbox": [
+              23,
+              3,
+              313,
+              307
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "speciesID": "blossom",
+      "actionID": "brush-tongue-sip",
+      "name": "Brush-Tongue Sip",
+      "chinese": "刷子舌吸蜜",
+      "tier": "idleQuirk",
+      "trigger": "idleNight",
+      "summary": "Hovers at a flower and paints out nectar with its brushy tongue.",
+      "unlockLevel": 2,
+      "frames": [
+        "unique_bat_blossom_brush-tongue-sip_0",
+        "unique_bat_blossom_brush-tongue-sip_1",
+        "unique_bat_blossom_brush-tongue-sip_2",
+        "unique_bat_blossom_brush-tongue-sip_3"
+      ],
+      "seconds": [
+        0.65,
+        0.4,
+        0.65,
+        0.7
+      ],
+      "sha256": [
+        "1669a10edd6a9f9e977e271fbc677647f5cd657f0cbfe1f7b6e0d8d87c2cb630",
+        "ef80421bfb104205fbe178d648d17a0d74684e9d574376c9b8ba36f5da63e5f3",
+        "cae2e299a2a0b58e15af96bf59daf479fc0f8c102bf28ed02786decd8594e6ae",
+        "f717b15720c8d1a79fe76a357850784023c24093e5fbaf529af7585140aaf16d"
+      ],
+      "portrait": "Art/gentle-pixel/portraits-v3/portraits/10-blossom.png",
+      "portraitSHA256": "44503d6b8e992634efad996878cb5fab416e0e9955dd2d4021abe24aee50f47c",
+      "source": "Art/gentle-pixel/portrait-actions-v1/blossom-sheet-v1.png",
+      "sourceSHA256": "6423335080a973228449816ab41a40ccf8a7fd6890e5fa7aff9dd4a5af06246f",
+      "framing": {
+        "scale": 0.35,
+        "center": [
+          -4.5,
+          0.0
+        ],
+        "frames": [
+          {
+            "rect": [
+              0,
+              0,
+              362,
+              362
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              24,
+              21,
+              314,
+              340
+            ]
+          },
+          {
+            "rect": [
+              362,
+              0,
+              362,
+              362
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              25,
+              21,
+              317,
+              337
+            ]
+          },
+          {
+            "rect": [
+              724,
+              0,
+              362,
+              362
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              23,
+              24,
+              314,
+              339
+            ]
+          },
+          {
+            "rect": [
+              1086,
+              0,
+              362,
+              362
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              25,
+              24,
+              330,
+              341
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "speciesID": "blossom",
+      "actionID": "pollen-sneeze",
+      "name": "Pollen Sneeze",
+      "chinese": "花粉喷嚏",
+      "tier": "reaction",
+      "trigger": "pet",
+      "summary": "A pet sends up a puff of pollen from its fur — achoo!",
+      "unlockLevel": 3,
+      "frames": [
+        "unique_bat_blossom_pollen-sneeze_0",
+        "unique_bat_blossom_pollen-sneeze_1",
+        "unique_bat_blossom_pollen-sneeze_2",
+        "unique_bat_blossom_pollen-sneeze_3"
+      ],
+      "seconds": [
+        0.65,
+        0.4,
+        0.65,
+        0.7
+      ],
+      "sha256": [
+        "3bbcda22660b67b483cd639ccd0fdc042e028811e6d6da440210c9aa18e95526",
+        "9e28e32c2d0da34dd3e819cfbd946ee5c7ccaf6c274cdc1d45841ec36ef0e058",
+        "773753d08d7764e5477eb758be35fe28d3852ea9b8420d70dc4d97b681ed0f0f",
+        "923cac2721f39ae7da953b2e9aa67f5042eeba82c213573b981c0f6ddd392def"
+      ],
+      "portrait": "Art/gentle-pixel/portraits-v3/portraits/10-blossom.png",
+      "portraitSHA256": "44503d6b8e992634efad996878cb5fab416e0e9955dd2d4021abe24aee50f47c",
+      "source": "Art/gentle-pixel/portrait-actions-v1/blossom-sheet-v1.png",
+      "sourceSHA256": "6423335080a973228449816ab41a40ccf8a7fd6890e5fa7aff9dd4a5af06246f",
+      "framing": {
+        "scale": 0.3425076452599388,
+        "center": [
+          10.0,
+          0.5
+        ],
+        "frames": [
+          {
+            "rect": [
+              0,
+              362,
+              362,
+              362
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              42,
+              23,
+              293,
+              344
+            ]
+          },
+          {
+            "rect": [
+              362,
+              362,
+              362,
+              362
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              30,
+              18,
+              314,
+              341
+            ]
+          },
+          {
+            "rect": [
+              724,
+              362,
+              362,
+              362
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              37,
+              18,
+              352,
+              341
+            ]
+          },
+          {
+            "rect": [
+              1086,
+              362,
+              362,
+              362
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              63,
+              24,
+              323,
+              345
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "speciesID": "blossom",
+      "actionID": "flower-patrol",
+      "name": "Flower Patrol",
+      "chinese": "花丛巡逻",
+      "tier": "signature",
+      "trigger": "dusk",
+      "summary": "Shoos a rival off its flower patch, then fluffs up proudly.",
+      "unlockLevel": 4,
+      "frames": [
+        "unique_bat_blossom_flower-patrol_0",
+        "unique_bat_blossom_flower-patrol_1",
+        "unique_bat_blossom_flower-patrol_2",
+        "unique_bat_blossom_flower-patrol_3"
+      ],
+      "seconds": [
+        0.65,
+        0.4,
+        0.65,
+        0.7
+      ],
+      "sha256": [
+        "92c23007982af6b605bc30ac5d2ecb9bf0e78c743a8395a898b070f2db97f2b9",
+        "ed609d9ed470b6032c15be0484326f9bdedebe3af8f26349729d52a3dc0e1ace",
+        "1b95b329fa91970081b9df6b39cfd9cec067cb3b46fdf8280c7b7c32bd82bf12",
+        "6ee59e90b59144be5760b063587814d271da495b304731b51b548807c43705f8"
+      ],
+      "portrait": "Art/gentle-pixel/portraits-v3/portraits/10-blossom.png",
+      "portraitSHA256": "44503d6b8e992634efad996878cb5fab416e0e9955dd2d4021abe24aee50f47c",
+      "source": "Art/gentle-pixel/portrait-actions-v1/blossom-sheet-v1.png",
+      "sourceSHA256": "6423335080a973228449816ab41a40ccf8a7fd6890e5fa7aff9dd4a5af06246f",
+      "framing": {
+        "scale": 0.3323442136498516,
+        "center": [
+          7.5,
+          0.5
+        ],
+        "frames": [
+          {
+            "rect": [
+              0,
+              724,
+              362,
+              362
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              24,
+              32,
+              334,
+              339
+            ]
+          },
+          {
+            "rect": [
+              362,
+              724,
+              362,
+              362
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              20,
+              31,
+              354,
+              295
+            ]
+          },
+          {
+            "rect": [
+              724,
+              724,
+              362,
+              362
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              28,
+              32,
+              357,
+              295
+            ]
+          },
+          {
+            "rect": [
+              1086,
+              724,
+              362,
+              362
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              24,
+              24,
+              339,
+              338
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "speciesID": "moss",
+      "actionID": "moss-hideout",
+      "name": "Moss Hideout",
+      "chinese": "苔藓藏身",
+      "tier": "idleQuirk",
+      "trigger": "asleep",
+      "summary": "Burrows into a hanging tuft of Spanish moss, ears poking out.",
+      "unlockLevel": 2,
+      "frames": [
+        "unique_bat_moss_moss-hideout_0",
+        "unique_bat_moss_moss-hideout_1",
+        "unique_bat_moss_moss-hideout_2",
+        "unique_bat_moss_moss-hideout_3"
+      ],
+      "seconds": [
+        0.65,
+        0.4,
+        0.65,
+        0.7
+      ],
+      "sha256": [
+        "ffb2348dadc2d0e5638ef61d61ca194c6d4d4c2a89760bdd02d6f0fc2765ee51",
+        "091d10ec310903f092c8304d24f9602d33ac2d07d6ae95d8843ff39ccad22874",
+        "d2aef7968037aea3c6c768942e92db2519f715e9abda154d3b0f46512904e04e",
+        "c27fd1a6020f72149e36e87be254b4a08be0e2a3a313c019f780272ff737686f"
+      ],
+      "portrait": "Art/gentle-pixel/portraits-v3/portraits/11-moss.png",
+      "portraitSHA256": "e8aa3ab3423747c5685c34644180fa6706eb69183a99bb285538c6bc6019559c",
+      "source": "Art/gentle-pixel/portrait-actions-v1/moss-sheet-v1.png",
+      "sourceSHA256": "c1a966a8131fc5dc3ed4f74f8eb78b2625a72dc3721f52326fbc6da45126051e",
+      "framing": {
+        "scale": 0.34890965732087226,
+        "center": [
+          6.5,
+          10.5
+        ],
+        "frames": [
+          {
+            "rect": [
+              0,
+              0,
+              362,
+              362
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              55,
+              61,
+              323,
+              352
+            ]
+          },
+          {
+            "rect": [
+              362,
+              0,
+              362,
+              362
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              49,
+              31,
+              318,
+              352
+            ]
+          },
+          {
+            "rect": [
+              724,
+              0,
+              362,
+              362
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              58,
+              35,
+              326,
+              351
+            ]
+          },
+          {
+            "rect": [
+              1086,
+              0,
+              362,
+              362
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              61,
+              46,
+              306,
+              326
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "speciesID": "moss",
+      "actionID": "let-go-drop",
+      "name": "Let-Go Drop",
+      "chinese": "松手俯冲",
+      "tier": "reaction",
+      "trigger": "pet",
+      "summary": "Lets go of the moss, drops straight down, and swoops back up.",
+      "unlockLevel": 3,
+      "frames": [
+        "unique_bat_moss_let-go-drop_0",
+        "unique_bat_moss_let-go-drop_1",
+        "unique_bat_moss_let-go-drop_2",
+        "unique_bat_moss_let-go-drop_3"
+      ],
+      "seconds": [
+        0.65,
+        0.4,
+        0.65,
+        0.7
+      ],
+      "sha256": [
+        "19bebbb03e245e4f4e43a5aabdc1b51158ff521af4add2b4d75e9b525a84eda9",
+        "676dee1a3d0281075d62ef05c39eae243b724f8b284ab0c6432fe2cd46058822",
+        "eb887db28f08eb742834a01690ff29c3b03abfd7c633231c785df88efc63963a",
+        "046f7b8d6fdadd579f36ab4f91bf06ae1f952a5393784af41c7e1f6ea6da7943"
+      ],
+      "portrait": "Art/gentle-pixel/portraits-v3/portraits/11-moss.png",
+      "portraitSHA256": "e8aa3ab3423747c5685c34644180fa6706eb69183a99bb285538c6bc6019559c",
+      "source": "Art/gentle-pixel/portrait-actions-v1/moss-sheet-v1.png",
+      "sourceSHA256": "c1a966a8131fc5dc3ed4f74f8eb78b2625a72dc3721f52326fbc6da45126051e",
+      "framing": {
+        "scale": 0.35443037974683544,
+        "center": [
+          6.0,
+          5.5
+        ],
+        "frames": [
+          {
+            "rect": [
+              0,
+              362,
+              362,
+              362
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              78,
+              34,
+              310,
+              309
+            ]
+          },
+          {
+            "rect": [
+              362,
+              362,
+              362,
+              362
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              53,
+              75,
+              321,
+              312
+            ]
+          },
+          {
+            "rect": [
+              724,
+              362,
+              362,
+              362
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              36,
+              55,
+              345,
+              339
+            ]
+          },
+          {
+            "rect": [
+              1086,
+              362,
+              362,
+              362
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              29,
+              57,
+              327,
+              309
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "speciesID": "moss",
+      "actionID": "sprout-planting",
+      "name": "Sprout Planting",
+      "chinese": "种下小芽",
+      "tier": "signature",
+      "trigger": "walkReturn",
+      "summary": "Drops a seed as it flies; a tiny sprout pops up behind it.",
+      "unlockLevel": 4,
+      "frames": [
+        "unique_bat_moss_sprout-planting_0",
+        "unique_bat_moss_sprout-planting_1",
+        "unique_bat_moss_sprout-planting_2",
+        "unique_bat_moss_sprout-planting_3"
+      ],
+      "seconds": [
+        0.65,
+        0.4,
+        0.65,
+        0.7
+      ],
+      "sha256": [
+        "c58b6240f9fb3ddff7978c76c64571c0425d981678da5f444e9b71c9f03bd4c6",
+        "0dbb7ede1d31f225674b0464f0ca6b3766430eb60ce3d0bb915edb33170778d1",
+        "86e8c24169c901ab13fd8ac186cd926297b1d92d30b216b809389bfb447c8c10",
+        "591f926b3e83c7c7f80a10c6b53cfee7c88d378b866750b201988781926d64d4"
+      ],
+      "portrait": "Art/gentle-pixel/portraits-v3/portraits/11-moss.png",
+      "portraitSHA256": "e8aa3ab3423747c5685c34644180fa6706eb69183a99bb285538c6bc6019559c",
+      "source": "Art/gentle-pixel/portrait-actions-v1/moss-sheet-v1.png",
+      "sourceSHA256": "c1a966a8131fc5dc3ed4f74f8eb78b2625a72dc3721f52326fbc6da45126051e",
+      "framing": {
+        "scale": 0.35555555555555557,
+        "center": [
+          13.5,
+          -9.0
+        ],
+        "frames": [
+          {
+            "rect": [
+              0,
+              724,
+              362,
+              362
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              44,
+              36,
+              335,
+              286
+            ]
+          },
+          {
+            "rect": [
+              362,
+              724,
+              362,
+              362
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              49,
+              26,
+              342,
+              306
+            ]
+          },
+          {
+            "rect": [
+              724,
+              724,
+              362,
+              362
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              49,
+              30,
+              352,
+              311
+            ]
+          },
+          {
+            "rect": [
+              1086,
+              724,
+              362,
+              362
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              37,
+              73,
+              335,
+              318
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "speciesID": "sunset",
+      "actionID": "sunset-compass",
+      "name": "Sunset Compass",
+      "chinese": "落日指南针",
+      "tier": "idleQuirk",
+      "trigger": "dusk",
+      "summary": "Stares at the sunset glow while a tiny compass needle spins and settles.",
+      "unlockLevel": 2,
+      "frames": [
+        "unique_bat_sunset_sunset-compass_0",
+        "unique_bat_sunset_sunset-compass_1",
+        "unique_bat_sunset_sunset-compass_2",
+        "unique_bat_sunset_sunset-compass_3"
+      ],
+      "seconds": [
+        0.65,
+        0.4,
+        0.65,
+        0.7
+      ],
+      "sha256": [
+        "2d192de9056fc4c41aa53e6525e508954a71758e08dba1357b2999b6f61a15bf",
+        "78458e47c48e8cda4f2cb2ee5d7c989f0e99e81f4ea8440bb3b210a3862ea005",
+        "9ea0e66d0147ec79b1f0b119696d08a76ed7a0621d82c7ece81e43b7e55af2bb",
+        "3fa05f740739fec8482dc0078edb96919b981f3a47f3db84b055226d8e1790e2"
+      ],
+      "portrait": "Art/gentle-pixel/portraits-v3/portraits/12-sunset.png",
+      "portraitSHA256": "fa99be4a02ef76eff627473a4c5ca30fa60f447fb778ff5b01fc3e8fb5a1d5d3",
+      "source": "Art/gentle-pixel/portrait-actions-v1/sunset-sheet-v1.png",
+      "sourceSHA256": "04695c30afbc8b58a914ea23ff8f47020f34f7fff3140ef79a02c651ba09002f",
+      "framing": {
+        "scale": 0.34890965732087226,
+        "center": [
+          23.5,
+          35.0
+        ],
+        "frames": [
+          {
+            "rect": [
+              0,
+              0,
+              362,
+              369
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              44,
+              64,
+              349,
+              369
+            ]
+          },
+          {
+            "rect": [
+              362,
+              0,
+              362,
+              369
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              58,
+              64,
+              350,
+              367
+            ]
+          },
+          {
+            "rect": [
+              724,
+              0,
+              365,
+              369
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              80,
+              68,
+              365,
+              366
+            ]
+          },
+          {
+            "rect": [
+              1089,
+              0,
+              359,
+              369
+            ],
+            "anchor": [
+              178.0,
+              181.0
+            ],
+            "bbox": [
+              47,
+              63,
+              344,
+              369
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "speciesID": "sunset",
+      "actionID": "crowd-dodge",
+      "name": "Crowd Dodge",
+      "chinese": "混进蝠群",
+      "tier": "reaction",
+      "trigger": "pet",
+      "summary": "Zig-zags into an invisible crowd of friends and pops out the other side.",
+      "unlockLevel": 3,
+      "frames": [
+        "unique_bat_sunset_crowd-dodge_0",
+        "unique_bat_sunset_crowd-dodge_1",
+        "unique_bat_sunset_crowd-dodge_2",
+        "unique_bat_sunset_crowd-dodge_3"
+      ],
+      "seconds": [
+        0.65,
+        0.4,
+        0.65,
+        0.7
+      ],
+      "sha256": [
+        "b17d8a5f67a623cca42cd61371ed5bd5dd81c8542f98390076d2faf0e11f6939",
+        "f61585cce34a542776556aa398a5469461527a7bdd05e7a90380637a1aabb709",
+        "0e384e87e7fb1858ba9cc44237db48bc5e4cb88354874b3eab78fddf02e6c143",
+        "62ecbfacfd5b71d78868e05c70cc12a9119ca01d3c86f78eb0379d3f17757702"
+      ],
+      "portrait": "Art/gentle-pixel/portraits-v3/portraits/12-sunset.png",
+      "portraitSHA256": "fa99be4a02ef76eff627473a4c5ca30fa60f447fb778ff5b01fc3e8fb5a1d5d3",
+      "source": "Art/gentle-pixel/portrait-actions-v1/sunset-sheet-v1.png",
+      "sourceSHA256": "04695c30afbc8b58a914ea23ff8f47020f34f7fff3140ef79a02c651ba09002f",
+      "framing": {
+        "scale": 0.3209169054441261,
+        "center": [
+          8.5,
+          14.0
+        ],
+        "frames": [
+          {
+            "rect": [
+              0,
+              369,
+              362,
+              355
+            ],
+            "anchor": [
+              181.0,
+              174.0
+            ],
+            "bbox": [
+              44,
+              36,
+              349,
+              338
+            ]
+          },
+          {
+            "rect": [
+              362,
+              369,
+              364,
+              355
+            ],
+            "anchor": [
+              181.0,
+              174.0
+            ],
+            "bbox": [
+              22,
+              67,
+              364,
+              328
+            ]
+          },
+          {
+            "rect": [
+              726,
+              369,
+              360,
+              355
+            ],
+            "anchor": [
+              179.0,
+              174.0
+            ],
+            "bbox": [
+              13,
+              40,
+              352,
+              340
+            ]
+          },
+          {
+            "rect": [
+              1086,
+              369,
+              362,
+              355
+            ],
+            "anchor": [
+              181.0,
+              174.0
+            ],
+            "bbox": [
+              50,
+              36,
+              346,
+              339
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "speciesID": "sunset",
+      "actionID": "batnado",
+      "name": "Batnado",
+      "chinese": "蝙蝠龙卷风",
+      "tier": "signature",
+      "trigger": "dusk",
+      "summary": "Spirals up in a swirling column of silhouette friends, then streams away like a river.",
+      "unlockLevel": 4,
+      "frames": [
+        "unique_bat_sunset_batnado_0",
+        "unique_bat_sunset_batnado_1",
+        "unique_bat_sunset_batnado_2",
+        "unique_bat_sunset_batnado_3"
+      ],
+      "seconds": [
+        0.65,
+        0.4,
+        0.65,
+        0.7
+      ],
+      "sha256": [
+        "ab39768bdaf4de6739270cabeec9e482bb462c7b9dc703997b3f99f0c1918c8b",
+        "c5940fec3fdb5a8f2f7bac7f2b39aa235df0cb44de585f987682e70a827ec68c",
+        "611bc3a85e925d454ac86d1ea92934be8130cd41182ddf4d33c0c4b8fc33fe12",
+        "7597213a5efe032a1208de22c838cb501a9a0423b2bfb10f2e691a9b1ba9a86c"
+      ],
+      "portrait": "Art/gentle-pixel/portraits-v3/portraits/12-sunset.png",
+      "portraitSHA256": "fa99be4a02ef76eff627473a4c5ca30fa60f447fb778ff5b01fc3e8fb5a1d5d3",
+      "source": "Art/gentle-pixel/portrait-actions-v1/sunset-sheet-v1.png",
+      "sourceSHA256": "04695c30afbc8b58a914ea23ff8f47020f34f7fff3140ef79a02c651ba09002f",
+      "framing": {
+        "scale": 0.33136094674556216,
+        "center": [
+          -1.0,
+          -12.5
+        ],
+        "frames": [
+          {
+            "rect": [
+              0,
+              724,
+              362,
+              362
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              44,
+              18,
+              349,
+              320
+            ]
+          },
+          {
+            "rect": [
+              362,
+              724,
+              362,
+              362
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              24,
+              14,
+              346,
+              311
+            ]
+          },
+          {
+            "rect": [
+              724,
+              724,
+              362,
+              362
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              69,
+              7,
+              337,
+              330
+            ]
+          },
+          {
+            "rect": [
+              1086,
+              724,
+              362,
+              362
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              11,
+              15,
+              339,
+              297
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "speciesID": "snow",
+      "actionID": "frost-beads",
+      "name": "Frost Beads",
+      "chinese": "结霜水珠",
+      "tier": "idleQuirk",
+      "trigger": "asleep",
+      "summary": "Tiny droplets bead and sparkle all over its fur while it sleeps.",
+      "unlockLevel": 2,
+      "frames": [
+        "unique_bat_snow_frost-beads_0",
+        "unique_bat_snow_frost-beads_1",
+        "unique_bat_snow_frost-beads_2",
+        "unique_bat_snow_frost-beads_3"
+      ],
+      "seconds": [
+        0.65,
+        0.4,
+        0.65,
+        0.7
+      ],
+      "sha256": [
+        "cb3c1e9ca9867f6c8f09f37ab6066d324380590992189c3b9d00d6c41cde0723",
+        "5e7d8d6e9689d2346f3c9f6858b89145625f5724d2370ce2b7acf87a533f867e",
+        "da87969f78ed0c747489fa16af51b6d0c894547df38cd7517159270c87044adf",
+        "1d12b5ca203a519655cc062e7d232624303202327714757dac90ec5315b8666c"
+      ],
+      "portrait": "Art/gentle-pixel/portraits-v3/portraits/13-snow.png",
+      "portraitSHA256": "6ca072381f1f5ed48dbefce48335702b99db3b1e74cd93a708b6f0b8eb86c3ad",
+      "source": "Art/gentle-pixel/portrait-actions-v1/snow-sheet-v1.png",
+      "sourceSHA256": "7ca96f3c6805157d280b78c9b6a01cfd557a37acb3995299865fd63de513c5ed",
+      "framing": {
+        "scale": 0.36245954692556637,
+        "center": [
+          -1.5,
+          8.5
+        ],
+        "frames": [
+          {
+            "rect": [
+              0,
+              0,
+              362,
+              362
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              49,
+              36,
+              317,
+              344
+            ]
+          },
+          {
+            "rect": [
+              362,
+              0,
+              362,
+              362
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              50,
+              36,
+              317,
+              344
+            ]
+          },
+          {
+            "rect": [
+              724,
+              0,
+              362,
+              362
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              38,
+              35,
+              321,
+              344
+            ]
+          },
+          {
+            "rect": [
+              1086,
+              0,
+              362,
+              362
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              49,
+              36,
+              314,
+              344
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "speciesID": "snow",
+      "actionID": "sleeping-bag",
+      "name": "Sleeping Bag",
+      "chinese": "尾巴睡袋",
+      "tier": "reaction",
+      "trigger": "pet",
+      "summary": "Shivers, then zips itself into its furry tail like a sleeping bag.",
+      "unlockLevel": 3,
+      "frames": [
+        "unique_bat_snow_sleeping-bag_0",
+        "unique_bat_snow_sleeping-bag_1",
+        "unique_bat_snow_sleeping-bag_2",
+        "unique_bat_snow_sleeping-bag_3"
+      ],
+      "seconds": [
+        0.65,
+        0.4,
+        0.65,
+        0.7
+      ],
+      "sha256": [
+        "4488e276c440ee3f91a9fdc1e6fc1f274ab6ffb00a563fe4ebfc5ec163303d2e",
+        "9444533417ddb609503ea64521dcfa03f1e45809ab7875185006aeb6660c24ff",
+        "f535b70f691770be1c58ff6fee9a5a1f7554dd2ab4986312700e33d368513e6a",
+        "c8046848a320b47a875b895850878759ecf1fead26588afe819575e8513976f8"
+      ],
+      "portrait": "Art/gentle-pixel/portraits-v3/portraits/13-snow.png",
+      "portraitSHA256": "6ca072381f1f5ed48dbefce48335702b99db3b1e74cd93a708b6f0b8eb86c3ad",
+      "source": "Art/gentle-pixel/portrait-actions-v1/snow-sheet-v1.png",
+      "sourceSHA256": "7ca96f3c6805157d280b78c9b6a01cfd557a37acb3995299865fd63de513c5ed",
+      "framing": {
+        "scale": 0.35782747603833864,
+        "center": [
+          -2.0,
+          3.5
+        ],
+        "frames": [
+          {
+            "rect": [
+              0,
+              362,
+              362,
+              362
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              48,
+              32,
+              318,
+              341
+            ]
+          },
+          {
+            "rect": [
+              362,
+              362,
+              362,
+              362
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              35,
+              28,
+              323,
+              341
+            ]
+          },
+          {
+            "rect": [
+              724,
+              362,
+              362,
+              362
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              50,
+              39,
+              318,
+              338
+            ]
+          },
+          {
+            "rect": [
+              1086,
+              362,
+              362,
+              362
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              61,
+              68,
+              306,
+              334
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "speciesID": "snow",
+      "actionID": "great-migration",
+      "name": "Great Migration",
+      "chinese": "大迁徙",
+      "tier": "signature",
+      "trigger": "walkReturn",
+      "summary": "Pulls on a tiny scarf and flaps off over the horizon — and back.",
+      "unlockLevel": 4,
+      "frames": [
+        "unique_bat_snow_great-migration_0",
+        "unique_bat_snow_great-migration_1",
+        "unique_bat_snow_great-migration_2",
+        "unique_bat_snow_great-migration_3"
+      ],
+      "seconds": [
+        0.65,
+        0.4,
+        0.65,
+        0.7
+      ],
+      "sha256": [
+        "a52bdfea13f55c87f6d539a5333f69e1ba16ffc9513bb4ba2c0cb65f2bfc5af4",
+        "d7861a99805d9075f398e82c6745440e4cf5e9b304126334f14a70c687d575c9",
+        "0053fd64fe302eaeb3199ae9a592a383f602300d5b4769b440f9b414f743f591",
+        "6111f92ac202b4b39d30fe05bf3eee12dd635302e79f379984df1b575e72bd9d"
+      ],
+      "portrait": "Art/gentle-pixel/portraits-v3/portraits/13-snow.png",
+      "portraitSHA256": "6ca072381f1f5ed48dbefce48335702b99db3b1e74cd93a708b6f0b8eb86c3ad",
+      "source": "Art/gentle-pixel/portrait-actions-v1/snow-sheet-v1.png",
+      "sourceSHA256": "7ca96f3c6805157d280b78c9b6a01cfd557a37acb3995299865fd63de513c5ed",
+      "framing": {
+        "scale": 0.3002680965147453,
+        "center": [
+          4.5,
+          -7.0
+        ],
+        "frames": [
+          {
+            "rect": [
+              0,
+              724,
+              362,
+              362
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              49,
+              30,
+              318,
+              340
+            ]
+          },
+          {
+            "rect": [
+              362,
+              724,
+              360,
+              362
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              51,
+              30,
+              319,
+              340
+            ]
+          },
+          {
+            "rect": [
+              722,
+              724,
+              374,
+              362
+            ],
+            "anchor": [
+              183.0,
+              181.0
+            ],
+            "bbox": [
+              1,
+              8,
+              374,
+              304
+            ]
+          },
+          {
+            "rect": [
+              1096,
+              724,
+              352,
+              362
+            ],
+            "anchor": [
+              171.0,
+              181.0
+            ],
+            "bbox": [
+              13,
+              33,
+              329,
+              340
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "speciesID": "cloud",
+      "actionID": "radar-bloom",
+      "name": "Radar Bloom",
+      "chinese": "雷达云团",
+      "tier": "idleQuirk",
+      "trigger": "idleNight",
+      "summary": "A ring of tiny dots blooms around it like a cloud on a weather radar.",
+      "unlockLevel": 2,
+      "frames": [
+        "unique_bat_cloud_radar-bloom_0",
+        "unique_bat_cloud_radar-bloom_1",
+        "unique_bat_cloud_radar-bloom_2",
+        "unique_bat_cloud_radar-bloom_3"
+      ],
+      "seconds": [
+        0.65,
+        0.4,
+        0.65,
+        0.7
+      ],
+      "sha256": [
+        "acee808aec3968c91acdda7c60d14affb785d421bfb57569be709bc36ad158fe",
+        "fccd492a3a19fbebd4d95717807724f2659a1296aabd1c4285b176dda5c10ae1",
+        "81944211c27cbc1bfe77879db0255bcc3db8fdf78493d58b4d4241297b83b873",
+        "84cc594e586ef61e9e11230c46f676f218877579e6dbf8ecfd4739b6dfb1ffeb"
+      ],
+      "portrait": "Art/gentle-pixel/portraits-v3/portraits/14-cloud.png",
+      "portraitSHA256": "b3b4049e95253b1c5e3ffbd9df02aac7e4db613d33c9893710311574c658a80e",
+      "source": "Art/gentle-pixel/portrait-actions-v1/cloud-fix-sheet-v1.png",
+      "sourceSHA256": "375d02a4f6e652a626c6eb8aaaf752ba6da88265f49f2a6dd1fe5290b8e0716d",
+      "framing": {
+        "scale": 0.32,
+        "center": [
+          6.0,
+          40.0
+        ],
+        "frames": [
+          {
+            "rect": [
+              0,
+              0,
+              362,
+              362
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              47,
+              135,
+              362,
+              313
+            ]
+          },
+          {
+            "rect": [
+              362,
+              0,
+              362,
+              362
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              39,
+              108,
+              342,
+              345
+            ]
+          },
+          {
+            "rect": [
+              724,
+              0,
+              362,
+              362
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              24,
+              97,
+              321,
+              341
+            ]
+          },
+          {
+            "rect": [
+              1086,
+              0,
+              362,
+              362
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              12,
+              135,
+              334,
+              313
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "speciesID": "cloud",
+      "actionID": "gust-surf",
+      "name": "Gust Surf",
+      "chinese": "乘风冲浪",
+      "tier": "reaction",
+      "trigger": "pet",
+      "summary": "A puff of wind catches it and it surfs the gust, ears flapping.",
+      "unlockLevel": 3,
+      "frames": [
+        "unique_bat_cloud_gust-surf_0",
+        "unique_bat_cloud_gust-surf_1",
+        "unique_bat_cloud_gust-surf_2",
+        "unique_bat_cloud_gust-surf_3"
+      ],
+      "seconds": [
+        0.65,
+        0.4,
+        0.65,
+        0.7
+      ],
+      "sha256": [
+        "acff8e0b883963f00f1e38422cb706ff5ab021c75de61f6b7c0fd8102b309c3d",
+        "a9dd57034ca4f0133e6808edce8661dbb78fda59b443b76c0316c98f5c6a780c",
+        "fc83ec0b99e39424dda6199a8307b7c0a4a48c4deb42a3fd29ee85fb28155996",
+        "edec7c8fdec2cc450e4a597a89d4ad96dcabce08c8b3e57e1deb1822f92f415e"
+      ],
+      "portrait": "Art/gentle-pixel/portraits-v3/portraits/14-cloud.png",
+      "portraitSHA256": "b3b4049e95253b1c5e3ffbd9df02aac7e4db613d33c9893710311574c658a80e",
+      "source": "Art/gentle-pixel/portrait-actions-v1/cloud-fix-sheet-v1.png",
+      "sourceSHA256": "375d02a4f6e652a626c6eb8aaaf752ba6da88265f49f2a6dd1fe5290b8e0716d",
+      "framing": {
+        "scale": 0.3190883190883191,
+        "center": [
+          5.5,
+          0.0
+        ],
+        "frames": [
+          {
+            "rect": [
+              0,
+              362,
+              362,
+              362
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              48,
+              104,
+              362,
+              281
+            ]
+          },
+          {
+            "rect": [
+              362,
+              362,
+              362,
+              362
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              44,
+              76,
+              329,
+              286
+            ]
+          },
+          {
+            "rect": [
+              724,
+              362,
+              362,
+              362
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              39,
+              84,
+              320,
+              279
+            ]
+          },
+          {
+            "rect": [
+              1086,
+              362,
+              362,
+              362
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              11,
+              105,
+              322,
+              286
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "speciesID": "cloud",
+      "actionID": "sky-high-snack",
+      "name": "Sky-High Snack",
+      "chinese": "云端加餐",
+      "tier": "signature",
+      "trigger": "walkReturn",
+      "summary": "Rockets up to the clouds, snaps a snack from the wind and zooms back in speed lines.",
+      "unlockLevel": 4,
+      "frames": [
+        "unique_bat_cloud_sky-high-snack_0",
+        "unique_bat_cloud_sky-high-snack_1",
+        "unique_bat_cloud_sky-high-snack_2",
+        "unique_bat_cloud_sky-high-snack_3"
+      ],
+      "seconds": [
+        0.65,
+        0.4,
+        0.65,
+        0.7
+      ],
+      "sha256": [
+        "3c1f9e68d04f48cecefc3ee96a74d61e2e2fe88dd595a0f24cd8882788eabb2c",
+        "759c1beabccd38f85daab362e41882b31003d385b253f4989091a8564e88d246",
+        "8e52a7f54ee22d41f8864558e0deb7cd372bd1849df9fa7d46a78152105519da",
+        "c3e7a6458dcf80345e9e1517ed21d70400ac779bf6e5c8d185f2326ed2d32783"
+      ],
+      "portrait": "Art/gentle-pixel/portraits-v3/portraits/14-cloud.png",
+      "portraitSHA256": "b3b4049e95253b1c5e3ffbd9df02aac7e4db613d33c9893710311574c658a80e",
+      "source": "Art/gentle-pixel/portrait-actions-v1/cloud-fix-sheet-v1.png",
+      "sourceSHA256": "375d02a4f6e652a626c6eb8aaaf752ba6da88265f49f2a6dd1fe5290b8e0716d",
+      "framing": {
+        "scale": 0.3146067415730337,
+        "center": [
+          3.0,
+          -19.0
+        ],
+        "frames": [
+          {
+            "rect": [
+              0,
+              724,
+              362,
+              362
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              48,
+              84,
+              362,
+              262
+            ]
+          },
+          {
+            "rect": [
+              362,
+              724,
+              362,
+              362
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              56,
+              41,
+              322,
+              283
+            ]
+          },
+          {
+            "rect": [
+              724,
+              724,
+              362,
+              362
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              33,
+              44,
+              319,
+              232
+            ]
+          },
+          {
+            "rect": [
+              1086,
+              724,
+              362,
+              362
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              6,
+              85,
+              332,
+              268
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "speciesID": "moonwing",
+      "actionID": "moon-shy",
+      "name": "Moon Shy",
+      "chinese": "害羞月亮",
+      "tier": "idleQuirk",
+      "trigger": "idleNight",
+      "summary": "When the moon is bright it hides behind a wing and peeks up at it.",
+      "unlockLevel": 2,
+      "frames": [
+        "unique_bat_moonwing_moon-shy_0",
+        "unique_bat_moonwing_moon-shy_1",
+        "unique_bat_moonwing_moon-shy_2",
+        "unique_bat_moonwing_moon-shy_3"
+      ],
+      "seconds": [
+        1.0,
+        0.42,
+        0.7,
+        0.65
+      ],
+      "sha256": [
+        "0c884f0cef8671449e45e02a55977086f810e484f395a76b601537134759a2a5",
+        "0842633e62f3fb24f208989949524a3a6708653c68dc97a7c010e722f4987dbb",
+        "22294039042f84a2b9568117fcbe1d20648e90641d9012a1d41c00b71d7d01c0",
+        "e866cd32904fd527dcace6186c1da805409908487420b50375da071b627f1e05"
+      ],
+      "portrait": "Art/gentle-pixel/portraits-v3/portraits/15-moonwing.png",
+      "portraitSHA256": "117c804ed40523baa83245efea3ec8d9051047a6eff24a36942bd5c9b892df3a",
+      "source": "Art/gentle-pixel/portrait-action-samples-v1/moonwing-moon-shy-v1.png",
+      "sourceSHA256": "c8d274c496ce4797a9751a1878a580f128a8e04191ee3ee35eafeb9f7b8ee32f",
+      "framing": {
+        "scale": 0.18983050847457628,
+        "center": [
+          6.75,
+          -288.0
+        ],
+        "frames": [
+          {
+            "rect": [
+              0,
+              0,
+              627,
+              636
+            ],
+            "bbox": [
+              111,
+              40,
+              571,
+              630
+            ],
+            "anchor": [
+              335.0,
+              623
+            ]
+          },
+          {
+            "rect": [
+              627,
+              0,
+              627,
+              636
+            ],
+            "bbox": [
+              59,
+              45,
+              497,
+              630
+            ],
+            "anchor": [
+              281.0,
+              623
+            ]
+          },
+          {
+            "rect": [
+              0,
+              636,
+              627,
+              618
+            ],
+            "bbox": [
+              111,
+              6,
+              572,
+              596
+            ],
+            "anchor": [
+              334.5,
+              589
+            ]
+          },
+          {
+            "rect": [
+              627,
+              636,
+              627,
+              618
+            ],
+            "bbox": [
+              59,
+              7,
+              497,
+              596
+            ],
+            "anchor": [
+              281.5,
+              589
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "speciesID": "moonwing",
+      "actionID": "katydid-hush",
+      "name": "Katydid Hush",
+      "chinese": "嘘——螽斯",
+      "tier": "reaction",
+      "trigger": "pet",
+      "summary": "Holds a wing to its lips — shh — and a tiny katydid goes quiet too.",
+      "unlockLevel": 3,
+      "frames": [
+        "unique_bat_moonwing_katydid-hush_0",
+        "unique_bat_moonwing_katydid-hush_1",
+        "unique_bat_moonwing_katydid-hush_2",
+        "unique_bat_moonwing_katydid-hush_3"
+      ],
+      "seconds": [
+        0.65,
+        0.4,
+        0.65,
+        0.7
+      ],
+      "sha256": [
+        "da0ee101c1894ef1ca653e5bdc515d432485358e8be4da6d0d9d64bdb034cab0",
+        "66f441b553372f94a0cb206307650e6a41906bde370a9f529cdf454d1a508a4a",
+        "f490b87ef70a380f7ad09a049718660ab1cfe24b1b30b751f78bf7a3660e2b1d",
+        "d40208e0702242d815674057d53f366d629c8f7f93facd13eaf43aa674b009f3"
+      ],
+      "portrait": "Art/gentle-pixel/portraits-v3/portraits/15-moonwing.png",
+      "portraitSHA256": "117c804ed40523baa83245efea3ec8d9051047a6eff24a36942bd5c9b892df3a",
+      "source": "Art/gentle-pixel/portrait-actions-v1/moonwing-sheet-v1.png",
+      "sourceSHA256": "421d00b19b766a1973c096344fce016f6dfd6413434b70effab4344876f839d5",
+      "framing": {
+        "scale": 0.2751842751842752,
+        "center": [
+          -5.5,
+          21.75
+        ],
+        "frames": [
+          {
+            "rect": [
+              0,
+              0,
+              444,
+              447
+            ],
+            "anchor": [
+              221.75,
+              221.75
+            ],
+            "bbox": [
+              74,
+              41,
+              394,
+              447
+            ]
+          },
+          {
+            "rect": [
+              444,
+              0,
+              443,
+              447
+            ],
+            "anchor": [
+              221.25,
+              221.75
+            ],
+            "bbox": [
+              65,
+              41,
+              359,
+              444
+            ]
+          },
+          {
+            "rect": [
+              887,
+              0,
+              443,
+              447
+            ],
+            "anchor": [
+              221.75,
+              221.75
+            ],
+            "bbox": [
+              39,
+              40,
+              387,
+              445
+            ]
+          },
+          {
+            "rect": [
+              1330,
+              0,
+              444,
+              447
+            ],
+            "anchor": [
+              222.25,
+              221.75
+            ],
+            "bbox": [
+              39,
+              40,
+              366,
+              446
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "speciesID": "moonwing",
+      "actionID": "termite-mound-den",
+      "name": "Termite-Mound Den",
+      "chinese": "白蚁丘小窝",
+      "tier": "signature",
+      "trigger": "asleep",
+      "summary": "Chews a round, cosy den into a mound and curls up inside.",
+      "unlockLevel": 4,
+      "frames": [
+        "unique_bat_moonwing_termite-mound-den_0",
+        "unique_bat_moonwing_termite-mound-den_1",
+        "unique_bat_moonwing_termite-mound-den_2",
+        "unique_bat_moonwing_termite-mound-den_3"
+      ],
+      "seconds": [
+        0.65,
+        0.4,
+        0.65,
+        0.7
+      ],
+      "sha256": [
+        "8dde353c6d6f8655829c4106e964b5c37dee925c23861846bbfef182503346c4",
+        "8ed9e5ecf681a85e4f01d81cde70544d4d35495e90a0ffbbb428b04fc1a32da6",
+        "a03d97b285d3fe67f13f84e843ab9cb403a63b32e1365d0a121d2b5cf6454170",
+        "1a5512696916ba23fdfc9c5863d094a0ce9a616b39c1c40b9e5c7b43712e6a38"
+      ],
+      "portrait": "Art/gentle-pixel/portraits-v3/portraits/15-moonwing.png",
+      "portraitSHA256": "117c804ed40523baa83245efea3ec8d9051047a6eff24a36942bd5c9b892df3a",
+      "source": "Art/gentle-pixel/portrait-actions-v1/moonwing-sheet-v1.png",
+      "sourceSHA256": "421d00b19b766a1973c096344fce016f6dfd6413434b70effab4344876f839d5",
+      "framing": {
+        "scale": 0.27552275522755226,
+        "center": [
+          6.0,
+          -8.75
+        ],
+        "frames": [
+          {
+            "rect": [
+              0,
+              447,
+              444,
+              440
+            ],
+            "anchor": [
+              221.75,
+              218.25
+            ],
+            "bbox": [
+              48,
+              22,
+              431,
+              397
+            ]
+          },
+          {
+            "rect": [
+              444,
+              447,
+              443,
+              440
+            ],
+            "anchor": [
+              221.25,
+              218.25
+            ],
+            "bbox": [
+              40,
+              25,
+              412,
+              397
+            ]
+          },
+          {
+            "rect": [
+              887,
+              447,
+              443,
+              440
+            ],
+            "anchor": [
+              221.75,
+              218.25
+            ],
+            "bbox": [
+              25,
+              100,
+              404,
+              393
+            ]
+          },
+          {
+            "rect": [
+              1330,
+              447,
+              444,
+              440
+            ],
+            "anchor": [
+              222.25,
+              218.25
+            ],
+            "bbox": [
+              25,
+              100,
+              406,
+              393
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "speciesID": "golden",
+      "actionID": "nest-blend",
+      "name": "Nest Blend",
+      "chinese": "鸟巢隐身",
+      "tier": "idleQuirk",
+      "trigger": "asleep",
+      "summary": "Fluffs its gold-tipped fur and vanishes into a hanging bird nest.",
+      "unlockLevel": 2,
+      "frames": [
+        "unique_bat_golden_nest-blend_0",
+        "unique_bat_golden_nest-blend_1",
+        "unique_bat_golden_nest-blend_2",
+        "unique_bat_golden_nest-blend_3"
+      ],
+      "seconds": [
+        0.65,
+        0.4,
+        0.65,
+        0.7
+      ],
+      "sha256": [
+        "579e963c74d11ea0cdf3e6eacef9324c5c833c539e805c8472844b1ffe4dcb74",
+        "82e58bb529183af43e3d214ce859979fc69b66b3229cade72a54f7492002bb28",
+        "72a975b8e9d0ff500a4ef2bbdcbfc1a2fa353a9713ea91b71a8f72b4f859cd25",
+        "6842c75770b7493945aaeda14ca2997e48c39fb628a0a8b23e7ca596c2d62dd6"
+      ],
+      "portrait": "Art/gentle-pixel/portraits-v3/portraits/16-golden.png",
+      "portraitSHA256": "3857a0892118bdddb72cf2d3d214b015b2c8e91a4178dcdb763bdaba25e369ee",
+      "source": "Art/gentle-pixel/portrait-actions-v1/golden-sheet-v1.png",
+      "sourceSHA256": "76dfcc2f93a19d4526749ddf844d6327e8631ccbb0f7674390e82ac0b89d27b6",
+      "framing": {
+        "scale": 0.3373493975903614,
+        "center": [
+          -1.0,
+          4.0
+        ],
+        "frames": [
+          {
+            "rect": [
+              0,
+              0,
+              362,
+              362
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              69,
+              64,
+              302,
+              346
+            ]
+          },
+          {
+            "rect": [
+              362,
+              0,
+              362,
+              362
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              14,
+              64,
+              346,
+              335
+            ]
+          },
+          {
+            "rect": [
+              724,
+              0,
+              362,
+              362
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              67,
+              20,
+              304,
+              350
+            ]
+          },
+          {
+            "rect": [
+              1086,
+              0,
+              362,
+              362
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              76,
+              22,
+              299,
+              346
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "speciesID": "golden",
+      "actionID": "web-pluck",
+      "name": "Web Pluck",
+      "chinese": "蛛网摘点心",
+      "tier": "reaction",
+      "trigger": "pet",
+      "summary": "Hovers at a dewy spider web and plucks off a snack with a flourish.",
+      "unlockLevel": 3,
+      "frames": [
+        "unique_bat_golden_web-pluck_0",
+        "unique_bat_golden_web-pluck_1",
+        "unique_bat_golden_web-pluck_2",
+        "unique_bat_golden_web-pluck_3"
+      ],
+      "seconds": [
+        0.65,
+        0.4,
+        0.65,
+        0.7
+      ],
+      "sha256": [
+        "dd1eba9baa587ab44b38b969162d6a768f0c476fbe1e8793314b3e72a7cb0b92",
+        "39d6582a325aac458c465bc0afa415a964fc96a16c2cd8f914437ebbb3c4680d",
+        "11bd18af54cb384e56c1d087bcce2d394686c14e00c1dccf3c842ec958480603",
+        "be8b49271d5a915f616f49f4d4f306b37e37f16bbd978ede99a8cbdfc2140d32"
+      ],
+      "portrait": "Art/gentle-pixel/portraits-v3/portraits/16-golden.png",
+      "portraitSHA256": "3857a0892118bdddb72cf2d3d214b015b2c8e91a4178dcdb763bdaba25e369ee",
+      "source": "Art/gentle-pixel/portrait-actions-v1/golden-sheet-v1.png",
+      "sourceSHA256": "76dfcc2f93a19d4526749ddf844d6327e8631ccbb0f7674390e82ac0b89d27b6",
+      "framing": {
+        "scale": 0.3181818181818182,
+        "center": [
+          2.0,
+          -18.5
+        ],
+        "frames": [
+          {
+            "rect": [
+              0,
+              362,
+              362,
+              350
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              31,
+              44,
+              318,
+              306
+            ]
+          },
+          {
+            "rect": [
+              362,
+              362,
+              362,
+              350
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              7,
+              19,
+              359,
+              288
+            ]
+          },
+          {
+            "rect": [
+              724,
+              362,
+              362,
+              350
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              33,
+              48,
+              342,
+              286
+            ]
+          },
+          {
+            "rect": [
+              1086,
+              362,
+              362,
+              350
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              14,
+              47,
+              334,
+              296
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "speciesID": "golden",
+      "actionID": "nest-party",
+      "name": "Nest Party",
+      "chinese": "鸟巢派对",
+      "tier": "signature",
+      "trigger": "walkReturn",
+      "summary": "The nest wiggles and golden faces pop out one by one — up to twelve.",
+      "unlockLevel": 4,
+      "frames": [
+        "unique_bat_golden_nest-party_0",
+        "unique_bat_golden_nest-party_1",
+        "unique_bat_golden_nest-party_2",
+        "unique_bat_golden_nest-party_3"
+      ],
+      "seconds": [
+        0.65,
+        0.4,
+        0.65,
+        0.7
+      ],
+      "sha256": [
+        "9353dbb93e24a185f042d3d4d2e0fdc6b58f5cdee549ef1cf517aefadd134152",
+        "e1e2d027aff590e2e844c1d418908a21fddc223d1234e87e5feb9f3fad988d39",
+        "317d2a00f7d424aa5abacee6b5cddc393a66ac7730262d2a2dbac5697ad6da12",
+        "ec32da53a01808c73c49f5056f188020226b9ac1d86c6ffebd0785aaf94ec7d1"
+      ],
+      "portrait": "Art/gentle-pixel/portraits-v3/portraits/16-golden.png",
+      "portraitSHA256": "3857a0892118bdddb72cf2d3d214b015b2c8e91a4178dcdb763bdaba25e369ee",
+      "source": "Art/gentle-pixel/portrait-actions-v1/golden-sheet-v1.png",
+      "sourceSHA256": "76dfcc2f93a19d4526749ddf844d6327e8631ccbb0f7674390e82ac0b89d27b6",
+      "framing": {
+        "scale": 0.32748538011695905,
+        "center": [
+          -3.0,
+          -21.0
+        ],
+        "frames": [
+          {
+            "rect": [
+              0,
+              712,
+              362,
+              374
+            ],
+            "anchor": [
+              181.0,
+              193.0
+            ],
+            "bbox": [
+              71,
+              5,
+              323,
+              321
+            ]
+          },
+          {
+            "rect": [
+              362,
+              712,
+              362,
+              374
+            ],
+            "anchor": [
+              181.0,
+              193.0
+            ],
+            "bbox": [
+              47,
+              1,
+              317,
+              326
+            ]
+          },
+          {
+            "rect": [
+              724,
+              712,
+              362,
+              374
+            ],
+            "anchor": [
+              181.0,
+              193.0
+            ],
+            "bbox": [
+              42,
+              2,
+              318,
+              335
+            ]
+          },
+          {
+            "rect": [
+              1086,
+              712,
+              362,
+              374
+            ],
+            "anchor": [
+              181.0,
+              193.0
+            ],
+            "bbox": [
+              30,
+              4,
+              326,
+              343
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "speciesID": "crystal",
+      "actionID": "blacklight-glow",
+      "name": "Blacklight Glow",
+      "chinese": "紫外荧光",
+      "tier": "idleQuirk",
+      "trigger": "idleNight",
+      "summary": "Its wings flash a soft green glow, as if under a blacklight.",
+      "unlockLevel": 2,
+      "frames": [
+        "unique_bat_crystal_blacklight-glow_0",
+        "unique_bat_crystal_blacklight-glow_1",
+        "unique_bat_crystal_blacklight-glow_2",
+        "unique_bat_crystal_blacklight-glow_3"
+      ],
+      "seconds": [
+        0.65,
+        0.4,
+        0.65,
+        0.7
+      ],
+      "sha256": [
+        "54f851b52d26cc53c06d073bbe2f87c67917ca649d9e5a080cd19b1ecc7a01fc",
+        "b7f4bc0a056cbb4eef69908472cc1d9c03f8d5a2fa04f72668f0c8d0dd41969c",
+        "35e82ef7032807694b2bf9c444dabac7920818a4a85c8967ef45f7c25a961681",
+        "1054d0042176aa93ac1e3f0ba4d64db81312ca1d2ea5a41ff4d445c6b77d1b16"
+      ],
+      "portrait": "Art/gentle-pixel/portraits-v3/portraits/17-crystal.png",
+      "portraitSHA256": "73c1a6a5f7326f495f2152d5e89365ecff54e8490c4d65d8dea9c0b6d01fb101",
+      "source": "Art/gentle-pixel/portrait-actions-v1/crystal-sheet-v1.png",
+      "sourceSHA256": "cf83bdca06f42705c1f0d9451b3ba23f8169e3b7ac379f15493e8faf9ecdf6b6",
+      "framing": {
+        "scale": 0.32,
+        "center": [
+          3.0,
+          26.0
+        ],
+        "frames": [
+          {
+            "rect": [
+              0,
+              0,
+              362,
+              362
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              21,
+              56,
+              347,
+              339
+            ]
+          },
+          {
+            "rect": [
+              362,
+              0,
+              362,
+              362
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              9,
+              59,
+              352,
+              338
+            ]
+          },
+          {
+            "rect": [
+              724,
+              0,
+              362,
+              362
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              12,
+              59,
+              359,
+              358
+            ]
+          },
+          {
+            "rect": [
+              1086,
+              0,
+              362,
+              362
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              15,
+              56,
+              344,
+              336
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "speciesID": "crystal",
+      "actionID": "wind-hairs",
+      "name": "Wind Hairs",
+      "chinese": "感风绒毛",
+      "tier": "reaction",
+      "trigger": "pet",
+      "summary": "Tiny hairs on its wings sparkle as it tests the air.",
+      "unlockLevel": 3,
+      "frames": [
+        "unique_bat_crystal_wind-hairs_0",
+        "unique_bat_crystal_wind-hairs_1",
+        "unique_bat_crystal_wind-hairs_2",
+        "unique_bat_crystal_wind-hairs_3"
+      ],
+      "seconds": [
+        0.65,
+        0.4,
+        0.65,
+        0.7
+      ],
+      "sha256": [
+        "cd2a89a2de5bac6d265949fa4558f686854840d69aff1e4d9cf3b7050d5578f6",
+        "2ad100c292ee97cce9e741fb8e8617763569e5ad69fcf5ef25de44badb97b72e",
+        "d86a64649afc93d0d586a35952d83cd3a6deb5ed1e02e30b8c7b67338f4a8a63",
+        "256852b5fac88ae9a1348af73088f8d801fae9c2a80b88e4be0ab53dd6e2f035"
+      ],
+      "portrait": "Art/gentle-pixel/portraits-v3/portraits/17-crystal.png",
+      "portraitSHA256": "73c1a6a5f7326f495f2152d5e89365ecff54e8490c4d65d8dea9c0b6d01fb101",
+      "source": "Art/gentle-pixel/portrait-actions-v1/crystal-sheet-v1.png",
+      "sourceSHA256": "cf83bdca06f42705c1f0d9451b3ba23f8169e3b7ac379f15493e8faf9ecdf6b6",
+      "framing": {
+        "scale": 0.30517711171662126,
+        "center": [
+          6.5,
+          6.0
+        ],
+        "frames": [
+          {
+            "rect": [
+              0,
+              362,
+              362,
+              362
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              16,
+              52,
+              350,
+              329
+            ]
+          },
+          {
+            "rect": [
+              362,
+              362,
+              362,
+              362
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              7,
+              58,
+              355,
+              321
+            ]
+          },
+          {
+            "rect": [
+              724,
+              362,
+              371,
+              362
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              4,
+              45,
+              371,
+              329
+            ]
+          },
+          {
+            "rect": [
+              1095,
+              362,
+              353,
+              362
+            ],
+            "anchor": [
+              172.0,
+              181.0
+            ],
+            "bbox": [
+              4,
+              55,
+              338,
+              329
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "speciesID": "crystal",
+      "actionID": "crystal-mend",
+      "name": "Crystal Mend",
+      "chinese": "水晶自愈",
+      "tier": "signature",
+      "trigger": "newDay",
+      "summary": "A crack in one crystal wing glimmers and seals itself shut.",
+      "unlockLevel": 4,
+      "frames": [
+        "unique_bat_crystal_crystal-mend_0",
+        "unique_bat_crystal_crystal-mend_1",
+        "unique_bat_crystal_crystal-mend_2",
+        "unique_bat_crystal_crystal-mend_3"
+      ],
+      "seconds": [
+        0.65,
+        0.4,
+        0.65,
+        0.7
+      ],
+      "sha256": [
+        "d67e29383bda47e3ddfe8f9249c8fec6de7117660061999f220bd8d5a385aa3f",
+        "eef565729867b04c0d299c5544cd9d8387da5edd7b7607dfcafc4129a1d88375",
+        "a2aa746a736149bffd4f1fc58d2ccb001d6674f137f914cbe715ff39befa5fdc",
+        "a8cf0394e7979b843697585b0e3f226505fd46223ff04f94025147279bc002ac"
+      ],
+      "portrait": "Art/gentle-pixel/portraits-v3/portraits/17-crystal.png",
+      "portraitSHA256": "73c1a6a5f7326f495f2152d5e89365ecff54e8490c4d65d8dea9c0b6d01fb101",
+      "source": "Art/gentle-pixel/portrait-actions-v1/crystal-sheet-v1.png",
+      "sourceSHA256": "cf83bdca06f42705c1f0d9451b3ba23f8169e3b7ac379f15493e8faf9ecdf6b6",
+      "framing": {
+        "scale": 0.32463768115942027,
+        "center": [
+          -0.5,
+          -18.0
+        ],
+        "frames": [
+          {
+            "rect": [
+              0,
+              724,
+              362,
+              362
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              16,
+              23,
+              353,
+              303
+            ]
+          },
+          {
+            "rect": [
+              362,
+              724,
+              362,
+              362
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              8,
+              23,
+              351,
+              302
+            ]
+          },
+          {
+            "rect": [
+              724,
+              724,
+              362,
+              362
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              10,
+              24,
+              349,
+              301
+            ]
+          },
+          {
+            "rect": [
+              1086,
+              724,
+              362,
+              362
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              9,
+              24,
+              346,
+              302
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "speciesID": "vampire",
+      "actionID": "gorilla-gallop",
+      "name": "Gorilla Gallop",
+      "chinese": "猩猩式奔跑",
+      "tier": "idleQuirk",
+      "trigger": "idleNight",
+      "summary": "Drops to the ground and gallops along on its wings like a tiny gorilla.",
+      "unlockLevel": 2,
+      "frames": [
+        "unique_bat_vampire_gorilla-gallop_0",
+        "unique_bat_vampire_gorilla-gallop_1",
+        "unique_bat_vampire_gorilla-gallop_2",
+        "unique_bat_vampire_gorilla-gallop_3"
+      ],
+      "seconds": [
+        0.65,
+        0.4,
+        0.65,
+        0.7
+      ],
+      "sha256": [
+        "fdd0c3ed75d2784aa4aab7e94ed3d5dd351568d962693c36b3e4e8e4f335a299",
+        "51c2e05db4f9143bf8d19931e45b29b17639a0f39037754925a513e5379e8cb8",
+        "ac0cc8fe283d6eac76f988b62fe553142077065c3e238dc618e88bc77229a553",
+        "93f893beba24358c4d30867b29aa9c87938b24d88935e3cb4a103dd801289a7f"
+      ],
+      "portrait": "Art/gentle-pixel/portraits-v3/portraits/18-vampire.png",
+      "portraitSHA256": "213084a97229a57a03ab38440a14276c68bb2fae855579a4883615a31cf5b315",
+      "source": "Art/gentle-pixel/portrait-actions-v1/vampire-fix-sheet-v1.png",
+      "sourceSHA256": "f9c429cb3db6064836cbfcd29bb7083fde5538d2d9628ea92773a5bdc5ef5617",
+      "framing": {
+        "scale": 0.19343696027633853,
+        "center": [
+          12.0,
+          31.5
+        ],
+        "frames": [
+          {
+            "rect": [
+              0,
+              0,
+              627,
+              627
+            ],
+            "anchor": [
+              313.5,
+              313.5
+            ],
+            "bbox": [
+              71,
+              198,
+              607,
+              610
+            ]
+          },
+          {
+            "rect": [
+              627,
+              0,
+              627,
+              627
+            ],
+            "anchor": [
+              313.5,
+              313.5
+            ],
+            "bbox": [
+              57,
+              194,
+              596,
+              611
+            ]
+          },
+          {
+            "rect": [
+              0,
+              627,
+              627,
+              627
+            ],
+            "anchor": [
+              313.5,
+              313.5
+            ],
+            "bbox": [
+              36,
+              79,
+              615,
+              453
+            ]
+          },
+          {
+            "rect": [
+              627,
+              627,
+              627,
+              627
+            ],
+            "anchor": [
+              313.5,
+              313.5
+            ],
+            "bbox": [
+              67,
+              88,
+              590,
+              485
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "speciesID": "vampire",
+      "actionID": "grooming-buddy",
+      "name": "Grooming Buddy",
+      "chinese": "互相梳毛",
+      "tier": "reaction",
+      "trigger": "pet",
+      "summary": "Grooms your finger right back — that's how bat friendships start.",
+      "unlockLevel": 3,
+      "frames": [
+        "unique_bat_vampire_grooming-buddy_0",
+        "unique_bat_vampire_grooming-buddy_1",
+        "unique_bat_vampire_grooming-buddy_2",
+        "unique_bat_vampire_grooming-buddy_3"
+      ],
+      "seconds": [
+        0.65,
+        0.4,
+        0.65,
+        0.7
+      ],
+      "sha256": [
+        "9df661bbf4303526c967b163584a38874e54dfd805aef70b9a038ea1064d7951",
+        "6d8abc935e40388f17725506c83101df9c3ed36f25491c4857a9c3131cba74cd",
+        "05a8720cbdf13c28f2632ca00d9e41e441bd1d9239ce14cdac01b5ccfccdfa67",
+        "078c4939a0b737a7f5c9f24aa2c3ce29e6c5658dd6a3e899be0b237df412b2f3"
+      ],
+      "portrait": "Art/gentle-pixel/portraits-v3/portraits/18-vampire.png",
+      "portraitSHA256": "213084a97229a57a03ab38440a14276c68bb2fae855579a4883615a31cf5b315",
+      "source": "Art/gentle-pixel/portrait-actions-v1/vampire-sheet-v1.png",
+      "sourceSHA256": "ce42cb49de357aabf34186d61d5ae6b4e1d9bb73a309f11fca277d0df81ffa0d",
+      "framing": {
+        "scale": 0.3284457478005865,
+        "center": [
+          24.5,
+          -1.0
+        ],
+        "frames": [
+          {
+            "rect": [
+              0,
+              362,
+              373,
+              362
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              35,
+              53,
+              373,
+              318
+            ]
+          },
+          {
+            "rect": [
+              373,
+              362,
+              362,
+              362
+            ],
+            "anchor": [
+              170.0,
+              181.0
+            ],
+            "bbox": [
+              36,
+              45,
+              362,
+              319
+            ]
+          },
+          {
+            "rect": [
+              735,
+              362,
+              365,
+              362
+            ],
+            "anchor": [
+              170.0,
+              181.0
+            ],
+            "bbox": [
+              38,
+              41,
+              365,
+              319
+            ]
+          },
+          {
+            "rect": [
+              1100,
+              362,
+              348,
+              362
+            ],
+            "anchor": [
+              167.0,
+              181.0
+            ],
+            "bbox": [
+              30,
+              45,
+              343,
+              319
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "speciesID": "vampire",
+      "actionID": "share-dinner",
+      "name": "Share Dinner",
+      "chinese": "分享晚餐",
+      "tier": "signature",
+      "trigger": "feed",
+      "summary": "Splits its fruit in two and offers you the bigger half.",
+      "unlockLevel": 4,
+      "frames": [
+        "unique_bat_vampire_share-dinner_0",
+        "unique_bat_vampire_share-dinner_1",
+        "unique_bat_vampire_share-dinner_2",
+        "unique_bat_vampire_share-dinner_3"
+      ],
+      "seconds": [
+        0.65,
+        0.4,
+        0.65,
+        0.7
+      ],
+      "sha256": [
+        "d690f436d892c868dfb7237bd076797db30e28fa3c394fa49fe13f7c2b712d82",
+        "aaa9611038e2258adda33f154ab042f1a60b8ec991602716a01119163b4406a6",
+        "c8f6194dcf7e6a0bca8a2fd8b37f1bac8027db3d7e59a3408767a72d4d3deb48",
+        "103594581a4cf4f465152ef2995e2314016459d129431c88be29177782db5679"
+      ],
+      "portrait": "Art/gentle-pixel/portraits-v3/portraits/18-vampire.png",
+      "portraitSHA256": "213084a97229a57a03ab38440a14276c68bb2fae855579a4883615a31cf5b315",
+      "source": "Art/gentle-pixel/portrait-actions-v1/vampire-sheet-v1.png",
+      "sourceSHA256": "ce42cb49de357aabf34186d61d5ae6b4e1d9bb73a309f11fca277d0df81ffa0d",
+      "framing": {
+        "scale": 0.32748538011695905,
+        "center": [
+          24.0,
+          -14.5
+        ],
+        "frames": [
+          {
+            "rect": [
+              0,
+              724,
+              362,
+              362
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              40,
+              38,
+              335,
+              295
+            ]
+          },
+          {
+            "rect": [
+              362,
+              724,
+              362,
+              362
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              34,
+              43,
+              350,
+              295
+            ]
+          },
+          {
+            "rect": [
+              724,
+              724,
+              376,
+              362
+            ],
+            "anchor": [
+              181.0,
+              181.0
+            ],
+            "bbox": [
+              52,
+              43,
+              376,
+              295
+            ]
+          },
+          {
+            "rect": [
+              1100,
+              724,
+              348,
+              362
+            ],
+            "anchor": [
+              167.0,
+              181.0
+            ],
+            "bbox": [
+              26,
+              38,
+              316,
+              293
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "speciesID": "galaxy",
+      "actionID": "star-map-hatch",
+      "name": "Star-Map Hatch",
+      "chinese": "星图孵化",
+      "tier": "hatchReveal",
+      "trigger": "hatch",
+      "summary": "The egg cracks into a little constellation map that folds into its body.",
+      "unlockLevel": 1,
+      "frames": [
+        "unique_bat_galaxy_star-map-hatch_0",
+        "unique_bat_galaxy_star-map-hatch_1",
+        "unique_bat_galaxy_star-map-hatch_2",
+        "unique_bat_galaxy_star-map-hatch_3"
+      ],
+      "seconds": [
+        0.65,
+        0.4,
+        0.65,
+        0.7
+      ],
+      "sha256": [
+        "f551a12244acd7719b300ce825798c8beddd405b165fc023433247832c3bcfdd",
+        "5571c600aa2961a43ce1e477045da30683337bcb07f62a75db22132a8f4a923b",
+        "6a7994cd2fc1370c9daece60bf12c165d9a10a288b4f322e42e2be062c545dc7",
+        "29b3b498008966d1b113bcce8750960b68c153ca1f78fc03e5ecc61ee09bc818"
+      ],
+      "portrait": "Art/gentle-pixel/portraits-v3/portraits/19-galaxy.png",
+      "portraitSHA256": "fb06f0eccf5bc3314661b8766a8a0df9cf255adb591d99d7e8019ac0ba280ad4",
+      "source": "Art/gentle-pixel/portrait-actions-v1/galaxy-fix-sheet-v1.png",
+      "sourceSHA256": "3eaecf9c43010d803d0eb0c99c7278ed9ff0bde8955f1ac53fec2ccec0c9d093",
+      "framing": {
+        "scale": 0.20588235294117646,
+        "center": [
+          18.5,
+          9.5
+        ],
+        "frames": [
+          {
+            "rect": [
+              0,
+              0,
+              627,
+              627
+            ],
+            "anchor": [
+              313.5,
+              313.5
+            ],
+            "bbox": [
+              217,
+              282,
+              488,
+              595
+            ]
+          },
+          {
+            "rect": [
+              627,
+              0,
+              627,
+              627
+            ],
+            "anchor": [
+              313.5,
+              313.5
+            ],
+            "bbox": [
+              62,
+              195,
+              525,
+              595
+            ]
+          },
+          {
+            "rect": [
+              0,
+              627,
+              627,
+              627
+            ],
+            "anchor": [
+              313.5,
+              313.5
+            ],
+            "bbox": [
+              79,
+              51,
+              602,
+              529
+            ]
+          },
+          {
+            "rect": [
+              627,
+              627,
+              627,
+              627
+            ],
+            "anchor": [
+              313.5,
+              313.5
+            ],
+            "bbox": [
+              67,
+              53,
+              544,
+              520
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "speciesID": "galaxy",
+      "actionID": "shortcut-map",
+      "name": "Shortcut Map",
+      "chinese": "抄近路地图",
+      "tier": "idleQuirk",
+      "trigger": "idleNight",
+      "summary": "Dotted lines draw a shortcut between twinkling fruit trees.",
+      "unlockLevel": 2,
+      "frames": [
+        "unique_bat_galaxy_shortcut-map_0",
+        "unique_bat_galaxy_shortcut-map_1",
+        "unique_bat_galaxy_shortcut-map_2",
+        "unique_bat_galaxy_shortcut-map_3"
+      ],
+      "seconds": [
+        0.65,
+        0.4,
+        0.65,
+        0.7
+      ],
+      "sha256": [
+        "61820acba9b34bc4c63d844baea77ddb1c010164e4162ab65d025362f6b5f540",
+        "326a504abd31eb6a0f876578273521a4b854cd254fb5e57d6eb892cef11aae99",
+        "2e4b109548c33199ee5202a90600f4f223a26252e566a073a7633c81d8a83919",
+        "1982a65252e546810a3646b1f58642f91f1c744360889f4903857da515a7a96e"
+      ],
+      "portrait": "Art/gentle-pixel/portraits-v3/portraits/19-galaxy.png",
+      "portraitSHA256": "fb06f0eccf5bc3314661b8766a8a0df9cf255adb591d99d7e8019ac0ba280ad4",
+      "source": "Art/gentle-pixel/portrait-actions-v1/galaxy-sheet-v1.png",
+      "sourceSHA256": "8a8dcaa0096edc5e0a835a1e98e63f9a7c7af5a6ddeb633adfeb51f3aabf9d79",
+      "framing": {
+        "scale": 0.44532803180914515,
+        "center": [
+          1.5,
+          2.3999999999999773
+        ],
+        "frames": [
+          {
+            "rect": [
+              0,
+              280,
+              280,
+              281
+            ],
+            "anchor": [
+              140.25,
+              140.60000000000002
+            ],
+            "bbox": [
+              33,
+              34,
+              258,
+              256
+            ]
+          },
+          {
+            "rect": [
+              280,
+              280,
+              281,
+              281
+            ],
+            "anchor": [
+              140.75,
+              140.60000000000002
+            ],
+            "bbox": [
+              17,
+              22,
+              268,
+              263
+            ]
+          },
+          {
+            "rect": [
+              561,
+              280,
+              281,
+              281
+            ],
+            "anchor": [
+              140.25,
+              140.60000000000002
+            ],
+            "bbox": [
+              16,
+              21,
+              260,
+              262
+            ]
+          },
+          {
+            "rect": [
+              842,
+              280,
+              280,
+              281
+            ],
+            "anchor": [
+              139.75,
+              140.60000000000002
+            ],
+            "bbox": [
+              16,
+              24,
+              246,
+              265
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "speciesID": "galaxy",
+      "actionID": "inner-compass",
+      "name": "Inner Compass",
+      "chinese": "体内罗盘",
+      "tier": "reaction",
+      "trigger": "pet",
+      "summary": "The stars fade out — and the compass inside it still points true.",
+      "unlockLevel": 3,
+      "frames": [
+        "unique_bat_galaxy_inner-compass_0",
+        "unique_bat_galaxy_inner-compass_1",
+        "unique_bat_galaxy_inner-compass_2",
+        "unique_bat_galaxy_inner-compass_3"
+      ],
+      "seconds": [
+        0.65,
+        0.4,
+        0.65,
+        0.7
+      ],
+      "sha256": [
+        "d3fae2b43bb5377a69e875260a07167d40bd00b17794c689a13597c6f3050997",
+        "8d9f075ddbad251b8336abe3cb15653b3b7481663eb40267abda0bc94227fc6a",
+        "4f08eda6868d28b85bd1d307a16889b53d9062a38bcc3b6cacdbd777c03798dc",
+        "d9c40da76da09a42628059bb22fba773690aa56b5a23626f75f8695913d08c6f"
+      ],
+      "portrait": "Art/gentle-pixel/portraits-v3/portraits/19-galaxy.png",
+      "portraitSHA256": "fb06f0eccf5bc3314661b8766a8a0df9cf255adb591d99d7e8019ac0ba280ad4",
+      "source": "Art/gentle-pixel/portrait-actions-v1/galaxy-sheet-v1.png",
+      "sourceSHA256": "8a8dcaa0096edc5e0a835a1e98e63f9a7c7af5a6ddeb633adfeb51f3aabf9d79",
+      "framing": {
+        "scale": 0.47761194029850745,
+        "center": [
+          0.5,
+          -10.5
+        ],
+        "frames": [
+          {
+            "rect": [
+              0,
+              561,
+              280,
+              280
+            ],
+            "anchor": [
+              140.25,
+              140.0
+            ],
+            "bbox": [
+              34,
+              19,
+              258,
+              240
+            ]
+          },
+          {
+            "rect": [
+              280,
+              561,
+              281,
+              280
+            ],
+            "anchor": [
+              140.75,
+              140.0
+            ],
+            "bbox": [
+              34,
+              33,
+              249,
+              238
+            ]
+          },
+          {
+            "rect": [
+              561,
+              561,
+              281,
+              280
+            ],
+            "anchor": [
+              140.25,
+              140.0
+            ],
+            "bbox": [
+              31,
+              24,
+              237,
+              238
+            ]
+          },
+          {
+            "rect": [
+              842,
+              561,
+              280,
+              280
+            ],
+            "anchor": [
+              139.75,
+              140.0
+            ],
+            "bbox": [
+              23,
+              19,
+              248,
+              240
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "speciesID": "galaxy",
+      "actionID": "migration-trail",
+      "name": "Migration Trail",
+      "chinese": "迁徙轨迹",
+      "tier": "signature",
+      "trigger": "walkReturn",
+      "summary": "Draws today's walk across its starry body as a migration route.",
+      "unlockLevel": 4,
+      "frames": [
+        "unique_bat_galaxy_migration-trail_0",
+        "unique_bat_galaxy_migration-trail_1",
+        "unique_bat_galaxy_migration-trail_2",
+        "unique_bat_galaxy_migration-trail_3"
+      ],
+      "seconds": [
+        0.65,
+        0.4,
+        0.65,
+        0.7
+      ],
+      "sha256": [
+        "1be0a7ba587f27b44fef73964a3501b45fa42450142523dfa71d40fc5791aeff",
+        "72bfdbb9414ba530f44117ae31c02c80b69bc7b329b8b919779160cff8301ce6",
+        "a3522123274e267bbf93860398670fac9d0e645fb7bafc27c588ad36b6f03cdf",
+        "4028419e920bd604cc0c2f287e16ce64a079e49a9fd4a6e59c3fda2690517a26"
+      ],
+      "portrait": "Art/gentle-pixel/portraits-v3/portraits/19-galaxy.png",
+      "portraitSHA256": "fb06f0eccf5bc3314661b8766a8a0df9cf255adb591d99d7e8019ac0ba280ad4",
+      "source": "Art/gentle-pixel/portrait-actions-v1/galaxy-sheet-v1.png",
+      "sourceSHA256": "8a8dcaa0096edc5e0a835a1e98e63f9a7c7af5a6ddeb633adfeb51f3aabf9d79",
+      "framing": {
+        "scale": 0.45714285714285713,
+        "center": [
+          -4.75,
+          -21.399999999999977
+        ],
+        "frames": [
+          {
+            "rect": [
+              0,
+              841,
+              280,
+              260
+            ],
+            "anchor": [
+              140.25,
+              140.39999999999998
+            ],
+            "bbox": [
+              33,
+              8,
+              258,
+              230
+            ]
+          },
+          {
+            "rect": [
+              280,
+              841,
+              281,
+              260
+            ],
+            "anchor": [
+              140.75,
+              140.39999999999998
+            ],
+            "bbox": [
+              33,
+              13,
+              246,
+              227
+            ]
+          },
+          {
+            "rect": [
+              561,
+              841,
+              281,
+              260
+            ],
+            "anchor": [
+              140.25,
+              140.39999999999998
+            ],
+            "bbox": [
+              13,
+              11,
+              238,
+              229
+            ]
+          },
+          {
+            "rect": [
+              842,
+              841,
+              280,
+              260
+            ],
+            "anchor": [
+              139.75,
+              140.39999999999998
+            ],
+            "bbox": [
+              25,
+              8,
+              245,
+              230
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "speciesID": "galaxy",
+      "actionID": "storm-surf",
+      "name": "Storm Surf",
+      "chinese": "风暴冲浪",
+      "tier": "secret",
+      "trigger": "rare",
+      "summary": "Rides a warm wind ahead of a storm, streaking across the whole sky.",
+      "unlockLevel": 5,
+      "frames": [
+        "unique_bat_galaxy_storm-surf_0",
+        "unique_bat_galaxy_storm-surf_1",
+        "unique_bat_galaxy_storm-surf_2",
+        "unique_bat_galaxy_storm-surf_3"
+      ],
+      "seconds": [
+        0.65,
+        0.4,
+        0.65,
+        0.7
+      ],
+      "sha256": [
+        "acd12ec3022dd720187f6e410606494adc0a747be96e5f760cec2ce92e5bf5d2",
+        "4e91be5747abaf79b0ae6012773a85bfe931b9f834f92307fbc32271a4ca8591",
+        "7893d3ac1b341e5c81b82bebb4404100e8e7ae73e218938ef995648d49340ee7",
+        "4731cc161c1fdf27aa880aa0bf316cff51098ba1aecf1579a7b81eef7c2eed21"
+      ],
+      "portrait": "Art/gentle-pixel/portraits-v3/portraits/19-galaxy.png",
+      "portraitSHA256": "fb06f0eccf5bc3314661b8766a8a0df9cf255adb591d99d7e8019ac0ba280ad4",
+      "source": "Art/gentle-pixel/portrait-actions-v1/galaxy-sheet-v1.png",
+      "sourceSHA256": "8a8dcaa0096edc5e0a835a1e98e63f9a7c7af5a6ddeb633adfeb51f3aabf9d79",
+      "framing": {
+        "scale": 0.43243243243243246,
+        "center": [
+          -5.75,
+          -30.299999999999955
+        ],
+        "frames": [
+          {
+            "rect": [
+              0,
+              1101,
+              280,
+              301
+            ],
+            "anchor": [
+              140.25,
+              160.79999999999995
+            ],
+            "bbox": [
+              24,
+              59,
+              261,
+              220
+            ]
+          },
+          {
+            "rect": [
+              280,
+              1101,
+              281,
+              301
+            ],
+            "anchor": [
+              140.75,
+              160.79999999999995
+            ],
+            "bbox": [
+              28,
+              1,
+              253,
+              249
+            ]
+          },
+          {
+            "rect": [
+              561,
+              1101,
+              281,
+              301
+            ],
+            "anchor": [
+              140.25,
+              160.79999999999995
+            ],
+            "bbox": [
+              8,
+              22,
+              249,
+              260
+            ]
+          },
+          {
+            "rect": [
+              842,
+              1101,
+              280,
+              301
+            ],
+            "anchor": [
+              139.75,
+              160.79999999999995
+            ],
+            "bbox": [
+              9,
+              38,
+              256,
+              233
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "speciesID": "eclipse",
+      "actionID": "totality-hatch",
+      "name": "Totality Hatch",
+      "chinese": "全食孵化",
+      "tier": "hatchReveal",
+      "trigger": "hatch",
+      "summary": "The screen dims to totality and the bat appears inside the golden ring.",
+      "unlockLevel": 1,
+      "frames": [
+        "unique_bat_eclipse_totality-hatch_0",
+        "unique_bat_eclipse_totality-hatch_1",
+        "unique_bat_eclipse_totality-hatch_2",
+        "unique_bat_eclipse_totality-hatch_3"
+      ],
+      "seconds": [
+        0.65,
+        0.4,
+        0.65,
+        0.7
+      ],
+      "sha256": [
+        "710f8948cb73b2c210b987a8c0a5173fb9cbdda602093aef20a837d4806dca18",
+        "8305877590b788464e6dc461cf0ec016fae764149960a4196cd7977db885fa8a",
+        "43742bc0e2326ee80797e13aa75a9f51cfff2c16cf0549cbe2d54dcaca1c5dba",
+        "de2eb650f50faf4f84759e66605ad951e03e268b39411c8cd7e9212ffd9ca9ea"
+      ],
+      "portrait": "Art/gentle-pixel/portraits-v3/portraits/20-eclipse.png",
+      "portraitSHA256": "c9f239b6b13354e34097b0b51b782212690ce26b29534ebaf9ad186b635a23f2",
+      "source": "Art/gentle-pixel/portrait-actions-v1/eclipse-sheet-v1.png",
+      "sourceSHA256": "ea420990a5b5f89ca3fe804094b2ffd34d81aa712b7675bc787b309505dc892e",
+      "framing": {
+        "scale": 0.4383561643835616,
+        "center": [
+          0.5,
+          23.80000000000001
+        ],
+        "frames": [
+          {
+            "rect": [
+              0,
+              0,
+              280,
+              283
+            ],
+            "anchor": [
+              140.25,
+              140.2
+            ],
+            "bbox": [
+              56,
+              89,
+              237,
+              279
+            ]
+          },
+          {
+            "rect": [
+              280,
+              0,
+              281,
+              283
+            ],
+            "anchor": [
+              140.75,
+              140.2
+            ],
+            "bbox": [
+              14,
+              86,
+              269,
+              283
+            ]
+          },
+          {
+            "rect": [
+              561,
+              0,
+              281,
+              283
+            ],
+            "anchor": [
+              140.25,
+              140.2
+            ],
+            "bbox": [
+              13,
+              45,
+              233,
+              283
+            ]
+          },
+          {
+            "rect": [
+              842,
+              0,
+              280,
+              283
+            ],
+            "anchor": [
+              139.75,
+              140.2
+            ],
+            "bbox": [
+              29,
+              89,
+              239,
+              283
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "speciesID": "eclipse",
+      "actionID": "whisper-sonar",
+      "name": "Whisper Sonar",
+      "chinese": "耳语声呐",
+      "tier": "idleQuirk",
+      "trigger": "idleNight",
+      "summary": "Sends sonar ripples so tiny that a moth drifts right past without noticing.",
+      "unlockLevel": 2,
+      "frames": [
+        "unique_bat_eclipse_whisper-sonar_0",
+        "unique_bat_eclipse_whisper-sonar_1",
+        "unique_bat_eclipse_whisper-sonar_2",
+        "unique_bat_eclipse_whisper-sonar_3"
+      ],
+      "seconds": [
+        0.65,
+        0.4,
+        0.65,
+        0.7
+      ],
+      "sha256": [
+        "3c64bff61b79387a24df8a4c06322d39c7ab063aa46e4b10c736a4c94a116588",
+        "fa1f0ce13f6f9988f27e766024ba2467d929cfb358521b741d88776740967cc8",
+        "20a2472f889897f6d7463329bb3a5a7067c7ddad2fc165d7e65458c0b0719821",
+        "2e494e74e1e7df271ce22358e94fb39de01ea7794f7e859eac177511df87d866"
+      ],
+      "portrait": "Art/gentle-pixel/portraits-v3/portraits/20-eclipse.png",
+      "portraitSHA256": "c9f239b6b13354e34097b0b51b782212690ce26b29534ebaf9ad186b635a23f2",
+      "source": "Art/gentle-pixel/portrait-actions-v1/eclipse-sheet-v1.png",
+      "sourceSHA256": "ea420990a5b5f89ca3fe804094b2ffd34d81aa712b7675bc787b309505dc892e",
+      "framing": {
+        "scale": 0.37209302325581395,
+        "center": [
+          1.25,
+          16.399999999999977
+        ],
+        "frames": [
+          {
+            "rect": [
+              0,
+              283,
+              280,
+              278
+            ],
+            "anchor": [
+              140.25,
+              137.60000000000002
+            ],
+            "bbox": [
+              39,
+              57,
+              250,
+              251
+            ]
+          },
+          {
+            "rect": [
+              280,
+              283,
+              271,
+              278
+            ],
+            "anchor": [
+              140.75,
+              137.60000000000002
+            ],
+            "bbox": [
+              8,
+              57,
+              256,
+              251
+            ]
+          },
+          {
+            "rect": [
+              551,
+              283,
+              302,
+              278
+            ],
+            "anchor": [
+              150.25,
+              137.60000000000002
+            ],
+            "bbox": [
+              1,
+              59,
+              302,
+              251
+            ]
+          },
+          {
+            "rect": [
+              853,
+              283,
+              269,
+              278
+            ],
+            "anchor": [
+              128.75,
+              137.60000000000002
+            ],
+            "bbox": [
+              15,
+              57,
+              266,
+              251
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "speciesID": "eclipse",
+      "actionID": "halo-ears",
+      "name": "Halo Ears",
+      "chinese": "光环耳朵",
+      "tier": "reaction",
+      "trigger": "pet",
+      "summary": "Pulls its joined ears down like a hood, then pops them up into a halo.",
+      "unlockLevel": 3,
+      "frames": [
+        "unique_bat_eclipse_halo-ears_0",
+        "unique_bat_eclipse_halo-ears_1",
+        "unique_bat_eclipse_halo-ears_2",
+        "unique_bat_eclipse_halo-ears_3"
+      ],
+      "seconds": [
+        0.65,
+        0.4,
+        0.65,
+        0.7
+      ],
+      "sha256": [
+        "8aaaba63fc34bc69a325357d1476ae7472a5d5317e8fcb84e5ae86183d7b2a04",
+        "11d96bba2d06c35ded97382949bad54aaadcece5f21c156fecf142a22ede95a1",
+        "a237db45f0c4d4cdef3bee7a36e3e17ef57a5450366788da1e44c365422e9eb0",
+        "91f6390422bd17d591b3e4033e11d2da915286bb6efcba03be80d72f05b159c5"
+      ],
+      "portrait": "Art/gentle-pixel/portraits-v3/portraits/20-eclipse.png",
+      "portraitSHA256": "c9f239b6b13354e34097b0b51b782212690ce26b29534ebaf9ad186b635a23f2",
+      "source": "Art/gentle-pixel/portrait-actions-v1/eclipse-sheet-v1.png",
+      "sourceSHA256": "ea420990a5b5f89ca3fe804094b2ffd34d81aa712b7675bc787b309505dc892e",
+      "framing": {
+        "scale": 0.45714285714285713,
+        "center": [
+          -8.75,
+          -17.5
+        ],
+        "frames": [
+          {
+            "rect": [
+              0,
+              561,
+              280,
+              261
+            ],
+            "anchor": [
+              140.25,
+              140.0
+            ],
+            "bbox": [
+              40,
+              44,
+              251,
+              239
+            ]
+          },
+          {
+            "rect": [
+              280,
+              561,
+              281,
+              261
+            ],
+            "anchor": [
+              140.75,
+              140.0
+            ],
+            "bbox": [
+              32,
+              66,
+              252,
+              242
+            ]
+          },
+          {
+            "rect": [
+              561,
+              561,
+              281,
+              261
+            ],
+            "anchor": [
+              140.25,
+              140.0
+            ],
+            "bbox": [
+              9,
+              3,
+              254,
+              242
+            ]
+          },
+          {
+            "rect": [
+              842,
+              561,
+              280,
+              261
+            ],
+            "anchor": [
+              139.75,
+              140.0
+            ],
+            "bbox": [
+              29,
+              44,
+              239,
+              240
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "speciesID": "eclipse",
+      "actionID": "old-wood-hideaway",
+      "name": "Old-Wood Hideaway",
+      "chinese": "古木藏身",
+      "tier": "signature",
+      "trigger": "newDay",
+      "summary": "Slips into a crack in an ancient dead tree; only the halo glints.",
+      "unlockLevel": 4,
+      "frames": [
+        "unique_bat_eclipse_old-wood-hideaway_0",
+        "unique_bat_eclipse_old-wood-hideaway_1",
+        "unique_bat_eclipse_old-wood-hideaway_2",
+        "unique_bat_eclipse_old-wood-hideaway_3"
+      ],
+      "seconds": [
+        0.65,
+        0.4,
+        0.65,
+        0.7
+      ],
+      "sha256": [
+        "0466b6d163db7f268523c2aa4fc4d9398c00ff63f3774847771901dafa96f1c9",
+        "6819d36aa20d127bb5ddcdf58bb2fad50581afe528a70de2f2958f2cd1ce2033",
+        "bce4c6357e420db3866fe57d19587a2e57a13b9e7c8f0815d20cb69bd664eaa9",
+        "0def3fd2636b9375f2aa6ddc18b1297b364ee456970b6d66a65b32916bcaa32d"
+      ],
+      "portrait": "Art/gentle-pixel/portraits-v3/portraits/20-eclipse.png",
+      "portraitSHA256": "c9f239b6b13354e34097b0b51b782212690ce26b29534ebaf9ad186b635a23f2",
+      "source": "Art/gentle-pixel/portrait-actions-v1/eclipse-sheet-v1.png",
+      "sourceSHA256": "ea420990a5b5f89ca3fe804094b2ffd34d81aa712b7675bc787b309505dc892e",
+      "framing": {
+        "scale": 0.4609053497942387,
+        "center": [
+          7.5,
+          -36.89999999999998
+        ],
+        "frames": [
+          {
+            "rect": [
+              0,
+              822,
+              280,
+              264
+            ],
+            "anchor": [
+              140.25,
+              159.39999999999998
+            ],
+            "bbox": [
+              40,
+              45,
+              250,
+              237
+            ]
+          },
+          {
+            "rect": [
+              280,
+              822,
+              281,
+              264
+            ],
+            "anchor": [
+              140.75,
+              159.39999999999998
+            ],
+            "bbox": [
+              64,
+              1,
+              256,
+              244
+            ]
+          },
+          {
+            "rect": [
+              561,
+              822,
+              281,
+              264
+            ],
+            "anchor": [
+              140.25,
+              159.39999999999998
+            ],
+            "bbox": [
+              58,
+              1,
+              224,
+              244
+            ]
+          },
+          {
+            "rect": [
+              842,
+              822,
+              280,
+              264
+            ],
+            "anchor": [
+              139.75,
+              159.39999999999998
+            ],
+            "bbox": [
+              94,
+              1,
+              225,
+              244
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "speciesID": "eclipse",
+      "actionID": "midday-dusk",
+      "name": "Midday Dusk",
+      "chinese": "正午黄昏",
+      "tier": "secret",
+      "trigger": "rare",
+      "summary": "In broad daylight the sky darkens; it wakes, peeks out as if dusk came, then shrugs back to sleep.",
+      "unlockLevel": 5,
+      "frames": [
+        "unique_bat_eclipse_midday-dusk_0",
+        "unique_bat_eclipse_midday-dusk_1",
+        "unique_bat_eclipse_midday-dusk_2",
+        "unique_bat_eclipse_midday-dusk_3"
+      ],
+      "seconds": [
+        0.65,
+        0.4,
+        0.65,
+        0.7
+      ],
+      "sha256": [
+        "ffb205ee110c8e187946ebc2dcd6a7558b87d21de8719fed3e4c26f6242e45c9",
+        "4c41e759464f047d37b0a9077458112f287d5cf7a99a4a8aecb80c714920d7e9",
+        "2331fff37daff8b796bcc1716a3fef90097f9e72be190cad5332180ad0b66289",
+        "135586be5138221bcd4095c4e20bd2355a2e2f49b512e58b1cebccfd0a60dd91"
+      ],
+      "portrait": "Art/gentle-pixel/portraits-v3/portraits/20-eclipse.png",
+      "portraitSHA256": "c9f239b6b13354e34097b0b51b782212690ce26b29534ebaf9ad186b635a23f2",
+      "source": "Art/gentle-pixel/portrait-actions-v1/eclipse-fix-sheet-v1.png",
+      "sourceSHA256": "54cf33db05bb8aabd35d391d4b50bb8f4447a89a28230b8320e7ca98da97cad9",
+      "framing": {
+        "scale": 0.2003577817531306,
+        "center": [
+          8.5,
+          -1.0
+        ],
+        "frames": [
+          {
+            "rect": [
+              0,
+              0,
+              627,
+              627
+            ],
+            "anchor": [
+              313.5,
+              313.5
+            ],
+            "bbox": [
+              63,
+              41,
+              578,
+              592
+            ]
+          },
+          {
+            "rect": [
+              627,
+              0,
+              627,
+              627
+            ],
+            "anchor": [
+              313.5,
+              313.5
+            ],
+            "bbox": [
+              62,
+              61,
+              578,
+              591
+            ]
+          },
+          {
+            "rect": [
+              0,
+              627,
+              627,
+              627
+            ],
+            "anchor": [
+              313.5,
+              313.5
+            ],
+            "bbox": [
+              55,
+              38,
+              589,
+              581
+            ]
+          },
+          {
+            "rect": [
+              627,
+              627,
+              627,
+              627
+            ],
+            "anchor": [
+              313.5,
+              313.5
+            ],
+            "bbox": [
+              62,
+              33,
+              571,
+              581
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

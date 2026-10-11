@@ -1,0 +1,333 @@
+{
+  "status": "Three concept animation samples only. Not approved or integrated into the app.",
+  "framing": "Unmodified original PNGs; renderer clips on transparent gaps and translates frames by foot anchors. Uniform per-character scale only.",
+  "characters": [
+    {
+      "id": "long-ear",
+      "name": "长耳蝠",
+      "action": "ladybird-listen",
+      "title": "偷听瓢虫",
+      "portrait": "../portraits-v3/portraits/03-long-ear.png",
+      "sheet": "long-ear-ladybird-listen-v1.png",
+      "portraitSHA256": "3c73163c6c2708d6506689bd1620563d37bdba317bcdff73362bdbb7a3a4cb93",
+      "sheetSHA256": "9e04e467d6708db4bdf211221ebbfa11adef7cac6c949ce12ecccb5a0985bfa5",
+      "original": {
+        "rect": [
+          0,
+          0,
+          1254,
+          1254
+        ],
+        "bbox": [
+          239,
+          11,
+          1097,
+          1233
+        ],
+        "anchor": [
+          629.0,
+          1233
+        ]
+      },
+      "frames": [
+        {
+          "rect": [
+            0,
+            0,
+            627,
+            627
+          ],
+          "bbox": [
+            147,
+            20,
+            588,
+            618
+          ],
+          "anchor": [
+            341.5,
+            618
+          ]
+        },
+        {
+          "rect": [
+            627,
+            0,
+            627,
+            627
+          ],
+          "bbox": [
+            104,
+            20,
+            551,
+            618
+          ],
+          "anchor": [
+            288.5,
+            618
+          ]
+        },
+        {
+          "rect": [
+            0,
+            627,
+            627,
+            627
+          ],
+          "bbox": [
+            202,
+            17,
+            612,
+            600
+          ],
+          "anchor": [
+            345.5,
+            598
+          ]
+        },
+        {
+          "rect": [
+            627,
+            627,
+            627,
+            627
+          ],
+          "bbox": [
+            94,
+            9,
+            550,
+            601
+          ],
+          "anchor": [
+            289.0,
+            601
+          ]
+        }
+      ],
+      "frameDurationsMs": [
+        1000,
+        420,
+        700,
+        650
+      ],
+      "status": "awaiting-user-review"
+    },
+    {
+      "id": "fruit",
+      "name": "果果蝠",
+      "action": "fruit-hug",
+      "title": "护食抱果",
+      "portrait": "../portraits-v3/portraits/04-fruit.png",
+      "sheet": "fruit-fruit-hug-v1.png",
+      "portraitSHA256": "87d0206d735b9ffa4cb6cccc4b19fd0148b470915dd3c96e6733e7ccb0ffdb8c",
+      "sheetSHA256": "b50f034626e6faecfeaa58a2ef6cef794c3e8d8f8f877079c9ced3ff5531e738",
+      "original": {
+        "rect": [
+          0,
+          0,
+          1254,
+          1254
+        ],
+        "bbox": [
+          160,
+          192,
+          1107,
+          1130
+        ],
+        "anchor": [
+          627.5,
+          1130
+        ]
+      },
+      "frames": [
+        {
+          "rect": [
+            0,
+            0,
+            627,
+            627
+          ],
+          "bbox": [
+            35,
+            66,
+            612,
+            621
+          ],
+          "anchor": [
+            319.5,
+            621
+          ]
+        },
+        {
+          "rect": [
+            627,
+            0,
+            627,
+            627
+          ],
+          "bbox": [
+            21,
+            66,
+            593,
+            621
+          ],
+          "anchor": [
+            303.0,
+            621
+          ]
+        },
+        {
+          "rect": [
+            0,
+            627,
+            627,
+            627
+          ],
+          "bbox": [
+            41,
+            32,
+            610,
+            584
+          ],
+          "anchor": [
+            324.0,
+            584
+          ]
+        },
+        {
+          "rect": [
+            627,
+            627,
+            627,
+            627
+          ],
+          "bbox": [
+            17,
+            32,
+            591,
+            585
+          ],
+          "anchor": [
+            303.5,
+            585
+          ]
+        }
+      ],
+      "frameDurationsMs": [
+        1000,
+        420,
+        700,
+        650
+      ],
+      "status": "awaiting-user-review"
+    },
+    {
+      "id": "moonwing",
+      "name": "月翼蝠",
+      "action": "moon-shy",
+      "title": "害羞月亮",
+      "portrait": "../portraits-v3/portraits/15-moonwing.png",
+      "sheet": "moonwing-moon-shy-v1.png",
+      "portraitSHA256": "117c804ed40523baa83245efea3ec8d9051047a6eff24a36942bd5c9b892df3a",
+      "sheetSHA256": "c8d274c496ce4797a9751a1878a580f128a8e04191ee3ee35eafeb9f7b8ee32f",
+      "original": {
+        "rect": [
+          0,
+          0,
+          1254,
+          1254
+        ],
+        "bbox": [
+          224,
+          69,
+          1047,
+          1192
+        ],
+        "anchor": [
+          629.5,
+          1181
+        ]
+      },
+      "frames": [
+        {
+          "rect": [
+            0,
+            0,
+            627,
+            636
+          ],
+          "bbox": [
+            112,
+            41,
+            570,
+            630
+          ],
+          "anchor": [
+            335.0,
+            623
+          ]
+        },
+        {
+          "rect": [
+            627,
+            0,
+            627,
+            636
+          ],
+          "bbox": [
+            59,
+            45,
+            496,
+            630
+          ],
+          "anchor": [
+            281.0,
+            623
+          ]
+        },
+        {
+          "rect": [
+            0,
+            636,
+            627,
+            618
+          ],
+          "bbox": [
+            112,
+            7,
+            571,
+            596
+          ],
+          "anchor": [
+            334.5,
+            589
+          ]
+        },
+        {
+          "rect": [
+            627,
+            636,
+            627,
+            618
+          ],
+          "bbox": [
+            59,
+            8,
+            496,
+            596
+          ],
+          "anchor": [
+            281.5,
+            589
+          ]
+        }
+      ],
+      "frameDurationsMs": [
+        1000,
+        420,
+        700,
+        650
+      ],
+      "status": "awaiting-user-review"
+    }
+  ]
+}

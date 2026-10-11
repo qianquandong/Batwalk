@@ -2,16 +2,27 @@ import Foundation
 
 /// Presentation-only events. They never change a save, grant EXP or spend fruit.
 public enum BatAnimationEvent: String, CaseIterable, Sendable {
-    case pet, feed, fly, walkReturn, newDay, signature
+    case pet, feed, fly, walkReturn, newDay, signature, hatch
 }
 
 public struct BatAnimationRequest: Hashable, Sendable {
     public let id: UUID
     public let events: [BatAnimationEvent]
+    public let actionIDs: [String]
 
-    public init(_ events: [BatAnimationEvent], id: UUID = UUID()) {
+    public init(_ events: [BatAnimationEvent] = [], actionIDs: [String] = [], id: UUID = UUID()) {
         self.id = id
         self.events = events
+        self.actionIDs = actionIDs
+    }
+
+    /// Celebrate every crossed level, including jumps, without changing game state.
+    public static func interaction(_ event: BatAnimationEvent, speciesID: String,
+                                   levelBefore: Int, levelAfter: Int) -> Self {
+        let unlocked = ActionCatalog.actions(for: speciesID).filter {
+            $0.unlockLevel > levelBefore && $0.unlockLevel <= levelAfter
+        }
+        return Self([event], actionIDs: unlocked.map(\.id))
     }
 }
 
@@ -56,46 +67,60 @@ public enum GeneratedFramePlan {
 /// Only clips with shipped frames belong here. The 102-action design catalog
 /// remains separate so an unlocked idea is never mistaken for playable art.
 ///
-/// Two sources of frames: the three hand-drawn pilots (4 frames per action plus a
-/// signature, `pilot_bat_…`) and the generated Gentle-pixel sets for every other
-/// species (6–8 frames per action, `gen_bat_…`, no signature until its art exists).
+/// The launch 20 have five portrait-derived universal clips plus unique actions.
+/// Wave two retains its matching pilots or original portrait fallback.
 public enum PilotAnimationCatalog {
     /// Hand-drawn pilots (Art/gentle-pixel/pilots-v1).
     public static let pilotSpeciesIDs = ["mochi", "sticky", "walker"]
-    /// Generated sets (Art/tools/gentle_pixel/export_frames.js): every catalogued species that is not a pilot.
-    public static let generatedSpeciesIDs: [String] = Roster.catalog.map(\.id).filter { !pilotSpeciesIDs.contains($0) }
-    public static let generatedPrefix = "gen_bat_"
-    /// Every species with playable frames.
-    public static var speciesIDs: [String] { pilotSpeciesIDs + generatedSpeciesIDs }
+    public static let portraitSpeciesIDs: [String] = Roster.catalog.map(\.id).filter { !pilotSpeciesIDs.contains($0) }
+    public static var staticFallbackSpeciesIDs: [String] {
+        portraitSpeciesIDs.filter { !PortraitUniversalFrames.speciesIDs.contains($0) }
+    }
+    /// Every species supported by the player, including portrait-only fallback.
+    public static var speciesIDs: [String] { pilotSpeciesIDs + portraitSpeciesIDs }
 
     public static func universal(for speciesID: String, action: UniversalAction) -> BatAnimationClip? {
-        if generatedSpeciesIDs.contains(speciesID) {
-            let plan = GeneratedFramePlan.plan(for: action)
-            return clip(speciesID, action.rawValue, indices: Array(0..<plan.count), durations: plan.seconds,
-                        rest: plan.rest, prefix: generatedPrefix)
+        if PortraitUniversalFrames.speciesIDs.contains(speciesID) {
+            let plan = PortraitUniversalFrames.plan(for: action)
+            return clip(speciesID, action.rawValue, indices: Array(plan.seconds.indices),
+                        durations: plan.seconds, rest: plan.rest, prefix: "universal_bat_")
+        }
+        if portraitSpeciesIDs.contains(speciesID) {
+            // Never switch to the discarded code-drawn identity between gestures.
+            return BatAnimationClip(speciesID: speciesID, actionID: action.rawValue,
+                frames: [BatAnimationFrame(assetName: "portrait_bat_\(speciesID)", seconds: 0.4, offsetX: 0)],
+                restSeconds: action == .idle || action == .sleep ? 4 : 0)
         }
         guard pilotSpeciesIDs.contains(speciesID) else { return nil }
-        let durations: [Double]
-        let rest: Double
-        switch action {
-        case .idle: durations = [2.4, 0.18, 0.18, 0.24]; rest = 4
-        case .sleep: durations = [1.4, 0.4, 0.4, 0.6]; rest = 3.6
-        case .fly: durations = [0.20, 0.20, 0.20, 0.20]; rest = 0
-        case .pet: durations = [0.25, 0.40, 0.55, 0.45]; rest = 0
-        case .eat: durations = [0.40, 0.45, 0.55, 0.60]; rest = 0
-        }
-        return clip(speciesID, action.rawValue, indices: [0, 1, 2, 3], durations: durations, rest: rest)
+        let plan = PortraitUniversalFrames.plan(for: action)
+        return clip(speciesID, action.rawValue, indices: Array(plan.seconds.indices), durations: plan.seconds, rest: plan.rest)
     }
 
-    /// Signature actions have art for the pilots only; a generated species gets
-    /// nil so the player never waits on frames that do not exist.
+    /// Only actions with packaged art are exposed, including the launch roster.
     public static func signatureAction(for speciesID: String) -> BatAction? {
-        guard pilotSpeciesIDs.contains(speciesID) else { return nil }
-        return ActionCatalog.actions(for: speciesID).first { $0.tier == .signature }
+        playableActions(for: speciesID).first { $0.tier == .signature }
     }
 
     public static func signature(for speciesID: String, friendshipLevel: Int) -> BatAnimationClip? {
         guard let action = signatureAction(for: speciesID), friendshipLevel >= action.unlockLevel else { return nil }
+        return unique(for: speciesID, actionID: action.id, friendshipLevel: friendshipLevel)
+    }
+
+    public static func playableActions(for speciesID: String) -> [BatAction] {
+        ActionCatalog.actions(for: speciesID).filter {
+            LaunchActionFrames.seconds["\(speciesID)/\($0.id)"] != nil ||
+                (pilotSpeciesIDs.contains(speciesID) && $0.tier == .signature)
+        }
+    }
+
+    public static func unique(for speciesID: String, actionID: String,
+                              friendshipLevel: Int) -> BatAnimationClip? {
+        guard let action = playableActions(for: speciesID).first(where: { $0.id == actionID }),
+              friendshipLevel >= action.unlockLevel else { return nil }
+        if let seconds = LaunchActionFrames.seconds["\(speciesID)/\(actionID)"] {
+            return clip(speciesID, actionID, indices: Array(seconds.indices), durations: seconds,
+                        prefix: "unique_bat_")
+        }
         if speciesID == "walker" {
             return clip(speciesID, action.id, indices: Array(repeating: [0, 1, 2, 3], count: 3).flatMap { $0 } + [4, 5],
                         durations: Array(repeating: 0.16, count: 12) + [0.45, 0.9])
@@ -106,19 +131,43 @@ public enum PilotAnimationCatalog {
 
     public static func reaction(for speciesID: String, event: BatAnimationEvent,
                                 friendshipLevel: Int) -> BatAnimationClip? {
+        reactions(for: speciesID, event: event, friendshipLevel: friendshipLevel).first
+    }
+
+    public static func reactions(for speciesID: String, event: BatAnimationEvent,
+                                 friendshipLevel: Int) -> [BatAnimationClip] {
+        if event == .signature { return [signature(for: speciesID, friendshipLevel: friendshipLevel)].compactMap { $0 } }
+        let trigger: ActionTrigger?
         switch event {
-        case .pet: return universal(for: speciesID, action: .pet)
-        case .feed: return universal(for: speciesID, action: .eat)
-        case .fly: return universal(for: speciesID, action: .fly)
-        case .signature: return signature(for: speciesID, friendshipLevel: friendshipLevel)
-        case .walkReturn:
-            if signatureAction(for: speciesID)?.trigger == .walkReturn,
-               let special = signature(for: speciesID, friendshipLevel: friendshipLevel) { return special }
-            return universal(for: speciesID, action: .fly)
-        case .newDay:
-            guard signatureAction(for: speciesID)?.trigger == .newDay else { return nil }
-            return signature(for: speciesID, friendshipLevel: friendshipLevel)
+        case .pet: trigger = .pet
+        case .feed: trigger = .feed
+        case .walkReturn: trigger = .walkReturn
+        case .newDay: trigger = .newDay
+        case .hatch: trigger = .hatch
+        case .fly, .signature: trigger = nil
         }
+        if let trigger {
+            let specials = ActionCatalog.available(for: speciesID, friendshipLevel: friendshipLevel, trigger: trigger)
+                .compactMap { unique(for: speciesID, actionID: $0.id, friendshipLevel: friendshipLevel) }
+            if !specials.isEmpty { return specials }
+        }
+        let fallback: UniversalAction?
+        switch event {
+        case .pet: fallback = .pet
+        case .feed: fallback = .eat
+        case .fly, .walkReturn: fallback = .fly
+        default: fallback = nil
+        }
+        return fallback.flatMap { universal(for: speciesID, action: $0) }.map { [$0] } ?? []
+    }
+
+    /// A newly unlocked reaction may also match this interaction. Play it once.
+    public static func clips(for request: BatAnimationRequest, speciesID: String,
+                             friendshipLevel: Int) -> [BatAnimationClip] {
+        var seen = Set<String>()
+        let natural = request.events.flatMap { reactions(for: speciesID, event: $0, friendshipLevel: friendshipLevel) }
+        let unlocked = request.actionIDs.compactMap { unique(for: speciesID, actionID: $0, friendshipLevel: friendshipLevel) }
+        return (natural + unlocked).filter { seen.insert($0.actionID).inserted }
     }
 
     public static func ambient(for speciesID: String, mood: BatMood) -> BatAnimationClip? {
@@ -154,9 +203,57 @@ public struct BatAnimationConsumption: Sendable {
     public init() {}
 
     public mutating func take(_ request: BatAnimationRequest?, enabled: Bool) -> [BatAnimationEvent] {
-        guard let request, request.id != lastID else { return [] }
+        guard consume(request, enabled: enabled) else { return [] }
+        return request?.events ?? []
+    }
+
+    public mutating func consume(_ request: BatAnimationRequest?, enabled: Bool) -> Bool {
+        guard let request, request.id != lastID else { return false }
         lastID = request.id
-        return enabled ? request.events : []
+        return enabled
+    }
+}
+
+/// Small presentation-only memory, independent of the save/sync schema. Each
+/// normal beat plays once per local day/period while this companion is mounted.
+/// A legendary secret gets one eligible 1-in-24 roll per minute, once per day.
+public struct BatAmbientMemory: Sendable {
+    private var day: String?
+    private var seen = Set<String>()
+    private var rareMinute: Int?
+    public init() {}
+
+    public mutating func record(_ clip: BatAnimationClip, time: TimeOfDay, day: String) {
+        if self.day != day { self.day = day; seen.removeAll(); rareMinute = nil }
+        seen.insert("\(clip.speciesID)/\(time.rawValue)/\(clip.actionID)")
+        seen.insert("\(clip.speciesID)/secret/\(clip.actionID)")
+    }
+
+    public mutating func next(speciesID: String, friendshipLevel: Int, time: TimeOfDay,
+                              day: String, minute: Int, rareRoll: Int) -> BatAnimationClip? {
+        if self.day != day { self.day = day; seen.removeAll(); rareMinute = nil }
+        let trigger: ActionTrigger = time == .day ? .asleep : time == .dusk ? .dusk : .idleNight
+        for action in ActionCatalog.available(for: speciesID, friendshipLevel: friendshipLevel, trigger: trigger) {
+            let key = "\(speciesID)/\(time.rawValue)/\(action.id)"
+            if !seen.contains(key), let clip = PilotAnimationCatalog.unique(for: speciesID, actionID: action.id,
+                                                                           friendshipLevel: friendshipLevel) {
+                seen.insert(key)
+                return clip
+            }
+        }
+        guard friendshipLevel >= 5, rareMinute != minute else { return nil }
+        rareMinute = minute
+        // Eclipse's midday secret needs daylight; Galaxy surfs a night storm.
+        guard rareRoll == 0, (speciesID == "eclipse" ? time == .day : time == .night) else { return nil }
+        for action in ActionCatalog.available(for: speciesID, friendshipLevel: friendshipLevel, trigger: .rare) {
+            let key = "\(speciesID)/secret/\(action.id)"
+            if !seen.contains(key), let clip = PilotAnimationCatalog.unique(for: speciesID, actionID: action.id,
+                                                                           friendshipLevel: friendshipLevel) {
+                seen.insert(key)
+                return clip
+            }
+        }
+        return nil
     }
 }
 

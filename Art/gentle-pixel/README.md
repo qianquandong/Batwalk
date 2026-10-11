@@ -18,7 +18,10 @@ art labels and do not rename the stored species IDs.
 
 All 32 portraits are now packaged for runtime display. Mochi, Sticky and Walker
 have [18 animated clips / 74 frames](pilots-v1/README.md) with a 64 px logical
-canvas. The other 29 use their own static portrait. Generated art still needs
+canvas. The launch 20 now have all [100 universal clips / 400 frames](portrait-universals-v1/README.md).
+The ten remaining non-pilot wave-two bats keep approved portrait stills.
+Launch bats #1–20 now also have [all 64 unique actions](launch-actions/README.md).
+Generated art still needs
 on-device approval and pixel cleanup; new Shiny palettes currently use hue rotation.
 
 ## Current runtime presentation and pose assets
@@ -29,8 +32,10 @@ on-device approval and pixel cleanup; new Shiny palettes currently use hue rotat
   Friendship accents. The iPhone uses warm cream and sage surfaces.
 - Flat cards/buttons, sparse static pixel plants/stars, compact Home branding.
   Keep native Dynamic Type, accessible labels and Reduce Motion behavior.
-- Three pilot identities have drawn idle/sleep/fly/pet/eat/signature frames. The
-  other 29 keep their approved static identity across moods until animation art lands.
+- Three pilot identities retain their original idle/sleep/fly/pet/eat/signature frames.
+  The other 19 launch bats use `portrait-universals-v1`; ten wave-two bats use portrait stills.
+  Launch unique actions use `launch-actions`.
+  Their source sheets are in `portrait-actions-v1`, with the three accepted samples in `portrait-action-samples-v1`.
 - The earlier 20-species pose pack (120 Normal/Shiny images) is retained as a
   historical fallback, alongside the 15 egg states and strawberry still in use.
 
@@ -51,7 +56,6 @@ renditions and 256 px catalog images, and exports opaque 1024 px app icons. Asse
 names start with `gentle_`, so the earlier catalog remains available for recovery.
 The legacy board builder reapplies this pack afterward.
 
-These are static pose assets. Drowsy, eating and playing currently use related
-poses plus native motion. Dedicated animation frames and layered artist source
-remain separate production work. Final approval should include actual Watch
+The older pose sheets are historical fallbacks. Active animation sets and their
+editable source are documented above. Final approval should include actual Watch
 scale, small-screen/accessibility checks and the simulator screenshots in the PR.

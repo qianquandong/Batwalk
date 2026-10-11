@@ -31,6 +31,16 @@ jobs:
       - uses: actions/checkout@v4
       - name: Test CI fallback detection
         run: python3 -m unittest discover -s scripts/tests -p 'test_github_ci_fallback.py'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify launch animation art and generated frame plans
+        run: |
+          python3 -m pip install Pillow==11.3.0
+          python3 Art/tools/package_portrait_actions.py --check
+          python3 Art/tools/package_portrait_universals.py --check
+          node --test Art/tools/gentle_pixel/unique_actions.test.js
+          node --test Art/tools/gentle_pixel/universal_actions.test.js
 
   # Simulator builds need macOS. Standard runners are free for this public
   # repository, so every pull request compiles the Watch and iPhone apps and runs
