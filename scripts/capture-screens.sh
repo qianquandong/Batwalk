@@ -16,6 +16,10 @@ mkdir -p "$out"
 xcrun simctl install "$SIM" "$app"
 xcrun simctl status_bar "$SIM" override --time "9:41" >/dev/null 2>&1 || true
 scenarios=$(grep "// scenarios:$platform" Apps/Shared/DemoMode.swift | grep -oE '"[a-z0-9-]+"' | tr -d '"')
+if [ -n "${BATWALK_SCREEN_SCENARIO:-}" ]; then
+  printf '%s\n' "$scenarios" | grep -Fxq "$BATWALK_SCREEN_SCENARIO" || { echo "::error::Unknown screenshot scenario"; exit 1; }
+  scenarios="$BATWALK_SCREEN_SCENARIO"
+fi
 i=0
 for sc in $scenarios; do
   i=$((i + 1))

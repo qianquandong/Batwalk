@@ -1,0 +1,553 @@
+{
+  "count": 32,
+  "uniqueIds": 32,
+  "sourceCopiesUnchanged": true,
+  "checks": [
+    {
+      "id": "mochi",
+      "size": [
+        1254,
+        1254
+      ],
+      "transparentCorners": true,
+      "alphaBBox": [
+        0,
+        23,
+        1234,
+        1254
+      ],
+      "fullyTransparentPixels": 962182,
+      "fullyOpaquePixels": 1848,
+      "partiallyTransparentPixels": 608486
+    },
+    {
+      "id": "cocoa",
+      "size": [
+        1254,
+        1254
+      ],
+      "transparentCorners": true,
+      "alphaBBox": [
+        37,
+        51,
+        1235,
+        1254
+      ],
+      "fullyTransparentPixels": 904533,
+      "fullyOpaquePixels": 2024,
+      "partiallyTransparentPixels": 665959
+    },
+    {
+      "id": "long-ear",
+      "size": [
+        1254,
+        1254
+      ],
+      "transparentCorners": true,
+      "alphaBBox": [
+        0,
+        8,
+        1224,
+        1238
+      ],
+      "fullyTransparentPixels": 1048091,
+      "fullyOpaquePixels": 1856,
+      "partiallyTransparentPixels": 522569
+    },
+    {
+      "id": "fruit",
+      "size": [
+        1254,
+        1254
+      ],
+      "transparentCorners": true,
+      "alphaBBox": [
+        0,
+        27,
+        1234,
+        1254
+      ],
+      "fullyTransparentPixels": 963421,
+      "fullyOpaquePixels": 1928,
+      "partiallyTransparentPixels": 607167
+    },
+    {
+      "id": "cave",
+      "size": [
+        1254,
+        1254
+      ],
+      "transparentCorners": true,
+      "alphaBBox": [
+        33,
+        21,
+        1234,
+        1254
+      ],
+      "fullyTransparentPixels": 1021082,
+      "fullyOpaquePixels": 2256,
+      "partiallyTransparentPixels": 549178
+    },
+    {
+      "id": "sleepy",
+      "size": [
+        1254,
+        1254
+      ],
+      "transparentCorners": true,
+      "alphaBBox": [
+        0,
+        41,
+        1240,
+        1254
+      ],
+      "fullyTransparentPixels": 877610,
+      "fullyOpaquePixels": 1349,
+      "partiallyTransparentPixels": 693557
+    },
+    {
+      "id": "dust",
+      "size": [
+        1254,
+        1254
+      ],
+      "transparentCorners": true,
+      "alphaBBox": [
+        65,
+        123,
+        1214,
+        1254
+      ],
+      "fullyTransparentPixels": 1022733,
+      "fullyOpaquePixels": 2941,
+      "partiallyTransparentPixels": 546842
+    },
+    {
+      "id": "pebble",
+      "size": [
+        1254,
+        1254
+      ],
+      "transparentCorners": true,
+      "alphaBBox": [
+        73,
+        102,
+        1204,
+        1254
+      ],
+      "fullyTransparentPixels": 1019641,
+      "fullyOpaquePixels": 1589,
+      "partiallyTransparentPixels": 551286
+    },
+    {
+      "id": "strawberry",
+      "size": [
+        1254,
+        1254
+      ],
+      "transparentCorners": true,
+      "alphaBBox": [
+        45,
+        33,
+        1232,
+        1254
+      ],
+      "fullyTransparentPixels": 850561,
+      "fullyOpaquePixels": 2670,
+      "partiallyTransparentPixels": 719285
+    },
+    {
+      "id": "blossom",
+      "size": [
+        1254,
+        1254
+      ],
+      "transparentCorners": true,
+      "alphaBBox": [
+        0,
+        20,
+        1240,
+        1254
+      ],
+      "fullyTransparentPixels": 1019132,
+      "fullyOpaquePixels": 2097,
+      "partiallyTransparentPixels": 551287
+    },
+    {
+      "id": "moss",
+      "size": [
+        1254,
+        1254
+      ],
+      "transparentCorners": true,
+      "alphaBBox": [
+        25,
+        29,
+        1234,
+        1254
+      ],
+      "fullyTransparentPixels": 1039029,
+      "fullyOpaquePixels": 2342,
+      "partiallyTransparentPixels": 531145
+    },
+    {
+      "id": "sunset",
+      "size": [
+        1254,
+        1254
+      ],
+      "transparentCorners": true,
+      "alphaBBox": [
+        0,
+        22,
+        1242,
+        1254
+      ],
+      "fullyTransparentPixels": 858159,
+      "fullyOpaquePixels": 3713,
+      "partiallyTransparentPixels": 710644
+    },
+    {
+      "id": "snow",
+      "size": [
+        1254,
+        1254
+      ],
+      "transparentCorners": true,
+      "alphaBBox": [
+        0,
+        69,
+        1186,
+        1214
+      ],
+      "fullyTransparentPixels": 1014594,
+      "fullyOpaquePixels": 1835,
+      "partiallyTransparentPixels": 556087
+    },
+    {
+      "id": "cloud",
+      "size": [
+        1254,
+        1254
+      ],
+      "transparentCorners": true,
+      "alphaBBox": [
+        0,
+        55,
+        1226,
+        1119
+      ],
+      "fullyTransparentPixels": 1104788,
+      "fullyOpaquePixels": 1827,
+      "partiallyTransparentPixels": 465901
+    },
+    {
+      "id": "moonwing",
+      "size": [
+        1254,
+        1254
+      ],
+      "transparentCorners": true,
+      "alphaBBox": [
+        27,
+        66,
+        1192,
+        1199
+      ],
+      "fullyTransparentPixels": 983979,
+      "fullyOpaquePixels": 1791,
+      "partiallyTransparentPixels": 586746
+    },
+    {
+      "id": "golden",
+      "size": [
+        1254,
+        1254
+      ],
+      "transparentCorners": true,
+      "alphaBBox": [
+        0,
+        29,
+        1248,
+        1230
+      ],
+      "fullyTransparentPixels": 822088,
+      "fullyOpaquePixels": 2715,
+      "partiallyTransparentPixels": 747713
+    },
+    {
+      "id": "crystal",
+      "size": [
+        1254,
+        1254
+      ],
+      "transparentCorners": true,
+      "alphaBBox": [
+        115,
+        101,
+        1218,
+        1206
+      ],
+      "fullyTransparentPixels": 1035786,
+      "fullyOpaquePixels": 2916,
+      "partiallyTransparentPixels": 533814
+    },
+    {
+      "id": "vampire",
+      "size": [
+        1254,
+        1254
+      ],
+      "transparentCorners": true,
+      "alphaBBox": [
+        49,
+        64,
+        1232,
+        1221
+      ],
+      "fullyTransparentPixels": 1047061,
+      "fullyOpaquePixels": 1784,
+      "partiallyTransparentPixels": 523671
+    },
+    {
+      "id": "galaxy",
+      "size": [
+        1254,
+        1254
+      ],
+      "transparentCorners": true,
+      "alphaBBox": [
+        0,
+        19,
+        1240,
+        1254
+      ],
+      "fullyTransparentPixels": 979371,
+      "fullyOpaquePixels": 1911,
+      "partiallyTransparentPixels": 591234
+    },
+    {
+      "id": "eclipse",
+      "size": [
+        1254,
+        1254
+      ],
+      "transparentCorners": true,
+      "alphaBBox": [
+        0,
+        30,
+        1230,
+        1254
+      ],
+      "fullyTransparentPixels": 864579,
+      "fullyOpaquePixels": 2236,
+      "partiallyTransparentPixels": 705701
+    },
+    {
+      "id": "bumblebee",
+      "size": [
+        1254,
+        1254
+      ],
+      "transparentCorners": true,
+      "alphaBBox": [
+        0,
+        21,
+        1208,
+        1254
+      ],
+      "fullyTransparentPixels": 942394,
+      "fullyOpaquePixels": 2496,
+      "partiallyTransparentPixels": 627626
+    },
+    {
+      "id": "sticky",
+      "size": [
+        1254,
+        1254
+      ],
+      "transparentCorners": true,
+      "alphaBBox": [
+        75,
+        39,
+        1235,
+        1230
+      ],
+      "fullyTransparentPixels": 1022114,
+      "fullyOpaquePixels": 2155,
+      "partiallyTransparentPixels": 548247
+    },
+    {
+      "id": "marshmallow",
+      "size": [
+        1254,
+        1254
+      ],
+      "transparentCorners": true,
+      "alphaBBox": [
+        0,
+        105,
+        1234,
+        1254
+      ],
+      "fullyTransparentPixels": 1013952,
+      "fullyOpaquePixels": 1920,
+      "partiallyTransparentPixels": 556644
+    },
+    {
+      "id": "honk",
+      "size": [
+        1254,
+        1254
+      ],
+      "transparentCorners": true,
+      "alphaBBox": [
+        0,
+        55,
+        1238,
+        1254
+      ],
+      "fullyTransparentPixels": 969846,
+      "fullyOpaquePixels": 2729,
+      "partiallyTransparentPixels": 599941
+    },
+    {
+      "id": "ember",
+      "size": [
+        1254,
+        1254
+      ],
+      "transparentCorners": true,
+      "alphaBBox": [
+        0,
+        45,
+        1232,
+        1254
+      ],
+      "fullyTransparentPixels": 1068272,
+      "fullyOpaquePixels": 1837,
+      "partiallyTransparentPixels": 502407
+    },
+    {
+      "id": "nectar",
+      "size": [
+        1254,
+        1254
+      ],
+      "transparentCorners": true,
+      "alphaBBox": [
+        0,
+        17,
+        1238,
+        1244
+      ],
+      "fullyTransparentPixels": 1214049,
+      "fullyOpaquePixels": 516,
+      "partiallyTransparentPixels": 357951
+    },
+    {
+      "id": "tube-nose",
+      "size": [
+        1254,
+        1254
+      ],
+      "transparentCorners": true,
+      "alphaBBox": [
+        17,
+        21,
+        1234,
+        1254
+      ],
+      "fullyTransparentPixels": 1001739,
+      "fullyOpaquePixels": 1736,
+      "partiallyTransparentPixels": 569041
+    },
+    {
+      "id": "polka",
+      "size": [
+        1254,
+        1254
+      ],
+      "transparentCorners": true,
+      "alphaBBox": [
+        0,
+        125,
+        1232,
+        1136
+      ],
+      "fullyTransparentPixels": 1046006,
+      "fullyOpaquePixels": 2939,
+      "partiallyTransparentPixels": 523571
+    },
+    {
+      "id": "wrinkle",
+      "size": [
+        1254,
+        1254
+      ],
+      "transparentCorners": true,
+      "alphaBBox": [
+        23,
+        37,
+        1214,
+        1254
+      ],
+      "fullyTransparentPixels": 873109,
+      "fullyOpaquePixels": 1508,
+      "partiallyTransparentPixels": 697899
+    },
+    {
+      "id": "walker",
+      "size": [
+        1254,
+        1254
+      ],
+      "transparentCorners": true,
+      "alphaBBox": [
+        0,
+        91,
+        1224,
+        1220
+      ],
+      "fullyTransparentPixels": 1124900,
+      "fullyOpaquePixels": 1871,
+      "partiallyTransparentPixels": 445745
+    },
+    {
+      "id": "fox",
+      "size": [
+        1254,
+        1254
+      ],
+      "transparentCorners": true,
+      "alphaBBox": [
+        0,
+        29,
+        1222,
+        1228
+      ],
+      "fullyTransparentPixels": 733640,
+      "fullyOpaquePixels": 1917,
+      "partiallyTransparentPixels": 836959
+    },
+    {
+      "id": "ghost",
+      "size": [
+        1254,
+        1254
+      ],
+      "transparentCorners": true,
+      "alphaBBox": [
+        73,
+        44,
+        1222,
+        1254
+      ],
+      "fullyTransparentPixels": 1005541,
+      "fullyOpaquePixels": 1414,
+      "partiallyTransparentPixels": 565561
+    }
+  ],
+  "smallPreviewMethod": "nearest-neighbor resize, no repainting or alpha removal",
+  "productionNote": "AI-generated pixel-style originals are not asserted to use an exact shared logical pixel grid. Runtime animation requires separate pixel-grid/palette cleanup and frame work."
+}

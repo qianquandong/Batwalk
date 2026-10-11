@@ -37,9 +37,8 @@ public enum DayKey {
 /// Converts HealthKit's "cumulative steps today" readings into game credit,
 /// exactly once per step.
 ///
-/// HealthKit is asked for one number: today's total step count. The ledger
-/// remembers the last total it saw for its current day and credits only the
-/// increase. That makes every edge case in PRD §4.9 safe:
+/// The platform adapter supplies cumulative totals for each accounting day.
+/// Retained high-water marks credit only positive changes, including late data:
 ///
 /// - **First launch**: today's steps so far are credited immediately (PRD §2.2 step 6).
 /// - **Large jump between launches**: the whole jump is credited once.
@@ -48,16 +47,66 @@ public enum DayKey {
 /// - **App not opened for several days**: the app ingests each missed day's
 ///   total in order (oldest first); a skipped day is simply never credited.
 /// - **Total goes down** (Health data deleted / source changed): credit 0, never negative.
-/// - **Time-zone travel backwards** (an earlier day key reappears): credit 0,
-///   so no step is ever counted twice. Some steps may be under-credited; that is
-///   the intentional trade-off.
+/// - **An unknown old day reappears**: credit 0, so trimmed days cannot be reopened.
+/// - **Travel**: the adapter uses the ledger's original time zone and verifies
+///   statistics bucket boundaries before supplying totals.
 public struct StepLedger: Codable, Equatable, Sendable {
     public private(set) var dayKey: String?
     public private(set) var lastDailyTotal: Int
+    /// Per-day high-water marks allow late arrivals to be reconciled independently.
+    public private(set) var dailyTotals: [String: Int]
+    public private(set) var trackingStartDay: String?
+    /// Fixed accounting boundaries prevent travel from crediting overlapping days.
+    public private(set) var timeZoneIdentifier: String?
 
     public init(dayKey: String? = nil, lastDailyTotal: Int = 0) {
         self.dayKey = dayKey
         self.lastDailyTotal = lastDailyTotal
+        self.dailyTotals = dayKey.map { [$0: lastDailyTotal] } ?? [:]
+        self.trackingStartDay = dayKey
+        self.timeZoneIdentifier = nil
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case dayKey, lastDailyTotal, dailyTotals, trackingStartDay, timeZoneIdentifier
+    }
+
+    public init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        dayKey = try c.decodeIfPresent(String.self, forKey: .dayKey)
+        lastDailyTotal = try c.decodeIfPresent(Int.self, forKey: .lastDailyTotal) ?? 0
+        let legacyDay = dayKey
+        let legacyTotal = lastDailyTotal
+        dailyTotals = try c.decodeIfPresent([String: Int].self, forKey: .dailyTotals)
+            ?? legacyDay.map { [$0: legacyTotal] } ?? [:]
+        trackingStartDay = try c.decodeIfPresent(String.self, forKey: .trackingStartDay) ?? dayKey
+        timeZoneIdentifier = try c.decodeIfPresent(String.self, forKey: .timeZoneIdentifier)
+    }
+
+    public mutating func beginTracking(on day: String, timeZone: String) {
+        if trackingStartDay == nil { trackingStartDay = day }
+        if timeZoneIdentifier == nil { timeZoneIdentifier = timeZone }
+    }
+
+    public func reconciliationStart(now: Date, calendar: Calendar, lookbackDays: Int = 7,
+                                    maxLookbackDays: Int = 45) -> Date {
+        let today = calendar.startOfDay(for: now)
+        let first = trackingStartDay.flatMap { DayKey.date(from: $0, calendar: calendar) } ?? today
+        let last = dayKey.flatMap { DayKey.date(from: $0, calendar: calendar) } ?? first
+        let lookback = calendar.date(byAdding: .day, value: -(max(1, lookbackDays) - 1), to: today) ?? today
+        // A long absence is queried in one statistics collection, without dropping
+        // days — up to `maxLookbackDays`. The Watch only keeps recent Health
+        // samples, so older days would read as 0 anyway; capping bounds the query
+        // (and the per-day fallback) instead of letting one absence query a year.
+        let floor = calendar.date(byAdding: .day, value: -(max(1, maxLookbackDays) - 1), to: today) ?? today
+        return min(today, max(first, floor, min(last, lookback)))
+    }
+
+    /// Used after a collection-only restore: today's existing steps are a baseline,
+    /// not a second reward for steps already consumed by the lost device.
+    public mutating func establishBaseline(dayKey: String, total: Int, timeZone: String) {
+        self = StepLedger(dayKey: dayKey, lastDailyTotal: max(0, total))
+        timeZoneIdentifier = timeZone
     }
 
     /// Feed a cumulative daily total; returns the newly creditable steps (>= 0).
@@ -68,18 +117,25 @@ public struct StepLedger: Codable, Equatable, Sendable {
         guard let current = dayKey else {
             dayKey = newDay
             lastDailyTotal = total
+            dailyTotals[newDay] = total
+            if trackingStartDay == nil { trackingStartDay = newDay }
             return total
         }
 
-        if newDay == current {
-            let delta = max(0, total - lastDailyTotal)
-            lastDailyTotal = max(lastDailyTotal, total)
+        if let previous = dailyTotals[newDay] {
+            let delta = max(0, total - previous)
+            dailyTotals[newDay] = max(previous, total)
+            if newDay == current { lastDailyTotal = dailyTotals[newDay]! }
             return delta
         }
 
         if newDay > current {
             dayKey = newDay
             lastDailyTotal = total
+            dailyTotals[newDay] = total
+            // Keep fourteen known days. Unknown older days stay closed forever;
+            // seven-day reconciliation cannot recreate and double-credit them.
+            for key in dailyTotals.keys.sorted().dropLast(14) { dailyTotals.removeValue(forKey: key) }
             return total
         }
 

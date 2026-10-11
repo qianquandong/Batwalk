@@ -1,0 +1,16 @@
+{
+  "date": "2026-10-10",
+  "generatedWith": "built-in image_gen",
+  "normalClips": 18,
+  "normalFrames": 74,
+  "runtimePortraits": 32,
+  "coreTests": {
+    "passed": 77,
+    "failed": 0,
+    "environment": "Docker swift:5.10-jammy on Windows"
+  },
+  "assetPackaging": "74 unique hashes matched; all 128px catalog renditions match 2x nearest scaling",
+  "swiftUI": "Syntax parsing passed; Apple SDK build and hosted tests pending",
+  "devicePlaybackAndEnergy": "not measured",
+  "shiny": "runtime hue variant; dedicated palettes pending"
+}

@@ -1,0 +1,1674 @@
+{
+  "version": 2,
+  "engine": "Art/tools/gentle_pixel/engine.js",
+  "prefix": "gen_bat_",
+  "logicalSize": 64,
+  "scale": 2,
+  "plan": {
+    "idle": {
+      "seconds": [
+        0.6,
+        0.14,
+        0.14,
+        0.14,
+        0.14,
+        0.14,
+        0.14,
+        0.2
+      ],
+      "rest": 1.6
+    },
+    "sleep": {
+      "seconds": [
+        0.32,
+        0.32,
+        0.32,
+        0.32,
+        0.32,
+        0.32,
+        0.32,
+        0.32
+      ],
+      "rest": 0.8
+    },
+    "fly": {
+      "seconds": [
+        0.1,
+        0.1,
+        0.1,
+        0.1,
+        0.1,
+        0.1
+      ],
+      "rest": 0
+    },
+    "pet": {
+      "seconds": [
+        0.12,
+        0.12,
+        0.12,
+        0.12,
+        0.12,
+        0.12,
+        0.12,
+        0.12
+      ],
+      "rest": 0
+    },
+    "eat": {
+      "seconds": [
+        0.18,
+        0.14,
+        0.14,
+        0.22,
+        0.2,
+        0.2,
+        0.22,
+        0.3
+      ],
+      "rest": 0
+    }
+  },
+  "species": {
+    "mochi": {
+      "idle": [
+        "gen_bat_mochi_idle_0",
+        "gen_bat_mochi_idle_1",
+        "gen_bat_mochi_idle_2",
+        "gen_bat_mochi_idle_3",
+        "gen_bat_mochi_idle_4",
+        "gen_bat_mochi_idle_5",
+        "gen_bat_mochi_idle_6",
+        "gen_bat_mochi_idle_7"
+      ],
+      "sleep": [
+        "gen_bat_mochi_sleep_0",
+        "gen_bat_mochi_sleep_1",
+        "gen_bat_mochi_sleep_2",
+        "gen_bat_mochi_sleep_3",
+        "gen_bat_mochi_sleep_4",
+        "gen_bat_mochi_sleep_5",
+        "gen_bat_mochi_sleep_6",
+        "gen_bat_mochi_sleep_7"
+      ],
+      "fly": [
+        "gen_bat_mochi_fly_0",
+        "gen_bat_mochi_fly_1",
+        "gen_bat_mochi_fly_2",
+        "gen_bat_mochi_fly_3",
+        "gen_bat_mochi_fly_4",
+        "gen_bat_mochi_fly_5"
+      ],
+      "pet": [
+        "gen_bat_mochi_pet_0",
+        "gen_bat_mochi_pet_1",
+        "gen_bat_mochi_pet_2",
+        "gen_bat_mochi_pet_3",
+        "gen_bat_mochi_pet_4",
+        "gen_bat_mochi_pet_5",
+        "gen_bat_mochi_pet_6",
+        "gen_bat_mochi_pet_7"
+      ],
+      "eat": [
+        "gen_bat_mochi_eat_0",
+        "gen_bat_mochi_eat_1",
+        "gen_bat_mochi_eat_2",
+        "gen_bat_mochi_eat_3",
+        "gen_bat_mochi_eat_4",
+        "gen_bat_mochi_eat_5",
+        "gen_bat_mochi_eat_6",
+        "gen_bat_mochi_eat_7"
+      ]
+    },
+    "cocoa": {
+      "idle": [
+        "gen_bat_cocoa_idle_0",
+        "gen_bat_cocoa_idle_1",
+        "gen_bat_cocoa_idle_2",
+        "gen_bat_cocoa_idle_3",
+        "gen_bat_cocoa_idle_4",
+        "gen_bat_cocoa_idle_5",
+        "gen_bat_cocoa_idle_6",
+        "gen_bat_cocoa_idle_7"
+      ],
+      "sleep": [
+        "gen_bat_cocoa_sleep_0",
+        "gen_bat_cocoa_sleep_1",
+        "gen_bat_cocoa_sleep_2",
+        "gen_bat_cocoa_sleep_3",
+        "gen_bat_cocoa_sleep_4",
+        "gen_bat_cocoa_sleep_5",
+        "gen_bat_cocoa_sleep_6",
+        "gen_bat_cocoa_sleep_7"
+      ],
+      "fly": [
+        "gen_bat_cocoa_fly_0",
+        "gen_bat_cocoa_fly_1",
+        "gen_bat_cocoa_fly_2",
+        "gen_bat_cocoa_fly_3",
+        "gen_bat_cocoa_fly_4",
+        "gen_bat_cocoa_fly_5"
+      ],
+      "pet": [
+        "gen_bat_cocoa_pet_0",
+        "gen_bat_cocoa_pet_1",
+        "gen_bat_cocoa_pet_2",
+        "gen_bat_cocoa_pet_3",
+        "gen_bat_cocoa_pet_4",
+        "gen_bat_cocoa_pet_5",
+        "gen_bat_cocoa_pet_6",
+        "gen_bat_cocoa_pet_7"
+      ],
+      "eat": [
+        "gen_bat_cocoa_eat_0",
+        "gen_bat_cocoa_eat_1",
+        "gen_bat_cocoa_eat_2",
+        "gen_bat_cocoa_eat_3",
+        "gen_bat_cocoa_eat_4",
+        "gen_bat_cocoa_eat_5",
+        "gen_bat_cocoa_eat_6",
+        "gen_bat_cocoa_eat_7"
+      ]
+    },
+    "long-ear": {
+      "idle": [
+        "gen_bat_long-ear_idle_0",
+        "gen_bat_long-ear_idle_1",
+        "gen_bat_long-ear_idle_2",
+        "gen_bat_long-ear_idle_3",
+        "gen_bat_long-ear_idle_4",
+        "gen_bat_long-ear_idle_5",
+        "gen_bat_long-ear_idle_6",
+        "gen_bat_long-ear_idle_7"
+      ],
+      "sleep": [
+        "gen_bat_long-ear_sleep_0",
+        "gen_bat_long-ear_sleep_1",
+        "gen_bat_long-ear_sleep_2",
+        "gen_bat_long-ear_sleep_3",
+        "gen_bat_long-ear_sleep_4",
+        "gen_bat_long-ear_sleep_5",
+        "gen_bat_long-ear_sleep_6",
+        "gen_bat_long-ear_sleep_7"
+      ],
+      "fly": [
+        "gen_bat_long-ear_fly_0",
+        "gen_bat_long-ear_fly_1",
+        "gen_bat_long-ear_fly_2",
+        "gen_bat_long-ear_fly_3",
+        "gen_bat_long-ear_fly_4",
+        "gen_bat_long-ear_fly_5"
+      ],
+      "pet": [
+        "gen_bat_long-ear_pet_0",
+        "gen_bat_long-ear_pet_1",
+        "gen_bat_long-ear_pet_2",
+        "gen_bat_long-ear_pet_3",
+        "gen_bat_long-ear_pet_4",
+        "gen_bat_long-ear_pet_5",
+        "gen_bat_long-ear_pet_6",
+        "gen_bat_long-ear_pet_7"
+      ],
+      "eat": [
+        "gen_bat_long-ear_eat_0",
+        "gen_bat_long-ear_eat_1",
+        "gen_bat_long-ear_eat_2",
+        "gen_bat_long-ear_eat_3",
+        "gen_bat_long-ear_eat_4",
+        "gen_bat_long-ear_eat_5",
+        "gen_bat_long-ear_eat_6",
+        "gen_bat_long-ear_eat_7"
+      ]
+    },
+    "fruit": {
+      "idle": [
+        "gen_bat_fruit_idle_0",
+        "gen_bat_fruit_idle_1",
+        "gen_bat_fruit_idle_2",
+        "gen_bat_fruit_idle_3",
+        "gen_bat_fruit_idle_4",
+        "gen_bat_fruit_idle_5",
+        "gen_bat_fruit_idle_6",
+        "gen_bat_fruit_idle_7"
+      ],
+      "sleep": [
+        "gen_bat_fruit_sleep_0",
+        "gen_bat_fruit_sleep_1",
+        "gen_bat_fruit_sleep_2",
+        "gen_bat_fruit_sleep_3",
+        "gen_bat_fruit_sleep_4",
+        "gen_bat_fruit_sleep_5",
+        "gen_bat_fruit_sleep_6",
+        "gen_bat_fruit_sleep_7"
+      ],
+      "fly": [
+        "gen_bat_fruit_fly_0",
+        "gen_bat_fruit_fly_1",
+        "gen_bat_fruit_fly_2",
+        "gen_bat_fruit_fly_3",
+        "gen_bat_fruit_fly_4",
+        "gen_bat_fruit_fly_5"
+      ],
+      "pet": [
+        "gen_bat_fruit_pet_0",
+        "gen_bat_fruit_pet_1",
+        "gen_bat_fruit_pet_2",
+        "gen_bat_fruit_pet_3",
+        "gen_bat_fruit_pet_4",
+        "gen_bat_fruit_pet_5",
+        "gen_bat_fruit_pet_6",
+        "gen_bat_fruit_pet_7"
+      ],
+      "eat": [
+        "gen_bat_fruit_eat_0",
+        "gen_bat_fruit_eat_1",
+        "gen_bat_fruit_eat_2",
+        "gen_bat_fruit_eat_3",
+        "gen_bat_fruit_eat_4",
+        "gen_bat_fruit_eat_5",
+        "gen_bat_fruit_eat_6",
+        "gen_bat_fruit_eat_7"
+      ]
+    },
+    "cave": {
+      "idle": [
+        "gen_bat_cave_idle_0",
+        "gen_bat_cave_idle_1",
+        "gen_bat_cave_idle_2",
+        "gen_bat_cave_idle_3",
+        "gen_bat_cave_idle_4",
+        "gen_bat_cave_idle_5",
+        "gen_bat_cave_idle_6",
+        "gen_bat_cave_idle_7"
+      ],
+      "sleep": [
+        "gen_bat_cave_sleep_0",
+        "gen_bat_cave_sleep_1",
+        "gen_bat_cave_sleep_2",
+        "gen_bat_cave_sleep_3",
+        "gen_bat_cave_sleep_4",
+        "gen_bat_cave_sleep_5",
+        "gen_bat_cave_sleep_6",
+        "gen_bat_cave_sleep_7"
+      ],
+      "fly": [
+        "gen_bat_cave_fly_0",
+        "gen_bat_cave_fly_1",
+        "gen_bat_cave_fly_2",
+        "gen_bat_cave_fly_3",
+        "gen_bat_cave_fly_4",
+        "gen_bat_cave_fly_5"
+      ],
+      "pet": [
+        "gen_bat_cave_pet_0",
+        "gen_bat_cave_pet_1",
+        "gen_bat_cave_pet_2",
+        "gen_bat_cave_pet_3",
+        "gen_bat_cave_pet_4",
+        "gen_bat_cave_pet_5",
+        "gen_bat_cave_pet_6",
+        "gen_bat_cave_pet_7"
+      ],
+      "eat": [
+        "gen_bat_cave_eat_0",
+        "gen_bat_cave_eat_1",
+        "gen_bat_cave_eat_2",
+        "gen_bat_cave_eat_3",
+        "gen_bat_cave_eat_4",
+        "gen_bat_cave_eat_5",
+        "gen_bat_cave_eat_6",
+        "gen_bat_cave_eat_7"
+      ]
+    },
+    "sleepy": {
+      "idle": [
+        "gen_bat_sleepy_idle_0",
+        "gen_bat_sleepy_idle_1",
+        "gen_bat_sleepy_idle_2",
+        "gen_bat_sleepy_idle_3",
+        "gen_bat_sleepy_idle_4",
+        "gen_bat_sleepy_idle_5",
+        "gen_bat_sleepy_idle_6",
+        "gen_bat_sleepy_idle_7"
+      ],
+      "sleep": [
+        "gen_bat_sleepy_sleep_0",
+        "gen_bat_sleepy_sleep_1",
+        "gen_bat_sleepy_sleep_2",
+        "gen_bat_sleepy_sleep_3",
+        "gen_bat_sleepy_sleep_4",
+        "gen_bat_sleepy_sleep_5",
+        "gen_bat_sleepy_sleep_6",
+        "gen_bat_sleepy_sleep_7"
+      ],
+      "fly": [
+        "gen_bat_sleepy_fly_0",
+        "gen_bat_sleepy_fly_1",
+        "gen_bat_sleepy_fly_2",
+        "gen_bat_sleepy_fly_3",
+        "gen_bat_sleepy_fly_4",
+        "gen_bat_sleepy_fly_5"
+      ],
+      "pet": [
+        "gen_bat_sleepy_pet_0",
+        "gen_bat_sleepy_pet_1",
+        "gen_bat_sleepy_pet_2",
+        "gen_bat_sleepy_pet_3",
+        "gen_bat_sleepy_pet_4",
+        "gen_bat_sleepy_pet_5",
+        "gen_bat_sleepy_pet_6",
+        "gen_bat_sleepy_pet_7"
+      ],
+      "eat": [
+        "gen_bat_sleepy_eat_0",
+        "gen_bat_sleepy_eat_1",
+        "gen_bat_sleepy_eat_2",
+        "gen_bat_sleepy_eat_3",
+        "gen_bat_sleepy_eat_4",
+        "gen_bat_sleepy_eat_5",
+        "gen_bat_sleepy_eat_6",
+        "gen_bat_sleepy_eat_7"
+      ]
+    },
+    "dust": {
+      "idle": [
+        "gen_bat_dust_idle_0",
+        "gen_bat_dust_idle_1",
+        "gen_bat_dust_idle_2",
+        "gen_bat_dust_idle_3",
+        "gen_bat_dust_idle_4",
+        "gen_bat_dust_idle_5",
+        "gen_bat_dust_idle_6",
+        "gen_bat_dust_idle_7"
+      ],
+      "sleep": [
+        "gen_bat_dust_sleep_0",
+        "gen_bat_dust_sleep_1",
+        "gen_bat_dust_sleep_2",
+        "gen_bat_dust_sleep_3",
+        "gen_bat_dust_sleep_4",
+        "gen_bat_dust_sleep_5",
+        "gen_bat_dust_sleep_6",
+        "gen_bat_dust_sleep_7"
+      ],
+      "fly": [
+        "gen_bat_dust_fly_0",
+        "gen_bat_dust_fly_1",
+        "gen_bat_dust_fly_2",
+        "gen_bat_dust_fly_3",
+        "gen_bat_dust_fly_4",
+        "gen_bat_dust_fly_5"
+      ],
+      "pet": [
+        "gen_bat_dust_pet_0",
+        "gen_bat_dust_pet_1",
+        "gen_bat_dust_pet_2",
+        "gen_bat_dust_pet_3",
+        "gen_bat_dust_pet_4",
+        "gen_bat_dust_pet_5",
+        "gen_bat_dust_pet_6",
+        "gen_bat_dust_pet_7"
+      ],
+      "eat": [
+        "gen_bat_dust_eat_0",
+        "gen_bat_dust_eat_1",
+        "gen_bat_dust_eat_2",
+        "gen_bat_dust_eat_3",
+        "gen_bat_dust_eat_4",
+        "gen_bat_dust_eat_5",
+        "gen_bat_dust_eat_6",
+        "gen_bat_dust_eat_7"
+      ]
+    },
+    "pebble": {
+      "idle": [
+        "gen_bat_pebble_idle_0",
+        "gen_bat_pebble_idle_1",
+        "gen_bat_pebble_idle_2",
+        "gen_bat_pebble_idle_3",
+        "gen_bat_pebble_idle_4",
+        "gen_bat_pebble_idle_5",
+        "gen_bat_pebble_idle_6",
+        "gen_bat_pebble_idle_7"
+      ],
+      "sleep": [
+        "gen_bat_pebble_sleep_0",
+        "gen_bat_pebble_sleep_1",
+        "gen_bat_pebble_sleep_2",
+        "gen_bat_pebble_sleep_3",
+        "gen_bat_pebble_sleep_4",
+        "gen_bat_pebble_sleep_5",
+        "gen_bat_pebble_sleep_6",
+        "gen_bat_pebble_sleep_7"
+      ],
+      "fly": [
+        "gen_bat_pebble_fly_0",
+        "gen_bat_pebble_fly_1",
+        "gen_bat_pebble_fly_2",
+        "gen_bat_pebble_fly_3",
+        "gen_bat_pebble_fly_4",
+        "gen_bat_pebble_fly_5"
+      ],
+      "pet": [
+        "gen_bat_pebble_pet_0",
+        "gen_bat_pebble_pet_1",
+        "gen_bat_pebble_pet_2",
+        "gen_bat_pebble_pet_3",
+        "gen_bat_pebble_pet_4",
+        "gen_bat_pebble_pet_5",
+        "gen_bat_pebble_pet_6",
+        "gen_bat_pebble_pet_7"
+      ],
+      "eat": [
+        "gen_bat_pebble_eat_0",
+        "gen_bat_pebble_eat_1",
+        "gen_bat_pebble_eat_2",
+        "gen_bat_pebble_eat_3",
+        "gen_bat_pebble_eat_4",
+        "gen_bat_pebble_eat_5",
+        "gen_bat_pebble_eat_6",
+        "gen_bat_pebble_eat_7"
+      ]
+    },
+    "strawberry": {
+      "idle": [
+        "gen_bat_strawberry_idle_0",
+        "gen_bat_strawberry_idle_1",
+        "gen_bat_strawberry_idle_2",
+        "gen_bat_strawberry_idle_3",
+        "gen_bat_strawberry_idle_4",
+        "gen_bat_strawberry_idle_5",
+        "gen_bat_strawberry_idle_6",
+        "gen_bat_strawberry_idle_7"
+      ],
+      "sleep": [
+        "gen_bat_strawberry_sleep_0",
+        "gen_bat_strawberry_sleep_1",
+        "gen_bat_strawberry_sleep_2",
+        "gen_bat_strawberry_sleep_3",
+        "gen_bat_strawberry_sleep_4",
+        "gen_bat_strawberry_sleep_5",
+        "gen_bat_strawberry_sleep_6",
+        "gen_bat_strawberry_sleep_7"
+      ],
+      "fly": [
+        "gen_bat_strawberry_fly_0",
+        "gen_bat_strawberry_fly_1",
+        "gen_bat_strawberry_fly_2",
+        "gen_bat_strawberry_fly_3",
+        "gen_bat_strawberry_fly_4",
+        "gen_bat_strawberry_fly_5"
+      ],
+      "pet": [
+        "gen_bat_strawberry_pet_0",
+        "gen_bat_strawberry_pet_1",
+        "gen_bat_strawberry_pet_2",
+        "gen_bat_strawberry_pet_3",
+        "gen_bat_strawberry_pet_4",
+        "gen_bat_strawberry_pet_5",
+        "gen_bat_strawberry_pet_6",
+        "gen_bat_strawberry_pet_7"
+      ],
+      "eat": [
+        "gen_bat_strawberry_eat_0",
+        "gen_bat_strawberry_eat_1",
+        "gen_bat_strawberry_eat_2",
+        "gen_bat_strawberry_eat_3",
+        "gen_bat_strawberry_eat_4",
+        "gen_bat_strawberry_eat_5",
+        "gen_bat_strawberry_eat_6",
+        "gen_bat_strawberry_eat_7"
+      ]
+    },
+    "blossom": {
+      "idle": [
+        "gen_bat_blossom_idle_0",
+        "gen_bat_blossom_idle_1",
+        "gen_bat_blossom_idle_2",
+        "gen_bat_blossom_idle_3",
+        "gen_bat_blossom_idle_4",
+        "gen_bat_blossom_idle_5",
+        "gen_bat_blossom_idle_6",
+        "gen_bat_blossom_idle_7"
+      ],
+      "sleep": [
+        "gen_bat_blossom_sleep_0",
+        "gen_bat_blossom_sleep_1",
+        "gen_bat_blossom_sleep_2",
+        "gen_bat_blossom_sleep_3",
+        "gen_bat_blossom_sleep_4",
+        "gen_bat_blossom_sleep_5",
+        "gen_bat_blossom_sleep_6",
+        "gen_bat_blossom_sleep_7"
+      ],
+      "fly": [
+        "gen_bat_blossom_fly_0",
+        "gen_bat_blossom_fly_1",
+        "gen_bat_blossom_fly_2",
+        "gen_bat_blossom_fly_3",
+        "gen_bat_blossom_fly_4",
+        "gen_bat_blossom_fly_5"
+      ],
+      "pet": [
+        "gen_bat_blossom_pet_0",
+        "gen_bat_blossom_pet_1",
+        "gen_bat_blossom_pet_2",
+        "gen_bat_blossom_pet_3",
+        "gen_bat_blossom_pet_4",
+        "gen_bat_blossom_pet_5",
+        "gen_bat_blossom_pet_6",
+        "gen_bat_blossom_pet_7"
+      ],
+      "eat": [
+        "gen_bat_blossom_eat_0",
+        "gen_bat_blossom_eat_1",
+        "gen_bat_blossom_eat_2",
+        "gen_bat_blossom_eat_3",
+        "gen_bat_blossom_eat_4",
+        "gen_bat_blossom_eat_5",
+        "gen_bat_blossom_eat_6",
+        "gen_bat_blossom_eat_7"
+      ]
+    },
+    "moss": {
+      "idle": [
+        "gen_bat_moss_idle_0",
+        "gen_bat_moss_idle_1",
+        "gen_bat_moss_idle_2",
+        "gen_bat_moss_idle_3",
+        "gen_bat_moss_idle_4",
+        "gen_bat_moss_idle_5",
+        "gen_bat_moss_idle_6",
+        "gen_bat_moss_idle_7"
+      ],
+      "sleep": [
+        "gen_bat_moss_sleep_0",
+        "gen_bat_moss_sleep_1",
+        "gen_bat_moss_sleep_2",
+        "gen_bat_moss_sleep_3",
+        "gen_bat_moss_sleep_4",
+        "gen_bat_moss_sleep_5",
+        "gen_bat_moss_sleep_6",
+        "gen_bat_moss_sleep_7"
+      ],
+      "fly": [
+        "gen_bat_moss_fly_0",
+        "gen_bat_moss_fly_1",
+        "gen_bat_moss_fly_2",
+        "gen_bat_moss_fly_3",
+        "gen_bat_moss_fly_4",
+        "gen_bat_moss_fly_5"
+      ],
+      "pet": [
+        "gen_bat_moss_pet_0",
+        "gen_bat_moss_pet_1",
+        "gen_bat_moss_pet_2",
+        "gen_bat_moss_pet_3",
+        "gen_bat_moss_pet_4",
+        "gen_bat_moss_pet_5",
+        "gen_bat_moss_pet_6",
+        "gen_bat_moss_pet_7"
+      ],
+      "eat": [
+        "gen_bat_moss_eat_0",
+        "gen_bat_moss_eat_1",
+        "gen_bat_moss_eat_2",
+        "gen_bat_moss_eat_3",
+        "gen_bat_moss_eat_4",
+        "gen_bat_moss_eat_5",
+        "gen_bat_moss_eat_6",
+        "gen_bat_moss_eat_7"
+      ]
+    },
+    "sunset": {
+      "idle": [
+        "gen_bat_sunset_idle_0",
+        "gen_bat_sunset_idle_1",
+        "gen_bat_sunset_idle_2",
+        "gen_bat_sunset_idle_3",
+        "gen_bat_sunset_idle_4",
+        "gen_bat_sunset_idle_5",
+        "gen_bat_sunset_idle_6",
+        "gen_bat_sunset_idle_7"
+      ],
+      "sleep": [
+        "gen_bat_sunset_sleep_0",
+        "gen_bat_sunset_sleep_1",
+        "gen_bat_sunset_sleep_2",
+        "gen_bat_sunset_sleep_3",
+        "gen_bat_sunset_sleep_4",
+        "gen_bat_sunset_sleep_5",
+        "gen_bat_sunset_sleep_6",
+        "gen_bat_sunset_sleep_7"
+      ],
+      "fly": [
+        "gen_bat_sunset_fly_0",
+        "gen_bat_sunset_fly_1",
+        "gen_bat_sunset_fly_2",
+        "gen_bat_sunset_fly_3",
+        "gen_bat_sunset_fly_4",
+        "gen_bat_sunset_fly_5"
+      ],
+      "pet": [
+        "gen_bat_sunset_pet_0",
+        "gen_bat_sunset_pet_1",
+        "gen_bat_sunset_pet_2",
+        "gen_bat_sunset_pet_3",
+        "gen_bat_sunset_pet_4",
+        "gen_bat_sunset_pet_5",
+        "gen_bat_sunset_pet_6",
+        "gen_bat_sunset_pet_7"
+      ],
+      "eat": [
+        "gen_bat_sunset_eat_0",
+        "gen_bat_sunset_eat_1",
+        "gen_bat_sunset_eat_2",
+        "gen_bat_sunset_eat_3",
+        "gen_bat_sunset_eat_4",
+        "gen_bat_sunset_eat_5",
+        "gen_bat_sunset_eat_6",
+        "gen_bat_sunset_eat_7"
+      ]
+    },
+    "snow": {
+      "idle": [
+        "gen_bat_snow_idle_0",
+        "gen_bat_snow_idle_1",
+        "gen_bat_snow_idle_2",
+        "gen_bat_snow_idle_3",
+        "gen_bat_snow_idle_4",
+        "gen_bat_snow_idle_5",
+        "gen_bat_snow_idle_6",
+        "gen_bat_snow_idle_7"
+      ],
+      "sleep": [
+        "gen_bat_snow_sleep_0",
+        "gen_bat_snow_sleep_1",
+        "gen_bat_snow_sleep_2",
+        "gen_bat_snow_sleep_3",
+        "gen_bat_snow_sleep_4",
+        "gen_bat_snow_sleep_5",
+        "gen_bat_snow_sleep_6",
+        "gen_bat_snow_sleep_7"
+      ],
+      "fly": [
+        "gen_bat_snow_fly_0",
+        "gen_bat_snow_fly_1",
+        "gen_bat_snow_fly_2",
+        "gen_bat_snow_fly_3",
+        "gen_bat_snow_fly_4",
+        "gen_bat_snow_fly_5"
+      ],
+      "pet": [
+        "gen_bat_snow_pet_0",
+        "gen_bat_snow_pet_1",
+        "gen_bat_snow_pet_2",
+        "gen_bat_snow_pet_3",
+        "gen_bat_snow_pet_4",
+        "gen_bat_snow_pet_5",
+        "gen_bat_snow_pet_6",
+        "gen_bat_snow_pet_7"
+      ],
+      "eat": [
+        "gen_bat_snow_eat_0",
+        "gen_bat_snow_eat_1",
+        "gen_bat_snow_eat_2",
+        "gen_bat_snow_eat_3",
+        "gen_bat_snow_eat_4",
+        "gen_bat_snow_eat_5",
+        "gen_bat_snow_eat_6",
+        "gen_bat_snow_eat_7"
+      ]
+    },
+    "cloud": {
+      "idle": [
+        "gen_bat_cloud_idle_0",
+        "gen_bat_cloud_idle_1",
+        "gen_bat_cloud_idle_2",
+        "gen_bat_cloud_idle_3",
+        "gen_bat_cloud_idle_4",
+        "gen_bat_cloud_idle_5",
+        "gen_bat_cloud_idle_6",
+        "gen_bat_cloud_idle_7"
+      ],
+      "sleep": [
+        "gen_bat_cloud_sleep_0",
+        "gen_bat_cloud_sleep_1",
+        "gen_bat_cloud_sleep_2",
+        "gen_bat_cloud_sleep_3",
+        "gen_bat_cloud_sleep_4",
+        "gen_bat_cloud_sleep_5",
+        "gen_bat_cloud_sleep_6",
+        "gen_bat_cloud_sleep_7"
+      ],
+      "fly": [
+        "gen_bat_cloud_fly_0",
+        "gen_bat_cloud_fly_1",
+        "gen_bat_cloud_fly_2",
+        "gen_bat_cloud_fly_3",
+        "gen_bat_cloud_fly_4",
+        "gen_bat_cloud_fly_5"
+      ],
+      "pet": [
+        "gen_bat_cloud_pet_0",
+        "gen_bat_cloud_pet_1",
+        "gen_bat_cloud_pet_2",
+        "gen_bat_cloud_pet_3",
+        "gen_bat_cloud_pet_4",
+        "gen_bat_cloud_pet_5",
+        "gen_bat_cloud_pet_6",
+        "gen_bat_cloud_pet_7"
+      ],
+      "eat": [
+        "gen_bat_cloud_eat_0",
+        "gen_bat_cloud_eat_1",
+        "gen_bat_cloud_eat_2",
+        "gen_bat_cloud_eat_3",
+        "gen_bat_cloud_eat_4",
+        "gen_bat_cloud_eat_5",
+        "gen_bat_cloud_eat_6",
+        "gen_bat_cloud_eat_7"
+      ]
+    },
+    "moonwing": {
+      "idle": [
+        "gen_bat_moonwing_idle_0",
+        "gen_bat_moonwing_idle_1",
+        "gen_bat_moonwing_idle_2",
+        "gen_bat_moonwing_idle_3",
+        "gen_bat_moonwing_idle_4",
+        "gen_bat_moonwing_idle_5",
+        "gen_bat_moonwing_idle_6",
+        "gen_bat_moonwing_idle_7"
+      ],
+      "sleep": [
+        "gen_bat_moonwing_sleep_0",
+        "gen_bat_moonwing_sleep_1",
+        "gen_bat_moonwing_sleep_2",
+        "gen_bat_moonwing_sleep_3",
+        "gen_bat_moonwing_sleep_4",
+        "gen_bat_moonwing_sleep_5",
+        "gen_bat_moonwing_sleep_6",
+        "gen_bat_moonwing_sleep_7"
+      ],
+      "fly": [
+        "gen_bat_moonwing_fly_0",
+        "gen_bat_moonwing_fly_1",
+        "gen_bat_moonwing_fly_2",
+        "gen_bat_moonwing_fly_3",
+        "gen_bat_moonwing_fly_4",
+        "gen_bat_moonwing_fly_5"
+      ],
+      "pet": [
+        "gen_bat_moonwing_pet_0",
+        "gen_bat_moonwing_pet_1",
+        "gen_bat_moonwing_pet_2",
+        "gen_bat_moonwing_pet_3",
+        "gen_bat_moonwing_pet_4",
+        "gen_bat_moonwing_pet_5",
+        "gen_bat_moonwing_pet_6",
+        "gen_bat_moonwing_pet_7"
+      ],
+      "eat": [
+        "gen_bat_moonwing_eat_0",
+        "gen_bat_moonwing_eat_1",
+        "gen_bat_moonwing_eat_2",
+        "gen_bat_moonwing_eat_3",
+        "gen_bat_moonwing_eat_4",
+        "gen_bat_moonwing_eat_5",
+        "gen_bat_moonwing_eat_6",
+        "gen_bat_moonwing_eat_7"
+      ]
+    },
+    "golden": {
+      "idle": [
+        "gen_bat_golden_idle_0",
+        "gen_bat_golden_idle_1",
+        "gen_bat_golden_idle_2",
+        "gen_bat_golden_idle_3",
+        "gen_bat_golden_idle_4",
+        "gen_bat_golden_idle_5",
+        "gen_bat_golden_idle_6",
+        "gen_bat_golden_idle_7"
+      ],
+      "sleep": [
+        "gen_bat_golden_sleep_0",
+        "gen_bat_golden_sleep_1",
+        "gen_bat_golden_sleep_2",
+        "gen_bat_golden_sleep_3",
+        "gen_bat_golden_sleep_4",
+        "gen_bat_golden_sleep_5",
+        "gen_bat_golden_sleep_6",
+        "gen_bat_golden_sleep_7"
+      ],
+      "fly": [
+        "gen_bat_golden_fly_0",
+        "gen_bat_golden_fly_1",
+        "gen_bat_golden_fly_2",
+        "gen_bat_golden_fly_3",
+        "gen_bat_golden_fly_4",
+        "gen_bat_golden_fly_5"
+      ],
+      "pet": [
+        "gen_bat_golden_pet_0",
+        "gen_bat_golden_pet_1",
+        "gen_bat_golden_pet_2",
+        "gen_bat_golden_pet_3",
+        "gen_bat_golden_pet_4",
+        "gen_bat_golden_pet_5",
+        "gen_bat_golden_pet_6",
+        "gen_bat_golden_pet_7"
+      ],
+      "eat": [
+        "gen_bat_golden_eat_0",
+        "gen_bat_golden_eat_1",
+        "gen_bat_golden_eat_2",
+        "gen_bat_golden_eat_3",
+        "gen_bat_golden_eat_4",
+        "gen_bat_golden_eat_5",
+        "gen_bat_golden_eat_6",
+        "gen_bat_golden_eat_7"
+      ]
+    },
+    "crystal": {
+      "idle": [
+        "gen_bat_crystal_idle_0",
+        "gen_bat_crystal_idle_1",
+        "gen_bat_crystal_idle_2",
+        "gen_bat_crystal_idle_3",
+        "gen_bat_crystal_idle_4",
+        "gen_bat_crystal_idle_5",
+        "gen_bat_crystal_idle_6",
+        "gen_bat_crystal_idle_7"
+      ],
+      "sleep": [
+        "gen_bat_crystal_sleep_0",
+        "gen_bat_crystal_sleep_1",
+        "gen_bat_crystal_sleep_2",
+        "gen_bat_crystal_sleep_3",
+        "gen_bat_crystal_sleep_4",
+        "gen_bat_crystal_sleep_5",
+        "gen_bat_crystal_sleep_6",
+        "gen_bat_crystal_sleep_7"
+      ],
+      "fly": [
+        "gen_bat_crystal_fly_0",
+        "gen_bat_crystal_fly_1",
+        "gen_bat_crystal_fly_2",
+        "gen_bat_crystal_fly_3",
+        "gen_bat_crystal_fly_4",
+        "gen_bat_crystal_fly_5"
+      ],
+      "pet": [
+        "gen_bat_crystal_pet_0",
+        "gen_bat_crystal_pet_1",
+        "gen_bat_crystal_pet_2",
+        "gen_bat_crystal_pet_3",
+        "gen_bat_crystal_pet_4",
+        "gen_bat_crystal_pet_5",
+        "gen_bat_crystal_pet_6",
+        "gen_bat_crystal_pet_7"
+      ],
+      "eat": [
+        "gen_bat_crystal_eat_0",
+        "gen_bat_crystal_eat_1",
+        "gen_bat_crystal_eat_2",
+        "gen_bat_crystal_eat_3",
+        "gen_bat_crystal_eat_4",
+        "gen_bat_crystal_eat_5",
+        "gen_bat_crystal_eat_6",
+        "gen_bat_crystal_eat_7"
+      ]
+    },
+    "vampire": {
+      "idle": [
+        "gen_bat_vampire_idle_0",
+        "gen_bat_vampire_idle_1",
+        "gen_bat_vampire_idle_2",
+        "gen_bat_vampire_idle_3",
+        "gen_bat_vampire_idle_4",
+        "gen_bat_vampire_idle_5",
+        "gen_bat_vampire_idle_6",
+        "gen_bat_vampire_idle_7"
+      ],
+      "sleep": [
+        "gen_bat_vampire_sleep_0",
+        "gen_bat_vampire_sleep_1",
+        "gen_bat_vampire_sleep_2",
+        "gen_bat_vampire_sleep_3",
+        "gen_bat_vampire_sleep_4",
+        "gen_bat_vampire_sleep_5",
+        "gen_bat_vampire_sleep_6",
+        "gen_bat_vampire_sleep_7"
+      ],
+      "fly": [
+        "gen_bat_vampire_fly_0",
+        "gen_bat_vampire_fly_1",
+        "gen_bat_vampire_fly_2",
+        "gen_bat_vampire_fly_3",
+        "gen_bat_vampire_fly_4",
+        "gen_bat_vampire_fly_5"
+      ],
+      "pet": [
+        "gen_bat_vampire_pet_0",
+        "gen_bat_vampire_pet_1",
+        "gen_bat_vampire_pet_2",
+        "gen_bat_vampire_pet_3",
+        "gen_bat_vampire_pet_4",
+        "gen_bat_vampire_pet_5",
+        "gen_bat_vampire_pet_6",
+        "gen_bat_vampire_pet_7"
+      ],
+      "eat": [
+        "gen_bat_vampire_eat_0",
+        "gen_bat_vampire_eat_1",
+        "gen_bat_vampire_eat_2",
+        "gen_bat_vampire_eat_3",
+        "gen_bat_vampire_eat_4",
+        "gen_bat_vampire_eat_5",
+        "gen_bat_vampire_eat_6",
+        "gen_bat_vampire_eat_7"
+      ]
+    },
+    "galaxy": {
+      "idle": [
+        "gen_bat_galaxy_idle_0",
+        "gen_bat_galaxy_idle_1",
+        "gen_bat_galaxy_idle_2",
+        "gen_bat_galaxy_idle_3",
+        "gen_bat_galaxy_idle_4",
+        "gen_bat_galaxy_idle_5",
+        "gen_bat_galaxy_idle_6",
+        "gen_bat_galaxy_idle_7"
+      ],
+      "sleep": [
+        "gen_bat_galaxy_sleep_0",
+        "gen_bat_galaxy_sleep_1",
+        "gen_bat_galaxy_sleep_2",
+        "gen_bat_galaxy_sleep_3",
+        "gen_bat_galaxy_sleep_4",
+        "gen_bat_galaxy_sleep_5",
+        "gen_bat_galaxy_sleep_6",
+        "gen_bat_galaxy_sleep_7"
+      ],
+      "fly": [
+        "gen_bat_galaxy_fly_0",
+        "gen_bat_galaxy_fly_1",
+        "gen_bat_galaxy_fly_2",
+        "gen_bat_galaxy_fly_3",
+        "gen_bat_galaxy_fly_4",
+        "gen_bat_galaxy_fly_5"
+      ],
+      "pet": [
+        "gen_bat_galaxy_pet_0",
+        "gen_bat_galaxy_pet_1",
+        "gen_bat_galaxy_pet_2",
+        "gen_bat_galaxy_pet_3",
+        "gen_bat_galaxy_pet_4",
+        "gen_bat_galaxy_pet_5",
+        "gen_bat_galaxy_pet_6",
+        "gen_bat_galaxy_pet_7"
+      ],
+      "eat": [
+        "gen_bat_galaxy_eat_0",
+        "gen_bat_galaxy_eat_1",
+        "gen_bat_galaxy_eat_2",
+        "gen_bat_galaxy_eat_3",
+        "gen_bat_galaxy_eat_4",
+        "gen_bat_galaxy_eat_5",
+        "gen_bat_galaxy_eat_6",
+        "gen_bat_galaxy_eat_7"
+      ]
+    },
+    "eclipse": {
+      "idle": [
+        "gen_bat_eclipse_idle_0",
+        "gen_bat_eclipse_idle_1",
+        "gen_bat_eclipse_idle_2",
+        "gen_bat_eclipse_idle_3",
+        "gen_bat_eclipse_idle_4",
+        "gen_bat_eclipse_idle_5",
+        "gen_bat_eclipse_idle_6",
+        "gen_bat_eclipse_idle_7"
+      ],
+      "sleep": [
+        "gen_bat_eclipse_sleep_0",
+        "gen_bat_eclipse_sleep_1",
+        "gen_bat_eclipse_sleep_2",
+        "gen_bat_eclipse_sleep_3",
+        "gen_bat_eclipse_sleep_4",
+        "gen_bat_eclipse_sleep_5",
+        "gen_bat_eclipse_sleep_6",
+        "gen_bat_eclipse_sleep_7"
+      ],
+      "fly": [
+        "gen_bat_eclipse_fly_0",
+        "gen_bat_eclipse_fly_1",
+        "gen_bat_eclipse_fly_2",
+        "gen_bat_eclipse_fly_3",
+        "gen_bat_eclipse_fly_4",
+        "gen_bat_eclipse_fly_5"
+      ],
+      "pet": [
+        "gen_bat_eclipse_pet_0",
+        "gen_bat_eclipse_pet_1",
+        "gen_bat_eclipse_pet_2",
+        "gen_bat_eclipse_pet_3",
+        "gen_bat_eclipse_pet_4",
+        "gen_bat_eclipse_pet_5",
+        "gen_bat_eclipse_pet_6",
+        "gen_bat_eclipse_pet_7"
+      ],
+      "eat": [
+        "gen_bat_eclipse_eat_0",
+        "gen_bat_eclipse_eat_1",
+        "gen_bat_eclipse_eat_2",
+        "gen_bat_eclipse_eat_3",
+        "gen_bat_eclipse_eat_4",
+        "gen_bat_eclipse_eat_5",
+        "gen_bat_eclipse_eat_6",
+        "gen_bat_eclipse_eat_7"
+      ]
+    },
+    "bumblebee": {
+      "idle": [
+        "gen_bat_bumblebee_idle_0",
+        "gen_bat_bumblebee_idle_1",
+        "gen_bat_bumblebee_idle_2",
+        "gen_bat_bumblebee_idle_3",
+        "gen_bat_bumblebee_idle_4",
+        "gen_bat_bumblebee_idle_5",
+        "gen_bat_bumblebee_idle_6",
+        "gen_bat_bumblebee_idle_7"
+      ],
+      "sleep": [
+        "gen_bat_bumblebee_sleep_0",
+        "gen_bat_bumblebee_sleep_1",
+        "gen_bat_bumblebee_sleep_2",
+        "gen_bat_bumblebee_sleep_3",
+        "gen_bat_bumblebee_sleep_4",
+        "gen_bat_bumblebee_sleep_5",
+        "gen_bat_bumblebee_sleep_6",
+        "gen_bat_bumblebee_sleep_7"
+      ],
+      "fly": [
+        "gen_bat_bumblebee_fly_0",
+        "gen_bat_bumblebee_fly_1",
+        "gen_bat_bumblebee_fly_2",
+        "gen_bat_bumblebee_fly_3",
+        "gen_bat_bumblebee_fly_4",
+        "gen_bat_bumblebee_fly_5"
+      ],
+      "pet": [
+        "gen_bat_bumblebee_pet_0",
+        "gen_bat_bumblebee_pet_1",
+        "gen_bat_bumblebee_pet_2",
+        "gen_bat_bumblebee_pet_3",
+        "gen_bat_bumblebee_pet_4",
+        "gen_bat_bumblebee_pet_5",
+        "gen_bat_bumblebee_pet_6",
+        "gen_bat_bumblebee_pet_7"
+      ],
+      "eat": [
+        "gen_bat_bumblebee_eat_0",
+        "gen_bat_bumblebee_eat_1",
+        "gen_bat_bumblebee_eat_2",
+        "gen_bat_bumblebee_eat_3",
+        "gen_bat_bumblebee_eat_4",
+        "gen_bat_bumblebee_eat_5",
+        "gen_bat_bumblebee_eat_6",
+        "gen_bat_bumblebee_eat_7"
+      ]
+    },
+    "sticky": {
+      "idle": [
+        "gen_bat_sticky_idle_0",
+        "gen_bat_sticky_idle_1",
+        "gen_bat_sticky_idle_2",
+        "gen_bat_sticky_idle_3",
+        "gen_bat_sticky_idle_4",
+        "gen_bat_sticky_idle_5",
+        "gen_bat_sticky_idle_6",
+        "gen_bat_sticky_idle_7"
+      ],
+      "sleep": [
+        "gen_bat_sticky_sleep_0",
+        "gen_bat_sticky_sleep_1",
+        "gen_bat_sticky_sleep_2",
+        "gen_bat_sticky_sleep_3",
+        "gen_bat_sticky_sleep_4",
+        "gen_bat_sticky_sleep_5",
+        "gen_bat_sticky_sleep_6",
+        "gen_bat_sticky_sleep_7"
+      ],
+      "fly": [
+        "gen_bat_sticky_fly_0",
+        "gen_bat_sticky_fly_1",
+        "gen_bat_sticky_fly_2",
+        "gen_bat_sticky_fly_3",
+        "gen_bat_sticky_fly_4",
+        "gen_bat_sticky_fly_5"
+      ],
+      "pet": [
+        "gen_bat_sticky_pet_0",
+        "gen_bat_sticky_pet_1",
+        "gen_bat_sticky_pet_2",
+        "gen_bat_sticky_pet_3",
+        "gen_bat_sticky_pet_4",
+        "gen_bat_sticky_pet_5",
+        "gen_bat_sticky_pet_6",
+        "gen_bat_sticky_pet_7"
+      ],
+      "eat": [
+        "gen_bat_sticky_eat_0",
+        "gen_bat_sticky_eat_1",
+        "gen_bat_sticky_eat_2",
+        "gen_bat_sticky_eat_3",
+        "gen_bat_sticky_eat_4",
+        "gen_bat_sticky_eat_5",
+        "gen_bat_sticky_eat_6",
+        "gen_bat_sticky_eat_7"
+      ]
+    },
+    "marshmallow": {
+      "idle": [
+        "gen_bat_marshmallow_idle_0",
+        "gen_bat_marshmallow_idle_1",
+        "gen_bat_marshmallow_idle_2",
+        "gen_bat_marshmallow_idle_3",
+        "gen_bat_marshmallow_idle_4",
+        "gen_bat_marshmallow_idle_5",
+        "gen_bat_marshmallow_idle_6",
+        "gen_bat_marshmallow_idle_7"
+      ],
+      "sleep": [
+        "gen_bat_marshmallow_sleep_0",
+        "gen_bat_marshmallow_sleep_1",
+        "gen_bat_marshmallow_sleep_2",
+        "gen_bat_marshmallow_sleep_3",
+        "gen_bat_marshmallow_sleep_4",
+        "gen_bat_marshmallow_sleep_5",
+        "gen_bat_marshmallow_sleep_6",
+        "gen_bat_marshmallow_sleep_7"
+      ],
+      "fly": [
+        "gen_bat_marshmallow_fly_0",
+        "gen_bat_marshmallow_fly_1",
+        "gen_bat_marshmallow_fly_2",
+        "gen_bat_marshmallow_fly_3",
+        "gen_bat_marshmallow_fly_4",
+        "gen_bat_marshmallow_fly_5"
+      ],
+      "pet": [
+        "gen_bat_marshmallow_pet_0",
+        "gen_bat_marshmallow_pet_1",
+        "gen_bat_marshmallow_pet_2",
+        "gen_bat_marshmallow_pet_3",
+        "gen_bat_marshmallow_pet_4",
+        "gen_bat_marshmallow_pet_5",
+        "gen_bat_marshmallow_pet_6",
+        "gen_bat_marshmallow_pet_7"
+      ],
+      "eat": [
+        "gen_bat_marshmallow_eat_0",
+        "gen_bat_marshmallow_eat_1",
+        "gen_bat_marshmallow_eat_2",
+        "gen_bat_marshmallow_eat_3",
+        "gen_bat_marshmallow_eat_4",
+        "gen_bat_marshmallow_eat_5",
+        "gen_bat_marshmallow_eat_6",
+        "gen_bat_marshmallow_eat_7"
+      ]
+    },
+    "honk": {
+      "idle": [
+        "gen_bat_honk_idle_0",
+        "gen_bat_honk_idle_1",
+        "gen_bat_honk_idle_2",
+        "gen_bat_honk_idle_3",
+        "gen_bat_honk_idle_4",
+        "gen_bat_honk_idle_5",
+        "gen_bat_honk_idle_6",
+        "gen_bat_honk_idle_7"
+      ],
+      "sleep": [
+        "gen_bat_honk_sleep_0",
+        "gen_bat_honk_sleep_1",
+        "gen_bat_honk_sleep_2",
+        "gen_bat_honk_sleep_3",
+        "gen_bat_honk_sleep_4",
+        "gen_bat_honk_sleep_5",
+        "gen_bat_honk_sleep_6",
+        "gen_bat_honk_sleep_7"
+      ],
+      "fly": [
+        "gen_bat_honk_fly_0",
+        "gen_bat_honk_fly_1",
+        "gen_bat_honk_fly_2",
+        "gen_bat_honk_fly_3",
+        "gen_bat_honk_fly_4",
+        "gen_bat_honk_fly_5"
+      ],
+      "pet": [
+        "gen_bat_honk_pet_0",
+        "gen_bat_honk_pet_1",
+        "gen_bat_honk_pet_2",
+        "gen_bat_honk_pet_3",
+        "gen_bat_honk_pet_4",
+        "gen_bat_honk_pet_5",
+        "gen_bat_honk_pet_6",
+        "gen_bat_honk_pet_7"
+      ],
+      "eat": [
+        "gen_bat_honk_eat_0",
+        "gen_bat_honk_eat_1",
+        "gen_bat_honk_eat_2",
+        "gen_bat_honk_eat_3",
+        "gen_bat_honk_eat_4",
+        "gen_bat_honk_eat_5",
+        "gen_bat_honk_eat_6",
+        "gen_bat_honk_eat_7"
+      ]
+    },
+    "ember": {
+      "idle": [
+        "gen_bat_ember_idle_0",
+        "gen_bat_ember_idle_1",
+        "gen_bat_ember_idle_2",
+        "gen_bat_ember_idle_3",
+        "gen_bat_ember_idle_4",
+        "gen_bat_ember_idle_5",
+        "gen_bat_ember_idle_6",
+        "gen_bat_ember_idle_7"
+      ],
+      "sleep": [
+        "gen_bat_ember_sleep_0",
+        "gen_bat_ember_sleep_1",
+        "gen_bat_ember_sleep_2",
+        "gen_bat_ember_sleep_3",
+        "gen_bat_ember_sleep_4",
+        "gen_bat_ember_sleep_5",
+        "gen_bat_ember_sleep_6",
+        "gen_bat_ember_sleep_7"
+      ],
+      "fly": [
+        "gen_bat_ember_fly_0",
+        "gen_bat_ember_fly_1",
+        "gen_bat_ember_fly_2",
+        "gen_bat_ember_fly_3",
+        "gen_bat_ember_fly_4",
+        "gen_bat_ember_fly_5"
+      ],
+      "pet": [
+        "gen_bat_ember_pet_0",
+        "gen_bat_ember_pet_1",
+        "gen_bat_ember_pet_2",
+        "gen_bat_ember_pet_3",
+        "gen_bat_ember_pet_4",
+        "gen_bat_ember_pet_5",
+        "gen_bat_ember_pet_6",
+        "gen_bat_ember_pet_7"
+      ],
+      "eat": [
+        "gen_bat_ember_eat_0",
+        "gen_bat_ember_eat_1",
+        "gen_bat_ember_eat_2",
+        "gen_bat_ember_eat_3",
+        "gen_bat_ember_eat_4",
+        "gen_bat_ember_eat_5",
+        "gen_bat_ember_eat_6",
+        "gen_bat_ember_eat_7"
+      ]
+    },
+    "nectar": {
+      "idle": [
+        "gen_bat_nectar_idle_0",
+        "gen_bat_nectar_idle_1",
+        "gen_bat_nectar_idle_2",
+        "gen_bat_nectar_idle_3",
+        "gen_bat_nectar_idle_4",
+        "gen_bat_nectar_idle_5",
+        "gen_bat_nectar_idle_6",
+        "gen_bat_nectar_idle_7"
+      ],
+      "sleep": [
+        "gen_bat_nectar_sleep_0",
+        "gen_bat_nectar_sleep_1",
+        "gen_bat_nectar_sleep_2",
+        "gen_bat_nectar_sleep_3",
+        "gen_bat_nectar_sleep_4",
+        "gen_bat_nectar_sleep_5",
+        "gen_bat_nectar_sleep_6",
+        "gen_bat_nectar_sleep_7"
+      ],
+      "fly": [
+        "gen_bat_nectar_fly_0",
+        "gen_bat_nectar_fly_1",
+        "gen_bat_nectar_fly_2",
+        "gen_bat_nectar_fly_3",
+        "gen_bat_nectar_fly_4",
+        "gen_bat_nectar_fly_5"
+      ],
+      "pet": [
+        "gen_bat_nectar_pet_0",
+        "gen_bat_nectar_pet_1",
+        "gen_bat_nectar_pet_2",
+        "gen_bat_nectar_pet_3",
+        "gen_bat_nectar_pet_4",
+        "gen_bat_nectar_pet_5",
+        "gen_bat_nectar_pet_6",
+        "gen_bat_nectar_pet_7"
+      ],
+      "eat": [
+        "gen_bat_nectar_eat_0",
+        "gen_bat_nectar_eat_1",
+        "gen_bat_nectar_eat_2",
+        "gen_bat_nectar_eat_3",
+        "gen_bat_nectar_eat_4",
+        "gen_bat_nectar_eat_5",
+        "gen_bat_nectar_eat_6",
+        "gen_bat_nectar_eat_7"
+      ]
+    },
+    "tube-nose": {
+      "idle": [
+        "gen_bat_tube-nose_idle_0",
+        "gen_bat_tube-nose_idle_1",
+        "gen_bat_tube-nose_idle_2",
+        "gen_bat_tube-nose_idle_3",
+        "gen_bat_tube-nose_idle_4",
+        "gen_bat_tube-nose_idle_5",
+        "gen_bat_tube-nose_idle_6",
+        "gen_bat_tube-nose_idle_7"
+      ],
+      "sleep": [
+        "gen_bat_tube-nose_sleep_0",
+        "gen_bat_tube-nose_sleep_1",
+        "gen_bat_tube-nose_sleep_2",
+        "gen_bat_tube-nose_sleep_3",
+        "gen_bat_tube-nose_sleep_4",
+        "gen_bat_tube-nose_sleep_5",
+        "gen_bat_tube-nose_sleep_6",
+        "gen_bat_tube-nose_sleep_7"
+      ],
+      "fly": [
+        "gen_bat_tube-nose_fly_0",
+        "gen_bat_tube-nose_fly_1",
+        "gen_bat_tube-nose_fly_2",
+        "gen_bat_tube-nose_fly_3",
+        "gen_bat_tube-nose_fly_4",
+        "gen_bat_tube-nose_fly_5"
+      ],
+      "pet": [
+        "gen_bat_tube-nose_pet_0",
+        "gen_bat_tube-nose_pet_1",
+        "gen_bat_tube-nose_pet_2",
+        "gen_bat_tube-nose_pet_3",
+        "gen_bat_tube-nose_pet_4",
+        "gen_bat_tube-nose_pet_5",
+        "gen_bat_tube-nose_pet_6",
+        "gen_bat_tube-nose_pet_7"
+      ],
+      "eat": [
+        "gen_bat_tube-nose_eat_0",
+        "gen_bat_tube-nose_eat_1",
+        "gen_bat_tube-nose_eat_2",
+        "gen_bat_tube-nose_eat_3",
+        "gen_bat_tube-nose_eat_4",
+        "gen_bat_tube-nose_eat_5",
+        "gen_bat_tube-nose_eat_6",
+        "gen_bat_tube-nose_eat_7"
+      ]
+    },
+    "polka": {
+      "idle": [
+        "gen_bat_polka_idle_0",
+        "gen_bat_polka_idle_1",
+        "gen_bat_polka_idle_2",
+        "gen_bat_polka_idle_3",
+        "gen_bat_polka_idle_4",
+        "gen_bat_polka_idle_5",
+        "gen_bat_polka_idle_6",
+        "gen_bat_polka_idle_7"
+      ],
+      "sleep": [
+        "gen_bat_polka_sleep_0",
+        "gen_bat_polka_sleep_1",
+        "gen_bat_polka_sleep_2",
+        "gen_bat_polka_sleep_3",
+        "gen_bat_polka_sleep_4",
+        "gen_bat_polka_sleep_5",
+        "gen_bat_polka_sleep_6",
+        "gen_bat_polka_sleep_7"
+      ],
+      "fly": [
+        "gen_bat_polka_fly_0",
+        "gen_bat_polka_fly_1",
+        "gen_bat_polka_fly_2",
+        "gen_bat_polka_fly_3",
+        "gen_bat_polka_fly_4",
+        "gen_bat_polka_fly_5"
+      ],
+      "pet": [
+        "gen_bat_polka_pet_0",
+        "gen_bat_polka_pet_1",
+        "gen_bat_polka_pet_2",
+        "gen_bat_polka_pet_3",
+        "gen_bat_polka_pet_4",
+        "gen_bat_polka_pet_5",
+        "gen_bat_polka_pet_6",
+        "gen_bat_polka_pet_7"
+      ],
+      "eat": [
+        "gen_bat_polka_eat_0",
+        "gen_bat_polka_eat_1",
+        "gen_bat_polka_eat_2",
+        "gen_bat_polka_eat_3",
+        "gen_bat_polka_eat_4",
+        "gen_bat_polka_eat_5",
+        "gen_bat_polka_eat_6",
+        "gen_bat_polka_eat_7"
+      ]
+    },
+    "wrinkle": {
+      "idle": [
+        "gen_bat_wrinkle_idle_0",
+        "gen_bat_wrinkle_idle_1",
+        "gen_bat_wrinkle_idle_2",
+        "gen_bat_wrinkle_idle_3",
+        "gen_bat_wrinkle_idle_4",
+        "gen_bat_wrinkle_idle_5",
+        "gen_bat_wrinkle_idle_6",
+        "gen_bat_wrinkle_idle_7"
+      ],
+      "sleep": [
+        "gen_bat_wrinkle_sleep_0",
+        "gen_bat_wrinkle_sleep_1",
+        "gen_bat_wrinkle_sleep_2",
+        "gen_bat_wrinkle_sleep_3",
+        "gen_bat_wrinkle_sleep_4",
+        "gen_bat_wrinkle_sleep_5",
+        "gen_bat_wrinkle_sleep_6",
+        "gen_bat_wrinkle_sleep_7"
+      ],
+      "fly": [
+        "gen_bat_wrinkle_fly_0",
+        "gen_bat_wrinkle_fly_1",
+        "gen_bat_wrinkle_fly_2",
+        "gen_bat_wrinkle_fly_3",
+        "gen_bat_wrinkle_fly_4",
+        "gen_bat_wrinkle_fly_5"
+      ],
+      "pet": [
+        "gen_bat_wrinkle_pet_0",
+        "gen_bat_wrinkle_pet_1",
+        "gen_bat_wrinkle_pet_2",
+        "gen_bat_wrinkle_pet_3",
+        "gen_bat_wrinkle_pet_4",
+        "gen_bat_wrinkle_pet_5",
+        "gen_bat_wrinkle_pet_6",
+        "gen_bat_wrinkle_pet_7"
+      ],
+      "eat": [
+        "gen_bat_wrinkle_eat_0",
+        "gen_bat_wrinkle_eat_1",
+        "gen_bat_wrinkle_eat_2",
+        "gen_bat_wrinkle_eat_3",
+        "gen_bat_wrinkle_eat_4",
+        "gen_bat_wrinkle_eat_5",
+        "gen_bat_wrinkle_eat_6",
+        "gen_bat_wrinkle_eat_7"
+      ]
+    },
+    "walker": {
+      "idle": [
+        "gen_bat_walker_idle_0",
+        "gen_bat_walker_idle_1",
+        "gen_bat_walker_idle_2",
+        "gen_bat_walker_idle_3",
+        "gen_bat_walker_idle_4",
+        "gen_bat_walker_idle_5",
+        "gen_bat_walker_idle_6",
+        "gen_bat_walker_idle_7"
+      ],
+      "sleep": [
+        "gen_bat_walker_sleep_0",
+        "gen_bat_walker_sleep_1",
+        "gen_bat_walker_sleep_2",
+        "gen_bat_walker_sleep_3",
+        "gen_bat_walker_sleep_4",
+        "gen_bat_walker_sleep_5",
+        "gen_bat_walker_sleep_6",
+        "gen_bat_walker_sleep_7"
+      ],
+      "fly": [
+        "gen_bat_walker_fly_0",
+        "gen_bat_walker_fly_1",
+        "gen_bat_walker_fly_2",
+        "gen_bat_walker_fly_3",
+        "gen_bat_walker_fly_4",
+        "gen_bat_walker_fly_5"
+      ],
+      "pet": [
+        "gen_bat_walker_pet_0",
+        "gen_bat_walker_pet_1",
+        "gen_bat_walker_pet_2",
+        "gen_bat_walker_pet_3",
+        "gen_bat_walker_pet_4",
+        "gen_bat_walker_pet_5",
+        "gen_bat_walker_pet_6",
+        "gen_bat_walker_pet_7"
+      ],
+      "eat": [
+        "gen_bat_walker_eat_0",
+        "gen_bat_walker_eat_1",
+        "gen_bat_walker_eat_2",
+        "gen_bat_walker_eat_3",
+        "gen_bat_walker_eat_4",
+        "gen_bat_walker_eat_5",
+        "gen_bat_walker_eat_6",
+        "gen_bat_walker_eat_7"
+      ]
+    },
+    "fox": {
+      "idle": [
+        "gen_bat_fox_idle_0",
+        "gen_bat_fox_idle_1",
+        "gen_bat_fox_idle_2",
+        "gen_bat_fox_idle_3",
+        "gen_bat_fox_idle_4",
+        "gen_bat_fox_idle_5",
+        "gen_bat_fox_idle_6",
+        "gen_bat_fox_idle_7"
+      ],
+      "sleep": [
+        "gen_bat_fox_sleep_0",
+        "gen_bat_fox_sleep_1",
+        "gen_bat_fox_sleep_2",
+        "gen_bat_fox_sleep_3",
+        "gen_bat_fox_sleep_4",
+        "gen_bat_fox_sleep_5",
+        "gen_bat_fox_sleep_6",
+        "gen_bat_fox_sleep_7"
+      ],
+      "fly": [
+        "gen_bat_fox_fly_0",
+        "gen_bat_fox_fly_1",
+        "gen_bat_fox_fly_2",
+        "gen_bat_fox_fly_3",
+        "gen_bat_fox_fly_4",
+        "gen_bat_fox_fly_5"
+      ],
+      "pet": [
+        "gen_bat_fox_pet_0",
+        "gen_bat_fox_pet_1",
+        "gen_bat_fox_pet_2",
+        "gen_bat_fox_pet_3",
+        "gen_bat_fox_pet_4",
+        "gen_bat_fox_pet_5",
+        "gen_bat_fox_pet_6",
+        "gen_bat_fox_pet_7"
+      ],
+      "eat": [
+        "gen_bat_fox_eat_0",
+        "gen_bat_fox_eat_1",
+        "gen_bat_fox_eat_2",
+        "gen_bat_fox_eat_3",
+        "gen_bat_fox_eat_4",
+        "gen_bat_fox_eat_5",
+        "gen_bat_fox_eat_6",
+        "gen_bat_fox_eat_7"
+      ]
+    },
+    "ghost": {
+      "idle": [
+        "gen_bat_ghost_idle_0",
+        "gen_bat_ghost_idle_1",
+        "gen_bat_ghost_idle_2",
+        "gen_bat_ghost_idle_3",
+        "gen_bat_ghost_idle_4",
+        "gen_bat_ghost_idle_5",
+        "gen_bat_ghost_idle_6",
+        "gen_bat_ghost_idle_7"
+      ],
+      "sleep": [
+        "gen_bat_ghost_sleep_0",
+        "gen_bat_ghost_sleep_1",
+        "gen_bat_ghost_sleep_2",
+        "gen_bat_ghost_sleep_3",
+        "gen_bat_ghost_sleep_4",
+        "gen_bat_ghost_sleep_5",
+        "gen_bat_ghost_sleep_6",
+        "gen_bat_ghost_sleep_7"
+      ],
+      "fly": [
+        "gen_bat_ghost_fly_0",
+        "gen_bat_ghost_fly_1",
+        "gen_bat_ghost_fly_2",
+        "gen_bat_ghost_fly_3",
+        "gen_bat_ghost_fly_4",
+        "gen_bat_ghost_fly_5"
+      ],
+      "pet": [
+        "gen_bat_ghost_pet_0",
+        "gen_bat_ghost_pet_1",
+        "gen_bat_ghost_pet_2",
+        "gen_bat_ghost_pet_3",
+        "gen_bat_ghost_pet_4",
+        "gen_bat_ghost_pet_5",
+        "gen_bat_ghost_pet_6",
+        "gen_bat_ghost_pet_7"
+      ],
+      "eat": [
+        "gen_bat_ghost_eat_0",
+        "gen_bat_ghost_eat_1",
+        "gen_bat_ghost_eat_2",
+        "gen_bat_ghost_eat_3",
+        "gen_bat_ghost_eat_4",
+        "gen_bat_ghost_eat_5",
+        "gen_bat_ghost_eat_6",
+        "gen_bat_ghost_eat_7"
+      ]
+    }
+  }
+}

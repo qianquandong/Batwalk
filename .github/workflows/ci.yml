@@ -4,20 +4,38 @@ on:
   push:
     branches: [main]
   pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
+  # The rules package is pure Swift and runs anywhere; this is the fastest
+  # signal (about a minute) and gates the macOS build below.
   core-tests:
-    name: BatwalkCore tests
-    runs-on: macos-15
+    name: BatwalkCore tests (Linux)
+    runs-on: ubuntu-latest
+    container: swift:5.10-jammy
     steps:
       - uses: actions/checkout@v4
-      - name: Select Xcode 26+
-        run: scripts/select-xcode.sh
       - name: Swift version
         run: swift --version
       - name: Run game-rule tests
         run: swift test --package-path Packages/BatwalkCore
 
+  script-tests:
+    name: Release-script tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Test CI fallback detection
+        run: python3 -m unittest discover -s scripts/tests -p 'test_github_ci_fallback.py'
+
+  # Simulator builds need macOS. Standard runners are free for this public
+  # repository, so every pull request compiles the Watch and iPhone apps and runs
+  # the hosted app tests here. Codemagic (codemagic.yaml) keeps the screenshot
+  # and TestFlight workflows.
   build-apps:
     name: Build Watch + iPhone (simulator, unsigned)
     runs-on: macos-15
@@ -40,3 +58,21 @@ jobs:
           scripts/ci-xcodebuild.sh -project Batwalk.xcodeproj -scheme BatwalkPhone \
             -destination 'generic/platform=iOS Simulator' \
             CODE_SIGNING_ALLOWED=NO build
+      - name: Test persistence and step reconciliation
+        run: |
+          device=$(xcrun simctl list devices available -j | python3 -c 'import json,sys; d=json.load(sys.stdin); print(next(x["udid"] for k,v in d["devices"].items() if "iOS" in k for x in v if x["name"].startswith("iPhone")))')
+          scripts/ci-xcodebuild.sh -project Batwalk.xcodeproj -scheme BatwalkPhone \
+            -destination "platform=iOS Simulator,id=$device" \
+            -resultBundlePath AppTests.xcresult CODE_SIGNING_ALLOWED=NO test
+      - name: Validate capability-enabled configuration (unsigned)
+        run: |
+          python3 scripts/configure-capabilities.py --app-group --cloud-backup
+          xcodegen generate --spec project.capabilities.json
+          scripts/ci-xcodebuild.sh -project Batwalk.xcodeproj -scheme BatwalkPhone \
+            -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO build
+      - name: Keep application test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-test-results
+          path: AppTests.xcresult

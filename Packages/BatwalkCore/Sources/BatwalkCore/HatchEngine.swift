@@ -56,6 +56,14 @@ public enum HatchEngine {
         return HatchRoll(species: species, isShiny: isShiny)
     }
 
+    /// Uniform pick with a seeded generator; nil for an empty list. Used by the
+    /// pity rules in `GameState`, which must be as deterministic as the base roll.
+    static func pick<T>(_ items: [T], rng: inout SeededGenerator) -> T? {
+        guard !items.isEmpty else { return nil }
+        let index = Int(rng.nextUnit() * Double(items.count))
+        return items[min(index, items.count - 1)]
+    }
+
     static func pickWeighted<T>(_ items: [T], weights: [Double], rng: inout SeededGenerator) -> T? {
         let total = weights.reduce(0, +)
         guard total > 0 else { return nil }

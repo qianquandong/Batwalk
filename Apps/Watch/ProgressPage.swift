@@ -6,8 +6,10 @@ import BatwalkCore
 struct ProgressPage: View {
     @Environment(GameStore.self) private var store
     @Binding var page: Int
+    let steps: StepService
 
     @State private var showEggPicker = false
+    @State private var health: HealthStatus = .noData
 
     var body: some View {
         NavigationStack {
@@ -41,7 +43,7 @@ struct ProgressPage: View {
                     BatwalkStatRow(title: "Today", value: todaySteps.formatted()) {
                         Image(systemName: "figure.walk")
                             .font(.system(size: 13, weight: .semibold))
-                            .foregroundStyle(BatwalkColor.softLavender)
+                            .foregroundStyle(BatwalkColor.sage)
                     }
 
                     if store.state.companion != nil {
@@ -60,6 +62,15 @@ struct ProgressPage: View {
                             EggIcon(size: 16)
                         }
                     }
+                    Button {
+                        Task { await store.syncSteps(using: steps) }
+                    } label: {
+                        Label(updateLabel, systemImage: "arrow.clockwise")
+                            .font(BatwalkFont.micro)
+                    }
+                    .disabled(StepSyncCoordinator.shared.isSyncing)
+                    NavigationLink("Step Count help") { HealthAccessView(steps: steps, status: $health) }
+                        .font(BatwalkFont.micro)
                 }
                 .padding(.horizontal, BatwalkSpacing.xs)
                 .batwalkAppear()
@@ -68,10 +79,23 @@ struct ProgressPage: View {
             .watchPageBackground()
         }
         .sheet(isPresented: $showEggPicker) { EggPickerView() }
+        .task { health = await HealthAccessView.currentStatus(steps: steps, state: store.state) }
     }
 
     private var todaySteps: Int {
         let ledger = store.state.ledger
-        return ledger.dayKey == DayKey.make(.now) ? ledger.lastDailyTotal : 0
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = ledger.timeZoneIdentifier.flatMap(TimeZone.init(identifier:)) ?? .current
+        return ledger.dayKey == DayKey.make(.now, calendar: calendar) ? ledger.lastDailyTotal : 0
+    }
+
+    private var updateLabel: String {
+        if store.isDemo { return "Update steps" }
+        switch StepSyncCoordinator.shared.status {
+        case .idle: return "Update steps"
+        case .updating: return "Updating…"
+        case .failed: return "Couldn't update · Try again"
+        case .updated(_, let date): return "Updated \(date.formatted(date: .omitted, time: .shortened)) · Refresh"
+        }
     }
 }

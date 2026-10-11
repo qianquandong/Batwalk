@@ -6,30 +6,42 @@ import BatwalkCore
 struct HistoryView: View {
     @Environment(GameStore.self) private var store
 
+    @State private var settings = false
     private let columns = Array(repeating: GridItem(.flexible(), spacing: 12), count: 2)
 
     var body: some View {
         NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: BatwalkSpacing.lg) {
-                    PhoneHeader(title: "History")
+                    HStack {
+                        PhoneHeader(title: "Journal")
+                        Button { settings = true } label: {
+                            Image(systemName: "gearshape").frame(width: 44, height: 44)
+                        }.accessibilityLabel("Settings")
+                    }
+                    Text("Little meetings, remembered.")
+                        .font(BatwalkFont.body).foregroundStyle(BatwalkColor.textSecondaryLight)
+                    PhoneSyncStatus()
 
                     LazyVGrid(columns: columns, spacing: 12) {
                         StatCard(title: "Bats Found", value: "\(state.collection.count) / \(Roster.all.count)") {
-                            BatSilhouette(size: 22, color: BatwalkColor.purple)
+                            BatSilhouette(size: 22, color: BatwalkColor.accent)
                         }
                         StatCard(title: "Shiny Bats", value: "\(state.collection.values.filter(\.hasShiny).count)") {
-                            Image(systemName: "sparkles").foregroundStyle(BatwalkColor.purple)
+                            Image(systemName: "sparkles").foregroundStyle(BatwalkColor.accent)
                         }
                         StatCard(title: "Eggs Hatched", value: "\(state.history.count)") {
                             EggIcon(size: 20)
                         }
                         StatCard(title: "Steps Walked", value: state.lifetimeCreditedSteps.formatted()) {
-                            Image(systemName: "figure.walk").foregroundStyle(BatwalkColor.purple)
+                            Image(systemName: "figure.walk").foregroundStyle(BatwalkColor.accent)
+                        }
+                        StatCard(title: "Moon Dust", value: "\(state.moonDust)") {
+                            Image(systemName: "sparkle").foregroundStyle(BatwalkColor.accent)
                         }
                     }
 
-                    Text("Hatch Timeline")
+                    Text("Your little arrivals")
                         .font(BatwalkFont.rounded(.title3, weight: .bold))
                         .foregroundStyle(BatwalkColor.textPrimaryLight)
                         .accessibilityAddTraits(.isHeader)
@@ -54,6 +66,7 @@ struct HistoryView: View {
             }
             .background(BatwalkColor.lightBackground.ignoresSafeArea())
             .toolbar(.hidden, for: .navigationBar)
+            .sheet(isPresented: $settings) { PhoneSettingsView() }
         }
     }
 
@@ -71,13 +84,13 @@ private struct TimelineEntry<Content: View>: View {
         HStack(alignment: .top, spacing: 10) {
             VStack(spacing: 0) {
                 Circle()
-                    .fill(muted ? BatwalkColor.softLavender.opacity(0.5) : BatwalkColor.purple)
+                    .fill(muted ? BatwalkColor.sage.opacity(0.5) : BatwalkColor.accent)
                     .frame(width: 10, height: 10)
-                    .overlay(Circle().strokeBorder(.white, lineWidth: 2))
+                    .overlay(Circle().strokeBorder(BatwalkColor.lightBackground, lineWidth: 2))
                     .padding(.top, 28)
                 if !isLast {
                     Rectangle()
-                        .fill(BatwalkColor.softLavender.opacity(0.6))
+                        .fill(BatwalkColor.sage.opacity(0.6))
                         .frame(width: 2)
                 }
             }

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Create and boot an Apple Watch simulator; exports SIM=<udid> to $GITHUB_ENV.
+# Create and boot an Apple Watch simulator; share SIM with the CI's next steps.
 set -euo pipefail
 
 pick_runtime() {
@@ -27,4 +27,9 @@ udid=$(xcrun simctl create "Batwalk Watch" "$devtype" "$runtime")
 xcrun simctl boot "$udid"
 xcrun simctl bootstatus "$udid" -b >/dev/null 2>&1 || sleep 20
 echo "::notice::Simulator: $devtype on $runtime"
-echo "SIM=$udid" >> "$GITHUB_ENV"
+env_file="${CM_ENV:-${GITHUB_ENV:-${BATWALK_ENV_FILE:-}}}"
+if [ -n "$env_file" ]; then
+  printf 'SIM=%s\n' "$udid" >> "$env_file"
+else
+  printf 'SIM=%s\n' "$udid"
+fi

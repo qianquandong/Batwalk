@@ -5,8 +5,7 @@ import BatwalkCore
 
 // MARK: - Glass card
 
-/// Dark glass surface: translucent indigo, 1 px soft border with a top highlight,
-/// 16 pt corners, no heavy blur or shadow.
+/// Quiet slate-green surface with a single restrained edge.
 struct BatwalkGlassCard: ViewModifier {
     var padding: CGFloat = BatwalkSpacing.md
     var radius: CGFloat = BatwalkRadius.card
@@ -16,14 +15,12 @@ struct BatwalkGlassCard: ViewModifier {
             .padding(padding)
             .background(
                 RoundedRectangle(cornerRadius: radius, style: .continuous)
-                    .fill(Color(hex: 0x1A1F3D).opacity(0.86))
-                    .overlay(RoundedRectangle(cornerRadius: radius, style: .continuous).fill(Color.white.opacity(0.05)))
+                    .fill(BatwalkColor.nightCard)
             )
             .overlay(
                 RoundedRectangle(cornerRadius: radius, style: .continuous)
                     .strokeBorder(
-                        LinearGradient(colors: [.white.opacity(0.22), .white.opacity(0.06)],
-                                       startPoint: .top, endPoint: .bottom),
+                        BatwalkColor.mist.opacity(0.22),
                         lineWidth: 1)
             )
     }
@@ -40,7 +37,7 @@ struct BatwalkLightCard: ViewModifier {
             .background(
                 RoundedRectangle(cornerRadius: radius, style: .continuous)
                     .fill(BatwalkColor.lightCard)
-                    .shadow(color: BatwalkColor.purple.opacity(0.08), radius: 10, y: 4)
+                    .shadow(color: BatwalkColor.accent.opacity(0.08), radius: 10, y: 4)
             )
     }
 }
@@ -56,7 +53,7 @@ extension View {
 
 // MARK: - Buttons
 
-/// Purple → pink pill, soft glow, ≥ 44 pt tall, 0.96 press scale.
+/// Flat mint button with dark text, ≥ 44 pt tall and gentle press feedback.
 struct BatwalkPrimaryButtonStyle: ButtonStyle {
     var minHeight: CGFloat = 44
 
@@ -72,14 +69,13 @@ struct BatwalkPrimaryButtonStyle: ButtonStyle {
         var body: some View {
             configuration.label
                 .font(BatwalkFont.headline)
-                .foregroundStyle(.white)
+                .foregroundStyle(BatwalkColor.buttonText)
                 .lineLimit(1)
                 .minimumScaleFactor(0.8)
                 .frame(maxWidth: .infinity, minHeight: minHeight)
                 .padding(.horizontal, BatwalkSpacing.md)
                 .background(Capsule().fill(BatwalkGradient.button))
-                .overlay(Capsule().strokeBorder(.white.opacity(0.18), lineWidth: 1))
-                .shadow(color: BatwalkColor.purpleGlow.opacity(isEnabled ? 0.55 : 0), radius: 6)
+                .overlay(Capsule().strokeBorder(BatwalkColor.cloud.opacity(0.15), lineWidth: 1))
                 .opacity(isEnabled ? 1 : 0.45)
                 .scaleEffect(configuration.isPressed ? 0.96 : 1)
                 .animation(configuration.isPressed ? BatwalkMotion.press : BatwalkMotion.release,
@@ -106,7 +102,7 @@ struct BatwalkProgressRing<Center: View>: View {
     let progress: Double
     var lineWidth: CGFloat = 9
     var pulses = true
-    var track: Color = BatwalkColor.purple.opacity(0.22)
+    var track: Color = BatwalkColor.accent.opacity(0.22)
     @ViewBuilder var center: () -> Center
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
@@ -122,7 +118,6 @@ struct BatwalkProgressRing<Center: View>: View {
                 .stroke(BatwalkGradient.ring(progress: shown),
                         style: StrokeStyle(lineWidth: lineWidth, lineCap: .round))
                 .rotationEffect(.degrees(-90))
-                .shadow(color: BatwalkColor.purpleGlow.opacity(0.55), radius: pulsing ? 6 : 3)
             center()
         }
         .scaleEffect(pulsing ? 1.025 : 1)
@@ -196,7 +191,7 @@ struct VariantChip: View {
     var body: some View {
         ChipView(text: shiny ? "Shiny" : "Normal",
                  symbol: shiny ? "sparkles" : "circle.fill",
-                 color: shiny ? BatwalkColor.rarityShiny : BatwalkColor.softLavender,
+                 color: shiny ? BatwalkColor.rarityShiny : BatwalkColor.sage,
                  dark: dark)
     }
 }
@@ -234,7 +229,7 @@ struct EggIcon: View {
             if let name = SpriteResolver.egg(type, state: .calm) {
                 Image(name).interpolation(.none).resizable().scaledToFit()
             } else {
-                Image(systemName: "oval.fill").resizable().scaledToFit().foregroundStyle(BatwalkColor.softLavender)
+                Image(systemName: "oval.fill").resizable().scaledToFit().foregroundStyle(BatwalkColor.sage)
             }
         }
         .frame(width: size, height: size)
@@ -248,10 +243,12 @@ struct FruitIcon: View {
 
     var body: some View {
         Group {
-            if assetExists("fruit_strawberry") {
+            if assetExists("gentle_fruit_strawberry") {
+                Image("gentle_fruit_strawberry").interpolation(.none).resizable().scaledToFit()
+            } else if assetExists("fruit_strawberry") {
                 Image("fruit_strawberry").interpolation(.none).resizable().scaledToFit()
             } else {
-                Image(systemName: "leaf.fill").resizable().scaledToFit().foregroundStyle(BatwalkColor.pinkAccent)
+                Image(systemName: "leaf.fill").resizable().scaledToFit().foregroundStyle(BatwalkColor.rose)
             }
         }
         .frame(width: size, height: size)
@@ -280,16 +277,16 @@ struct BatSilhouette: View {
 
 // MARK: - Night sky
 
-/// Moonlit background from the boards: indigo gradient, still stars, a crescent
-/// moon and a pine silhouette. Drawn once with Canvas — no animation, no timers.
+/// A still, sparse pixel glade. Canvas has no animation or background timers.
 struct NightSkyBackground: View {
     var time: TimeOfDay = .night
     var scenery = true
+    var groundLevel: CGFloat = 0.72
 
     private var colors: [Color] {
         switch time {
-        case .day: return [Color(hex: 0x2E3A72), Color(hex: 0x1A2148)]
-        case .dusk: return [Color(hex: 0x5A3576), Color(hex: 0x231A46)]
+        case .day: return [Color(hex: 0x304A44), Color(hex: 0x162C2D)]
+        case .dusk: return [Color(hex: 0x3B4143), Color(hex: 0x182A2E)]
         case .night: return [BatwalkColor.indigo, BatwalkColor.deepNight]
         }
     }
@@ -299,15 +296,9 @@ struct NightSkyBackground: View {
             LinearGradient(colors: colors, startPoint: .top, endPoint: .bottom)
             Canvas { context, size in
                 drawStars(in: &context, size: size)
-                if scenery { drawTrees(in: &context, size: size) }
-            }
-            if scenery {
-                GeometryReader { geo in
-                    Crescent()
-                        .fill(BatwalkColor.moonlight.opacity(time == .day ? 0.45 : 1))
-                        .frame(width: geo.size.width * 0.14, height: geo.size.width * 0.14)
-                        .shadow(color: BatwalkColor.moonlight.opacity(0.6), radius: 8)
-                        .position(x: geo.size.width * 0.76, y: geo.size.height * 0.2)
+                if scenery {
+                    drawTrees(in: &context, size: size)
+                    drawGlade(in: &context, size: size)
                 }
             }
         }
@@ -317,57 +308,69 @@ struct NightSkyBackground: View {
 
     private func drawStars(in context: inout GraphicsContext, size: CGSize) {
         var rng = SeededGenerator(seed: 7)
-        let count = scenery ? 34 : 22
+        let count = scenery ? 6 : 2
         for i in 0..<count {
-            let x = rng.nextUnit() * size.width
-            let y = rng.nextUnit() * size.height * (scenery ? 0.62 : 1)
-            let r = 0.6 + rng.nextUnit() * 1.1
-            let alpha = (time == .day ? 0.25 : (scenery ? 0.55 : 0.3)) + rng.nextUnit() * (scenery ? 0.35 : 0.25)
-            let rect = CGRect(x: x, y: y, width: r * 2, height: r * 2)
-            context.fill(Path(ellipseIn: rect), with: .color(.white.opacity(alpha)))
-            if scenery && i % 9 == 0 {
-                // a few four-point sparkles
-                var p = Path()
-                let s = r * 3.2
-                p.move(to: CGPoint(x: x + r, y: y + r - s)); p.addLine(to: CGPoint(x: x + r, y: y + r + s))
-                p.move(to: CGPoint(x: x + r - s, y: y + r)); p.addLine(to: CGPoint(x: x + r + s, y: y + r))
-                context.stroke(p, with: .color(BatwalkColor.moonlight.opacity(alpha)), lineWidth: 0.8)
+            let x = (rng.nextUnit() * size.width / 2).rounded(.down) * 2
+            let y = (size.height * (0.30 + rng.nextUnit() * 0.27) / 2).rounded(.down) * 2
+            let alpha = time == .day ? 0.12 : 0.28
+            context.fill(Path(CGRect(x: x, y: y, width: 2, height: 2)),
+                         with: .color(BatwalkColor.cloud.opacity(alpha)))
+            if scenery && i == 0 {
+                context.fill(Path(CGRect(x: x - 2, y: y, width: 6, height: 2)),
+                             with: .color(BatwalkColor.moonlight.opacity(alpha)))
+                context.fill(Path(CGRect(x: x, y: y - 2, width: 2, height: 6)),
+                             with: .color(BatwalkColor.moonlight.opacity(alpha)))
             }
         }
     }
 
+    /// Static stepped silhouettes keep the centre quiet and cost no animation timers.
     private func drawTrees(in context: inout GraphicsContext, size: CGSize) {
-        var rng = SeededGenerator(seed: 11)
-        let base = size.height
-        let treeColor = Color(hex: 0x0A0E1E)
-        var x: CGFloat = -10
-        while x < size.width + 10 {
-            let w = 18 + rng.nextUnit() * 22
-            let h = size.height * (0.14 + rng.nextUnit() * 0.16)
-            var p = Path()
-            // stepped pine: three stacked triangles
-            for tier in 0..<3 {
-                let t = CGFloat(tier)
-                let top = base - h + t * h * 0.22
-                let bottom = base - h * 0.35 + t * h * 0.18
-                let half = w * (0.32 + t * 0.12)
-                p.move(to: CGPoint(x: x + w / 2, y: top))
-                p.addLine(to: CGPoint(x: x + w / 2 + half, y: bottom))
-                p.addLine(to: CGPoint(x: x + w / 2 - half, y: bottom))
-                p.closeSubpath()
+        let u: CGFloat = 4
+        func block(_ x: CGFloat, _ y: CGFloat, _ w: CGFloat, _ h: CGFloat, _ color: Color) {
+            context.fill(Path(CGRect(x: (x / u).rounded(.down) * u, y: (y / u).rounded(.down) * u,
+                                     width: max(u, (w / u).rounded(.down) * u), height: max(u, h))),
+                         with: .color(color), style: FillStyle(antialiased: false))
+        }
+        for side in [CGFloat(0), CGFloat(1)] {
+            let edge = side == 0 ? size.width * 0.04 : size.width * 0.93
+            let floor = size.height * groundLevel
+            block(edge, size.height * 0.12, u * 2, floor - size.height * 0.12,
+                  BatwalkColor.accent.opacity(0.24))
+            for tier in 0..<7 {
+                let width = u * CGFloat(3 + tier % 3)
+                let x = side == 0 ? edge - u : edge - width + u * 2
+                block(x, size.height * 0.12 + CGFloat(tier) * u * 3, width, u * 3,
+                      BatwalkColor.accentSoft.opacity(tier % 2 == 0 ? 0.12 : 0.08))
             }
-            p.addRect(CGRect(x: x, y: base - h * 0.2, width: w, height: h * 0.2 + 2))
-            context.fill(p, with: .color(treeColor.opacity(0.92)))
-            x += w * 0.72
+            for tier in 0..<4 {
+                let x = side == 0 ? size.width * 0.12 : size.width * 0.82
+                let width = u * CGFloat(2 + tier * 2)
+                block(x - width / 2, floor - CGFloat(5 - tier) * u * 4, width, u * 4,
+                      BatwalkColor.accent.opacity(0.12))
+            }
         }
     }
-}
 
-private struct Crescent: Shape {
-    func path(in rect: CGRect) -> Path {
-        let outer = Path(ellipseIn: rect)
-        let cut = Path(ellipseIn: rect.offsetBy(dx: rect.width * 0.32, dy: -rect.height * 0.18))
-        return outer.subtracting(cut)
+    private func drawGlade(in context: inout GraphicsContext, size: CGSize) {
+        let unit: CGFloat = 4
+        for column in 0..<Int((size.width / unit).rounded(.up)) {
+            let x = CGFloat(column) * unit
+            let arch = sin(Double(x / size.width) * .pi)
+            let top = ((size.height * groundLevel - CGFloat(arch) * 10) / unit).rounded(.down) * unit
+            context.fill(Path(CGRect(x: x, y: top, width: unit, height: size.height - top)),
+                         with: .color(BatwalkColor.accent.opacity(0.20)))
+        }
+        // Two small stepped leaves frame the character without a busy skyline.
+        for side in [CGFloat(0.07), CGFloat(0.90)] {
+            let x = (size.width * side / unit).rounded(.down) * unit
+            let y = (size.height * (groundLevel - 0.08) / unit).rounded(.down) * unit
+            for (dx, dy, width, height) in [(0, 0, 1, 5), (-1, 1, 1, 2), (1, -1, 1, 2), (-2, 0, 1, 1), (2, -2, 1, 1)] {
+                context.fill(Path(CGRect(x: x + CGFloat(dx) * unit, y: y + CGFloat(dy) * unit,
+                                        width: CGFloat(width) * unit, height: CGFloat(height) * unit)),
+                             with: .color(BatwalkColor.accentSoft.opacity(0.25)))
+            }
+        }
     }
 }
 
@@ -413,7 +416,7 @@ struct HeartBurst: View {
         var body: some View {
             Image(systemName: "heart.fill")
                 .font(.system(size: 9 + abs(dx) / 8, weight: .bold))
-                .foregroundStyle(BatwalkColor.pinkAccent)
+                .foregroundStyle(BatwalkColor.rose)
                 .offset(x: dx, y: up && !still ? -34 : -8)
                 .opacity(up ? 0 : 1)
                 .onAppear {

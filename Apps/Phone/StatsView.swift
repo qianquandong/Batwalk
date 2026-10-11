@@ -2,12 +2,12 @@ import SwiftUI
 import BatwalkCore
 
 /// Collection Stats (board: iPhone › 5. Collection Progress): progress hero,
-/// milestones 5 / 10 / 15 / 20, recent hatches.
+/// milestones 5 / 10 / 20 / all, recent hatches.
 struct StatsView: View {
     @Environment(GameStore.self) private var store
     @Binding var tab: PhoneTab
 
-    private let milestones = [5, 10, 15, 20]
+    private let milestones = [5, 10, 20, Roster.all.count]
 
     var body: some View {
         NavigationStack {
@@ -17,9 +17,9 @@ struct StatsView: View {
 
                     VStack(spacing: 4) {
                         BatwalkProgressRing(progress: fraction, lineWidth: 14, pulses: false,
-                                            track: BatwalkColor.purple.opacity(0.14)) {
+                                            track: BatwalkColor.accent.opacity(0.14)) {
                             VStack(spacing: 2) {
-                                BatSilhouette(size: 30, color: BatwalkColor.purple)
+                                BatSilhouette(size: 30, color: BatwalkColor.accent)
                                 Text("\(found) / \(Roster.all.count)")
                                     .font(BatwalkFont.rounded(.title, weight: .bold))
                                     .foregroundStyle(BatwalkColor.textPrimaryLight)
@@ -29,7 +29,7 @@ struct StatsView: View {
                                     .foregroundStyle(BatwalkColor.textSecondaryLight)
                                 Text("\(Int((fraction * 100).rounded()))%")
                                     .font(BatwalkFont.rounded(.subheadline, weight: .bold))
-                                    .foregroundStyle(BatwalkColor.purple)
+                                    .foregroundStyle(BatwalkColor.accent)
                             }
                         }
                         .frame(width: 180, height: 180)
@@ -39,8 +39,7 @@ struct StatsView: View {
                     .padding(BatwalkSpacing.lg)
                     .background(
                         RoundedRectangle(cornerRadius: 26, style: .continuous)
-                            .fill(LinearGradient(colors: [Color(hex: 0xEDE4FF), Color(hex: 0xDCCBFF)],
-                                                 startPoint: .top, endPoint: .bottom))
+                            .fill(BatwalkGradient.lightArt)
                     )
 
                     HStack {
@@ -57,7 +56,7 @@ struct StatsView: View {
                             .foregroundStyle(BatwalkColor.textPrimaryLight)
                         Spacer()
                         Button {
-                            tab = .history
+                            tab = .journal
                         } label: {
                             HStack(spacing: 2) { Text("See All"); Image(systemName: "chevron.right") }
                                 .font(BatwalkFont.rounded(.subheadline, weight: .semibold))
@@ -97,7 +96,7 @@ private struct MilestoneBadge: View {
                 Circle()
                     .fill(done ? AnyShapeStyle(BatwalkGradient.primary) : AnyShapeStyle(BatwalkColor.lockedBatLight))
                     .frame(width: 52, height: 52)
-                    .shadow(color: done ? BatwalkColor.purple.opacity(0.35) : .clear, radius: 6, y: 2)
+                    .shadow(color: done ? BatwalkColor.accent.opacity(0.35) : .clear, radius: 6, y: 2)
                 if done {
                     BatSilhouette(size: 28, color: .white)
                 } else {

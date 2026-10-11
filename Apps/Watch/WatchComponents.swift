@@ -37,10 +37,10 @@ struct FeedButton: View {
         Button(action: action) {
             HStack(spacing: 6) {
                 FruitIcon(size: 16)
-                Text("Feed (\(fruit))")
+                Text("Feed · \(fruit)")
             }
         }
-        .buttonStyle(BatwalkPrimaryButtonStyle(minHeight: 36))
+        .buttonStyle(BatwalkPrimaryButtonStyle(minHeight: 44))
         .disabled(fruit == 0)
         .accessibilityLabel("Feed")
         .accessibilityValue("\(fruit) fruit")
@@ -114,16 +114,13 @@ struct BatCollectionTile: View {
         )
         .overlay(
             RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .strokeBorder(LinearGradient(colors: [BatwalkColor.purpleGlow, BatwalkColor.pinkAccent.opacity(0.6)],
-                                             startPoint: .topLeading, endPoint: .bottomTrailing),
-                              lineWidth: 1.5)
+                .strokeBorder(BatwalkColor.mist.opacity(0.28), lineWidth: 1)
         )
-        .shadow(color: BatwalkColor.purpleGlow.opacity(0.35), radius: 4)
         .overlay(alignment: .topTrailing) {
             if isCompanion {
                 Image(systemName: "heart.fill")
                     .font(.system(size: 8, weight: .bold))
-                    .foregroundStyle(BatwalkColor.pinkAccent)
+                    .foregroundStyle(BatwalkColor.rose)
                     .padding(4)
             }
         }

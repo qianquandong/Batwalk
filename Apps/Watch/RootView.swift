@@ -10,20 +10,47 @@ struct RootView: View {
     @State private var page = DemoMode.page
 
     var body: some View {
-        if store.state.hasStarted {
+        Group {
+        if DemoMode.scenario == "pilot-lab" {
+            NavigationStack { PilotAnimationLab() }
+        } else if store.recoveryRequired {
+            ScrollView {
+                VStack(spacing: 12) {
+                    Image(systemName: "externaldrive.badge.exclamationmark").font(.title)
+                    Text("Save needs attention").font(.headline)
+                    Text(store.lastError ?? "Please try opening your save again.").font(.caption)
+                    Button("Try again") { store.load() }
+                    if let backup = store.availableBackup {
+                        Button("Restore \(backup.collection.count) bats") { try? store.restore(backup) }
+                    }
+                }.padding()
+            }
+        } else if store.state.hasStarted {
             TabView(selection: $page) {
-                HomeView().tag(0)
-                ProgressPage(page: $page).tag(1)
+                HomeView().environment(\.batPageVisible, page == 0).tag(0)
+                ProgressPage(page: $page, steps: steps).environment(\.batPageVisible, page == 1).tag(1)
                 if store.state.companion != nil {
-                    FriendshipPage().tag(2)
-                    CollectionPage().tag(3)
+                    FriendshipPage().environment(\.batPageVisible, page == 2).tag(2)
+                    CollectionPage().environment(\.batPageVisible, page == 3).tag(3)
                 }
-                SettingsView(steps: steps).tag(4)
+                SettingsView(steps: steps).environment(\.batPageVisible, page == 4).tag(4)
             }
             .tabViewStyle(.verticalPage)
         } else {
             OnboardingView(steps: steps)
         }
+        }
+        .onOpenURL { url in
+            guard let route = WatchRoute(url: url) else { return }
+            page = route == .progress ? 1 : 0
+        }
+        .tint(BatwalkColor.cloud)
+        .alert("Progress update", isPresented: Binding(
+            get: { store.lastError != nil && !store.recoveryRequired },
+            set: { if !$0 { store.clearError() } }
+        )) {
+            Button("OK") { store.clearError() }
+        } message: { Text(store.lastError ?? "") }
     }
 }
 
@@ -54,6 +81,14 @@ struct OnboardingView: View {
                     .multilineTextAlignment(.center)
             }
             Spacer(minLength: 0)
+            // A replaced or re-paired Watch: the iPhone (or iCloud) still remembers the collection.
+            if let backup = store.availableBackup, !backup.collection.isEmpty {
+                Button("Restore my \(backup.collection.count) bats") {
+                    do { try store.restore(backup) } catch { Haptics.failure() }
+                }
+                .font(BatwalkFont.micro)
+                .disabled(isWorking)
+            }
             Button(step < 2 ? "Next" : "Let it hatch") {
                 if step < 2 {
                     withAnimation(.easeInOut(duration: 0.6)) { step += 1 }
@@ -62,6 +97,7 @@ struct OnboardingView: View {
                 }
             }
             .buttonStyle(BatwalkPrimaryButtonStyle(minHeight: 40))
+            .doubleTapPrimaryAction()
             .disabled(isWorking)
         }
         .padding(.horizontal, BatwalkSpacing.sm)
@@ -73,11 +109,11 @@ struct OnboardingView: View {
         Task { @MainActor in
             let granted = await steps.requestAuthorization()
             store.analytics.log(.stepPermissionResult, properties: ["completed": granted ? "true" : "false"])
-            store.mutate { $0.start(seed: UInt64.random(in: .min ... .max), now: .now) }
+            do { try store.mutate { $0.start(seed: UInt64.random(in: .min ... .max), now: .now) } }
+            catch { isWorking = false; return }
             // Credit steps already earned today (PRD §2.2 step 6).
             await store.syncSteps(using: steps)
             store.analytics.log(.onboardingComplete, properties: [:])
-            await HatchNotifier.requestPermission()
             isWorking = false
         }
     }

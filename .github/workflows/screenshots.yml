@@ -9,6 +9,19 @@ on:
   push:
     branches: [screenshots]
   workflow_dispatch:
+    inputs:
+      publish:
+        description: "Also replace screenshots-output (off = downloadable artifact only)"
+        type: boolean
+        default: false
+      watch_only:
+        description: "Capture only the Watch"
+        type: boolean
+        default: false
+      watch_scenario:
+        description: "Optional exact Watch scenario for a focused visual check"
+        type: string
+        default: ""
 
 permissions:
   contents: write
@@ -47,12 +60,16 @@ jobs:
             build
 
       - name: Capture Watch scenarios
+        env:
+          BATWALK_SCREEN_SCENARIO: ${{ inputs.watch_scenario }}
         run: scripts/capture-screens.sh watch "$RUNNER_TEMP/out/screens/watch"
 
       - name: Boot an iPhone simulator
+        if: ${{ !inputs.watch_only }}
         run: scripts/phone-sim.sh
 
       - name: Build iPhone app for the simulator
+        if: ${{ !inputs.watch_only }}
         run: |
           scripts/ci-xcodebuild.sh \
             -project Batwalk.xcodeproj \
@@ -64,9 +81,17 @@ jobs:
             build
 
       - name: Capture iPhone scenarios
+        if: ${{ !inputs.watch_only }}
         run: SIM="$PHONE_SIM" scripts/capture-screens.sh phone "$RUNNER_TEMP/out/screens/phone"
 
+      - name: Save review screenshots
+        uses: actions/upload-artifact@v4
+        with:
+          name: batwalk-screenshots
+          path: ${{ runner.temp }}/out/screens
+
       - name: Publish to screenshots-output branch
+        if: ${{ github.event_name == 'push' || inputs.publish }}
         env:
           TOKEN: ${{ github.token }}
         run: |

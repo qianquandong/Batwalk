@@ -2,89 +2,170 @@ import Foundation
 import Observation
 import StoreKit
 
-/// $1.99 one-time non-consumable unlock (PRD §2.10) with StoreKit 2.
-/// Both apps read the entitlement directly from StoreKit, so a purchase on the
-/// iPhone unlocks the Watch without any custom sync.
-///
-/// Never sell step skips, hatch odds, energy, or Friendship boosts.
+struct PurchaseOffer: Equatable { let displayPrice: String }
+enum PurchaseOutcome { case purchased, pending, cancelled }
+
+/// What StoreKit says about the full unlock right now.
+enum EntitlementState: Equatable {
+    /// A verified, unrevoked transaction exists.
+    case active
+    /// The latest verified transaction was refunded or revoked by Apple.
+    case revoked
+    /// Nothing is known for this product on this device. This is *not* proof of
+    /// anything: entitlements may simply not have synced to the Watch yet.
+    case none
+}
+
+/// How an entitlement check maps onto the save (2026-10-10 review, finding 3b):
+/// only a verified entitlement unlocks and only an explicit revocation re-locks.
+/// An unknown result leaves the save alone, so one false negative can never
+/// lock a paying player out of the pools their eggs were started with.
+enum EntitlementPolicy {
+    static func unlockedValue(for state: EntitlementState) -> Bool? {
+        switch state {
+        case .active: return true
+        case .revoked: return false
+        case .none: return nil
+        }
+    }
+}
+
 @MainActor
-@Observable
-final class PurchaseManager {
-    private(set) var product: Product?
-    private(set) var isUnlocked = false
-    /// False until the first entitlement check finishes — don't act on `isUnlocked` before that.
-    private(set) var hasCheckedEntitlements = false
-    private(set) var isBusy = false
-    var lastError: String?
+protocol PurchaseBackend {
+    func loadOffer() async throws -> PurchaseOffer?
+    func entitlement() async -> EntitlementState
+    func buy() async throws -> PurchaseOutcome
+    func restore() async throws
+}
 
-    @ObservationIgnored private var updatesTask: Task<Void, Never>?
-
-    func start() {
-        guard updatesTask == nil else { return }
-        updatesTask = Task {
-            for await update in Transaction.updates {
-                if case .verified(let transaction) = update {
-                    await transaction.finish()
-                }
-                await self.refreshEntitlements()
-            }
-        }
-        Task {
-            await refreshEntitlements()
-            await loadProduct()
-        }
+@MainActor
+private final class StoreKitBackend: PurchaseBackend {
+    private var product: Product?
+    func loadOffer() async throws -> PurchaseOffer? {
+        product = try await Product.products(for: [SharedConfig.fullUnlockProductID]).first
+        return product.map { PurchaseOffer(displayPrice: $0.displayPrice) }
     }
-
-    func loadProduct() async {
-        do {
-            product = try await Product.products(for: [SharedConfig.fullUnlockProductID]).first
-        } catch {
-            lastError = error.localizedDescription
-        }
-    }
-
-    func refreshEntitlements() async {
-        var unlocked = false
+    func entitlement() async -> EntitlementState {
         for await result in Transaction.currentEntitlements {
             if case .verified(let transaction) = result,
                transaction.productID == SharedConfig.fullUnlockProductID,
-               transaction.revocationDate == nil {
-                unlocked = true
+               transaction.revocationDate == nil { return .active }
+        }
+        if let latest = await Transaction.latest(for: SharedConfig.fullUnlockProductID),
+           case .verified(let transaction) = latest, transaction.revocationDate != nil {
+            return .revoked
+        }
+        return .none
+    }
+    func buy() async throws -> PurchaseOutcome {
+        guard let product else { throw PurchaseError.unavailable }
+        switch try await product.purchase() {
+        case .success(let verification):
+            guard case .verified(let transaction) = verification else { throw PurchaseError.unverified }
+            await transaction.finish()
+            return .purchased
+        case .pending: return .pending
+        case .userCancelled: return .cancelled
+        @unknown default: throw PurchaseError.unavailable
+        }
+    }
+    func restore() async throws { try await AppStore.sync() }
+}
+
+private enum PurchaseError: LocalizedError {
+    case unavailable, unverified
+    var errorDescription: String? {
+        switch self {
+        case .unavailable: return "The purchase isn't available right now. Please try again."
+        case .unverified: return "The App Store couldn't verify this purchase. Please restore or try again."
+        }
+    }
+}
+
+/// StoreKit owns the entitlement. Game saves and collection backups never grant it.
+/// Works the same on the Watch and the iPhone: both can buy (StoreKit 2 on watchOS)
+/// and a purchase on either device unlocks the other through Apple's entitlements.
+@MainActor
+@Observable
+final class PurchaseManager {
+    private(set) var product: PurchaseOffer?
+    private(set) var entitlement: EntitlementState = .none
+    /// True only for a verified, active entitlement.
+    var isUnlocked: Bool { entitlement == .active }
+    private(set) var hasCheckedEntitlements = false
+    /// Increments after every entitlement check, even when the result is the same,
+    /// so the app can re-apply it to a save that was loaded or restored since.
+    private(set) var entitlementVersion = 0
+    private(set) var isBusy = false
+    private(set) var isLoadingProduct = false
+    private(set) var message: String?
+    var lastError: String?
+    @ObservationIgnored private let backend: any PurchaseBackend
+    @ObservationIgnored private var updatesTask: Task<Void, Never>?
+
+    init(backend: (any PurchaseBackend)? = nil) { self.backend = backend ?? StoreKitBackend() }
+
+    func start() {
+        guard updatesTask == nil else { return }
+        updatesTask = Task { [weak self] in
+            for await update in Transaction.updates {
+                guard let self else { return }
+                if case .verified(let transaction) = update,
+                   transaction.productID == SharedConfig.fullUnlockProductID {
+                    await transaction.finish()
+                    await self.refreshEntitlements()
+                    if self.isUnlocked { self.message = "Full unlock is active." }
+                }
             }
         }
-        isUnlocked = unlocked
+        Task { await refreshEntitlements(); await loadProduct() }
+    }
+
+    func loadProduct() async {
+        guard !isLoadingProduct else { return }
+        isLoadingProduct = true
+        defer { isLoadingProduct = false }
+        lastError = nil
+        do {
+            product = try await backend.loadOffer()
+            if product == nil { lastError = PurchaseError.unavailable.localizedDescription }
+        } catch { lastError = error.localizedDescription }
+    }
+
+    func refreshEntitlements() async {
+        entitlement = await backend.entitlement()
         hasCheckedEntitlements = true
+        entitlementVersion += 1
     }
 
     func purchase() async {
-        guard let product else { return }
-        isBusy = true
+        guard !isBusy else { return }
+        guard product != nil else { lastError = PurchaseError.unavailable.localizedDescription; return }
+        isBusy = true; lastError = nil; message = nil
         defer { isBusy = false }
         do {
-            switch try await product.purchase() {
-            case .success(let verification):
-                if case .verified(let transaction) = verification {
-                    await transaction.finish()
-                }
+            switch try await backend.buy() {
+            case .purchased:
                 await refreshEntitlements()
-            case .pending, .userCancelled:
-                break
-            @unknown default:
-                break
+                message = isUnlocked ? "Full unlock is active." : "Purchase received. Please restore if it hasn't appeared yet."
+            case .pending: message = "Waiting for App Store approval. Your walks can continue."
+            case .cancelled: message = "Purchase cancelled."
             }
-        } catch {
-            lastError = error.localizedDescription
-        }
+        } catch { lastError = error.localizedDescription }
     }
 
     func restore() async {
-        isBusy = true
+        guard !isBusy else { return }
+        isBusy = true; lastError = nil; message = nil
         defer { isBusy = false }
         do {
-            try await AppStore.sync()
-        } catch {
-            lastError = error.localizedDescription
-        }
-        await refreshEntitlements()
+            try await backend.restore()
+            await refreshEntitlements()
+            switch entitlement {
+            case .active: message = "Full unlock restored."
+            case .revoked: message = "This purchase was refunded, so the full unlock is no longer active."
+            case .none: message = "No full unlock found for this Apple Account."
+            }
+        } catch { lastError = error.localizedDescription }
     }
 }

@@ -5,8 +5,18 @@ import BatwalkCore
 enum HealthStatus: Equatable {
     case connected
     case notSetUp
-    /// Asked before, but no steps have arrived today.
+    case noData
+    /// The latest query failed. Zero steps never implies denied access.
     case needsAttention
+
+    var label: String {
+        switch self {
+        case .connected: return "Steps received"
+        case .notSetUp: return "Not set up"
+        case .noData: return "No steps received yet"
+        case .needsAttention: return "Update failed"
+        }
+    }
 }
 
 /// Visual-QA scenarios (UI_REDESIGN_TASKS P11), selected with a launch argument:
@@ -16,8 +26,8 @@ enum HealthStatus: Equatable {
 /// Without the argument this file does nothing.
 enum DemoMode {
     // The capture script reads these two lines — keep each list on one line.
-    static let watchScenarios = ["first-egg", "home", "home-day", "hatch-ready", "reveal-rare", "progress-61", "progress-100", "friendship-1", "fruit-available", "friendship-5", "collection-1", "collection-rare", "settings", "health-error"] // scenarios:watch
-    static let phoneScenarios = ["phone-batpedia", "phone-batpedia-rare", "phone-detail", "phone-history", "phone-unlock", "phone-stats", "phone-empty"] // scenarios:phone
+    static let watchScenarios = ["first-egg", "home", "home-day", "home-cocoa", "home-long-ear", "hatch-ready", "reveal-rare", "progress-61", "progress-100", "friendship-1", "friendship-2", "friendship-3", "friendship-4", "fruit-available", "friendship-5", "collection-1", "collection-rare", "free-complete", "settings", "health-error", "pilot-mochi", "pilot-sticky", "pilot-walker", "pilot-cocoa", "pilot-long-ear"] // scenarios:watch
+    static let phoneScenarios = ["phone-companion", "phone-batpedia", "phone-batpedia-rare", "phone-detail", "phone-pending", "phone-confirmed", "phone-stale", "phone-first-egg", "phone-egg-ready", "phone-history", "phone-unlock", "phone-stats", "phone-empty"] // scenarios:phone
 
     static let scenario: String? = {
         let args = ProcessInfo.processInfo.arguments
@@ -30,7 +40,7 @@ enum DemoMode {
     /// Forced Day / Dusk / Night (nil = real clock).
     private(set) static var timeOverride: TimeOfDay?
     /// Watch: 0 Home · 1 Progress · 2 Friendship · 3 Bats · 4 Settings.
-    /// iPhone: 0 Batpedia · 1 History · 2 Stats · 3 Unlock.
+    /// iPhone: 0 Companion · 1 Batpedia · 2 Journal. Purchases live in Settings.
     private(set) static var page = 0
     /// Hatch result shown as the reveal on launch.
     private(set) static var reveal: HatchResult?
@@ -47,6 +57,8 @@ enum DemoMode {
     /// Builds the in-memory game state for the current scenario.
     static func makeState() -> GameState? {
         guard let scenario else { return nil }
+        // Screenshots show the whole catalogue, including waves not shipped yet.
+        Roster.enabledWave = 2
         let now = Date()
         let day = DayKey.make(now)
         var state = GameState()
@@ -59,7 +71,8 @@ enum DemoMode {
         }
         @discardableResult
         func hatch(_ egg: EggType, _ species: String, shiny: Bool = false) -> HatchResult? {
-            guard (try? state.startEgg(egg, seed: seed(egg, species, shiny: shiny), now: now)) != nil else { return nil }
+            let paid = state.isUnlocked || !egg.isFree
+            guard (try? state.startEgg(egg, seed: seed(egg, species, shiny: shiny, isUnlocked: paid), now: now)) != nil else { return nil }
             walk(egg.targetSteps)
             return try? state.hatch(now: now)
         }
@@ -78,7 +91,7 @@ enum DemoMode {
         state.setUnlocked(true)
         state.start(seed: 1, now: now)
 
-        if scenario == "first-egg" {
+        if scenario == "first-egg" || scenario == "phone-first-egg" {
             walk(1_230)
             return state
         }
@@ -90,6 +103,21 @@ enum DemoMode {
         _ = try? state.hatch(now: now) // Mochi, the starter
 
         switch scenario {
+        case "pilot-mochi", "pilot-sticky", "pilot-walker", "pilot-cocoa", "pilot-long-ear":
+            // The three hand-drawn pilots, and two generated Gentle-pixel sets (the free roster).
+            let species = String(scenario.dropFirst("pilot-".count))
+            let egg: EggType = species == "walker" ? .crystal : .tiny
+            for _ in 0..<14 { hatch(egg, species) }
+            try? state.setCompanion(species)
+            boardEgg()
+        case "home-cocoa":
+            hatch(.tiny, "cocoa")
+            try? state.setCompanion("cocoa")
+            boardEgg()
+        case "home-long-ear":
+            hatch(.forest, "long-ear")
+            try? state.setCompanion("long-ear")
+            boardEgg()
         case "home-day":
             timeOverride = .day
             boardEgg()
@@ -119,9 +147,21 @@ enum DemoMode {
             page = 2
             for _ in 0..<26 { hatch(.tiny, "mochi") } // duplicates → Friendship EXP
             boardEgg()
+        case "friendship-2", "friendship-3", "friendship-4":
+            page = 2
+            let duplicates = scenario == "friendship-2" ? 3 : scenario == "friendship-3" ? 7 : 13
+            for _ in 0..<duplicates { hatch(.tiny, "mochi") }
+            boardEgg()
         case "collection-1":
             page = 3
             boardEgg()
+        case "free-complete":
+            // A free player who has met all three free bats: the Collection shows
+            // what the full collection holds, and the one-time trial egg appears.
+            page = 3
+            state.setUnlocked(false)
+            hatch(.tiny, "cocoa")
+            hatch(.tiny, "long-ear")
         case "collection-rare":
             page = 3
             addCollection()
@@ -135,22 +175,26 @@ enum DemoMode {
             page = 4
             healthStatus = .needsAttention
             boardEgg()
-        case "phone-batpedia":
-            page = 0
+        case "phone-companion", "phone-batpedia", "phone-detail", "phone-pending", "phone-confirmed", "phone-stale":
+            for _ in 0..<13 { hatch(.tiny, "mochi") }
+            for _ in 0..<8 { hatch(.tiny, "sticky") }
+            hatch(.crystal, "walker")
+            try? state.setCompanion(scenario == "phone-confirmed" ? "sticky" : "mochi")
+            page = ["phone-batpedia", "phone-detail", "phone-pending", "phone-confirmed"].contains(scenario) ? 1 : 0
+            if ["phone-detail", "phone-pending", "phone-confirmed"].contains(scenario) { detailSpecies = "sticky" }
             boardEgg()
         case "phone-batpedia-rare":
-            page = 0
+            page = 1
             addCollection()
             boardEgg()
-        case "phone-detail":
-            page = 0
-            detailSpecies = "mochi"
-            boardEgg()
+        case "phone-egg-ready":
+            try? state.startEgg(.tiny, seed: 7, now: now)
+            walk(2_500)
         case "phone-history":
-            page = 1
+            page = 2
             boardEgg()
         case "phone-unlock":
-            page = 3
+            page = 0
             state.setUnlocked(false)
             boardEgg()
         case "phone-stats":
@@ -163,10 +207,10 @@ enum DemoMode {
     }
 
     /// First seed whose roll yields `species` (deterministic, so screenshots are stable).
-    private static func seed(_ egg: EggType, _ species: String, shiny: Bool) -> UInt64 {
+    private static func seed(_ egg: EggType, _ species: String, shiny: Bool, isUnlocked: Bool = true) -> UInt64 {
         var s: UInt64 = 1
         while s < 3_000_000 {
-            let roll = HatchEngine.roll(egg: egg, seed: s, isUnlocked: true)
+            let roll = HatchEngine.roll(egg: egg, seed: s, isUnlocked: isUnlocked)
             if roll.species.id == species && roll.isShiny == shiny { return s }
             s += 1
         }

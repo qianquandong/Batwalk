@@ -6,10 +6,27 @@ enum SharedConfig {
     static let cloudKitContainer = "iCloud.com.aimanjack.batwalk"
     static let fullUnlockProductID = "com.aimanjack.batwalk.fullunlock"
 
-    /// iCloud backup + App Group (complication data) need an App Group and an
+    /// Cloud collection backup and live widgets are independent capabilities.
+    /// They need an App Group and an
     /// iCloud container created by hand in the developer portal — an App Store
     /// Connect API key can't create them. Until then, saves stay on the Watch
-    /// and the complication shows a static face. Flip together with the
+    /// and the complication opens the app. Enable each with its corresponding
     /// entitlements in project.yml (see docs/SIGNING.md).
-    static let iCloudAndAppGroupEnabled = false
+    static var appGroupEnabled: Bool { enabled("BatwalkAppGroupEnabled") }
+    static var cloudBackupEnabled: Bool { enabled("BatwalkCloudBackupEnabled") }
+
+    /// Highest roster wave this build ships (`BATWALK_CONTENT_WAVE`; 1 = launch
+    /// roster, 2 = + Oddball Bats). See `Roster.enabledWave` and open question Q12.
+    static var contentWave: Int {
+        if let value = Bundle.main.object(forInfoDictionaryKey: "BatwalkContentWave") as? Int { return max(1, value) }
+        if let text = Bundle.main.object(forInfoDictionaryKey: "BatwalkContentWave") as? String, let value = Int(text) {
+            return max(1, value)
+        }
+        return 1
+    }
+
+    private static func enabled(_ key: String) -> Bool {
+        if let value = Bundle.main.object(forInfoDictionaryKey: key) as? Bool { return value }
+        return (Bundle.main.object(forInfoDictionaryKey: key) as? String)?.uppercased() == "YES"
+    }
 }

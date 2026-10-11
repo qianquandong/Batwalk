@@ -1,0 +1,503 @@
+{
+  "version": 1,
+  "normalClips": 18,
+  "normalFrames": 74,
+  "portraitCount": 32,
+  "shiny": "runtime hue rotation of the same identity; dedicated palettes pending",
+  "sourceCellPixels": 256,
+  "paddedCellPixels": 320,
+  "rowBounds": {
+    "mochi": [
+      0,
+      268,
+      512,
+      753,
+      1000,
+      1249,
+      1536
+    ],
+    "sticky": [
+      0,
+      269,
+      519,
+      774,
+      1025,
+      1276,
+      1536
+    ],
+    "walker": [
+      0,
+      276,
+      503,
+      764,
+      1025,
+      1267,
+      1536
+    ]
+  },
+  "columnBounds": {
+    "mochi": [
+      [
+        0,
+        271,
+        513,
+        763,
+        1024
+      ],
+      [
+        0,
+        265,
+        511,
+        771,
+        1024
+      ],
+      [
+        0,
+        256,
+        512,
+        768,
+        1024
+      ],
+      [
+        0,
+        268,
+        501,
+        760,
+        1024
+      ],
+      [
+        0,
+        267,
+        516,
+        760,
+        1024
+      ],
+      [
+        0,
+        270,
+        498,
+        788,
+        1024
+      ]
+    ],
+    "sticky": [
+      [
+        0,
+        256,
+        514,
+        767,
+        1024
+      ],
+      [
+        0,
+        256,
+        512,
+        768,
+        1024
+      ],
+      [
+        0,
+        265,
+        517,
+        772,
+        1024
+      ],
+      [
+        0,
+        257,
+        510,
+        776,
+        1024
+      ],
+      [
+        0,
+        256,
+        512,
+        768,
+        1024
+      ],
+      [
+        0,
+        242,
+        527,
+        787,
+        1024
+      ]
+    ],
+    "walker": [
+      [
+        0,
+        259,
+        509,
+        764,
+        1024
+      ],
+      [
+        0,
+        269,
+        516,
+        767,
+        1024
+      ],
+      [
+        0,
+        265,
+        521,
+        759,
+        1024
+      ],
+      [
+        0,
+        257,
+        502,
+        765,
+        1024
+      ],
+      [
+        0,
+        278,
+        525,
+        761,
+        1024
+      ],
+      [
+        0,
+        270,
+        518,
+        765,
+        1024
+      ]
+    ]
+  },
+  "processing": "Crop with fixed anchors; nearest-neighbor resize; original alpha preserved.",
+  "clips": [
+    {
+      "speciesID": "mochi",
+      "actionID": "idle",
+      "frames": [
+        "pilot_bat_mochi_idle_0",
+        "pilot_bat_mochi_idle_1",
+        "pilot_bat_mochi_idle_2",
+        "pilot_bat_mochi_idle_3"
+      ],
+      "logicalPixels": 64,
+      "catalogPixels": 128,
+      "sha256": [
+        "e691468e59f4e9be5bd30fa17c866bb214e8c1c810a807e8e84988ea1d9d2391",
+        "7f816f87d970de7ffe38a801ae4e5d8d89e5b67f2ba80a2e4264f607dba9f783",
+        "d1b447530667d3f96ab04c6585fa7c0e6ed4a649c8fa15f74454ce15cdc9c9a2",
+        "e458349b5a309d389c3f2970eb0cfdea3e9a3b8ba9714d4b2b6eb9e44adf57a3"
+      ]
+    },
+    {
+      "speciesID": "mochi",
+      "actionID": "sleep",
+      "frames": [
+        "pilot_bat_mochi_sleep_0",
+        "pilot_bat_mochi_sleep_1",
+        "pilot_bat_mochi_sleep_2",
+        "pilot_bat_mochi_sleep_3"
+      ],
+      "logicalPixels": 64,
+      "catalogPixels": 128,
+      "sha256": [
+        "3e244af5e04f9b755930dcdd088f8fe02136f1dc4aead57f3f6978f8b69ea2e1",
+        "f68853cea7b661cf0468d2fab6f51a23e4fd27eef3e75f8311a8296cfff3fab0",
+        "5469e37890192d9968f937790409fce60e068a17f3a1311afb4e05ddc5dc2ec9",
+        "68834d18ac562ef23a8ec5c95ae2353f9ce04840ded03aa30486aebef0f50bea"
+      ]
+    },
+    {
+      "speciesID": "mochi",
+      "actionID": "fly",
+      "frames": [
+        "pilot_bat_mochi_fly_0",
+        "pilot_bat_mochi_fly_1",
+        "pilot_bat_mochi_fly_2",
+        "pilot_bat_mochi_fly_3"
+      ],
+      "logicalPixels": 64,
+      "catalogPixels": 128,
+      "sha256": [
+        "e24ad117b7a4f457e74e76aad259d7a2e6ef32ba3553aaea7110e18d8e5daef8",
+        "2f48489a4c1b6bb035da8a2805d9e00f0dd818de566c3566b2c20840eaf62511",
+        "494c69b96e4e08cda9811a785b5ca4f2199320c9a33f9e68ace72d7f6011d815",
+        "442496c56f653f5482640d5bb3d8cd593a157fdd44ac0dbda54c6c1d6282697a"
+      ]
+    },
+    {
+      "speciesID": "mochi",
+      "actionID": "pet",
+      "frames": [
+        "pilot_bat_mochi_pet_0",
+        "pilot_bat_mochi_pet_1",
+        "pilot_bat_mochi_pet_2",
+        "pilot_bat_mochi_pet_3"
+      ],
+      "logicalPixels": 64,
+      "catalogPixels": 128,
+      "sha256": [
+        "239ae34fb56caf965f130ee733ac439e064136ba6ea6cdc329bdaa6d2c2923c2",
+        "63441f9fcc287c03b8ffb4d650b6d61b568ad67162f502f46f9d2a7db7c28d98",
+        "c2ac2ac586370b16f786bd57f9f7137371c28a6cbac1e5e8bf68db698a6aeda0",
+        "63658396e92f913f2683b32497234fca8e7639ce07191f088ec49d4deb39af45"
+      ]
+    },
+    {
+      "speciesID": "mochi",
+      "actionID": "eat",
+      "frames": [
+        "pilot_bat_mochi_eat_0",
+        "pilot_bat_mochi_eat_1",
+        "pilot_bat_mochi_eat_2",
+        "pilot_bat_mochi_eat_3"
+      ],
+      "logicalPixels": 64,
+      "catalogPixels": 128,
+      "sha256": [
+        "4b062e84c86ef85337e0f45d37e67e11748c2cb329a9b8ba59b3a26bf4d5d76e",
+        "35f78c11dfda64f309abb68870e07c548138fdba92f1cd3f52ebbeeb30523cf1",
+        "a2a7105f268f8719085dc33c4a351196e526e13492c08b8317a51d98530cc9b0",
+        "8e68472e8df28e3d85aedd447d16bf4f059b38f839f76ddb6273d1e8f4b6901f"
+      ]
+    },
+    {
+      "speciesID": "mochi",
+      "actionID": "cartwheel-landing",
+      "frames": [
+        "pilot_bat_mochi_cartwheel-landing_0",
+        "pilot_bat_mochi_cartwheel-landing_1",
+        "pilot_bat_mochi_cartwheel-landing_2",
+        "pilot_bat_mochi_cartwheel-landing_3"
+      ],
+      "logicalPixels": 64,
+      "catalogPixels": 128,
+      "sha256": [
+        "c7264b2c5b951a0bc823707fe46d7d7a1dafc786489c13a92fdde2de0caa438f",
+        "f8de2adaf964eada455d098b4ef44cbc787d0ad5e368837da40733e2e3f88c23",
+        "c77e50d08808217b93669201ce17c61ed0d0f492bdb3fce16d99bfea1488dd9e",
+        "5c449aa1c91b00a6e737f450006384dc9a6e555361afcf74396a6bbaecc52b0a"
+      ]
+    },
+    {
+      "speciesID": "sticky",
+      "actionID": "idle",
+      "frames": [
+        "pilot_bat_sticky_idle_0",
+        "pilot_bat_sticky_idle_1",
+        "pilot_bat_sticky_idle_2",
+        "pilot_bat_sticky_idle_3"
+      ],
+      "logicalPixels": 64,
+      "catalogPixels": 128,
+      "sha256": [
+        "24a18c9b50c38d831bd878041bd06db0db416567857e5720d711043d7ba8a8fc",
+        "84667bf0a219c7baa2d0a2039b032499f980123b7becc2c72f091eb8596057bb",
+        "2892abe7d3925af6c283bce47cba1fefbb4492b2b4d8c19ed8a34e55cefa1865",
+        "af8f7f469ae4d716c53a134825511630a6021e3b84c931977bc812c0ab8f4a0c"
+      ]
+    },
+    {
+      "speciesID": "sticky",
+      "actionID": "sleep",
+      "frames": [
+        "pilot_bat_sticky_sleep_0",
+        "pilot_bat_sticky_sleep_1",
+        "pilot_bat_sticky_sleep_2",
+        "pilot_bat_sticky_sleep_3"
+      ],
+      "logicalPixels": 64,
+      "catalogPixels": 128,
+      "sha256": [
+        "b8ac60c27fd6e30ba5cf4ab7bffcd22011dc6b0db111a4aead613dc77479178b",
+        "605c5920c368ea9ab20c1b0adc482bc8171b3f9150466e4b11f69b4b8a1fa409",
+        "1b2da6a6f6ea2d370c3103e7a515120767e42a5a2d34b5750c28ebb3fc12aed6",
+        "76485e85df505611017195d2099f3523226f2f39807073e24a0b3dc045ebab27"
+      ]
+    },
+    {
+      "speciesID": "sticky",
+      "actionID": "fly",
+      "frames": [
+        "pilot_bat_sticky_fly_0",
+        "pilot_bat_sticky_fly_1",
+        "pilot_bat_sticky_fly_2",
+        "pilot_bat_sticky_fly_3"
+      ],
+      "logicalPixels": 64,
+      "catalogPixels": 128,
+      "sha256": [
+        "05aa7176aacd9a08900a7f685569b16b46c772dbd9a859fb8b7f2a2857c38e06",
+        "ac8d846bd597107b2ae5c9ce551acc1288d73a9a09ac7c1298dc701816e5a59b",
+        "3ba265d6a24c4b01e19c7fc9c5500a0f5b7c3ec42511c7c8d002ab7a32da4ffb",
+        "6a21c6fae5f394b83e3fe89c502c83523d74b5f79843ec50a09671f33aef49da"
+      ]
+    },
+    {
+      "speciesID": "sticky",
+      "actionID": "pet",
+      "frames": [
+        "pilot_bat_sticky_pet_0",
+        "pilot_bat_sticky_pet_1",
+        "pilot_bat_sticky_pet_2",
+        "pilot_bat_sticky_pet_3"
+      ],
+      "logicalPixels": 64,
+      "catalogPixels": 128,
+      "sha256": [
+        "9e56afc831bc0756a700bf1f4c397c0bfa4b9013168bb2785190b3f17ec2e5f7",
+        "c33b9602608f6de53117a613c55e3987adbb12f9d5546dfb3ed0082d6dbfe15b",
+        "695fc76e9937a81f7ff2fcc9ca5a063a649f1d6f84b6177373072c3fca847fcb",
+        "a7205262c9caff51e9dfdbf86d23812158e2f464f18416471f4841bc3b0a5249"
+      ]
+    },
+    {
+      "speciesID": "sticky",
+      "actionID": "eat",
+      "frames": [
+        "pilot_bat_sticky_eat_0",
+        "pilot_bat_sticky_eat_1",
+        "pilot_bat_sticky_eat_2",
+        "pilot_bat_sticky_eat_3"
+      ],
+      "logicalPixels": 64,
+      "catalogPixels": 128,
+      "sha256": [
+        "a12f116b0c9b6ef8bd53a4120b1c0caabf4a23b52a765a8d054cbce6ea9eb971",
+        "4f80344c4ca0971cc8660089b9f60a496cb1222322004381e1dee548c3570633",
+        "06b5108bf148d1622345c58137b3ed90b8412fbc35d0e0c6fdcb0547da467a96",
+        "b8b9bb7670543273d0a21e8b526597766d5fb9c3acf716853b2e269826def0d4"
+      ]
+    },
+    {
+      "speciesID": "sticky",
+      "actionID": "moving-day",
+      "frames": [
+        "pilot_bat_sticky_moving-day_0",
+        "pilot_bat_sticky_moving-day_1",
+        "pilot_bat_sticky_moving-day_2",
+        "pilot_bat_sticky_moving-day_3"
+      ],
+      "logicalPixels": 64,
+      "catalogPixels": 128,
+      "sha256": [
+        "5df9fc2ebe9b1d554410305b075f0bd77ab52b83b3fb68259090a4fe24224dbc",
+        "c6aca570a68bbf2f6986babca40ad019e0345c2b3100473232216f99fd40d37c",
+        "5fe08ce5b248cf2c93fd6cd71d48f31a61759719be006232a175dcb07d3db4c8",
+        "5048c9c999d6c5661a76ecae551ed1e613d2ff3942272f4174f861e7d7a216d9"
+      ]
+    },
+    {
+      "speciesID": "walker",
+      "actionID": "idle",
+      "frames": [
+        "pilot_bat_walker_idle_0",
+        "pilot_bat_walker_idle_1",
+        "pilot_bat_walker_idle_2",
+        "pilot_bat_walker_idle_3"
+      ],
+      "logicalPixels": 64,
+      "catalogPixels": 128,
+      "sha256": [
+        "e0ca59c1446f466827f7c76da787f58ee6e8f6e375630c88aa89f24ec38378a5",
+        "b90e207f2b0be429cde1ce11555f5b7a606b5416db505f8218ec6d887e3daf7b",
+        "b91e704e6305f5af117e738a1cd24c78d35b7dd22a9531e3d92b43d7880f3a40",
+        "fe476587cca3aaf5c68348e6a5feb6723db563c99eebd8774f8f51c807a032b0"
+      ]
+    },
+    {
+      "speciesID": "walker",
+      "actionID": "sleep",
+      "frames": [
+        "pilot_bat_walker_sleep_0",
+        "pilot_bat_walker_sleep_1",
+        "pilot_bat_walker_sleep_2",
+        "pilot_bat_walker_sleep_3"
+      ],
+      "logicalPixels": 64,
+      "catalogPixels": 128,
+      "sha256": [
+        "e8ffa7d5f22755d7741833641d721d2b450cc35c4f4d87efb37716a9bc1596d0",
+        "0677e91cbecdfda9bb0d0b87e41ed6a2fe669e4113faf79ac4489bbe657a11d5",
+        "3629bae33a25ee00131918bd61a33d19d0f8662cf626089f0394a17bcf0fc9d7",
+        "621444a4a8f0cc1a29c88e61e86a1f2f3bb99882708daa931bd582d76c3de13b"
+      ]
+    },
+    {
+      "speciesID": "walker",
+      "actionID": "fly",
+      "frames": [
+        "pilot_bat_walker_fly_0",
+        "pilot_bat_walker_fly_1",
+        "pilot_bat_walker_fly_2",
+        "pilot_bat_walker_fly_3"
+      ],
+      "logicalPixels": 64,
+      "catalogPixels": 128,
+      "sha256": [
+        "800c90b426cb49571208f816812c39f112cde507179ca177ef547c5edf4c1eda",
+        "1cb39bf0ddb8e6c9c9ec9aabd6475f5e704dc9c0db76ef20fe2d0676b9806b0f",
+        "7a2a0ac5608e9bb09b1e42fbcfba4a2b936f777c4e09e86f16998fc7f3392905",
+        "f7e20d10ef4acf8a9f4b0b271001c8b46aae5aacedad99efc222749c488a9806"
+      ]
+    },
+    {
+      "speciesID": "walker",
+      "actionID": "pet",
+      "frames": [
+        "pilot_bat_walker_pet_0",
+        "pilot_bat_walker_pet_1",
+        "pilot_bat_walker_pet_2",
+        "pilot_bat_walker_pet_3"
+      ],
+      "logicalPixels": 64,
+      "catalogPixels": 128,
+      "sha256": [
+        "3203330340f05e378908b69d5f3529eeb0f46e6f54af0b97a3c60931899c7389",
+        "7ee38abfa807da7c1bef50d92df8508ff502b65704076305af4ecc8a154e0ba4",
+        "7f108110acb0701ad4127664936db985d2b06a2d290f37533b0b21d773618728",
+        "4e4ed75234b0d58601ae0c17fe3540d1d7843037a0ed3cd36b8a04671c02a7b6"
+      ]
+    },
+    {
+      "speciesID": "walker",
+      "actionID": "eat",
+      "frames": [
+        "pilot_bat_walker_eat_0",
+        "pilot_bat_walker_eat_1",
+        "pilot_bat_walker_eat_2",
+        "pilot_bat_walker_eat_3"
+      ],
+      "logicalPixels": 64,
+      "catalogPixels": 128,
+      "sha256": [
+        "4c9838cb1e1e94f5780f018a47e060b446f9fca6e902e50e154d660ab3e4e6cf",
+        "4fecac29f7534cb9a8c6c09dde5f3adf52176563a6696a142c35bb6a39ccfdcb",
+        "8b39bc50f62a43cba2bf69e7d33ef48b937b82a666d4ea28bf6b64c0abc16d27",
+        "ca0f9ae919d5434b99b251c1d50838bf68733dc32412704c7ff64c21024c4109"
+      ]
+    },
+    {
+      "speciesID": "walker",
+      "actionID": "power-walk",
+      "frames": [
+        "pilot_bat_walker_power-walk_0",
+        "pilot_bat_walker_power-walk_1",
+        "pilot_bat_walker_power-walk_2",
+        "pilot_bat_walker_power-walk_3",
+        "pilot_bat_walker_power-walk_4",
+        "pilot_bat_walker_power-walk_5"
+      ],
+      "logicalPixels": 64,
+      "catalogPixels": 128,
+      "sha256": [
+        "ded494cb05f68196cf7f78b00c667e9b12e260ead0f3f2f8afadbf0d11c59625",
+        "c2fe7da0c063913cfcfb96bb9f51704aeb5b0e622cd7f1aa1981fb276276c403",
+        "6f8118300520ddf822bdf20ce3f39d7068b626c188c33457ec28ed8bdac4fb53",
+        "b1bfb789be476a0ddf13f7804cfc639b6ad0657aee892cb47aa4d779c8ec54a6",
+        "9d89e5545fbfa8920415c0d8d522412c6b8ad14c24896ccd643147f4b928f2ef",
+        "39ffcf6246ba77d3930ce1d08faaec8ac43862a088149ce85897889f35f28a1b"
+      ]
+    }
+  ]
+}

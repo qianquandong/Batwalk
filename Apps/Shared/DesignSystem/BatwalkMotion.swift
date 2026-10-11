@@ -1,4 +1,5 @@
 import SwiftUI
+import BatwalkCore
 #if os(watchOS)
 import WatchKit
 #elseif canImport(UIKit)
@@ -140,7 +141,7 @@ struct BatwalkAppear: ViewModifier {
 /// Card / tile unlock: opacity 0 → 1, scale 0.9 → ~1.04 → 1 with a brief glow.
 struct UnlockReveal: ViewModifier {
     let isNew: Bool
-    var glow: Color = BatwalkColor.purpleGlow
+    var glow: Color = BatwalkColor.accentSoft
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var revealed = false
     @State private var glowing = false
@@ -186,7 +187,7 @@ extension View {
     func earTwitch(_ enabled: Bool = true) -> some View { modifier(EarTwitch(enabled: enabled)) }
     func happyBounce(trigger: Int) -> some View { modifier(HappyBounce(trigger: trigger)) }
     func batwalkAppear(delay: Double = 0) -> some View { modifier(BatwalkAppear(delay: delay)) }
-    func unlockReveal(isNew: Bool, glow: Color = BatwalkColor.purpleGlow) -> some View {
+    func unlockReveal(isNew: Bool, glow: Color = BatwalkColor.accentSoft) -> some View {
         modifier(UnlockReveal(isNew: isNew, glow: glow))
     }
     func staggeredAppear(index: Int) -> some View { modifier(StaggeredAppear(index: index)) }
@@ -236,6 +237,68 @@ enum Haptics {
         WKInterfaceDevice.current().play(.failure)
         #elseif canImport(UIKit)
         UINotificationFeedbackGenerator().notificationOccurred(.error)
+        #endif
+    }
+
+    /// One tick as the player cracks the egg open (crown turn / tap).
+    static func crack() {
+        #if os(watchOS)
+        WKInterfaceDevice.current().play(.click)
+        #elseif canImport(UIKit)
+        UIImpactFeedbackGenerator(style: .light).impactOccurred()
+        #endif
+    }
+
+    /// The reveal has a signature per rarity, so a Rare feels different on the
+    /// wrist before the eyes catch up (PRD §8 "Rare/Legendary reveal feels special"):
+    /// Common one tap · Uncommon a rise and a tap · Rare two rises and a tap ·
+    /// Legendary a start, two rises and a tap · Shiny adds a closing chime.
+    /// Pulses are spaced so each one can be felt separately.
+    @MainActor
+    static func reveal(rarity: Rarity, shiny: Bool) async {
+        #if os(watchOS)
+        let device = WKInterfaceDevice.current()
+        func pulse(_ type: WKHapticType, after milliseconds: Int) async {
+            try? await Task.sleep(for: .milliseconds(milliseconds))
+            guard !Task.isCancelled else { return }
+            device.play(type)
+        }
+        switch rarity {
+        case .common:
+            device.play(.success)
+        case .uncommon:
+            device.play(.directionUp)
+            await pulse(.success, after: 180)
+        case .rare:
+            device.play(.directionUp)
+            await pulse(.directionUp, after: 160)
+            await pulse(.success, after: 240)
+        case .legendary:
+            device.play(.start)
+            await pulse(.directionUp, after: 220)
+            await pulse(.directionUp, after: 160)
+            await pulse(.success, after: 280)
+        }
+        if shiny { await pulse(.notification, after: 320) }
+        #elseif canImport(UIKit)
+        UINotificationFeedbackGenerator().notificationOccurred(.success)
+        #endif
+    }
+}
+
+extension View {
+    /// Apple Watch Double Tap (watchOS 11+) performs this control's primary action.
+    /// A no-op on earlier systems and on iPhone, so callers never need to gate it.
+    @ViewBuilder
+    func doubleTapPrimaryAction() -> some View {
+        #if os(watchOS)
+        if #available(watchOS 11.0, *) {
+            handGestureShortcut(.primaryAction)
+        } else {
+            self
+        }
+        #else
+        self
         #endif
     }
 }

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Create and boot an iPhone simulator; exports PHONE_SIM=<udid> to $GITHUB_ENV.
+# Create and boot an iPhone simulator; share PHONE_SIM with the CI's next steps.
 set -euo pipefail
 runtime=$(xcrun simctl list runtimes -j | python3 -c '
 import json, sys
@@ -15,4 +15,9 @@ udid=$(xcrun simctl create "Batwalk iPhone" "$devtype" "$runtime")
 xcrun simctl boot "$udid"
 xcrun simctl bootstatus "$udid" -b >/dev/null 2>&1 || sleep 20
 echo "::notice::iPhone simulator: $devtype on $runtime"
-echo "PHONE_SIM=$udid" >> "$GITHUB_ENV"
+env_file="${CM_ENV:-${GITHUB_ENV:-${BATWALK_ENV_FILE:-}}}"
+if [ -n "$env_file" ]; then
+  printf 'PHONE_SIM=%s\n' "$udid" >> "$env_file"
+else
+  printf 'PHONE_SIM=%s\n' "$udid"
+fi

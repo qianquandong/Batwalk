@@ -1,55 +1,77 @@
 import Foundation
 import SwiftData
-import BatwalkCore
 
-/// The save is one Codable `GameState` blob in a single SwiftData row.
-/// See docs/decisions/0002-save-as-single-blob.md for why (CloudKit-safe,
-/// schema evolves in Swift, all rules stay unit-tested in BatwalkCore).
-///
-/// CloudKit rules respected: every attribute has a default, no unique constraints,
-/// no required relationships.
 @Model
 final class SaveRecord {
     var payload: Data = Data()
     var updatedAt: Date = Date.distantPast
-    /// "watch" or "phone" — only the Watch ever writes a save.
     var writer: String = ""
-
     init(payload: Data, updatedAt: Date, writer: String) {
-        self.payload = payload
-        self.updatedAt = updatedAt
-        self.writer = writer
+        self.payload = payload; self.updatedAt = updatedAt; self.writer = writer
     }
 }
 
+@Model
+final class CollectionBackupRecord {
+    var saveID: String = ""
+    var payload: Data = Data()
+    var updatedAt: Date = Date.distantPast
+    init() {}
+}
+
+@MainActor
 enum Persistence {
-    /// Local SwiftData store in the App Group, mirrored to the user's private
-    /// CloudKit database for backup / restore. Falls back to local-only so the
-    /// game is always playable even if iCloud is unavailable.
-    static func makeContainer() -> ModelContainer {
-        let schema = Schema([SaveRecord.self])
-        guard SharedConfig.iCloudAndAppGroupEnabled else {
-            return localOnly(schema)
-        }
+    static var storageUnavailable = false
+
+    static func makeContainer(localURL: URL? = nil) -> ModelContainer {
+        storageUnavailable = false
+        let localSchema = Schema([SaveRecord.self])
+        let backupSchema = Schema([CollectionBackupRecord.self])
+        let schema = Schema([SaveRecord.self, CollectionBackupRecord.self])
+        // The original default.store URL stays unchanged. App Groups share only
+        // the widget snapshot, and SaveRecord is never configured for CloudKit.
+        let local = localURL.map { ModelConfiguration(schema: localSchema, url: $0, cloudKitDatabase: .none) }
+            ?? ModelConfiguration(schema: localSchema, cloudKitDatabase: .none)
+        let cloud: ModelConfiguration.CloudKitDatabase = SharedConfig.cloudBackupEnabled ? .private(SharedConfig.cloudKitContainer) : .none
+        let backups = localURL.map {
+            ModelConfiguration("CollectionBackup", schema: backupSchema,
+                url: $0.deletingLastPathComponent().appendingPathComponent("CollectionBackup.store"), cloudKitDatabase: cloud)
+        } ?? ModelConfiguration("CollectionBackup", schema: backupSchema, cloudKitDatabase: cloud)
         do {
-            let config = ModelConfiguration(
-                schema: schema,
-                groupContainer: .identifier(SharedConfig.appGroup),
-                cloudKitDatabase: .private(SharedConfig.cloudKitContainer)
-            )
-            return try ModelContainer(for: schema, configurations: config)
+            try excludeFromBackup(local.url)
+            let container = try ModelContainer(for: schema, configurations: local, backups)
+            return container
         } catch {
-            print("[persistence] CloudKit store unavailable, using local-only store: \(error)")
-            return localOnly(schema)
+            let fallback = localURL.map {
+                ModelConfiguration("CollectionBackup", schema: backupSchema,
+                    url: $0.deletingLastPathComponent().appendingPathComponent("CollectionBackup.store"), cloudKitDatabase: .none)
+            } ?? ModelConfiguration("CollectionBackup", schema: backupSchema, cloudKitDatabase: .none)
+            do {
+                try excludeFromBackup(local.url)
+                let container = try ModelContainer(for: schema, configurations: local, fallback)
+                return container
+            } catch {
+                let memory = ModelConfiguration(schema: schema, isStoredInMemoryOnly: true, cloudKitDatabase: .none)
+                guard let container = try? ModelContainer(for: schema, configurations: memory) else {
+                    fatalError("Unable to initialize the recovery interface")
+                }
+                storageUnavailable = true
+                return container
+            }
         }
     }
 
-    private static func localOnly(_ schema: Schema) -> ModelContainer {
-        let local = ModelConfiguration(schema: schema, cloudKitDatabase: .none)
-        do {
-            return try ModelContainer(for: schema, configurations: local)
-        } catch {
-            fatalError("Could not create even a local store: \(error)")
+    private static func excludeFromBackup(_ url: URL) throws {
+        var directory = url.deletingLastPathComponent()
+        try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+        var directoryValues = URLResourceValues(); directoryValues.isExcludedFromBackup = true
+        // Mark the directory before opening SQLite so later WAL/SHM files inherit
+        // exclusion. If this fails, don't create a Health-derived save there.
+        try directory.setResourceValues(directoryValues)
+        for suffix in ["", "-wal", "-shm"] {
+            var target = URL(fileURLWithPath: url.path + suffix)
+            var values = URLResourceValues(); values.isExcludedFromBackup = true
+            try? target.setResourceValues(values)
         }
     }
 }

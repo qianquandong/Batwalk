@@ -1,21 +1,30 @@
 import SwiftUI
 import HealthKit
+import UserNotifications
 import BatwalkCore
 
 /// Settings (board: Watch › 6. Settings): companion, notifications, Health access,
-/// restore purchase, version. Health troubleshooting lives here, not in gameplay.
+/// unlock / restore purchase, version. Health troubleshooting lives here, not in gameplay.
 struct SettingsView: View {
     @Environment(GameStore.self) private var store
     @Environment(PurchaseManager.self) private var purchases
     let steps: StepService
 
     @AppStorage(HatchNotifier.enabledKey) private var notificationsOn = true
-    @State private var health: HealthStatus = .connected
+    @AppStorage(HatchNotifier.duskEnabledKey) private var duskOn = false
+    @State private var health: HealthStatus = .noData
+    @State private var notificationStatus: UNAuthorizationStatus = .notDetermined
+    @State private var confirmRestore = false
+    @State private var showUnlock = false
 
     var body: some View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: 6) {
+                    #if DEBUG
+                    NavigationLink("Animation samples") { PilotAnimationLab() }
+                        .font(BatwalkFont.caption)
+                    #endif
                     if let companion = store.state.companion {
                         NavigationLink(value: SettingsRoute.bat(companion.speciesID)) {
                             HStack(spacing: BatwalkSpacing.sm) {
@@ -36,17 +45,34 @@ struct SettingsView: View {
                     }
 
                     Toggle(isOn: $notificationsOn) {
-                        Label("Notifications", systemImage: "bell.fill")
+                        Label("Ready to hatch", systemImage: "bell.fill")
                             .font(BatwalkFont.caption)
                     }
-                    .tint(BatwalkColor.purple)
+                    .tint(BatwalkColor.accent)
                     .batwalkGlassCard(padding: 8, radius: 14)
+
+                    // "Bat Awake" (Q8, decided 2026-10-10): one optional note at dusk,
+                    // off by default, never more than one a day.
+                    Toggle(isOn: $duskOn) {
+                        Label("Bat Awake at dusk", systemImage: "moon.stars.fill")
+                            .font(BatwalkFont.caption)
+                    }
+                    .tint(BatwalkColor.accent)
+                    .batwalkGlassCard(padding: 8, radius: 14)
+                    Text("One gentle note around \(duskHourText) when your bat wakes up.")
+                        .font(BatwalkFont.micro)
+                        .foregroundStyle(BatwalkColor.textSecondaryDark)
+
+                    if (notificationsOn || duskOn) && notificationStatus == .denied {
+                        Text("Notifications are blocked in device settings.")
+                            .font(BatwalkFont.micro).foregroundStyle(BatwalkColor.warning)
+                    }
 
                     NavigationLink(value: SettingsRoute.health) {
                         HStack(spacing: BatwalkSpacing.sm) {
                             Image(systemName: "heart.fill")
                                 .font(.system(size: 14))
-                                .foregroundStyle(BatwalkColor.pinkAccent)
+                                .foregroundStyle(BatwalkColor.rose)
                             VStack(alignment: .leading, spacing: 1) {
                                 Text("Health Access").font(BatwalkFont.caption)
                                 Text(healthLabel)
@@ -61,13 +87,34 @@ struct SettingsView: View {
                     }
                     .buttonStyle(PressableStyle())
 
+                    if !purchases.isUnlocked {
+                        Button { showUnlock = true } label: {
+                            HStack(spacing: BatwalkSpacing.sm) {
+                                Image(systemName: "sparkles")
+                                    .font(.system(size: 13))
+                                    .foregroundStyle(BatwalkColor.rarityShiny)
+                                VStack(alignment: .leading, spacing: 1) {
+                                    Text("Unlock all bats").font(BatwalkFont.caption)
+                                    Text(purchases.product.map { "\($0.displayPrice) · one-time" } ?? "Every bat, every egg")
+                                        .font(BatwalkFont.micro)
+                                        .foregroundStyle(BatwalkColor.textSecondaryDark)
+                                }
+                                Spacer(minLength: 0)
+                                chevron
+                            }
+                            .foregroundStyle(.white)
+                            .batwalkGlassCard(padding: 8, radius: 14)
+                        }
+                        .buttonStyle(PressableStyle())
+                    }
+
                     Button {
                         Task { await purchases.restore() }
                     } label: {
                         HStack(spacing: BatwalkSpacing.sm) {
                             Image(systemName: purchases.isUnlocked ? "checkmark.seal.fill" : "arrow.clockwise")
                                 .font(.system(size: 13))
-                                .foregroundStyle(purchases.isUnlocked ? BatwalkColor.success : BatwalkColor.softLavender)
+                                .foregroundStyle(purchases.isUnlocked ? BatwalkColor.success : BatwalkColor.sage)
                             Text(purchases.isUnlocked ? "Full unlock active" : "Restore Purchase")
                                 .font(BatwalkFont.caption)
                             Spacer(minLength: 0)
@@ -77,6 +124,17 @@ struct SettingsView: View {
                     }
                     .buttonStyle(PressableStyle())
                     .disabled(purchases.isBusy)
+                    if let message = purchases.message {
+                        Text(message).font(BatwalkFont.micro).foregroundStyle(BatwalkColor.textSecondaryDark)
+                    }
+                    if let error = purchases.lastError {
+                        Text(error).font(BatwalkFont.micro).foregroundStyle(BatwalkColor.warning)
+                    }
+                    NavigationLink("Privacy & data") { PrivacyView() }.font(BatwalkFont.caption)
+                    if let backup = store.availableBackup, backup.collection.count > store.state.collection.count {
+                        Button("Restore \(backup.collection.count) backed-up bats") { confirmRestore = true }
+                            .font(BatwalkFont.caption)
+                    }
 
                     Text(versionText)
                         .font(BatwalkFont.micro)
@@ -95,9 +153,34 @@ struct SettingsView: View {
             }
             .watchPageBackground()
         }
-        .task { health = await HealthAccessView.currentStatus(steps: steps, state: store.state) }
+        .sheet(isPresented: $showUnlock) { WatchUnlockView() }
+        .task {
+            health = await HealthAccessView.currentStatus(steps: steps, state: store.state)
+            notificationStatus = await UNUserNotificationCenter.current().notificationSettings().authorizationStatus
+        }
+        .alert("Restore collection?", isPresented: $confirmRestore) {
+            Button("Cancel", role: .cancel) {}
+            Button("Restore") {
+                if let backup = store.availableBackup { try? store.restore(backup) }
+            }
+        } message: {
+            Text("This replaces the collection on this Watch. Bats and friendship are restored; your current egg and step accounting start fresh.")
+        }
         .onChange(of: notificationsOn) { _, on in
-            if on { Task { await HatchNotifier.requestPermission() } }
+            if on {
+                Task {
+                    await HatchNotifier.requestPermission()
+                    notificationStatus = await UNUserNotificationCenter.current().notificationSettings().authorizationStatus
+                }
+            }
+        }
+        .onChange(of: duskOn) { _, on in
+            Task {
+                if on { await HatchNotifier.requestPermission() }
+                await HatchNotifier.scheduleDuskReminder(enabled: on, companionName: store.state.companion?.displayName,
+                                                         hour: Tuning.default.duskStartHour)
+                notificationStatus = await UNUserNotificationCenter.current().notificationSettings().authorizationStatus
+            }
         }
     }
 
@@ -107,18 +190,20 @@ struct SettingsView: View {
             .foregroundStyle(BatwalkColor.textSecondaryDark)
     }
 
+    private var duskHourText: String {
+        let hour = Tuning.default.duskStartHour
+        return Calendar.current.date(from: DateComponents(hour: hour))?.formatted(.dateTime.hour()) ?? "\(hour):00"
+    }
+
     private var healthLabel: String {
-        switch health {
-        case .connected: return "Connected"
-        case .notSetUp: return "Not set up"
-        case .needsAttention: return "Needs attention"
-        }
+        health.label
     }
 
     private var healthColor: Color {
         switch health {
         case .connected: return BatwalkColor.success
         case .notSetUp, .needsAttention: return BatwalkColor.warning
+        case .noData: return BatwalkColor.textSecondaryDark
         }
     }
 
@@ -146,7 +231,7 @@ struct HealthAccessView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: BatwalkSpacing.sm) {
-                Label(status == .connected ? "Connected" : status == .notSetUp ? "Not set up" : "Needs attention",
+                Label(status.label,
                       systemImage: status == .connected ? "checkmark.circle.fill" : "exclamationmark.circle.fill")
                     .font(BatwalkFont.headline)
                     .foregroundStyle(status == .connected ? BatwalkColor.success : BatwalkColor.warning)
@@ -156,12 +241,12 @@ struct HealthAccessView: View {
                     .foregroundStyle(BatwalkColor.textSecondaryDark)
 
                 if status != .connected {
-                    Text("No steps have arrived today. If you've been walking, open Health on your iPhone › Sharing › Apps › Batwalk and turn on Steps.")
+                    Text("An empty result can mean no recorded steps or limited Health access. If you've been walking, check Batwalk's Step Count access in the Health app on your iPhone.")
                         .font(BatwalkFont.micro)
                         .foregroundStyle(.white)
                         .batwalkGlassCard(padding: 8, radius: 14)
 
-                    Button("Allow Step Count") {
+                    Button("Check Step Count") {
                         isWorking = true
                         Task { @MainActor in
                             _ = await steps.requestAuthorization()
@@ -186,9 +271,10 @@ struct HealthAccessView: View {
     static func currentStatus(steps: StepService, state: GameState) async -> HealthStatus {
         if let demo = DemoMode.healthStatus { return demo }
         if await steps.authorizationRequestStatus() == .shouldRequest { return .notSetUp }
-        // Today's total, not lifetime: if Steps access is later turned off in Health,
-        // the status must stop saying "Connected".
-        let today = state.ledger.dayKey == DayKey.make(.now) ? state.ledger.lastDailyTotal : 0
-        return today > 0 ? .connected : .needsAttention
+        switch StepSyncCoordinator.shared.status {
+        case .updated(let total, _): return total > 0 ? .connected : .noData
+        case .failed: return .needsAttention
+        case .idle, .updating: return .noData
+        }
     }
 }

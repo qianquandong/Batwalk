@@ -1,8 +1,8 @@
 import SwiftUI
 import BatwalkCore
 
-// Batwalk design tokens. Values come from the approved UI boards
-// (Art/ui-boards/watch-ui-spec.png › Component Tokens, overview.png › Design System).
+// Gentle pixel direction: midnight teal, cream, sage, and restrained peach.
+// See Art/gentle-pixel/README.md for the current visual reference.
 // Screens use these semantic names — never raw hex values.
 
 extension Color {
@@ -15,70 +15,86 @@ extension Color {
             opacity: opacity
         )
     }
+
+    /// Follows the system appearance on iPhone. The Watch is always dark, so it
+    /// resolves to `dark`; other platforms (tests on macOS) use `light`.
+    static func adaptive(light: UInt32, dark: UInt32) -> Color {
+        #if os(watchOS)
+        return Color(hex: dark)
+        #elseif canImport(UIKit)
+        return Color(uiColor: UIColor { traits in
+            UIColor(Color(hex: traits.userInterfaceStyle == .dark ? dark : light))
+        })
+        #else
+        return Color(hex: light)
+        #endif
+    }
 }
 
 enum BatwalkColor {
     // Night surfaces (Watch + dark heroes)
-    static let deepNight = Color(hex: 0x0B1020)
-    static let indigo = Color(hex: 0x1A1F3D)
-    static let nightSurface = Color(hex: 0x1E2130)
-    static let nightCard = Color(hex: 0x2A2F45)
-    static let nightCardElevated = Color(hex: 0x353B57)
+    static let deepNight = Color(hex: 0x0C181B)
+    static let indigo = Color(hex: 0x1C2E32)
+    static let nightSurface = Color(hex: 0x1F3033)
+    static let nightCard = Color(hex: 0x2C3E40)
+    static let nightCardElevated = Color(hex: 0x374B49)
 
     // Brand
-    static let purple = Color(hex: 0x8B5CF6)
-    static let purpleGlow = Color(hex: 0x9F7BFF)
-    static let pinkAccent = Color(hex: 0xF472B6)
-    static let ringPink = Color(hex: 0xFF6BCC)
-    static let moonlight = Color(hex: 0xFDE68A)
-    static let softLavender = Color(hex: 0xCDB4FF)
-    static let mist = Color(hex: 0x8BA0D9)
-    static let cloud = Color(hex: 0xF3EBFF)
+    static let accent = Color(hex: 0x547465)
+    static let accentSoft = Color(hex: 0xB7C9AC)
+    static let rose = Color(hex: 0xDDAE9D)
+    static let ringMint = Color(hex: 0xCBD6AB)
+    static let moonlight = Color(hex: 0xEFE2B6)
+    static let sage = Color(hex: 0xCED7BF)
+    static let mist = Color(hex: 0x89A7A0)
+    static let cloud = Color(hex: 0xF4F0E2)
+    static let buttonText = Color(hex: 0x182C25)
 
     // Text
-    static let textPrimaryDark = Color.white
-    static let textSecondaryDark = Color(hex: 0xB9B3D9)
-    static let textPrimaryLight = Color(hex: 0x1B1640)
-    static let textSecondaryLight = Color(hex: 0x6E6894)
+    static let textPrimaryDark = cloud
+    static let textSecondaryDark = Color(hex: 0xB2C0B8)
+    static let textPrimaryLight = Color.adaptive(light: 0x202C28, dark: 0xF4F0E2)
+    static let textSecondaryLight = Color.adaptive(light: 0x66766B, dark: 0xA9B8B0)
 
-    // Light (iPhone) surfaces
-    static let lightBackground = Color(hex: 0xF7F3FF)
-    static let lightCard = Color.white
-    static let lightTint = Color(hex: 0xEFE7FF)
+    // Companion (iPhone) surfaces — warm cream by day, midnight teal in Dark Mode.
+    // The "light" names describe the companion app's surface role, not a fixed appearance.
+    static let lightBackground = Color.adaptive(light: 0xF4F1E8, dark: 0x0F1C1E)
+    static let lightCard = Color.adaptive(light: 0xFFFCF4, dark: 0x1B2B2D)
+    static let lightTint = Color.adaptive(light: 0xE5E9DB, dark: 0x25383A)
 
     // Locked bats
-    static let lockedBatBackground = Color(hex: 0x161A30)
-    static let lockedBatLight = Color(hex: 0xECE6FA)
+    static let lockedBatBackground = Color(hex: 0x122125)
+    static let lockedBatLight = Color.adaptive(light: 0xE1E5D8, dark: 0x2A3C3E)
 
     // Status
-    static let success = Color(hex: 0x5ED3A6)
-    static let warning = Color(hex: 0xF5B83D)
+    static let success = Color(hex: 0xAFC9A5)
+    static let warning = Color(hex: 0xE3BA7A)
 
     // Rarity
-    static let rarityCommon = Color(hex: 0xA79BC9)
-    static let rarityUncommon = Color(hex: 0x5ED3A6)
-    static let rarityRare = Color(hex: 0x5B8CFF)
-    static let rarityLegendary = Color(hex: 0xF5B83D)
-    static let rarityShiny = Color(hex: 0xFFD86B)
+    static let rarityCommon = Color(hex: 0xADBBAC)
+    static let rarityUncommon = Color(hex: 0xB3C697)
+    static let rarityRare = Color(hex: 0xA7BECF)
+    static let rarityLegendary = Color(hex: 0xDEC48B)
+    static let rarityShiny = Color(hex: 0xF0DCA6)
 }
 
 enum BatwalkGradient {
-    /// Main interactive gradient: purple → pink.
+    /// Muted sage accents for the light companion app.
     static let primary = LinearGradient(
-        colors: [BatwalkColor.purple, BatwalkColor.pinkAccent],
+        colors: [BatwalkColor.accent, BatwalkColor.mist],
         startPoint: .leading, endPoint: .trailing)
 
-    /// Buttons: mostly purple with a pink edge, as on the boards.
+    /// Cream-mint buttons remain readable on both night and light surfaces.
     static let button = LinearGradient(
-        colors: [Color(hex: 0x7C4DF0), Color(hex: 0xB062E8)],
+        colors: [BatwalkColor.accentSoft, BatwalkColor.accentSoft],
         startPoint: .leading, endPoint: .trailing)
 
     static let friendship = LinearGradient(
-        colors: [Color(hex: 0xFF5FA2), BatwalkColor.pinkAccent],
+        colors: [BatwalkColor.rose, BatwalkColor.rose],
         startPoint: .leading, endPoint: .trailing)
 
     static let hatchGlow = RadialGradient(
-        colors: [BatwalkColor.moonlight.opacity(0.85), BatwalkColor.pinkAccent.opacity(0.25), .clear],
+        colors: [BatwalkColor.moonlight.opacity(0.25), BatwalkColor.accentSoft.opacity(0.08), .clear],
         center: .center, startRadius: 2, endRadius: 90)
 
     static let nightBackground = LinearGradient(
@@ -88,15 +104,15 @@ enum BatwalkGradient {
     /// Progress ring stroke; the ring rotates it so it starts at 12 o'clock.
     static func ring(progress: Double) -> AngularGradient {
         AngularGradient(
-            colors: [BatwalkColor.purpleGlow, BatwalkColor.ringPink],
+            colors: [BatwalkColor.accentSoft, BatwalkColor.ringMint],
             center: .center,
             startAngle: .degrees(0),
             endAngle: .degrees(360 * max(0.02, min(1, progress))))
     }
 
-    /// Soft lavender used behind bat art on the light iPhone UI.
+    /// Warm cream backdrop for the pixel characters.
     static let lightArt = LinearGradient(
-        colors: [Color(hex: 0xF3ECFF), Color(hex: 0xE4D8FF)],
+        colors: [BatwalkColor.lightTint, BatwalkColor.lightBackground],
         startPoint: .top, endPoint: .bottom)
 }
 

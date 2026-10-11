@@ -1,20 +1,18 @@
 import SwiftUI
 import BatwalkCore
 
-/// Unlock (board: iPhone › 4. Unlock / Premium Paywall). One-time $1.99, no
-/// subscription, no countdowns or fake discounts (PRD §2.10).
+/// Unlock (board: iPhone › 4. Unlock / Premium Paywall). One-time purchase, no
+/// subscription, no countdowns or fake discounts (PRD §2.10). Reached from a
+/// locked Batpedia card, the Companion page and Settings.
 struct UnlockView: View {
     @Environment(PurchaseManager.self) private var purchases
     @Environment(GameStore.self) private var store
-    private let ambient = AmbientMotionReader()
-
-    @State private var ctaGlow = false
     @State private var celebrate = false
 
     private let benefits: [(String, String)] = [
-        ("moon.stars.fill", "Access all 20 bats"),
+        ("moon.stars.fill", "Access all \(Roster.all.count) bats"),
         ("star.fill", "Discover Rare & Legendary bats"),
-        ("sparkles", "Find Shiny variants"),
+        ("sparkles", "Find Shiny variants — guaranteed within 40 hatches"),
         ("circle.hexagongrid.fill", "Unlock all egg pools"),
         ("book.closed.fill", "Complete the Batpedia"),
     ]
@@ -41,7 +39,7 @@ struct UnlockView: View {
                             HStack(spacing: 12) {
                                 Image(systemName: symbol)
                                     .font(.system(size: 15, weight: .semibold))
-                                    .foregroundStyle(BatwalkColor.purple)
+                                    .foregroundStyle(BatwalkColor.accent)
                                     .frame(width: 28, height: 28)
                                     .background(Circle().fill(BatwalkColor.lightTint))
                                 Text(text)
@@ -61,19 +59,20 @@ struct UnlockView: View {
                         } label: {
                             VStack(spacing: 2) {
                                 Text("Unlock All Bats")
-                                Text("\(purchases.product?.displayPrice ?? "$1.99") · One-time purchase")
+                                Text(purchases.product.map { "\($0.displayPrice) · One-time purchase" } ?? (store.isDemo ? "$2.99 · Preview" : "Loading price…"))
                                     .font(BatwalkFont.rounded(.caption, weight: .medium))
                                     .opacity(0.9)
                             }
                         }
                         .buttonStyle(BatwalkPrimaryButtonStyle(minHeight: 58))
-                        .shadow(color: BatwalkColor.purpleGlow.opacity(ctaGlow ? 0.55 : 0.2), radius: ctaGlow ? 14 : 6)
                         .disabled(purchases.isBusy || (purchases.product == nil && !store.isDemo))
 
                         if purchases.product == nil && !store.isDemo {
                             Text(purchases.lastError == nil ? "Connecting to the App Store…" : "The App Store isn't reachable right now.")
                                 .font(BatwalkFont.caption)
                                 .foregroundStyle(BatwalkColor.textSecondaryLight)
+                            Button("Retry App Store") { Task { await purchases.loadProduct() } }
+                                .disabled(purchases.isLoadingProduct)
                         }
                     }
 
@@ -84,6 +83,10 @@ struct UnlockView: View {
                     if let error = purchases.lastError {
                         Text(error).font(BatwalkFont.caption).foregroundStyle(.red).multilineTextAlignment(.center)
                     }
+                    if let message = purchases.message {
+                        Text(message).font(BatwalkFont.caption).foregroundStyle(BatwalkColor.textSecondaryLight).multilineTextAlignment(.center)
+                    }
+                    NavigationLink("Privacy & data") { PrivacyView() }
 
                     Label("Thank you for supporting Batwalk!", systemImage: "heart.fill")
                         .font(BatwalkFont.caption)
@@ -95,12 +98,6 @@ struct UnlockView: View {
             .background(BatwalkColor.lightBackground.ignoresSafeArea())
             .toolbar(.hidden, for: .navigationBar)
         }
-        .task(id: ambient.allowed) {
-            stopMotion { ctaGlow = false }
-            guard ambient.allowed else { return }
-            withAnimation(.easeInOut(duration: 1.6).repeatForever(autoreverses: true)) { ctaGlow = true }
-        }
-        .onDisappear { stopMotion { ctaGlow = false } }
         .onChange(of: purchases.isUnlocked) { _, unlocked in
             guard unlocked else { return }
             Haptics.success()
@@ -111,10 +108,7 @@ struct UnlockView: View {
     /// Hero: dusk sky with the board's four bats. TODO(asset): treasure-chest hero art from the iPhone board.
     private var hero: some View {
         ZStack {
-            LinearGradient(colors: [Color(hex: 0x2A1F5C), Color(hex: 0x7B4FC9), Color(hex: 0xF0D6F5)],
-                           startPoint: .top, endPoint: .bottom)
-            NightSkyBackground(time: .night, scenery: false).opacity(0.35)
-            SparkleField(count: 6, spread: 120)
+            NightSkyBackground(time: .night, scenery: true)
             HStack(alignment: .bottom, spacing: -18) {
                 BatSprite(speciesID: "moonwing", mood: .awake, size: 78)
                 BatHeroView(speciesID: "mochi", mood: .happy, size: 124)
@@ -142,6 +136,6 @@ struct UnlockView: View {
         }
         .frame(maxWidth: .infinity)
         .batwalkLightCard(padding: 20, radius: 22)
-        .overlay { if celebrate { SparkleField(count: 6, color: BatwalkColor.purple, spread: 90) } }
+        .overlay { if celebrate { SparkleField(count: 6, color: BatwalkColor.accent, spread: 90) } }
     }
 }
