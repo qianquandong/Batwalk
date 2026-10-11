@@ -44,7 +44,7 @@ project.yml             XcodeGen spec (the .xcodeproj is generated, not committe
 The manual workflows in [`codemagic.yaml`](codemagic.yaml) run Watch/iPhone checks
 and capture Watch simulator screenshots on a Codemagic Mac, independently of
 GitHub Actions. No Apple signing credentials are needed for these simulator builds.
-See **[Codemagic setup](docs/CODEMAGIC.md)** to connect this private repository and
+See **[Codemagic setup](docs/CODEMAGIC.md)** to connect the repository and
 select the branch containing the configuration. A local Codex monitor can start
 the verification workflow when GitHub explicitly blocks CI for billing or minute
 limits; its operating requirements are documented in the same guide.
