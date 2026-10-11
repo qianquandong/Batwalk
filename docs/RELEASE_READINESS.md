@@ -32,8 +32,10 @@ be read from the PR's latest green CI run; an unsigned build is not a device sig
 | Platform | Siri "Check my egg" (App Intents), iPhone Dark Mode, share card, String Catalog, strict-concurrency warnings, content waves (Oddballs = v1.1). |
 | CI | Core tests on Linux for every PR (1× minutes); macOS builds on `main` / manual; Codemagic for PR Mac checks. |
 
-Not compiled on a Mac in that pass — the first Xcode build of the branch should
-expect small SwiftUI/API fixes (Watch, iPhone and complication targets).
+Verified on Codemagic (`batwalk-verify`, build 6acaec5b, 2026-10-11, Xcode 26.3):
+core tests, Watch + iPhone simulator builds, the hosted app tests (incl. all
+1,216 generated frames), iPhone and Watch screenshots and the capability-enabled
+build — green after one fix (`RelevantContext.date(from:to:)` for watchOS 11).
 
 ## Required before release
 
