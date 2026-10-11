@@ -49,6 +49,10 @@ function blanket(g,P,cx,cy,amount) {
 function copy(g,src,dx=0,dy=0,angle=0) {
   // Inverse nearest sampling preserves filled pixel clusters on a turning bat.
   const a=angle*Math.PI/180,co=Math.cos(a),si=Math.sin(a);
+  for(let y=0;y<64;y++)for(let x=0;x<64;x++)if(src.get(x,y)){
+    const tx=Math.round((x-32)*co-(y-35)*si+32+dx),ty=Math.round((x-32)*si+(y-35)*co+35+dy);
+    if(tx<1||tx>62||ty<1||ty>62)throw Error('Character pose would crop at '+tx+','+ty);
+  }
   for(let y=1;y<63;y++)for(let x=1;x<63;x++){
     const xx=x-32-dx, yy=y-35-dy;
     const color=src.get(Math.round(xx*co+yy*si+32),Math.round(-xx*si+yy*co+35));
@@ -56,8 +60,8 @@ function copy(g,src,dx=0,dy=0,angle=0) {
   }
 }
 function scene(id,f,p={},back=()=>{},front=()=>{},options={}) {
-  p={...p,wingFold:Math.max(0,Math.abs((p.dx||0)+(options.x||0))-1)};
   const original=E.species(id),spec={...original,body:{...original.body},ears:{...original.ears},face:{...original.face},pal:{...original.pal}};
+  p={...p,wingFold:Math.max(0,Math.abs((p.dx||0)+(options.x||0))+spec.body.rx-12)};
   if(options.ears)Object.assign(spec.ears,options.ears);
   if(options.face)Object.assign(spec.face,options.face);
   if(options.palette)Object.assign(spec.pal,options.palette);
@@ -140,10 +144,10 @@ add('sleepy/pitcher-plant-bed',f=>scene('sleepy',f,{dy:pick(f,[-7,-5,-2,1,4,4,4,
 
 // #07 Dust — practise, forget to flap, recover. Asymmetric timing sells clumsiness.
 add('dust/flap-practice',f=>scene('dust',f,{wings:pick(f,[0,-14,10,-14,10,-14,0,0]),eyes:f>=6?'happy':'open',mouth:f>=5?'open':'small'},g=>branch(g,9),g=>{if(f===6)g.ell(51,39,3,2,C.cloud);},{angle:180,y:-5}));
-add('dust/drop-start',f=>scene('dust',f,{wings:pick(f,[undefined,undefined,undefined,10,-12,10,-10,undefined]),dy:pick(f,[-9,-7,1,9,5,-2,-6,-8]),mouth:f===3?'open':'smile'},g=>branch(g,8),()=>{}, {angle:f<2?180:0}));
+add('dust/drop-start',f=>scene('dust',f,{wings:pick(f,[undefined,undefined,undefined,10,-12,10,-10,undefined]),mouth:f===3?'open':'smile'},g=>branch(g,8),()=>{}, {angle:f<2?180:0,y:pick(f,[-9,-7,1,7,5,-2,-6,-8])}));
 add('dust/almost-landing',f=>scene('dust',f,{wings:f<4?pick(f,[0,-10,10,undefined]):undefined,eyes:f===3?'open':'happy'},g=>branch(g,9),g=>{
   if(f>=5&&f<7){for(const x of [13,20,46,52])g.ell(x,38+(x%3)*3,2,2,C.cloud);}
-},{angle:pick(f,[0,-45,-100,-30,100,180,180,180]),y:pick(f,[2,-2,-4,5,2,-4,-4,-4])}));
+},{angle:pick(f,[0,-45,-100,-30,100,180,180,180]),y:pick(f,[2,-2,-1,5,2,-4,-4,-4])}));
 
 // #08 Pebble — the rock is part of the gesture, never a scaled character variant.
 add('pebble/crack-squeeze',f=>scene('pebble',f,{dy:pick(f,[0,1,3,5,6,6,6,0]),eyes:'half'},g=>rock(g,33,50,22,7),(g)=>{
@@ -179,7 +183,7 @@ add('blossom/flower-patrol',f=>scene('blossom',f,{dx:pick(f,[0,-6,-3,4,8,3,0,0])
 // #11 Moss — disappearing in hanging moss is distinct from the seed-drop return.
 function moss(g,front,f) {for(let i=0;i<9;i++){const x=13+i*5;g.line(x,12,x+(f%2),front?43-(i%3)*4:23+(i%3)*7,i%2?C.leaf:C.stem);}}
 add('moss/moss-hideout',f=>scene('moss',f,{dy:pick(f,[2,0,-3,-5,-6,-6,-6,2]),eyes:'closed'},g=>{branch(g,10);moss(g,false,f);},g=>{if(f>=2&&f<7)moss(g,true,f);}));
-add('moss/let-go-drop',f=>scene('moss',f,{dy:pick(f,[-9,-5,3,10,6,-1,-6,-8]),dx:pick(f,[0,0,0,1,5,6,3,0]),wings:f>=3&&f<7?pick(f,[0,0,0,10,-12,5,-10]):undefined},g=>{branch(g,8);moss(g,false,0);},()=>{}, {angle:f<2?180:0}));
+add('moss/let-go-drop',f=>scene('moss',f,{dx:pick(f,[0,0,0,1,5,6,3,0]),wings:f>=3&&f<7?pick(f,[0,0,0,10,-12,5,-10]):undefined},g=>{branch(g,8);moss(g,false,0);},()=>{}, {angle:f<2?180:0,y:pick(f,[-9,-5,3,8,6,-1,-6,-8])}));
 add('moss/sprout-planting',f=>scene('moss',f,{dx:pick(f,[-7,-5,-2,2,6,9,9,5]),dy:-7,wings:pick(f,[0,-12,8,-12,8,0,0,0])},g=>g.line(8,58,56,58,C.stem),(g)=>{
   if(f<5)g.ell(25+Math.min(f,2)*2,39+f*4,1,2,C.bark);
   if(f>=5){g.line(29,57,29,57-(f-4)*3,C.stem);leaf(g,26,55-(f-4)*3,3);leaf(g,33,54-(f-4)*3,3);}
