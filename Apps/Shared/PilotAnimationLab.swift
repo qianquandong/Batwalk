@@ -6,7 +6,7 @@ import BatwalkCore
 struct PilotAnimationLab: View {
     @State private var speciesID = "mochi"
     @State private var mood: BatMood = .awake
-    @State private var bestFriends = false
+    @State private var level = 1
     @State private var request: BatAnimationRequest?
 
     var body: some View {
@@ -18,10 +18,11 @@ struct PilotAnimationLab: View {
                     }
                 }
                 BatHeroView(speciesID: speciesID, mood: mood, size: 100,
-                            friendshipEXP: bestFriends ? Tuning.default.friendshipThresholds[3] : 0,
+                            friendshipEXP: Tuning.default.friendshipThresholds[level - 1],
                             animationRequest: request)
-                Toggle("Friendship Lv. 4", isOn: $bestFriends)
-                    .font(.caption)
+                Picker("Friendship", selection: $level) {
+                    ForEach(1...5, id: \.self) { Text("Lv. \($0)").tag($0) }
+                }
                 HStack {
                     Button("Idle") { request = nil; mood = .awake }
                     Button("Sleep") { request = nil; mood = .sleeping }
@@ -31,9 +32,11 @@ struct PilotAnimationLab: View {
                     Button("Pet") { request = BatAnimationRequest([.pet]) }
                     Button("Eat") { request = BatAnimationRequest([.feed]) }
                 }
-                if let action = PilotAnimationCatalog.signatureAction(for: speciesID) {
-                    Button(action.name) { request = BatAnimationRequest([.signature]) }
-                        .disabled(!bestFriends)
+                ForEach(PilotAnimationCatalog.playableActions(for: speciesID), id: \.id) { action in
+                    Button("Lv. \(action.unlockLevel) · \(action.name)") {
+                        request = BatAnimationRequest(actionIDs: [action.id])
+                    }
+                    .disabled(level < action.unlockLevel)
                 }
                 Text("Preview only · your save stays as it is")
                     .font(.caption2).foregroundStyle(.secondary)

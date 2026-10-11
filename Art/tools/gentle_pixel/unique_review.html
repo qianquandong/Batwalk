@@ -1,0 +1,30 @@
+<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Batwalk · Little personalities</title>
+<style>
+:root{color-scheme:light;font:15px/1.6 system-ui,sans-serif;color:#34473d;background:#f5f0e4}*{box-sizing:border-box}
+body{margin:0;padding:40px 5vw 80px}header{max-width:850px;margin-bottom:36px}h1{font-size:clamp(28px,5vw,48px);line-height:1.15;font-weight:650;letter-spacing:-1.5px;margin:8px 0 20px}h2{font-size:19px;margin:0}
+.eyebrow{letter-spacing:3px;font-size:12px;color:#697b5f}p{color:#627266;margin:8px 0}.toolbar{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin:24px 0}button,select{font:inherit;border:1px solid #ccd1c1;border-radius:9px;padding:8px 12px;background:#fbf9f1;color:inherit;cursor:pointer}button:hover{background:#e8ecdc}button:focus-visible,select:focus-visible{outline:3px solid #a48368}
+main{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:24px}.card{background:#fffcf3;border:1px solid #dedfcc;border-radius:18px;overflow:hidden}.stage{height:222px;background:#1c2e32;display:flex;align-items:center;justify-content:center;gap:18px;position:relative}.stage figure{margin:0;text-align:center}.stage figcaption{color:#99b2ad;font-size:10px;letter-spacing:2px}.stage img{image-rendering:pixelated;display:block}.watch{width:88px;height:88px}.phone{width:148px;height:148px}.info{padding:18px 20px 22px}.meta{font-size:12px;color:#819079;margin-bottom:7px}.info select{width:100%;margin-top:12px}.summary{min-height:64px;font-size:13px}.progress{height:3px;background:#cdd8bf}.progress i{display:block;height:3px;width:0;background:#7c9674}.cue{display:flex;justify-content:space-between;font-size:12px;margin-top:8px}.hint{max-width:780px}footer{margin-top:38px;font-size:12px;color:#73826f}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto}}
+</style>
+<header><div class="eyebrow">BATWALK / GENTLE PIXEL</div><h1>20 位朋友，<br>64 个属于自己的小动作。</h1><p class="hint">同一只蝙蝠，同一种画风。洗耳、护果、带宝宝、分享晚餐——每个动作都有自己的起因、手势和收尾。左侧接近 Watch 陪伴页大小，右侧为 iPhone 展示大小。</p>
+<div class="toolbar"><button id="play" aria-pressed="false">播放全部</button><button id="reset">回到第一帧</button><label>动作类别 <select id="tier"><option value="signature">招牌动作 · Lv.4</option><option value="idleQuirk">日常小习惯 · Lv.2</option><option value="reaction">互动反应 · Lv.3</option><option value="hatchReveal">传说登场 · Lv.1</option><option value="secret">传说隐藏 · Lv.5</option></select></label></div><p>可逐只选择动作，也可暂停后点击「下一帧」看细节。这里只预览素材，不改变存档。</p></header><main id="grid"></main><footer>与 App 使用同一份 PNG 帧及播放时长。每段动作后停顿 2 秒再循环。App 中按互动、等级、昼夜触发，后台及降低动态效果时停止。</footer>
+<script>
+const manifest=/* MANIFEST */;
+const root='../../../Apps/Shared/Sprites.xcassets/';
+const trigger={idleNight:'夜间待机',asleep:'白天睡觉',dusk:'黄昏醒来',pet:'被摸之后',feed:'吃果子之后',walkReturn:'散步归来',newDay:'新一天',hatch:'孵化登场',rare:'稀有时刻'};
+const grouped=Object.groupBy(manifest.clips,c=>c.speciesID),cards=[];let playing=false,last=0;
+for(const [id,clips] of Object.entries(grouped)){
+ const card=document.createElement('article');card.className='card';card.innerHTML='<div class="stage"><figure><img class="watch" alt=""><figcaption>WATCH</figcaption></figure><figure><img class="phone" alt=""><figcaption>IPHONE</figcaption></figure></div><div class="progress"><i></i></div><div class="info"><div class="meta"></div><h2></h2><select aria-label="'+id+' 动作"></select><p class="summary"></p><div class="cue"><span></span><button class="next">下一帧</button></div></div>';
+ const s={el:card,clips,clip:clips.find(c=>c.tier==='signature'),frame:0,elapsed:0};
+ const select=card.querySelector('select');for(const c of clips){const o=document.createElement('option');o.value=c.actionID;o.textContent='Lv.'+c.unlockLevel+' · '+c.chinese;select.append(o);}
+ function choose(c){s.clip=c;s.frame=0;s.elapsed=0;select.value=c.actionID;card.querySelector('h2').textContent=c.chinese;card.querySelector('.meta').textContent=String(cards.indexOf(s)+1).padStart(2,'0')+' / '+id.toUpperCase();card.querySelector('.summary').textContent=c.summary;card.querySelector('.cue span').textContent=trigger[c.trigger];paint(s);}
+ s.choose=choose;select.onchange=()=>choose(clips.find(c=>c.actionID===select.value));card.querySelector('.next').onclick=()=>{setPlaying(false);s.frame=(s.frame+1)%s.clip.frames.length;paint(s);};cards.push(s);document.querySelector('#grid').append(card);choose(s.clip);
+}
+function paint(s){const c=s.clip;for(const img of s.el.querySelectorAll('img')){img.src=root+c.frames[s.frame]+'.imageset/sprite.png';img.alt=c.speciesID+' · '+c.name+' · '+(s.frame+1)+'/'+c.frames.length;}s.el.querySelector('.progress i').style.width=(s.frame+1)/c.frames.length*100+'%';}
+function setPlaying(value){playing=value;const b=document.querySelector('#play');b.textContent=value?'暂停全部':'播放全部';b.setAttribute('aria-pressed',value);last=performance.now();}
+document.querySelector('#play').onclick=()=>setPlaying(!playing);document.querySelector('#reset').onclick=()=>{setPlaying(false);cards.forEach(s=>s.choose(s.clip));};
+document.querySelector('#tier').onchange=e=>cards.forEach(s=>{const c=s.clips.find(c=>c.tier===e.target.value);s.el.hidden=!c;if(c)s.choose(c);});
+document.addEventListener('visibilitychange',()=>{if(document.hidden)setPlaying(false);});
+function tick(now){if(playing){const dt=Math.min(.25,(now-last)/1000);for(const s of cards){if(s.el.hidden)continue;s.elapsed+=dt;const hold=s.clip.seconds[s.frame]+(s.frame===s.clip.frames.length-1?2:0);if(s.elapsed>=hold){s.elapsed=0;s.frame=(s.frame+1)%s.clip.frames.length;paint(s);}}}last=now;requestAnimationFrame(tick);}requestAnimationFrame(tick);
+</script></html>

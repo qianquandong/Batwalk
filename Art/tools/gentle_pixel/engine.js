@@ -201,7 +201,7 @@
     var eyeY = Math.round(c.cy - c.ry * 0.12), ex = Math.round(c.rx * 0.42);
     var eyes = pose.eyes || f.eyes || 'open';
     for (var s = -1; s <= 1; s += 2) {
-      var x = c.cx + s * ex;
+      var x = c.cx + s * ex + (pose.look || 0);
       if (eyes === 'open') { g.rect(x - 1, eyeY - 2, 3, 4, P.eye); g.set(x - 1, eyeY - 2, P.white); }
       else if (eyes === 'half') { g.rect(x - 1, eyeY, 3, 2, P.eye); g.rect(x - 1, eyeY - 1, 3, 1, P.shade); }
       else if (eyes === 'closed') { g.set(x - 1, eyeY, P.eye); g.set(x, eyeY + 1, P.eye); g.set(x + 1, eyeY, P.eye); }

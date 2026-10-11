@@ -13,9 +13,15 @@ See [the pilot pack](gentle-pixel/pilots-v1/README.md) and run
 128 px asset-catalog renditions. Shiny currently uses a hue rotation of the same
 new identity; dedicated v3 Shiny palettes remain pending.
 
+The launch roster (#1–20) additionally has **all 64 designed unique actions**:
+496 new frames + Mochi's four original cartwheel frames. These extend the current
+editable pixel characters; the pilot identities and all universal frames are unchanged.
+See [the launch pack, source and review](gentle-pixel/launch-actions/README.md).
+
 Earlier 20-species Normal/Shiny pose sheets, matching eggs, fruit and app icons
 remain in [`gentle-pixel/`](gentle-pixel/README.md). The resolver prefers pilot
-frames, then approved portraits, then historical `gentle_`/legacy assets.
+frames / generated universal frames, then approved portraits, then historical
+`gentle_`/legacy assets. Unique frames play only for their matching action.
 
 ### Earlier art (retained as a fallback)
 

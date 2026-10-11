@@ -80,6 +80,12 @@ Debug 版 Settings → Animation samples：可切三只角色、五个通用动�
 The pilots stay as they are. Every other species now has a generated Gentle-pixel
 set — 38 frames each (`gen_bat_…`), 6–8 frames per universal action with the plan in
 `GeneratedFramePlan` — so Day / Dusk / Night, petting and feeding are visible on every
-companion, not only the three pilots. No signature clips: `signatureAction(for:)`
-returns nil for them until art exists. Details and regeneration:
+companion, not only the three pilots. The first generated pass had no signatures;
+the launch update below supersedes that limitation. Details and regeneration:
 `Art/gentle-pixel/generated-frames/README.md`.
+
+## Launch personalities (2026-10-11)
+
+首发 20 只的 64 个专属动作现已全部可播放。本文前面的「3 个已做、99 个待做」
+及测试结果是样板阶段记录；当前为 66 个可播放、36 个 wave-two 动作仍待制作。
+详见 [LAUNCH_PERSONALITIES.md](LAUNCH_PERSONALITIES.md)。

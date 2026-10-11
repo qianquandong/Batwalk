@@ -3,6 +3,7 @@ import BatwalkCore
 
 struct CompanionView: View {
     @Environment(GameStore.self) private var store
+    @Environment(\.batPageVisible) private var pageVisible
     @Binding var tab: PhoneTab
     @State private var settings = false
 
@@ -89,6 +90,7 @@ struct CompanionView: View {
                         BatHeroView(speciesID: bat.speciesID, shiny: bat.showsShiny,
                                     mood: BatMood.resting(at: time), size: 170,
                                     friendshipEXP: bat.friendshipEXP, showsKeepsake: false)
+                        .environment(\.batPageVisible, pageVisible && !settings)
                         Label("Lv. \(Friendship.level(forEXP: bat.friendshipEXP))", systemImage: "heart.fill")
                             .font(BatwalkFont.headline)
                     } else {
@@ -127,6 +129,11 @@ struct PhoneSettingsView: View {
                     Text("Your Watch saves your progress. Keep both apps updated and open Batwalk on your Watch to refresh your collection.")
                         .font(BatwalkFont.caption)
                 }
+                #if DEBUG
+                Section("Preview") {
+                    NavigationLink("Animation samples") { PilotAnimationLab() }
+                }
+                #endif
             }
             .scrollContentBackground(.hidden)
             .background(BatwalkColor.lightBackground)

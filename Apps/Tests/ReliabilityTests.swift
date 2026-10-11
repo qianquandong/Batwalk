@@ -247,6 +247,17 @@ final class AppReliabilityTests: XCTestCase {
             }
         }
         XCTAssertEqual(generated, PilotAnimationCatalog.generatedSpeciesIDs.count * 38)
+        var launchFrames = Set<String>()
+        for species in Roster.catalog where species.number <= 20 {
+            for action in ActionCatalog.actions(for: species.id) {
+                let clip = try XCTUnwrap(PilotAnimationCatalog.unique(for: species.id, actionID: action.id, friendshipLevel: 5))
+                for frame in clip.frames {
+                    XCTAssertTrue(assetExists(frame.assetName), frame.assetName)
+                    launchFrames.insert(frame.assetName)
+                }
+            }
+        }
+        XCTAssertEqual(launchFrames.count, 500)
         for species in Roster.catalog { XCTAssertTrue(assetExists("portrait_bat_\(species.id)"), species.id) }
     }
 

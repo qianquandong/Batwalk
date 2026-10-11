@@ -159,7 +159,8 @@ struct BatDetailView: View {
         ScrollView {
             if let bat = store.state.collection[speciesID], let species = bat.species {
                 VStack(spacing: 6) {
-                    BatHeroView(speciesID: speciesID, shiny: bat.showsShiny, mood: .awake, size: 76)
+                    BatHeroView(speciesID: speciesID, shiny: bat.showsShiny, mood: .awake, size: 76,
+                                friendshipEXP: bat.friendshipEXP)
                     Text(bat.displayName).font(BatwalkFont.headline).foregroundStyle(.white)
                     if bat.nickname != nil {
                         Text(species.name).font(BatwalkFont.micro).foregroundStyle(BatwalkColor.textSecondaryDark)

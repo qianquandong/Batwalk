@@ -131,6 +131,7 @@ struct HatchSequenceView: View {
     @State private var tease: Double = 0
     @State private var flash: Double = 0
     @State private var revealScale: CGFloat
+    @State private var revealRequest = BatAnimationRequest([.hatch])
 
     init(presentation: HatchPresentation, onDone: @escaping () -> Void) {
         self.presentation = presentation
@@ -184,7 +185,8 @@ struct HatchSequenceView: View {
                                              center: .center, startRadius: 4, endRadius: 64))
                         .frame(width: 90, height: 90)
                     if special { SparkleField(count: 6, color: record.isShiny ? BatwalkColor.rarityShiny : rarity.color, spread: 42) }
-                    BatSprite(speciesID: record.speciesID, shiny: record.isShiny, mood: .happy, size: 70)
+                    BatHeroView(speciesID: record.speciesID, shiny: record.isShiny, mood: .happy, size: 70,
+                                animationRequest: revealRequest, showsKeepsake: false)
                         .scaleEffect(revealScale)
                 }
                 .frame(height: 76)

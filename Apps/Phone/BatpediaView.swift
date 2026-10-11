@@ -122,8 +122,10 @@ struct BatpediaView: View {
 
 struct BatDetailPage: View {
     @Environment(GameStore.self) private var store
+    @Environment(\.batPageVisible) private var pageVisible
     let speciesID: String
     @State private var shareImage: Image?
+    @State private var moment: BatMomentSelection?
 
     private var bat: OwnedBat? { store.state.collection[speciesID] }
     private var species: Species? { bat?.species }
@@ -134,6 +136,7 @@ struct BatDetailPage: View {
                 VStack(spacing: 0) {
                     BatHeroView(speciesID: speciesID, shiny: bat.showsShiny, mood: .awake,
                                 size: 160, friendshipEXP: bat.friendshipEXP, showsKeepsake: false)
+                        .environment(\.batPageVisible, pageVisible && moment == nil)
                         .frame(maxWidth: .infinity).padding(.vertical, 20)
                         .background(NightSkyBackground(time: .night, scenery: true, groundLevel: 0.86))
                         .clipShape(UnevenRoundedRectangle(bottomLeadingRadius: 28, bottomTrailingRadius: 28))
@@ -155,6 +158,23 @@ struct BatDetailPage: View {
                             FriendshipProgressView(exp: bat.friendshipEXP, dark: false)
                         }
                         Divider()
+                        VStack(alignment: .leading, spacing: 12) {
+                            Text("Little moments").font(BatwalkFont.title)
+                            ForEach(PilotAnimationCatalog.playableActions(for: speciesID)
+                                .filter { $0.tier != .secret && $0.tier != .hatchReveal }, id: \.id) { action in
+                                let unlocked = Friendship.level(forEXP: bat.friendshipEXP) >= action.unlockLevel
+                                Button {
+                                    moment = BatMomentSelection(action: action)
+                                } label: {
+                                    Label(unlocked ? action.name : "Lv. \(action.unlockLevel) · \(action.name)",
+                                          systemImage: unlocked ? "play.circle" : "lock")
+                                        .font(BatwalkFont.body)
+                                        .frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
+                                }
+                                .disabled(!unlocked)
+                                .accessibilityHint(unlocked ? "Watch this little habit" : "Build friendship on your Watch to unlock")
+                            }
+                        }
                         if let cousin = species.realLifeCousin {
                             Text("Little habits").font(BatwalkFont.title)
                             Label { Text(cousin).font(BatwalkFont.body) } icon: {
@@ -190,6 +210,9 @@ struct BatDetailPage: View {
             }
         }
         .background(BatwalkColor.lightBackground.ignoresSafeArea())
+        .sheet(item: $moment) { selected in
+            if let bat { BatMomentPreview(bat: bat, action: selected.action) }
+        }
         .safeAreaInset(edge: .bottom) {
             if store.state.collection[speciesID] != nil {
                 VStack(spacing: 10) {

@@ -198,8 +198,8 @@ struct HomeView: View {
         if levelAfter > levelBefore { Haptics.success() } else { Haptics.light() }
         petCount += 1
         if PilotAnimationCatalog.speciesIDs.contains(bat.speciesID) {
-            let unlocked = levelBefore < 4 && levelAfter >= 4
-            animationRequest = BatAnimationRequest(unlocked ? [.pet, .signature] : [.pet])
+            animationRequest = .interaction(.pet, speciesID: bat.speciesID,
+                                            levelBefore: levelBefore, levelAfter: levelAfter)
             return
         }
         // Tapping a sleeping / drowsy bat wakes it (CARE: feed · pet · wake, PRD §2.4).

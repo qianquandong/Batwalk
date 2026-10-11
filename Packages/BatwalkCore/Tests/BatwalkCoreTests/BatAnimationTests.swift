@@ -10,7 +10,7 @@ final class BatAnimationTests: XCTestCase {
                 XCTAssertEqual(PilotAnimationCatalog.signature(for: species, friendshipLevel: level) != nil, level >= 4)
             }
         }
-        XCTAssertNil(PilotAnimationCatalog.signature(for: "galaxy", friendshipLevel: 5))
+        XCTAssertNotNil(PilotAnimationCatalog.signature(for: "galaxy", friendshipLevel: 5))
         XCTAssertNil(PilotAnimationCatalog.universal(for: "missing", action: .idle))
     }
 
@@ -22,11 +22,15 @@ final class BatAnimationTests: XCTestCase {
             for level in 1...5 {
                 XCTAssertNotNil(PilotAnimationCatalog.reaction(for: species, event: .pet, friendshipLevel: level))
                 XCTAssertNotNil(PilotAnimationCatalog.reaction(for: species, event: .feed, friendshipLevel: level))
-                // No signature art yet: never a clip whose frames do not exist.
-                XCTAssertNil(PilotAnimationCatalog.signature(for: species, friendshipLevel: level), species)
-                XCTAssertNil(PilotAnimationCatalog.reaction(for: species, event: .newDay, friendshipLevel: level), species)
+                if Roster.species(species)!.number > 20 {
+                    // Wave two keeps its universal art; no invented signature frames.
+                    XCTAssertNil(PilotAnimationCatalog.signature(for: species, friendshipLevel: level), species)
+                    XCTAssertNil(PilotAnimationCatalog.reaction(for: species, event: .newDay, friendshipLevel: level), species)
+                } else {
+                    XCTAssertEqual(PilotAnimationCatalog.signature(for: species, friendshipLevel: level) != nil, level >= 4)
+                }
             }
-            XCTAssertEqual(PilotAnimationCatalog.reaction(for: species, event: .walkReturn, friendshipLevel: 5)?.actionID, "fly")
+            XCTAssertNotNil(PilotAnimationCatalog.reaction(for: species, event: .walkReturn, friendshipLevel: 5))
         }
     }
 
