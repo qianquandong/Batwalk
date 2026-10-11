@@ -31,6 +31,8 @@ be read from the PR's latest green CI run; an unsigned build is not a device sig
 | Animation | Generated Gentle-pixel frame sets for the 29 non-pilot species (1,216 frames, 6–8 per action, `GeneratedFramePlan`); pilots unchanged. Verify playback cadence and energy on hardware. |
 | Platform | Siri "Check my egg" (App Intents), iPhone Dark Mode, share card, String Catalog, strict-concurrency warnings, content waves (Oddballs = v1.1). |
 | CI | Every PR: core tests on Linux, then Watch + iPhone simulator builds and hosted app tests on a GitHub macOS runner (free on the public repo). Codemagic keeps screenshots and TestFlight. |
+| Public pages | GitHub Pages from `site/` (`.github/workflows/pages.yml`): [privacy](https://qianquandong.github.io/Batwalk/privacy.html) · [support](https://qianquandong.github.io/Batwalk/support.html). Paste both into App Store Connect. |
+| License | Code MIT (`LICENSE`); artwork CC BY-NC 4.0 (`Art/LICENSE`). |
 
 Verified on Codemagic (`batwalk-verify`, build 6acaec5b, 2026-10-11, Xcode 26.3):
 core tests, Watch + iPhone simulator builds, the hosted app tests (incl. all
