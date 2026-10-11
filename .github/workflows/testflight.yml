@@ -26,6 +26,13 @@ on:
         description: "Build number greater than the latest TestFlight build (blank = GitHub run number)"
         type: string
         required: false
+      runner:
+        description: "Standard Mac runner pool (Intel is a fallback when Apple Silicon is queued)"
+        type: choice
+        default: macos-15
+        options:
+          - macos-15
+          - macos-15-intel
 
 concurrency:
   group: testflight
@@ -34,7 +41,7 @@ concurrency:
 jobs:
   testflight:
     name: Archive, sign, upload
-    runs-on: macos-15
+    runs-on: ${{ inputs.runner == 'macos-15-intel' && 'macos-15-intel' || 'macos-15' }}
     timeout-minutes: 45
     env:
       BUILD_NUMBER: ${{ inputs.build_number || github.run_number }}
