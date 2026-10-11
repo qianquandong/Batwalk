@@ -140,3 +140,10 @@ art. Next: run on a physical Watch and integrate pixel art — see the
 - No punishment mechanics of any kind.
 - Read only Step Count; never upload Health data.
 - No AI features.
+
+## License
+
+Code is released under the [MIT License](LICENSE). The artwork — everything under
+`Art/` except `Art/tools/`, every image in the apps' asset catalogs, and the bat
+character designs — is licensed [CC BY-NC 4.0](Art/LICENSE): share and adapt it
+with credit, no commercial use without permission.
