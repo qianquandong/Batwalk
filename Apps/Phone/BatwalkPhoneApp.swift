@@ -4,6 +4,7 @@ import BatwalkCore
 
 /// iPhone companion: a light, editorial collectible app (PRD §2.5). It never
 /// gates the core loop and never writes the save — the Watch is the game.
+/// Follows the system appearance (Light / Dark) since the 2026-10-10 review.
 @main
 struct BatwalkPhoneApp: App {
     @Environment(\.scenePhase) private var scenePhase
@@ -13,9 +14,11 @@ struct BatwalkPhoneApp: App {
     private let container: ModelContainer
 
     init() {
+        Roster.enabledWave = SharedConfig.contentWave
         let container = Persistence.makeContainer()
         self.container = container
         let store = GameStore(container: container, role: .phone)
+        store.analytics = AnalyticsSetup.makeSink()
         _store = State(initialValue: store)
         if let demo = DemoMode.makeState() {
             store.loadDemo(demo) // screenshot scenario: no sync, no StoreKit
@@ -23,6 +26,8 @@ struct BatwalkPhoneApp: App {
         }
         PhoneSync.shared.onReceiveSave = { data, date in store.applyMirror(data, updatedAt: date) }
         PhoneSync.shared.onReceiveReceipt = { receipt in store.receiveCompanionReceipt(receipt) }
+        // The phone keeps its copy of the collection within the Watch's reach.
+        PhoneSync.shared.onActivated = { store.publishBackupToWatch() }
         PhoneSync.shared.activate()
     }
 
@@ -31,13 +36,13 @@ struct BatwalkPhoneApp: App {
             PhoneRootView()
                 .environment(store)
                 .environment(purchases)
-                .preferredColorScheme(.light)
                 .tint(BatwalkColor.accent)
                 .task { if !store.isDemo { purchases.start() } }
                 .onChange(of: scenePhase) { _, phase in
                     if phase == .active {
                         store.load()
                         store.refreshHandoff()
+                        store.publishBackupToWatch()
                         if !store.isDemo { Task { await purchases.refreshEntitlements() } }
                     }
                 }

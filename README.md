@@ -12,7 +12,7 @@ the game; the iPhone is the companion library.
 - 🥚 5 egg types (2,000 – 6,000 steps)
 - 🌙 Day / Dusk / Night behaviour from local time
 - 💤 No death, no hunger, no streaks, no guilt — ever
-- 💵 Free + one-time $1.99 unlock · no AI · no backend
+- 💵 Free + one-time $2.99 unlock · no AI · no backend
 
 📄 **[Product Requirements (PRD v1.0)](docs/PRD.md)** · [Roadmap](docs/ROADMAP.md) · [Open questions](docs/OPEN_QUESTIONS.md) · [Test plan](docs/TEST_PLAN.md) · [Decisions](docs/decisions/)
 
@@ -39,15 +39,15 @@ docs/                   PRD, roadmap, open questions, ADRs, test plan
 project.yml             XcodeGen spec (the .xcodeproj is generated, not committed)
 ```
 
-## No Mac? Build and preview with Codemagic
+## CI: every pull request builds on a Mac
 
-The manual workflows in [`codemagic.yaml`](codemagic.yaml) run Watch/iPhone checks
-and capture Watch simulator screenshots on a Codemagic Mac, independently of
-GitHub Actions. No Apple signing credentials are needed for these simulator builds.
-See **[Codemagic setup](docs/CODEMAGIC.md)** to connect this private repository and
-select the branch containing the configuration. A local Codex monitor can start
-the verification workflow when GitHub explicitly blocks CI for billing or minute
-limits; its operating requirements are documented in the same guide.
+[`.github/workflows/ci.yml`](.github/workflows/ci.yml) runs the rules tests on Linux,
+then compiles the Watch and iPhone apps, runs the hosted app tests and validates the
+capability-enabled configuration on a GitHub macOS runner — free for this public
+repository. The manual workflows in [`codemagic.yaml`](codemagic.yaml) remain for
+Watch/iPhone simulator screenshots and TestFlight uploads from a Codemagic Mac; see
+**[Codemagic setup](docs/CODEMAGIC.md)**, which also documents the local monitor
+that falls back to Codemagic if GitHub ever blocks CI.
 
 ## Ship to TestFlight from your phone
 
@@ -81,7 +81,7 @@ open Batwalk.xcodeproj
 
 Pick the **BatwalkWatch** scheme to run the game on a Watch simulator or device.
 The **BatwalkPhone** scheme runs the companion and uses `Config/Batwalk.storekit`,
-so the $1.99 unlock can be tested without App Store Connect.
+so the $2.99 unlock can be tested without App Store Connect.
 
 ### Before running on real devices
 
@@ -118,6 +118,14 @@ Duplicates turn into Friendship EXP. The whole game state is one Codable value,
 saved by the Watch to SwiftData, mirrored to iCloud, and pushed to the iPhone.
 See [ADR 0001](docs/decisions/0001-architecture.md).
 
+## Verifying without a Mac
+
+The rules package runs anywhere, including Docker on Windows:
+
+```bash
+docker run --rm -v "$PWD/Packages/BatwalkCore:/work" -w /work swift:5.10-jammy swift test
+```
+
 ## Status
 
 **M0 — Foundation.** Every PRD mechanic is implemented in `BatwalkCore` with
@@ -132,3 +140,10 @@ art. Next: run on a physical Watch and integrate pixel art — see the
 - No punishment mechanics of any kind.
 - Read only Step Count; never upload Health data.
 - No AI features.
+
+## License
+
+Code is released under the [MIT License](LICENSE). The artwork — everything under
+`Art/` except `Art/tools/`, every image in the apps' asset catalogs, and the bat
+character designs — is licensed [CC BY-NC 4.0](Art/LICENSE): share and adapt it
+with credit, no commercial use without permission.

@@ -30,8 +30,24 @@ final class StepService: StepTotalReader {
         return (try? await healthStore.statusForAuthorizationRequest(toShare: [], read: [stepType])) ?? .unknown
     }
 
+    /// Daily cumulative totals for [start, end) in the ledger's calendar.
+    ///
+    /// One statistics-collection query normally covers the whole range. When
+    /// HealthKit buckets by a calendar that does not match the ledger's time zone
+    /// (travel, DST), the buckets fail the boundary check and we fall back to one
+    /// statistics query per day with an explicit [midnight, midnight) predicate —
+    /// exact by construction, so a single bad day can never block every later sync
+    /// (2026-10-10 review, finding 1).
     func totals(from start: Date, through end: Date, calendar: Calendar) async throws -> [DailyStepTotal] {
         guard isAvailable else { throw QueryError.unavailable }
+        do {
+            return try await collectionTotals(from: start, through: end, calendar: calendar)
+        } catch QueryError.boundaries {
+            return try await perDayTotals(from: start, through: end, calendar: calendar)
+        }
+    }
+
+    private func collectionTotals(from start: Date, through end: Date, calendar: Calendar) async throws -> [DailyStepTotal] {
         let predicate = HKQuery.predicateForSamples(withStart: start, end: end, options: [])
         var interval = DateComponents(day: 1)
         interval.calendar = calendar
@@ -59,7 +75,7 @@ final class StepService: StepTotalReader {
                         completion.finish(.failure(QueryError.boundaries)); return
                     }
                     let total = statistics?.sumQuantity()?.doubleValue(for: .count()) ?? 0
-                    readings.append(DailyStepTotal(day: DayKey.make(day, calendar: calendar), total: max(0, Int(total))))
+                    readings.append(DailyStepTotal(day: DayKey.make(day, calendar: calendar), total: Self.sanitize(total)))
                     day = next
                 }
                 completion.finish(.success(readings))
@@ -70,6 +86,48 @@ final class StepService: StepTotalReader {
                 if completion.finish(.failure(QueryError.timeout)) { store.stop(query) }
             }
         }
+    }
+
+    private func perDayTotals(from start: Date, through end: Date, calendar: Calendar) async throws -> [DailyStepTotal] {
+        var readings: [DailyStepTotal] = []
+        var day = start
+        let deadline = Date().addingTimeInterval(25)
+        while day < end {
+            guard let next = calendar.date(byAdding: .day, value: 1, to: day) else { throw QueryError.boundaries }
+            guard Date() < deadline else { throw QueryError.timeout }
+            let total = try await dailyTotal(from: day, to: next)
+            readings.append(DailyStepTotal(day: DayKey.make(day, calendar: calendar), total: total))
+            day = next
+        }
+        return readings
+    }
+
+    /// Cumulative steps whose sample start lies in [start, end).
+    private func dailyTotal(from start: Date, to end: Date) async throws -> Int {
+        let predicate = HKQuery.predicateForSamples(withStart: start, end: end, options: .strictStartDate)
+        let store = healthStore
+        return try await withCheckedThrowingContinuation { continuation in
+            let completion = QueryCompletion(continuation)
+            let query = HKStatisticsQuery(quantityType: stepType, quantitySamplePredicate: predicate,
+                                          options: .cumulativeSum) { _, statistics, error in
+                if let error, (error as? HKError)?.code != .errorNoData {
+                    completion.finish(.failure(error)); return
+                }
+                let total = statistics?.sumQuantity()?.doubleValue(for: .count()) ?? 0
+                completion.finish(.success(Self.sanitize(total)))
+            }
+            store.execute(query)
+            DispatchQueue.global().asyncAfter(deadline: .now() + 20) {
+                if completion.finish(.failure(QueryError.timeout)) { store.stop(query) }
+            }
+        }
+    }
+
+    /// NaN, infinite or absurd sums written by another app never reach `Int(_:)`,
+    /// which traps on them. The game applies its own `Tuning.maxDailySteps` cap after this.
+    nonisolated static func sanitize(_ total: Double) -> Int {
+        guard total.isFinite, total > 0 else { return 0 }
+        return Int(min(total, 10_000_000))
     }
 
     func startObserving(onChange: @escaping @Sendable () async -> Void) {
@@ -89,12 +147,12 @@ final class StepService: StepTotalReader {
     enum QueryError: Error { case unavailable, timeout, boundaries }
 }
 
-private final class QueryCompletion: @unchecked Sendable {
+private final class QueryCompletion<Value: Sendable>: @unchecked Sendable {
     private let lock = NSLock()
-    private var continuation: CheckedContinuation<[DailyStepTotal], Error>?
-    init(_ continuation: CheckedContinuation<[DailyStepTotal], Error>) { self.continuation = continuation }
+    private var continuation: CheckedContinuation<Value, Error>?
+    init(_ continuation: CheckedContinuation<Value, Error>) { self.continuation = continuation }
     @discardableResult
-    func finish(_ result: Result<[DailyStepTotal], Error>) -> Bool {
+    func finish(_ result: Result<Value, Error>) -> Bool {
         lock.lock()
         let current = continuation
         continuation = nil

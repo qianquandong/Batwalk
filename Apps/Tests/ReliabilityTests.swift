@@ -208,8 +208,9 @@ final class AppReliabilityTests: XCTestCase {
     }
 
     @MainActor
-    func testAll32SpeciesResolveTheirOwnApprovedIdentity() async throws {
-        for species in Roster.all.map(\.id) {
+    func testEveryCataloguedSpeciesResolvesItsOwnApprovedIdentity() async throws {
+        // All 32 identities, including the wave-2 Oddballs, so the v1.1 flip needs no new art.
+        for species in Roster.catalog.map(\.id) {
             for mood in [BatMood.sleeping, .awake, .happy] {
                 for shiny in [false, true] {
                     let art = try XCTUnwrap(SpriteResolver.bat(species, mood: mood, shiny: shiny))
@@ -224,7 +225,7 @@ final class AppReliabilityTests: XCTestCase {
     @MainActor
     func testEveryPlayableFrameIsInTheApplicationBundle() async throws {
         var names: Set<String> = []
-        for species in PilotAnimationCatalog.speciesIDs {
+        for species in PilotAnimationCatalog.pilotSpeciesIDs {
             let clips = UniversalAction.allCases.compactMap { PilotAnimationCatalog.universal(for: species, action: $0) }
                 + [try XCTUnwrap(PilotAnimationCatalog.signature(for: species, friendshipLevel: 4))]
             for clip in clips {
@@ -235,7 +236,18 @@ final class AppReliabilityTests: XCTestCase {
             }
         }
         XCTAssertEqual(names.count, 74)
-        for species in Roster.all { XCTAssertTrue(assetExists("portrait_bat_\(species.id)"), species.id) }
+        // Generated Gentle-pixel sets: 8 + 8 + 6 + 8 + 8 frames for every other species.
+        var generated = 0
+        for species in PilotAnimationCatalog.generatedSpeciesIDs {
+            for action in UniversalAction.allCases {
+                for frame in try XCTUnwrap(PilotAnimationCatalog.universal(for: species, action: action)).frames {
+                    XCTAssertTrue(assetExists(frame.assetName), frame.assetName)
+                    generated += 1
+                }
+            }
+        }
+        XCTAssertEqual(generated, PilotAnimationCatalog.generatedSpeciesIDs.count * 38)
+        for species in Roster.catalog { XCTAssertTrue(assetExists("portrait_bat_\(species.id)"), species.id) }
     }
 
     func testVisitWatermarksStayInProtectedLocalArchiveAndRespectSaveIdentity() throws {

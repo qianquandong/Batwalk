@@ -30,13 +30,51 @@ public struct BatAnimationClip: Hashable, Sendable {
     public let restSeconds: Double
 }
 
+/// Frame plan of the generated Gentle-pixel sets (Art/tools/gentle_pixel): how
+/// many frames each universal action has, how long each shows, and the rest on
+/// frame 0 after an ambient cycle. Mirrors `PLAN` in engine.js exactly — change
+/// both together, then re-export.
+public enum GeneratedFramePlan {
+    public struct Plan: Sendable, Equatable {
+        public let seconds: [Double]
+        public let rest: Double
+        public var count: Int { seconds.count }
+        public init(seconds: [Double], rest: Double) { self.seconds = seconds; self.rest = rest }
+    }
+
+    public static func plan(for action: UniversalAction) -> Plan {
+        switch action {
+        case .idle: return Plan(seconds: [0.6, 0.14, 0.14, 0.14, 0.14, 0.14, 0.14, 0.2], rest: 1.6)
+        case .sleep: return Plan(seconds: Array(repeating: 0.32, count: 8), rest: 0.8)
+        case .fly: return Plan(seconds: Array(repeating: 0.1, count: 6), rest: 0)
+        case .pet: return Plan(seconds: Array(repeating: 0.12, count: 8), rest: 0)
+        case .eat: return Plan(seconds: [0.18, 0.14, 0.14, 0.22, 0.2, 0.2, 0.22, 0.3], rest: 0)
+        }
+    }
+}
+
 /// Only clips with shipped frames belong here. The 102-action design catalog
 /// remains separate so an unlocked idea is never mistaken for playable art.
+///
+/// Two sources of frames: the three hand-drawn pilots (4 frames per action plus a
+/// signature, `pilot_bat_…`) and the generated Gentle-pixel sets for every other
+/// species (6–8 frames per action, `gen_bat_…`, no signature until its art exists).
 public enum PilotAnimationCatalog {
-    public static let speciesIDs = ["mochi", "sticky", "walker"]
+    /// Hand-drawn pilots (Art/gentle-pixel/pilots-v1).
+    public static let pilotSpeciesIDs = ["mochi", "sticky", "walker"]
+    /// Generated sets (Art/tools/gentle_pixel/export_frames.js): every catalogued species that is not a pilot.
+    public static let generatedSpeciesIDs: [String] = Roster.catalog.map(\.id).filter { !pilotSpeciesIDs.contains($0) }
+    public static let generatedPrefix = "gen_bat_"
+    /// Every species with playable frames.
+    public static var speciesIDs: [String] { pilotSpeciesIDs + generatedSpeciesIDs }
 
     public static func universal(for speciesID: String, action: UniversalAction) -> BatAnimationClip? {
-        guard speciesIDs.contains(speciesID) else { return nil }
+        if generatedSpeciesIDs.contains(speciesID) {
+            let plan = GeneratedFramePlan.plan(for: action)
+            return clip(speciesID, action.rawValue, indices: Array(0..<plan.count), durations: plan.seconds,
+                        rest: plan.rest, prefix: generatedPrefix)
+        }
+        guard pilotSpeciesIDs.contains(speciesID) else { return nil }
         let durations: [Double]
         let rest: Double
         switch action {
@@ -49,8 +87,10 @@ public enum PilotAnimationCatalog {
         return clip(speciesID, action.rawValue, indices: [0, 1, 2, 3], durations: durations, rest: rest)
     }
 
+    /// Signature actions have art for the pilots only; a generated species gets
+    /// nil so the player never waits on frames that do not exist.
     public static func signatureAction(for speciesID: String) -> BatAction? {
-        guard speciesIDs.contains(speciesID) else { return nil }
+        guard pilotSpeciesIDs.contains(speciesID) else { return nil }
         return ActionCatalog.actions(for: speciesID).first { $0.tier == .signature }
     }
 
@@ -98,11 +138,11 @@ public enum PilotAnimationCatalog {
     }
 
     private static func clip(_ speciesID: String, _ actionID: String, indices: [Int],
-                             durations: [Double], rest: Double = 0) -> BatAnimationClip {
+                             durations: [Double], rest: Double = 0, prefix: String = "pilot_bat_") -> BatAnimationClip {
         BatAnimationClip(speciesID: speciesID, actionID: actionID,
             frames: zip(indices, durations).enumerated().map { position, pair in
                 let offset = actionID == "power-walk" ? -0.12 + Double(min(position, 11)) * 0.24 / 11 : 0
-                return BatAnimationFrame(assetName: "pilot_bat_\(speciesID)_\(actionID)_\(pair.0)",
+                return BatAnimationFrame(assetName: "\(prefix)\(speciesID)_\(actionID)_\(pair.0)",
                                          seconds: pair.1, offsetX: offset)
             }, restSeconds: rest)
     }

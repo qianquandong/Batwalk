@@ -1,8 +1,9 @@
 import SwiftUI
 import BatwalkCore
 
-/// Unlock (board: iPhone › 4. Unlock / Premium Paywall). One-time $1.99, no
-/// subscription, no countdowns or fake discounts (PRD §2.10).
+/// Unlock (board: iPhone › 4. Unlock / Premium Paywall). One-time purchase, no
+/// subscription, no countdowns or fake discounts (PRD §2.10). Reached from a
+/// locked Batpedia card, the Companion page and Settings.
 struct UnlockView: View {
     @Environment(PurchaseManager.self) private var purchases
     @Environment(GameStore.self) private var store
@@ -11,7 +12,7 @@ struct UnlockView: View {
     private let benefits: [(String, String)] = [
         ("moon.stars.fill", "Access all \(Roster.all.count) bats"),
         ("star.fill", "Discover Rare & Legendary bats"),
-        ("sparkles", "Find Shiny variants"),
+        ("sparkles", "Find Shiny variants — guaranteed within 40 hatches"),
         ("circle.hexagongrid.fill", "Unlock all egg pools"),
         ("book.closed.fill", "Complete the Batpedia"),
     ]
@@ -58,7 +59,7 @@ struct UnlockView: View {
                         } label: {
                             VStack(spacing: 2) {
                                 Text("Unlock All Bats")
-                                Text(purchases.product.map { "\($0.displayPrice) · One-time purchase" } ?? (store.isDemo ? "$1.99 · Preview" : "Loading price…"))
+                                Text(purchases.product.map { "\($0.displayPrice) · One-time purchase" } ?? (store.isDemo ? "$2.99 · Preview" : "Loading price…"))
                                     .font(BatwalkFont.rounded(.caption, weight: .medium))
                                     .opacity(0.9)
                             }

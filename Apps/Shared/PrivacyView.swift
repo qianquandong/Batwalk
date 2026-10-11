@@ -13,9 +13,12 @@ struct PrivacyView: View {
                 Text(SharedConfig.cloudBackupEnabled
                     ? "Your bats, nicknames, friendship, fruit inventory, and hatch history can back up to your private iCloud account. Daily steps, step dates, lifetime steps, active egg progress, and banked steps are excluded. After restoring a collection, a new egg starts from new steps."
                     : "Cloud collection backup is not enabled in this build. Keep the app installed to retain your local progress.")
-                Text("There are no ads, tracking SDKs, developer analytics servers, or Batwalk accounts. Apple handles purchases and their verification.")
+                Text(AnalyticsSetup.isEnabled
+                    ? "Batwalk counts anonymous game events (for example \"egg hatched\" or \"bat fed\") through TelemetryDeck so we can tell whether the game is fun. These counts contain no step data, no identifiers and no Health information, and they are never sold."
+                    : "There are no ads, tracking SDKs, developer analytics servers, or Batwalk accounts. Apple handles purchases and their verification.")
+                Text("Siri's \"Check my egg\" reads the same small egg-progress summary the watch face uses, on your device only.")
                 Text("You can change Step Count access in the Health app and notification access in device settings. Removing Batwalk deletes its local app data; if cloud backup is enabled, manage that separately in your iCloud storage settings. Removing Health access does not erase bats you've already collected.")
-                Text("Updated October 9, 2026").font(.caption)
+                Text("Updated October 10, 2026").font(.caption)
             }
             .font(.footnote)
             .padding()

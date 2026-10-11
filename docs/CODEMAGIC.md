@@ -8,7 +8,7 @@ GitHub 继续保存代码和 PR，Codemagic 直接拉取仓库并在云端 Mac �
 1. 在 [Codemagic](https://codemagic.io/signup/) 注册或登录**个人账户**。
    官方当前提供每月 500 分钟 macOS M2 免费额度；Team 不含此免费额度。
 2. Add application → GitHub，安装/授权 Codemagic CI/CD GitHub App。
-   选择 **Only select repositories → qianquandong/Batwalk**。仓库仍保持私有。
+   选择 **Only select repositories → qianquandong/Batwalk**。
 3. 添加 Batwalk，项目类型选择 iOS / 使用 `codemagic.yaml` 的原生项目。
 4. 配置扫描分支选择 **`improve/watch-release-readiness`**；配置尚在 PR #1，`main` 暂时没有。
 5. Start new build → 同一分支 → **Batwalk · Watch + iPhone checks** (`batwalk-verify`)。

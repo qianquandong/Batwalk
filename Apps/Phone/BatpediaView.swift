@@ -10,6 +10,7 @@ struct BatpediaView: View {
     @State private var query = ""
     @State private var searching = false
     @State private var settings = false
+    @State private var showUnlock = false
 
     private var columns: [GridItem] {
         Array(repeating: GridItem(.flexible(), spacing: 14), count: typeSize.isAccessibilitySize ? 1 : 2)
@@ -43,6 +44,11 @@ struct BatpediaView: View {
                                     BatCard(species: bat, shiny: variant == .shiny,
                                             isCompanion: store.state.companionID == bat.id)
                                 }.buttonStyle(PressableStyle())
+                            } else if !store.state.isUnlocked && !bat.isFree {
+                                // A locked card is the natural place to ask "how do I get this one?"
+                                Button { showUnlock = true } label: { LockedBatCard(number: bat.number) }
+                                    .buttonStyle(PressableStyle())
+                                    .accessibilityHint("Part of the full collection. Shows the unlock.")
                             } else {
                                 LockedBatCard(number: bat.number)
                             }
@@ -51,6 +57,20 @@ struct BatpediaView: View {
                     if species.isEmpty {
                         Text("No discovered bats match your search.")
                             .font(BatwalkFont.body).foregroundStyle(BatwalkColor.textSecondaryLight)
+                    }
+                    if store.state.hasCompletedFreeRoster {
+                        Button { showUnlock = true } label: {
+                            VStack(alignment: .leading, spacing: 4) {
+                                Label("You've met all \(Roster.freeSpecies.count) free bats", systemImage: "sparkles")
+                                    .font(BatwalkFont.headline)
+                                Text("\(Roster.all.count - Roster.freeSpecies.count) more are waiting in the full collection.")
+                                    .font(BatwalkFont.caption).foregroundStyle(BatwalkColor.textSecondaryLight)
+                            }
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .foregroundStyle(BatwalkColor.textPrimaryLight)
+                            .batwalkLightCard()
+                        }
+                        .buttonStyle(PressableStyle())
                     }
                     Text("Every bat has a little personality.")
                         .font(BatwalkFont.caption).foregroundStyle(BatwalkColor.textSecondaryLight)
@@ -70,6 +90,13 @@ struct BatpediaView: View {
             .toolbar(.hidden, for: .navigationBar)
             .navigationDestination(for: String.self) { BatDetailPage(speciesID: $0) }
             .sheet(isPresented: $settings) { PhoneSettingsView() }
+            .sheet(isPresented: $showUnlock) {
+                UnlockView()
+                    .safeAreaInset(edge: .top) {
+                        HStack { Spacer(); Button("Done") { showUnlock = false }.padding() }
+                            .background(BatwalkColor.lightBackground)
+                    }
+            }
         }
         .toolbar(path.isEmpty ? .visible : .hidden, for: .tabBar)
     }
@@ -96,10 +123,14 @@ struct BatpediaView: View {
 struct BatDetailPage: View {
     @Environment(GameStore.self) private var store
     let speciesID: String
+    @State private var shareImage: Image?
+
+    private var bat: OwnedBat? { store.state.collection[speciesID] }
+    private var species: Species? { bat?.species }
 
     var body: some View {
         ScrollView {
-            if let bat = store.state.collection[speciesID], let species = bat.species {
+            if let bat, let species {
                 VStack(spacing: 0) {
                     BatHeroView(speciesID: speciesID, shiny: bat.showsShiny, mood: .awake,
                                 size: 160, friendshipEXP: bat.friendshipEXP, showsKeepsake: false)
@@ -137,8 +168,18 @@ struct BatDetailPage: View {
                             Image(systemName: "calendar").foregroundStyle(BatwalkColor.accent)
                         } detail: { EmptyView() }
                         if let first = store.state.history.first(where: { $0.speciesID == speciesID }) {
-                            BatInfoRow(title: "Hatch source", value: first.eggType.displayName) {
-                                EggIcon(type: first.eggType, size: 24)
+                            BatInfoRow(title: first.source == .moonDust ? "Called with" : "Hatch source",
+                                       value: first.source == .moonDust ? "Moon Dust" : first.eggType.displayName) {
+                                if first.source == .moonDust {
+                                    Image(systemName: "sparkle").foregroundStyle(BatwalkColor.accent)
+                                } else {
+                                    EggIcon(type: first.eggType, size: 24)
+                                }
+                            } detail: { EmptyView() }
+                        }
+                        if bat.hatchCount > 1 {
+                            BatInfoRow(title: "Times met", value: "\(bat.hatchCount)") {
+                                Image(systemName: "repeat").foregroundStyle(BatwalkColor.accent)
                             } detail: { EmptyView() }
                         }
                         PhoneSyncStatus()
@@ -167,6 +208,21 @@ struct BatDetailPage: View {
         .toolbar(.hidden, for: .tabBar)
         .toolbarBackground(BatwalkColor.lightBackground, for: .navigationBar)
         .toolbarBackground(.visible, for: .navigationBar)
-        .toolbarColorScheme(.light, for: .navigationBar)
+        .toolbar {
+            if let shareImage, let bat {
+                ToolbarItem(placement: .topBarTrailing) {
+                    // A bat card with its "real-life cousin" fact — the thing worth sending a friend.
+                    ShareLink(item: shareImage, preview: SharePreview(bat.displayName, image: shareImage)) {
+                        Image(systemName: "square.and.arrow.up")
+                    }
+                    .accessibilityLabel("Share \(bat.displayName)")
+                }
+            }
+        }
+        .task(id: "\(speciesID)-\(bat?.showsShiny ?? false)-\(bat?.nickname ?? "")") {
+            #if os(iOS)
+            if let bat, let species { shareImage = BatShareImage.render(bat: bat, species: species) }
+            #endif
+        }
     }
 }

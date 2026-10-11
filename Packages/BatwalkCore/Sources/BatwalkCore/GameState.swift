@@ -35,12 +35,46 @@ public struct ActiveEgg: Codable, Equatable, Sendable {
     public var visualState: EggVisualState { .forProgress(progress) }
 }
 
+/// How a bat arrived in the collection.
+public enum HatchSource: String, Codable, Sendable {
+    /// Walked out of an egg.
+    case egg
+    /// Called with Moon Dust from duplicates of max-Friendship bats.
+    case moonDust
+}
+
 public struct HatchRecord: Codable, Equatable, Sendable {
     public let speciesID: String
     public let isShiny: Bool
     public let eggType: EggType
     public let hatchedAt: Date
     public let outcome: HatchOutcome
+    public let source: HatchSource
+
+    public init(speciesID: String, isShiny: Bool, eggType: EggType, hatchedAt: Date,
+                outcome: HatchOutcome, source: HatchSource = .egg) {
+        self.speciesID = speciesID
+        self.isShiny = isShiny
+        self.eggType = eggType
+        self.hatchedAt = hatchedAt
+        self.outcome = outcome
+        self.source = source
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case speciesID, isShiny, eggType, hatchedAt, outcome, source
+    }
+
+    /// Records written before `source` existed decode as ordinary egg hatches.
+    public init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        speciesID = try c.decode(String.self, forKey: .speciesID)
+        isShiny = try c.decodeIfPresent(Bool.self, forKey: .isShiny) ?? false
+        eggType = try c.decode(EggType.self, forKey: .eggType)
+        hatchedAt = try c.decode(Date.self, forKey: .hatchedAt)
+        outcome = try c.decodeIfPresent(HatchOutcome.self, forKey: .outcome) ?? .newSpecies
+        source = try c.decodeIfPresent(HatchSource.self, forKey: .source) ?? .egg
+    }
 }
 
 public enum HatchOutcome: String, Codable, Sendable {
@@ -55,6 +89,8 @@ public enum HatchOutcome: String, Codable, Sendable {
 public struct HatchResult: Equatable, Sendable {
     public let record: HatchRecord
     public let friendshipGained: Int
+    /// Moon Dust earned because this duplicate's species was already at max Friendship.
+    public let moonDustGained: Int
     public let bat: OwnedBat
 }
 
@@ -74,6 +110,9 @@ public enum GameError: Error, Equatable, Sendable {
     case eggLocked(EggType)
     case notOwned(String)
     case noFruit
+    case notEnoughMoonDust
+    /// Every species the player can reach is already in the collection.
+    case nothingToDiscover
 }
 
 /// The whole save file. A value type with pure, deterministic mutations so every
@@ -99,6 +138,13 @@ public struct GameState: Codable, Equatable, Sendable {
     /// speciesID → (dayKey, pets that granted EXP that day)
     public private(set) var petLog: [String: PetDay] = [:]
     public private(set) var lifetimeCreditedSteps = 0
+    /// Pity counters (see `Tuning.shinyPityHatches` / `newSpeciesPityHatches`).
+    public private(set) var hatchesSinceShiny = 0
+    public private(set) var hatchesSinceNewSpecies = 0
+    /// Duplicates of max-Friendship bats become Moon Dust; dust calls unmet bats.
+    public private(set) var moonDust = 0
+    /// The free tier's one trial egg (`Tuning.freeTrialEgg`) has been started.
+    public private(set) var trialEggUsed = false
 
     public struct PetDay: Codable, Equatable, Sendable {
         public var dayKey: String
@@ -110,6 +156,7 @@ public struct GameState: Codable, Equatable, Sendable {
     private enum CodingKeys: String, CodingKey {
         case schemaVersion, saveID, revision, needsStepBaseline, hasStarted, egg, bankedSteps
         case ledger, collection, companionID, fruit, fruitProgressSteps, isUnlocked, history, petLog, lifetimeCreditedSteps
+        case hatchesSinceShiny, hatchesSinceNewSpecies, moonDust, trialEggUsed
     }
 
     public init(from decoder: Decoder) throws {
@@ -134,6 +181,10 @@ public struct GameState: Codable, Equatable, Sendable {
         history = try c.decode([HatchRecord].self, forKey: .history)
         petLog = try c.decodeIfPresent([String: PetDay].self, forKey: .petLog) ?? [:]
         lifetimeCreditedSteps = try c.decodeIfPresent(Int.self, forKey: .lifetimeCreditedSteps) ?? 0
+        hatchesSinceShiny = try c.decodeIfPresent(Int.self, forKey: .hatchesSinceShiny) ?? 0
+        hatchesSinceNewSpecies = try c.decodeIfPresent(Int.self, forKey: .hatchesSinceNewSpecies) ?? 0
+        moonDust = try c.decodeIfPresent(Int.self, forKey: .moonDust) ?? 0
+        trialEggUsed = try c.decodeIfPresent(Bool.self, forKey: .trialEggUsed) ?? false
         // v1 eggs are sealed once during migration, before any entitlement refresh.
         if var current = egg, current.frozenSpeciesID == nil {
             let roll = HatchEngine.roll(egg: current.type, seed: current.seed, isUnlocked: isUnlocked || !current.type.isFree)
@@ -158,7 +209,49 @@ public struct GameState: Codable, Equatable, Sendable {
 
     public var companion: OwnedBat? { companionID.flatMap { collection[$0] } }
     public var isEggReady: Bool { egg?.isReady ?? false }
-    public var pickableEggs: [EggType] { EggType.pickable(isUnlocked: isUnlocked) }
+
+    /// Eggs the player can choose after a hatch, in `EggType.allCases` order.
+    /// A free player who has met every free bat also sees the one-time trial egg.
+    public var pickableEggs: [EggType] { pickableEggs(tuning: .default) }
+
+    public func pickableEggs(tuning: Tuning) -> [EggType] {
+        var eggs = EggType.pickable(isUnlocked: isUnlocked)
+        if let trial = trialEgg(tuning: tuning), !eggs.contains(trial) { eggs.append(trial) }
+        return EggType.allCases.filter { eggs.contains($0) }
+    }
+
+    /// The free tier's trial egg, while it is still available (Q13 in OPEN_QUESTIONS).
+    public func trialEgg(tuning: Tuning = .default) -> EggType? {
+        guard !isUnlocked, !trialEggUsed, let trial = tuning.freeTrialEgg, trial.isPickable, !trial.isFree,
+              hasMetAllFreeSpecies else { return nil }
+        return trial
+    }
+
+    /// Every free species has been hatched in Normal form.
+    public var hasMetAllFreeSpecies: Bool {
+        let free = Roster.freeSpecies
+        return !free.isEmpty && free.allSatisfy { collection[$0.id]?.hasNormal == true }
+    }
+
+    /// A free player who has seen everything the free tier offers — the moment
+    /// to show what the full collection holds (never before).
+    public var hasCompletedFreeRoster: Bool { !isUnlocked && hasMetAllFreeSpecies }
+
+    /// Species IDs from `pool` the player has not hatched in Normal form yet.
+    public func unmetSpecies(in pool: [String]) -> [String] {
+        pool.filter { collection[$0]?.hasNormal != true }
+    }
+
+    /// Species the player could still meet from the eggs of their own tier
+    /// (the free trial egg is not counted: Moon Dust never buys paid content).
+    public var reachableUnmetSpecies: [String] {
+        let reachable = Set(EggType.pickable(isUnlocked: isUnlocked).flatMap { $0.pool(isUnlocked: isUnlocked) })
+        return unmetSpecies(in: reachable.sorted { (Roster.species($0)?.number ?? 0) < (Roster.species($1)?.number ?? 0) })
+    }
+
+    public func canCallNewBat(tuning: Tuning = .default) -> Bool {
+        moonDust >= tuning.moonDustForNewBat && !reachableUnmetSpecies.isEmpty
+    }
 
     /// Used to pick between two saves after an iCloud restore races a fresh
     /// install: the save with more hatches wins, then more lifetime steps.
@@ -176,18 +269,48 @@ public struct GameState: Codable, Equatable, Sendable {
     // MARK: - Onboarding
 
     /// PRD §2.2: the first egg is always a Starter Egg.
-    public mutating func start(seed: UInt64, now: Date) {
+    public mutating func start(seed: UInt64, now: Date, tuning: Tuning = .default) {
         guard !hasStarted else { return }
         hasStarted = true
         egg = ActiveEgg(type: .starter, seed: seed, creditedSteps: 0, startedAt: now)
-        freezeEgg(tuning: .default)
+        freezeEgg(tuning: tuning)
     }
 
+    /// Seals the egg's outcome at creation (PRD §4.4; ADR 0001 §5). Pity rules are
+    /// applied here, once, so a refund, restore or tuning change can never reroll it.
     private mutating func freezeEgg(tuning: Tuning) {
         guard var current = egg else { return }
-        let roll = HatchEngine.roll(egg: current.type, seed: current.seed, isUnlocked: isUnlocked, tuning: tuning)
+        // A paid-type egg (trial, or started under the unlock) always uses the
+        // paid pool: free pools are empty for Forest / Moon / Crystal.
+        let paid = isUnlocked || !current.type.isFree
+        var roll = HatchEngine.roll(egg: current.type, seed: current.seed, isUnlocked: paid, tuning: tuning)
+        // Pity rules draw from a second stream of the same seed, so they are just
+        // as deterministic as the base roll.
+        var rng = SeededGenerator(seed: current.seed ^ 0x5DEE_CE66_D1CE_4E5B)
+
+        if paid, tuning.newSpeciesPityHatches > 0, hatchesSinceNewSpecies >= tuning.newSpeciesPityHatches {
+            let unmet = unmetSpecies(in: current.type.pool(isUnlocked: true))
+            if let id = HatchEngine.pick(unmet, rng: &rng), let species = Roster.species(id) {
+                roll = HatchRoll(species: species, isShiny: roll.isShiny)
+            }
+        }
+
+        var shiny = roll.isShiny
+        if paid, !shiny {
+            if tuning.shinyPityHatches > 0, hatchesSinceShiny + 1 >= tuning.shinyPityHatches {
+                shiny = true
+            } else if tuning.maxFriendshipShinyMultiplier > 1,
+                      let bat = collection[roll.species.id],
+                      Friendship.level(forEXP: bat.friendshipEXP, tuning: tuning) >= Friendship.maxLevel {
+                // Lift P(shiny) from p to m·p: on the non-shiny branch add q = (m−1)p / (1−p).
+                let p = min(max(tuning.shinyChance, 0), 0.999_999)
+                let extra = (tuning.maxFriendshipShinyMultiplier - 1) * p / (1 - p)
+                shiny = rng.nextUnit() < extra
+            }
+        }
+
         current.frozenSpeciesID = roll.species.id
-        current.frozenIsShiny = roll.isShiny
+        current.frozenIsShiny = shiny
         egg = current
     }
 
@@ -196,7 +319,8 @@ public struct GameState: Codable, Equatable, Sendable {
     /// Ingest HealthKit's cumulative total for a day. See `StepLedger`.
     @discardableResult
     public mutating func ingestSteps(dayKey: String, dailyTotal: Int, tuning: Tuning = .default) -> StepUpdate {
-        let delta = ledger.ingest(dayKey: dayKey, dailyTotal: dailyTotal)
+        let sane = min(max(0, dailyTotal), max(0, tuning.maxDailySteps))
+        let delta = ledger.ingest(dayKey: dayKey, dailyTotal: sane)
         return credit(steps: delta, tuning: tuning)
     }
 
@@ -220,14 +344,14 @@ public struct GameState: Codable, Equatable, Sendable {
         }
 
         // Fruit (PRD §2.8): occasional reward from walking, no hunger system.
+        // Division, not a loop, so a bogus huge total can never spin for long.
+        let perFruit = max(1, tuning.stepsPerFruit)
         fruitProgressSteps += steps
-        while fruitProgressSteps >= tuning.stepsPerFruit {
-            fruitProgressSteps -= tuning.stepsPerFruit
-            if fruit < tuning.maxFruit {
-                fruit += 1
-                update.fruitEarned += 1
-            }
-        }
+        let earned = fruitProgressSteps / perFruit
+        fruitProgressSteps %= perFruit
+        let added = min(earned, max(0, tuning.maxFruit - fruit))
+        fruit += added
+        update.fruitEarned = added
         return update
     }
 
@@ -251,8 +375,10 @@ public struct GameState: Codable, Equatable, Sendable {
 
         let outcome: HatchOutcome
         var gained = 0
+        var dust = 0
         var bat: OwnedBat
         if var existing = collection[id] {
+            let wasMaxLevel = Friendship.level(forEXP: existing.friendshipEXP, tuning: tuning) >= Friendship.maxLevel
             if roll.isShiny && !existing.hasShiny {
                 outcome = .newShiny
                 existing.hasShiny = true
@@ -264,6 +390,12 @@ public struct GameState: Codable, Equatable, Sendable {
                 outcome = .duplicate
                 gained = tuning.duplicateEXP[roll.species.rarity] ?? 0
                 existing.friendshipEXP += gained
+                // Past max Friendship the EXP means nothing, so the duplicate pays
+                // in Moon Dust instead (PRD §2.7: duplicates must stay useful).
+                if wasMaxLevel {
+                    dust = max(0, tuning.moonDustPerMaxLevelDuplicate)
+                    moonDust += dust
+                }
             }
             existing.hatchCount += 1
             bat = existing
@@ -285,18 +417,24 @@ public struct GameState: Codable, Equatable, Sendable {
         // First bat becomes the companion (PRD §2.2 step 10).
         if companionID == nil { companionID = id }
 
+        hatchesSinceShiny = roll.isShiny ? 0 : hatchesSinceShiny + 1
+        hatchesSinceNewSpecies = outcome == .newSpecies ? 0 : hatchesSinceNewSpecies + 1
+
         let record = HatchRecord(speciesID: id, isShiny: roll.isShiny, eggType: current.type,
                                  hatchedAt: now, outcome: outcome)
         history.append(record)
         egg = nil
-        return HatchResult(record: record, friendshipGained: gained, bat: bat)
+        return HatchResult(record: record, friendshipGained: gained, moonDustGained: dust, bat: bat)
     }
 
     /// Start the next egg. Banked steps are applied immediately.
     @discardableResult
     public mutating func startEgg(_ type: EggType, seed: UInt64, now: Date, tuning: Tuning = .default) throws -> StepUpdate {
         guard egg == nil else { throw GameError.eggAlreadyIncubating }
-        guard type.isPickable, isUnlocked || type.isFree else { throw GameError.eggLocked(type) }
+        guard type.isPickable else { throw GameError.eggLocked(type) }
+        let isTrial = !isUnlocked && !type.isFree && trialEgg(tuning: tuning) == type
+        guard isUnlocked || type.isFree || isTrial else { throw GameError.eggLocked(type) }
+        if isTrial { trialEggUsed = true }
         egg = ActiveEgg(type: type, seed: seed, creditedSteps: 0, startedAt: now)
         freezeEgg(tuning: tuning)
 
@@ -312,6 +450,37 @@ public struct GameState: Codable, Equatable, Sendable {
             update.eggBecameReady = current.isReady
         }
         return update
+    }
+
+    /// Spend Moon Dust to meet a bat the player has not hatched yet (Normal form),
+    /// chosen uniformly from the unmet species of every egg they can start.
+    /// A free player who has met all three free bats gets `nothingToDiscover` —
+    /// the honest answer, and the natural moment to show the full collection.
+    @discardableResult
+    public mutating func callNewBat(seed: UInt64, now: Date, tuning: Tuning = .default) throws -> HatchResult {
+        guard moonDust >= tuning.moonDustForNewBat else { throw GameError.notEnoughMoonDust }
+        var rng = SeededGenerator(seed: seed)
+        guard let id = HatchEngine.pick(reachableUnmetSpecies, rng: &rng),
+              Roster.species(id) != nil else { throw GameError.nothingToDiscover }
+        moonDust -= tuning.moonDustForNewBat
+
+        var bat: OwnedBat
+        if var existing = collection[id] { // owned as Shiny only
+            existing.hasNormal = true
+            existing.hatchCount += 1
+            bat = existing
+        } else {
+            bat = OwnedBat(speciesID: id, nickname: nil, hasNormal: true, hasShiny: false, showsShiny: false,
+                           friendshipEXP: 0, hatchCount: 1, firstHatchedAt: now)
+        }
+        collection[id] = bat
+        if companionID == nil { companionID = id }
+        hatchesSinceNewSpecies = 0
+
+        let record = HatchRecord(speciesID: id, isShiny: false, eggType: EggType.primaryEgg(for: id),
+                                 hatchedAt: now, outcome: .newSpecies, source: .moonDust)
+        history.append(record)
+        return HatchResult(record: record, friendshipGained: 0, moonDustGained: 0, bat: bat)
     }
 
     // MARK: - Care (PRD §2.8 — no punishment, ever)
@@ -362,19 +531,25 @@ public struct GameState: Codable, Equatable, Sendable {
 
     // MARK: - Purchase
 
-    /// $1.99 one-time unlock (or Restore Purchase). Idempotent.
+    /// One-time full unlock (or Restore Purchase). Idempotent.
     public mutating func setUnlocked(_ unlocked: Bool) {
         isUnlocked = unlocked
     }
 
     public mutating func restoreCollection(_ backup: CollectionBackup) {
         saveID = backup.saveID
-        revision = backup.revision
+        // Jump far past any revision a mirror may already hold for this saveID,
+        // so the iPhone accepts the restored save instead of dropping it as stale.
+        revision = max(backup.revision, revision) + 1_000
         hasStarted = backup.hasStarted
         collection = backup.collection
         companionID = backup.companionID.flatMap { collection[$0] == nil ? nil : $0 }
         history = backup.history
         fruit = backup.fruit
+        moonDust = backup.moonDust
+        trialEggUsed = backup.trialEggUsed
+        hatchesSinceShiny = 0
+        hatchesSinceNewSpecies = 0
         egg = nil
         bankedSteps = 0
         ledger = StepLedger()

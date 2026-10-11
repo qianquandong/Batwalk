@@ -3,7 +3,7 @@ import XCTest
 
 final class BatAnimationTests: XCTestCase {
     func testUniversalReactionsDoNotRequireFriendshipAndSignaturesUnlockAtFour() {
-        for species in PilotAnimationCatalog.speciesIDs {
+        for species in PilotAnimationCatalog.pilotSpeciesIDs {
             for level in 1...5 {
                 XCTAssertNotNil(PilotAnimationCatalog.reaction(for: species, event: .pet, friendshipLevel: level))
                 XCTAssertNotNil(PilotAnimationCatalog.reaction(for: species, event: .feed, friendshipLevel: level))
@@ -12,6 +12,45 @@ final class BatAnimationTests: XCTestCase {
         }
         XCTAssertNil(PilotAnimationCatalog.signature(for: "galaxy", friendshipLevel: 5))
         XCTAssertNil(PilotAnimationCatalog.universal(for: "missing", action: .idle))
+    }
+
+    func testEveryCataloguedSpeciesHasPlayableUniversalActions() {
+        XCTAssertEqual(Set(PilotAnimationCatalog.speciesIDs), Set(Roster.catalog.map(\.id)))
+        XCTAssertEqual(PilotAnimationCatalog.generatedSpeciesIDs.count, Roster.catalog.count - 3)
+        XCTAssertTrue(PilotAnimationCatalog.generatedSpeciesIDs.allSatisfy { !PilotAnimationCatalog.pilotSpeciesIDs.contains($0) })
+        for species in PilotAnimationCatalog.generatedSpeciesIDs {
+            for level in 1...5 {
+                XCTAssertNotNil(PilotAnimationCatalog.reaction(for: species, event: .pet, friendshipLevel: level))
+                XCTAssertNotNil(PilotAnimationCatalog.reaction(for: species, event: .feed, friendshipLevel: level))
+                // No signature art yet: never a clip whose frames do not exist.
+                XCTAssertNil(PilotAnimationCatalog.signature(for: species, friendshipLevel: level), species)
+                XCTAssertNil(PilotAnimationCatalog.reaction(for: species, event: .newDay, friendshipLevel: level), species)
+            }
+            XCTAssertEqual(PilotAnimationCatalog.reaction(for: species, event: .walkReturn, friendshipLevel: 5)?.actionID, "fly")
+        }
+    }
+
+    func testGeneratedFramesFollowThePlanAndTheExportNaming() throws {
+        for species in PilotAnimationCatalog.generatedSpeciesIDs {
+            for action in UniversalAction.allCases {
+                let plan = GeneratedFramePlan.plan(for: action)
+                let clip = try XCTUnwrap(PilotAnimationCatalog.universal(for: species, action: action))
+                XCTAssertEqual(clip.frames.count, plan.count, "\(species) \(action)")
+                XCTAssertEqual(clip.frames.map(\.seconds), plan.seconds)
+                XCTAssertEqual(clip.restSeconds, plan.rest)
+                XCTAssertEqual(clip.frames.first?.assetName, "gen_bat_\(species)_\(action.rawValue)_0")
+                XCTAssertEqual(clip.frames.last?.assetName, "gen_bat_\(species)_\(action.rawValue)_\(plan.count - 1)")
+                XCTAssertTrue(clip.frames.allSatisfy { $0.seconds >= 0.1 && $0.offsetX == 0 })
+                XCTAssertLessThan(clip.frames.reduce(0) { $0 + $1.seconds }, 4)
+            }
+            XCTAssertEqual(PilotAnimationCatalog.still(for: species, mood: .sleeping), "gen_bat_\(species)_sleep_0")
+            XCTAssertEqual(PilotAnimationCatalog.still(for: species, mood: .awake), "gen_bat_\(species)_idle_0")
+        }
+        // Ambient loops rest on frame 0 so a visible bat is not a constant animation.
+        XCTAssertGreaterThanOrEqual(GeneratedFramePlan.plan(for: .idle).rest, 1)
+        XCTAssertGreaterThanOrEqual(GeneratedFramePlan.plan(for: .sleep).rest, 0.5)
+        XCTAssertEqual(GeneratedFramePlan.plan(for: .fly).count, 6)
+        XCTAssertEqual(GeneratedFramePlan.plan(for: .pet).count, 8)
     }
 
     func testNaturalTriggersUseTheDesignedSignatureOrUniversalFlyFallback() {
@@ -69,11 +108,12 @@ final class BatAnimationTests: XCTestCase {
     }
 
     func testAnimationHasBoundedCadenceAndWalkerEndsWithNectar() throws {
-        for species in PilotAnimationCatalog.speciesIDs {
+        for species in PilotAnimationCatalog.pilotSpeciesIDs {
             let clips = UniversalAction.allCases.compactMap { PilotAnimationCatalog.universal(for: species, action: $0) }
                 + [try XCTUnwrap(PilotAnimationCatalog.signature(for: species, friendshipLevel: 4))]
             for clip in clips {
                 XCTAssertTrue(clip.frames.allSatisfy { $0.seconds >= 0.16 && abs($0.offsetX) <= 0.121 })
+                XCTAssertTrue(clip.frames.allSatisfy { $0.assetName.hasPrefix("pilot_bat_") })
                 XCTAssertLessThan(clip.frames.reduce(0) { $0 + $1.seconds }, 4)
             }
             XCTAssertGreaterThanOrEqual(try XCTUnwrap(PilotAnimationCatalog.ambient(for: species, mood: .awake)).restSeconds, 3)

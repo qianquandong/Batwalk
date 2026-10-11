@@ -109,6 +109,10 @@ func assetExists(_ name: String) -> Bool {
 
 /// Placeholder colours per species until the art board's palettes are wired in.
 enum SpeciesPalette {
+    /// Dark-bodied species that disappear into the midnight background at tile
+    /// size without a light rim (2026-10-10 art review: 05, 18, 20, 28 unreadable).
+    static let needsRim: Set<String> = ["cave", "vampire", "eclipse", "polka", "galaxy", "wrinkle"]
+
     static func body(_ speciesID: String, shiny: Bool) -> Color {
         let number = Roster.species(speciesID)?.number ?? 1
         let hue = Double((number * 37) % 100) / 100
@@ -134,6 +138,11 @@ struct BatSprite: View {
                     .hueRotation(.degrees(art.hueDegrees))
                     .saturation(art.saturation)
                     .brightness(art.brightness)
+                    .background {
+                        if SpeciesPalette.needsRim.contains(speciesID) {
+                            PixelRim(assetName: art.name, width: max(1, (size / 48).rounded()))
+                        }
+                    }
             } else if speciesID == "cocoa" || speciesID == "long-ear" {
                 FreeBatArtwork(longEars: speciesID == "long-ear", shiny: shiny, mood: mood)
             } else {
@@ -142,6 +151,29 @@ struct BatSprite: View {
         }
         .frame(width: size, height: size)
         .accessibilityLabel(Roster.species(speciesID)?.name ?? "Bat")
+    }
+}
+
+/// A one-pixel light rim drawn from the sprite's own alpha: four template copies
+/// offset by a pixel beneath the sprite. Keeps dark bats readable on night
+/// surfaces without touching the artwork itself.
+private struct PixelRim: View {
+    let assetName: String
+    let width: CGFloat
+
+    var body: some View {
+        ZStack {
+            ForEach(0..<4, id: \.self) { index in
+                Image(assetName)
+                    .renderingMode(.template)
+                    .interpolation(.none)
+                    .resizable()
+                    .scaledToFit()
+                    .foregroundStyle(BatwalkColor.cloud.opacity(0.55))
+                    .offset(x: [-width, width, 0, 0][index], y: [0, 0, -width, width][index])
+            }
+        }
+        .accessibilityHidden(true)
     }
 }
 

@@ -214,7 +214,11 @@ struct HatchHistoryRow: View {
                 }
                 HStack(spacing: 4) {
                     VariantChip(shiny: record.isShiny, dark: false)
-                    ChipView(text: record.eggType.displayName, color: BatwalkColor.accent, dark: false)
+                    if record.source == .moonDust {
+                        ChipView(text: "Moon Dust", symbol: "sparkle", color: BatwalkColor.rarityShiny, dark: false)
+                    } else {
+                        ChipView(text: record.eggType.displayName, color: BatwalkColor.accent, dark: false)
+                    }
                 }
             }
             Spacer(minLength: 4)
@@ -246,7 +250,7 @@ struct UndiscoveredRow: View {
             Spacer()
         }
         .padding(10)
-        .background(RoundedRectangle(cornerRadius: 18, style: .continuous).fill(Color.white.opacity(0.55)))
+        .background(RoundedRectangle(cornerRadius: 18, style: .continuous).fill(BatwalkColor.lightCard.opacity(0.7)))
         .accessibilityElement(children: .ignore)
         .accessibilityLabel("Not discovered yet")
     }

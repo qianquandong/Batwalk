@@ -2,7 +2,7 @@ import SwiftUI
 import BatwalkCore
 
 /// Home (board: Watch › 1. Home). The bat dominates the moonlit scene; one glass
-/// card carries the name and a single progress pill. Tap the bat to pet it.
+/// card carries the name and a single progress pill. Tap the bat (or Double Tap) to pet it.
 struct HomeView: View {
     @Environment(GameStore.self) private var store
     @Environment(\.scenePhase) private var scenePhase
@@ -44,6 +44,7 @@ struct HomeView: View {
             if store.state.egg == nil { showEggPicker = true }
         }) { presentation in
             HatchSequenceView(presentation: presentation) {
+                // Only one egg to choose from: start it without a detour (Q2).
                 if store.state.pickableEggs == [.tiny], store.state.egg == nil {
                     do { try store.mutate { try $0.startEgg(.tiny, seed: UInt64.random(in: .min ... .max), now: .now) } }
                     catch { return }
@@ -100,6 +101,7 @@ struct HomeView: View {
     private func companionScene(_ companion: OwnedBat, time: TimeOfDay) -> some View {
         GeometryReader { geo in
             let batSize = min(geo.size.width * 0.80, geo.size.height * 0.52)
+            let resting = BatMood.resting(at: time)
             VStack(spacing: 3) {
                 NavigationLink(value: companion.speciesID) {
                     VStack(alignment: .leading, spacing: 2) {
@@ -113,26 +115,30 @@ struct HomeView: View {
                     .frame(maxWidth: .infinity, minHeight: 40, alignment: .leading)
                 }.buttonStyle(.plain)
                 Spacer(minLength: 0)
-                BatHeroView(
-                    speciesID: companion.speciesID,
-                    shiny: companion.showsShiny,
-                    mood: reaction ?? BatMood.resting(at: time),
-                    size: batSize,
-                    bounceTrigger: petCount,
-                    friendshipEXP: companion.friendshipEXP,
-                    animationRequest: animationRequest,
-                    showsKeepsake: false
-                )
-                .scaleEffect(1.18)
+                // A real control, so Double Tap (watchOS 11) pets the bat too.
+                Button { pet(companion) } label: {
+                    BatHeroView(
+                        speciesID: companion.speciesID,
+                        shiny: companion.showsShiny,
+                        mood: reaction ?? resting,
+                        size: batSize,
+                        bounceTrigger: petCount,
+                        friendshipEXP: companion.friendshipEXP,
+                        animationRequest: animationRequest,
+                        showsKeepsake: false
+                    )
+                    .scaleEffect(1.18)
+                    .overlay { HeartBurst(trigger: petCount) }
+                    .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
+                .doubleTapPrimaryAction()
                 .onAppear { heroVisible = true; welcomeCompanion() }
                 .onDisappear { heroVisible = false; clearReaction() }
-                .overlay { HeartBurst(trigger: petCount) }
-                .contentShape(Rectangle())
-                .onTapGesture { pet(companion) }
-                .accessibilityAddTraits(.isButton)
-                .accessibilityHint(BatMood.resting(at: time) == .awake ? "Pet \(companion.displayName)" : "Wake \(companion.displayName)")
+                .accessibilityLabel(companion.displayName)
+                .accessibilityHint(resting == .awake ? "Pet \(companion.displayName)" : "Wake \(companion.displayName)")
                 Spacer(minLength: 0)
-                Text(showArrival ? "\(companion.companionTitle) is here" : (BatMood.resting(at: time) == .awake ? "Tap to pet" : "Tap to wake"))
+                Text(showArrival ? "\(companion.companionTitle) is here" : (resting == .awake ? "Tap to pet" : "Tap to wake"))
                     .font(BatwalkFont.micro).foregroundStyle(BatwalkColor.textSecondaryDark)
                     .opacity(luminanceReduced ? 0 : 1)
                     .accessibilityHidden(true)
@@ -237,18 +243,21 @@ struct HomeView: View {
             "species": id,
             "rarity": Roster.species(id)?.rarity.rawValue ?? "",
             "shiny": result.record.isShiny ? "true" : "false",
+            "egg": egg.type.rawValue,
         ])
         if result.record.outcome == .duplicate {
-            store.analytics.log(.duplicateFriendship, properties: ["species": id])
+            store.analytics.log(.duplicateFriendship, properties: ["species": id, "moonDust": "\(result.moonDustGained)"])
         }
         hatching = HatchPresentation(result: result, egg: egg.type, startRevealed: false)
     }
 }
 
-/// Next-egg chooser, shown after every hatch.
+/// Next-egg chooser, shown after every hatch. Locked eggs are not greyed-out dead
+/// ends: they show what they hold and open the unlock (2026-10-10 review).
 struct EggPickerView: View {
     @Environment(GameStore.self) private var store
     @Environment(\.dismiss) private var dismiss
+    @State private var showUnlock = false
 
     var body: some View {
         NavigationStack {
@@ -256,21 +265,25 @@ struct EggPickerView: View {
                 VStack(spacing: 6) {
                     ForEach(EggType.allCases.filter(\.isPickable), id: \.self) { type in
                         let available = store.state.pickableEggs.contains(type)
+                        let isTrial = store.state.trialEgg() == type
                         Button {
-                            start(type)
+                            if available { start(type) } else { showUnlock = true }
                         } label: {
                             HStack(spacing: BatwalkSpacing.sm) {
                                 EggIcon(type: type, size: 26)
                                 VStack(alignment: .leading, spacing: 1) {
                                     Text(type.displayName).font(BatwalkFont.caption)
-                                    Text(available ? "\(type.targetSteps.formatted()) steps" : "Full unlock")
+                                    Text(isTrial ? "Free trial · \(type.targetSteps.formatted()) steps"
+                                         : available ? "\(type.targetSteps.formatted()) steps"
+                                         : "Full unlock · \(type.targetSteps.formatted()) steps")
+                                        .font(BatwalkFont.micro)
+                                        .foregroundStyle(isTrial ? BatwalkColor.rarityShiny : BatwalkColor.textSecondaryDark)
+                                    Text(type.pool(isUnlocked: type.isFree ? store.state.isUnlocked : true)
+                                            .compactMap { Roster.species($0)?.name.replacingOccurrences(of: " Bat", with: "") }
+                                            .joined(separator: ", "))
                                         .font(BatwalkFont.micro)
                                         .foregroundStyle(BatwalkColor.textSecondaryDark)
-                                    if available {
-                                        Text(type.pool(isUnlocked: store.state.isUnlocked).compactMap { Roster.species($0)?.name }.joined(separator: ", "))
-                                            .font(BatwalkFont.micro)
-                                            .foregroundStyle(BatwalkColor.textSecondaryDark)
-                                    }
+                                        .lineLimit(2)
                                 }
                                 Spacer(minLength: 0)
                                 if !available {
@@ -281,10 +294,16 @@ struct EggPickerView: View {
                             }
                             .foregroundStyle(.white)
                             .batwalkGlassCard(padding: 8, radius: 14)
-                            .opacity(available ? 1 : 0.55)
+                            .opacity(available ? 1 : 0.7)
                         }
                         .buttonStyle(PressableStyle())
-                        .disabled(!available)
+                        .accessibilityHint(available ? "Start this egg" : "Shows the full collection unlock")
+                    }
+                    if !store.state.isUnlocked {
+                        Text("Locked eggs hold \(Roster.all.count - Roster.freeSpecies.count) more bats.")
+                            .font(BatwalkFont.micro)
+                            .foregroundStyle(BatwalkColor.textSecondaryDark)
+                            .padding(.top, 2)
                     }
                 }
                 .padding(.horizontal, 2)
@@ -292,6 +311,7 @@ struct EggPickerView: View {
             .navigationTitle("Next Egg")
             .watchPageBackground()
         }
+        .sheet(isPresented: $showUnlock) { WatchUnlockView() }
     }
 
     private func start(_ type: EggType) {
