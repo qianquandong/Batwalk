@@ -2,13 +2,16 @@ import SwiftUI
 import BatwalkCore
 
 /// Collection (board: Watch › 4. Collection): 3-column grid, glowing unlocked
-/// tiles, dark locked tiles, ♥ on the companion. Newly found bats play the unlock reveal.
+/// tiles, dark locked tiles, ♥ on the companion. Newly found bats play the unlock
+/// reveal. Above the grid: the "met every free bat" card and the Moon Dust row.
 struct CollectionPage: View {
     @Environment(GameStore.self) private var store
     /// Species the player has already seen in the grid (UI memory, not game state).
     @AppStorage("batwalk.seenBats") private var seenRaw = ""
     @AppStorage("batwalk.seenBatsInitialized") private var seenInitialized = false
     @State private var newIDs: Set<String> = []
+    @State private var showUnlock = false
+    @State private var calling: HatchPresentation?
 
     private let columns = Array(repeating: GridItem(.flexible(), spacing: 6), count: 3)
 
@@ -24,6 +27,8 @@ struct CollectionPage: View {
                             .foregroundStyle(BatwalkColor.textSecondaryDark)
                             .padding(.trailing, 10)
                     }
+                    if store.state.hasCompletedFreeRoster { freeCompleteCard }
+                    moonDustRow
                     LazyVGrid(columns: columns, spacing: 6) {
                         ForEach(Roster.all) { species in
                             if let bat = store.state.collection[species.id] {
@@ -47,6 +52,78 @@ struct CollectionPage: View {
             .watchPageBackground()
         }
         .onAppear(perform: markNewBats)
+        .sheet(isPresented: $showUnlock) { WatchUnlockView() }
+        .fullScreenCover(item: $calling) { presentation in
+            HatchSequenceView(presentation: presentation) { calling = nil }
+        }
+    }
+
+    /// The free tier is finished: say so, and show what the full collection holds.
+    /// Shown only once every free bat has been met (never as a nag before that).
+    private var freeCompleteCard: some View {
+        Button { showUnlock = true } label: {
+            VStack(alignment: .leading, spacing: 3) {
+                Label("You've met all \(Roster.freeSpecies.count) free bats", systemImage: "sparkles")
+                    .font(BatwalkFont.caption)
+                Text(store.state.trialEgg() != nil
+                     ? "\(Roster.all.count - Roster.freeSpecies.count) more are waiting — and a free Forest Egg is yours to try."
+                     : "\(Roster.all.count - Roster.freeSpecies.count) more are waiting in the full collection.")
+                    .font(BatwalkFont.micro)
+                    .foregroundStyle(BatwalkColor.textSecondaryDark)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .foregroundStyle(.white)
+            .batwalkGlassCard(padding: 8, radius: 14)
+        }
+        .buttonStyle(PressableStyle())
+    }
+
+    /// Duplicates of a max-Friendship bat pay Moon Dust; enough dust calls a bat the
+    /// player has not met. Hidden until dust is possible, so it never clutters a new game.
+    @ViewBuilder
+    private var moonDustRow: some View {
+        let cost = Tuning.default.moonDustForNewBat
+        let anyMaxed = store.state.collection.values.contains { Friendship.level(forEXP: $0.friendshipEXP) >= Friendship.maxLevel }
+        if store.state.moonDust > 0 || anyMaxed {
+            VStack(spacing: 4) {
+                HStack(spacing: 6) {
+                    Image(systemName: "sparkle").foregroundStyle(BatwalkColor.rarityShiny)
+                    Text("Moon Dust").font(BatwalkFont.caption)
+                    Spacer(minLength: 4)
+                    Text("\(store.state.moonDust) / \(cost)").font(BatwalkFont.caption).monospacedDigit()
+                }
+                if store.state.canCallNewBat() {
+                    Button("Call a new bat") { callNewBat() }
+                        .buttonStyle(BatwalkPrimaryButtonStyle(minHeight: 34))
+                } else if store.state.moonDust >= cost, !store.state.isUnlocked {
+                    Button("Nothing new to call — see the full collection") { showUnlock = true }
+                        .font(BatwalkFont.micro)
+                } else if store.state.moonDust >= cost {
+                    Text("You've met every bat. Dust will matter again when new bats arrive.")
+                        .font(BatwalkFont.micro).foregroundStyle(BatwalkColor.textSecondaryDark)
+                } else {
+                    Text("Duplicates of a Lv. 5 bat turn into dust. \(cost) dust calls a bat you haven't met.")
+                        .font(BatwalkFont.micro).foregroundStyle(BatwalkColor.textSecondaryDark)
+                }
+            }
+            .foregroundStyle(.white)
+            .batwalkGlassCard(padding: 8, radius: 14)
+            .accessibilityElement(children: .combine)
+        }
+    }
+
+    private func callNewBat() {
+        guard let result = try? store.mutate({ try $0.callNewBat(seed: UInt64.random(in: .min ... .max), now: .now) }) else {
+            Haptics.failure()
+            return
+        }
+        store.analytics.log(.batCollected, properties: [
+            "species": result.record.speciesID,
+            "rarity": Roster.species(result.record.speciesID)?.rarity.rawValue ?? "",
+            "shiny": "false",
+            "source": "moon-dust",
+        ])
+        calling = HatchPresentation(result: result, egg: result.record.eggType, startRevealed: true)
     }
 
     private func markNewBats() {
@@ -97,6 +174,11 @@ struct BatDetailView: View {
                             .font(BatwalkFont.caption)
                             .foregroundStyle(BatwalkColor.rose)
                         FriendshipProgressView(exp: bat.friendshipEXP)
+                        if Friendship.level(forEXP: bat.friendshipEXP) >= Friendship.maxLevel {
+                            Label("Duplicates now pay Moon Dust", systemImage: "sparkle")
+                                .font(BatwalkFont.micro)
+                                .foregroundStyle(BatwalkColor.rarityShiny)
+                        }
                     }
                     .batwalkGlassCard(padding: 8, radius: 14)
 

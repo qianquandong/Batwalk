@@ -14,6 +14,8 @@ final class GameStore {
     let role: Role
     private(set) var lastError: String?
     private(set) var recoveryRequired = false
+    /// A collection that could be restored: a local/CloudKit backup row, or the
+    /// backup the paired iPhone published over WatchConnectivity.
     private(set) var availableBackup: CollectionBackup?
     private(set) var lastSyncAt: Date?
     private(set) var companionHandoff = CompanionHandoff()
@@ -97,11 +99,16 @@ final class GameStore {
             }
             // Keep conflicting/corrupt rows available for recovery.
             let backups = try context.fetch(FetchDescriptor<CollectionBackupRecord>())
-            availableBackup = backups.compactMap { row -> (CollectionBackup, Date)? in
+            var candidates = backups.compactMap { row -> (CollectionBackup, Date)? in
                 guard let backup = try? JSONDecoder().decode(CollectionBackup.self, from: row.payload),
                       backup.version == 1, backup.hasStarted else { return nil }
                 return (backup, row.updatedAt)
-            }.sorted { a, b in
+            }
+            // A re-paired Watch has no rows, but the phone may still hold the mirror.
+            if role == .watch, let phone = PhoneSync.shared.receivedPhoneBackup(), phone.hasStarted {
+                candidates.append((phone, .now))
+            }
+            availableBackup = candidates.sorted { a, b in
                 if a.0.saveID == b.0.saveID { return a.0.revision > b.0.revision }
                 if a.0.collection.count != b.0.collection.count { return a.0.collection.count > b.0.collection.count }
                 if a.0.history.count != b.0.history.count { return a.0.history.count > b.0.history.count }
@@ -182,6 +189,21 @@ final class GameStore {
         } catch { recoveryRequired = wasBlocked; throw error }
     }
 
+    /// Watch only: the paired iPhone published its mirror of the collection.
+    /// Offered when this Watch has nothing yet, or strictly less than the phone remembers.
+    func offerPhoneBackup(_ backup: CollectionBackup) {
+        guard role == .watch, !isDemo, backup.version == 1, backup.hasStarted else { return }
+        let richerThanLocal = availableBackup.map { backup.collection.count > $0.collection.count } ?? true
+        guard richerThanLocal, !state.hasStarted || backup.collection.count > state.collection.count else { return }
+        availableBackup = backup
+    }
+
+    /// iPhone only: keep the Watch's fallback copy of the collection current.
+    func publishBackupToWatch() {
+        guard role == .phone, !isDemo, state.hasStarted else { return }
+        PhoneSync.shared.publish(phoneBackup: CollectionBackup(state: state))
+    }
+
     func loadDemo(_ demo: GameState) {
         isDemo = true; state = demo
         if role == .phone {
@@ -194,8 +216,15 @@ final class GameStore {
     func clearError() { lastError = nil }
 
     func applyMirror(_ data: Data, updatedAt: Date? = nil) {
-        guard role == .phone, !isDemo,
-              let incoming = try? JSONDecoder().decode(GameState.self, from: data) else { return }
+        guard role == .phone, !isDemo else { return }
+        guard let incoming = try? JSONDecoder().decode(GameState.self, from: data) else {
+            // Tell the player why nothing is arriving instead of silently showing an old mirror.
+            let json = (try? JSONSerialization.jsonObject(with: data)) as? [String: Any]
+            if (json?["schemaVersion"] as? Int ?? 1) > GameState.currentSchemaVersion {
+                lastError = "Your Watch has a newer Batwalk. Update Batwalk on this iPhone to see your latest progress."
+            }
+            return
+        }
         if incoming.saveID == state.saveID, incoming.revision < state.revision { return }
         do {
             try archive.save(data)
@@ -207,6 +236,8 @@ final class GameStore {
             persistPhoneMetadata()
             recoveryRequired = false
             lastError = nil
+            saveIntentSnapshot()
+            publishBackupToWatch()
         } catch { lastError = "Your Watch data arrived, but the offline copy could not be saved." }
     }
 
@@ -282,16 +313,39 @@ final class GameStore {
         catch { companionRequestError = "The latest connection status could not be saved. Open both apps to refresh it." }
     }
 
+    // MARK: Complication / intent snapshot
+
+    private var snapshot: ComplicationSnapshot {
+        let previous = ComplicationSnapshot.load()
+        return ComplicationSnapshot(
+            companionName: state.companion?.displayName,
+            companionSpeciesID: state.companion?.speciesID,
+            companionIsShiny: state.companion?.showsShiny ?? false,
+            eggType: state.egg?.type.rawValue,
+            eggProgress: state.egg?.progress,
+            eggStepsRemaining: state.egg?.stepsRemaining,
+            eggVisualState: state.egg?.visualState.rawValue,
+            isEggReady: state.isEggReady,
+            duskHour: Tuning.default.duskStartHour,
+            // A freshly launched process (background wake, phone request) has no step
+            // read yet; keep the last known freshness instead of flashing "stale".
+            updatedAt: lastStepReadAt ?? previous.updatedAt)
+    }
+
     func refreshComplication() {
-        guard !isDemo, role == .watch, SharedConfig.appGroupEnabled else { return }
-        let snapshot = ComplicationSnapshot(companionName: state.companion?.displayName,
-            companionSpeciesID: state.companion?.speciesID, eggProgress: state.egg?.progress,
-            eggStepsRemaining: state.egg?.stepsRemaining, isEggReady: state.isEggReady,
-            updatedAt: lastStepReadAt ?? .distantPast)
+        guard !isDemo, role == .watch else { return }
         guard snapshot.save() else { return }
         #if canImport(WidgetKit)
         WidgetCenter.shared.reloadTimelines(ofKind: "BatwalkComplication")
         #endif
+    }
+
+    /// iPhone: the in-app copy that Siri's "Check my egg" reads (no App Group needed).
+    private func saveIntentSnapshot() {
+        guard role == .phone, !isDemo else { return }
+        var copy = snapshot
+        copy.updatedAt = lastSyncAt ?? .now
+        copy.save()
     }
 
     func recordStepRead(at date: Date) { lastStepReadAt = date; refreshComplication() }
@@ -299,9 +353,14 @@ final class GameStore {
     private func writeCollectionBackup() {
         guard SharedConfig.cloudBackupEnabled, role == .watch else { return }
         do {
-            let payload = try JSONEncoder().encode(CollectionBackup(state: state))
+            let current = CollectionBackup(state: state)
             let rows = try context.fetch(FetchDescriptor<CollectionBackupRecord>())
             let existing = rows.first { $0.saveID == state.saveID.uuidString }
+            // Never rewrite the cloud record for step churn alone: its modification
+            // times would otherwise trace when the player was walking (guideline 5.1.3).
+            if let existing, let previous = try? JSONDecoder().decode(CollectionBackup.self, from: existing.payload),
+               previous.hasSameContent(as: current) { return }
+            let payload = try JSONEncoder().encode(current)
             let backup = existing ?? CollectionBackupRecord()
             if existing == nil { context.insert(backup) }
             backup.saveID = state.saveID.uuidString

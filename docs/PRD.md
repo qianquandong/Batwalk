@@ -7,7 +7,7 @@
 
 | Status | Primary platform | Language | Monetization |
 |---|---|---|---|
-| Final PRD v1.0 | Apple Watch | English only | Free + $1.99 unlock |
+| Final PRD v1.1 | Apple Watch | English only | Free + $2.99 unlock |
 
 **Contents** — [Locked Decisions](#locked-product-decisions) · [1. Discovery](#1-discovery--problem--opportunity) · [2. Design](#2-design--solution-shape) · [3. Art Direction](#3-art-direction--production-spec) · [4. Build](#4-build--technical-implementation) · [5. Launch](#5-launch--deploy--operate) · [6. Content](#6-launch-content--20-bat-roster) · [7. Scope Lock](#7-mvp-scope-lock) · [8. Definition of Done](#8-mvp-definition-of-done)
 
@@ -25,14 +25,14 @@
 | Mood | Cute + cozy + slightly mysterious; never horror-first |
 | Launch roster | 20 bat species |
 | Hatching cadence | Typically 1–2 bats/day; no hard daily cap |
-| Duplicates | Allowed; duplicates add Friendship EXP instead of creating junk inventory copies |
+| Duplicates | Allowed; duplicates add Friendship EXP — and Moon Dust once a bat is at Lv.5 — instead of creating junk inventory copies |
 | Companion | One current companion shown on Watch at a time |
 | Naming | Players can rename their owned companion |
 | Day/night | Based on local device time: Day / Dusk / Night |
 | Feeding | Included; fruit rewards add interaction and Friendship. No hunger punishment. |
 | Language | English only at launch |
-| Pricing | Free download; $1.99 one-time purchase unlocks full content |
-| Free tier | 3 bats + 2 egg types + complete core hatching/care loop |
+| Pricing | Free download; $2.99 one-time purchase unlocks full content (2026-10-10) |
+| Free tier | 3 bats + 2 egg types + complete core hatching/care loop + one trial Forest Egg once all three are met |
 | Save | Local-first + iCloud/CloudKit backup/restore |
 | Notifications | Only lightweight events such as Hatch Ready / Bat Awake |
 | AI | **None.** No AI features, AI roadmap, or AI positioning |
@@ -100,7 +100,7 @@ WALK AGAIN ← NEW EGG ← BUILD FRIENDSHIP ← CHOOSE CURRENT COMPANION
 6. Read already-earned steps from today and credit them immediately.
 7. Starter Egg target: 2,000 steps.
 8. At 100%, Watch haptic + "Ready to hatch."
-9. User taps to hatch entirely on Watch.
+9. User turns the Digital Crown (or taps the egg) to crack it open, entirely on Watch; light in the rarity's colour leaks out before the reveal.
 10. First bat joins Collection and becomes current companion.
 
 ### 2.3 Day / Dusk / Night
@@ -144,6 +144,11 @@ Habitat is deferred beyond MVP unless schedule permits.
 
 Normal players should typically hatch 1–2 bats per day. No hard cap is required.
 
+**Trial egg (Q13, 2026-10-10).** When a free player has met all three free bats, one
+Forest Egg appears in the picker once. It uses the full Forest pool (Shiny possible)
+and costs the full 4,000 steps — a taste of the full collection at the moment the free
+tier runs out, never a step skip.
+
 ### 2.7 Duplicate & Friendship System
 
 Duplicates are allowed, but the Collection does not accumulate piles of identical copies. A duplicate converts into Friendship EXP for that species.
@@ -155,6 +160,11 @@ Duplicates are allowed, but the Collection does not accumulate piles of identica
 | Lv.3 | New interaction reaction |
 | Lv.4 | Special signature animation |
 | Lv.5 | Friendship badge + special expression/accessory |
+
+**Moon Dust (Q14, 2026-10-10).** Past Lv.5, duplicate EXP would mean nothing, so a
+duplicate of a Lv.5 bat pays 1 Moon Dust instead. 4 dust calls a bat the player has
+not met yet, from the eggs they can already start (dust never buys paid content).
+After 10 paid hatches without a new species, the next egg is sealed to an unmet one.
 
 The species-specific actions behind Lv.2–5 are listed in [`BAT_ACTIONS.md`](BAT_ACTIONS.md).
 
@@ -170,12 +180,16 @@ Every species can have a Normal and Shiny variant. Shiny is a palette/visual var
 
 Example: Moonwing → Normal ✅ / Shiny ⬜. Twenty species therefore create up to forty meaningful visual collection targets.
 
+Shiny must be reachable for those targets to mean anything: 3 % per paid hatch, a
+guaranteed Shiny at least every 40 hatches, and ×3 odds for a species already at Lv.5
+(Q14, 2026-10-10). The outcome is sealed when the egg is created.
+
 ### 2.10 Monetization
 
 | Tier | Contents | Price |
 |---|---|---|
 | Free | 3 bat species, 2 egg types, full basic hatch/care/Friendship loop | $0 |
-| Full Unlock | All 20 bats, all egg pools, Rare/Legendary/Shiny access, full Friendship progression | $1.99 one-time |
+| Full Unlock | Every bat, all egg pools, Rare/Legendary/Shiny access, full Friendship progression | $2.99 one-time |
 
 > **Never** sell step skips, better hatch odds, energy, Friendship boosts, or any shortcut that undermines walking.
 
@@ -236,7 +250,7 @@ Each launch bat should include, at minimum:
 | 25–50% | Occasional small shake |
 | 50–75% | Visible cracks |
 | 75–99% | Frequent movement / stronger crack state |
-| 100% | Hatch-ready state + haptic + tap-to-reveal |
+| 100% | Hatch-ready state + haptic; the player cracks it open with the Digital Crown or taps, light leaking out in the rarity's colour |
 
 ### 3.6 Pixel Artist Deliverables
 
@@ -312,7 +326,7 @@ Minimum states: `egg`, `hatchReady`, `sleeping`, `drowsy`, `awake`, `happy`, `ea
 | Uncommon | 25% |
 | Rare | 8% |
 | Legendary | 1.5% |
-| Shiny modifier | 0.5% initial target |
+| Shiny modifier | 3% per paid hatch; guaranteed within 40 hatches; ×3 for a Lv.5 species (2026-10-10) |
 
 Exact rates are tuning values for beta and may change without changing the core design.
 
@@ -384,7 +398,7 @@ See [TEST_PLAN.md](TEST_PLAN.md) for which of these are covered by unit tests an
 | D1 retention | ≥50% |
 | Watch opens per active day | ≥3 |
 | Bats collected in first week | ≥3 |
-| Complication adoption | ≥20% |
+| Complication adoption | ≥20% (portrait + egg ring; Smart Stack at hatch-ready and dusk) |
 | Crash-free sessions | >99.5% |
 
 ### 5.4 Key Risks
@@ -404,7 +418,7 @@ See [TEST_PLAN.md](TEST_PLAN.md) for which of these are covered by unit tests an
 |---|---|---|---|---|
 | 1 | Mochi Bat | Common | Round, sleepy, friendly starter mascot | Starter / Tiny |
 | 2 | Cocoa Bat | Common | Chocolate brown, calm, wraps in wings | Tiny |
-| 3 | Long Ear Bat | Common | Oversized ears, curious reactions | Forest |
+| 3 | Long Ear Bat | Common | Oversized ears, curious reactions | Tiny / Forest |
 | 4 | Fruit Bat | Common | Round face, food-loving | Forest |
 | 5 | Cave Bat | Common | Shy, hides in wings | Tiny / Forest |
 | 6 | Sleepy Bat | Common | Half-closed eyes, tiny sleep cap | Tiny |
@@ -455,8 +469,10 @@ as a one-line fun fact. All are Full Unlock content; the free tier is unchanged.
 
 Forest stays Common + Uncommon only, so per-egg rarity odds (§4.4) are unchanged;
 each rarity simply has more species to find. With Shiny variants the Batpedia
-grows from 40 to 64 collection targets. Whether these ship at launch or as the
-first content update is open question Q12.
+grows from 40 to 64 collection targets. They ship as the **first content update
+(v1.1)**, not at launch (Q12, decided 2026-10-10): `BATWALK_CONTENT_WAVE` gates
+them, so launch animation work stays on the 20-bat roster and the update gives
+the App Store a second moment.
 
 ---
 
@@ -478,7 +494,7 @@ first content update is open question Q12.
 - [ ] SwiftData local save
 - [ ] CloudKit backup / restore
 - [ ] iPhone Batpedia / Collection / Basic History
-- [ ] $1.99 one-time full unlock + Restore Purchase
+- [ ] $2.99 one-time full unlock + Restore Purchase — on the Watch as well as the iPhone
 - [ ] English-only launch copy
 
 ### 7.2 Explicitly Deferred

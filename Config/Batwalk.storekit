@@ -3,12 +3,12 @@
   "nonRenewingSubscriptions" : [ ],
   "products" : [
     {
-      "displayPrice" : "1.99",
+      "displayPrice" : "2.99",
       "familyShareable" : false,
       "internalID" : "6740000001",
       "localizations" : [
         {
-          "description" : "All 20 bats, every egg, Rare, Legendary and Shiny bats.",
+          "description" : "Every bat, every egg, Rare, Legendary and Shiny bats. One purchase, forever.",
           "displayName" : "Batwalk Full Unlock",
           "locale" : "en_US"
         }

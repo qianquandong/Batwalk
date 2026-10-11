@@ -2,10 +2,16 @@ import Foundation
 import WatchConnectivity
 import BatwalkCore
 
-/// Best-effort Watch → iPhone sync (PRD §4.1). The Watch pushes its whole save
-/// as the WatchConnectivity application context; only the latest one is kept,
-/// which is exactly the semantics a mirror needs. CloudKit backs up collection
-/// metadata only; complete Health-derived saves never enter CloudKit.
+/// Best-effort Watch ↔ iPhone sync (PRD §4.1).
+///
+/// - Watch → iPhone: the whole save goes into the Watch's application context
+///   (only the latest matters to a mirror; a large history uses a file transfer).
+/// - iPhone → Watch: companion-change requests (`transferUserInfo`, queued), and
+///   the phone's latest *collection backup* in the phone's application context,
+///   so a replaced or re-paired Watch can restore the collection without iCloud
+///   (2026-10-10 review, finding 2). Health-derived data never travels this way.
+///
+/// CloudKit backs up collection metadata only; complete saves never enter CloudKit.
 final class PhoneSync: NSObject, WCSessionDelegate {
     static let shared = PhoneSync()
 
@@ -13,17 +19,22 @@ final class PhoneSync: NSObject, WCSessionDelegate {
     var onReceiveSave: (@MainActor (Data, Date?) -> Void)?
     var onReceiveRequest: (@MainActor (CompanionChangeRequest) -> Void)?
     var onReceiveReceipt: (@MainActor (CompanionChangeReceipt) -> Void)?
-    /// Watch only: requests from the iPhone, applied by the Watch (the only writer).
-    var onReceiveCommand: (@MainActor ([String: String]) -> Void)?
+    /// Watch only: the collection backup the paired iPhone last published.
+    var onReceivePhoneBackup: (@MainActor (CollectionBackup) -> Void)?
+    /// Called once the session is active (the phone publishes its backup here).
+    var onActivated: (@MainActor () -> Void)?
 
-    static let setCompanionKey = "setCompanion"
     private static let saveKey = "save"
     private static let updatedKey = "updatedAt"
     private static let requestKey = "companionRequest"
     private static let receiptKey = "companionReceipt"
+    private static let phoneBackupKey = "collectionBackup"
     static let fileSaveKey = "batwalk-save"
     static func usesFileTransfer(forByteCount count: Int) -> Bool { count > 50_000 }
+    /// The application context is small; the phone's backup must fit under this.
+    static let maxPhoneBackupBytes = 60_000
     private let pendingLock = NSLock()
+    private let flushLock = NSLock()
     private var pendingSave: Data?
 
     enum SendResult { case sent, noWatchApp, unavailable }
@@ -44,23 +55,13 @@ final class PhoneSync: NSObject, WCSessionDelegate {
         if let save { push(save: save) }
     }
 
-    /// iPhone → Watch request. `transferUserInfo` is queued and delivered even
-    /// when the Watch app isn't running.
-    @discardableResult
-    func send(command: [String: String]) -> SendResult {
-        guard WCSession.isSupported(), WCSession.default.activationState == .activated else { return .unavailable }
-        #if os(iOS)
-        guard WCSession.default.isPaired, WCSession.default.isWatchAppInstalled else { return .noWatchApp }
-        #endif
-        WCSession.default.transferUserInfo(command)
-        return .sent
-    }
-
     func activate() {
         guard WCSession.isSupported() else { return }
         WCSession.default.delegate = self
         WCSession.default.activate()
     }
+
+    // MARK: Watch → iPhone save
 
     func push(save data: Data) {
         pendingLock.lock(); pendingSave = data; pendingLock.unlock()
@@ -69,11 +70,20 @@ final class PhoneSync: NSObject, WCSessionDelegate {
 
     private func flushPendingSave() {
         guard WCSession.isSupported(), WCSession.default.activationState == .activated else { return }
+        // One flush at a time: the delegate queue and the main thread can both get
+        // here, and an older snapshot must never overwrite a newer context.
+        flushLock.lock(); defer { flushLock.unlock() }
         pendingLock.lock(); let data = pendingSave; pendingLock.unlock()
         guard let data else { return }
         do {
             if Self.usesFileTransfer(forByteCount: data.count) {
                 // Long hatch histories must not exceed application-context limits.
+                // One transfer in flight at a time; the newest save goes out when it
+                // finishes, so a busy Watch never builds a backlog of stale files.
+                let inFlight = WCSession.default.outstandingFileTransfers.contains {
+                    $0.file.metadata?[Self.fileSaveKey] as? Bool == true
+                }
+                guard !inFlight else { return } // pendingSave stays set
                 let file = FileManager.default.temporaryDirectory.appendingPathComponent("batwalk-mirror-\(UUID().uuidString).json")
                 try data.write(to: file, options: [.atomic, .completeFileProtectionUntilFirstUserAuthentication])
                 WCSession.default.transferFile(file, metadata: [Self.fileSaveKey: true, Self.updatedKey: Date().timeIntervalSince1970])
@@ -86,20 +96,59 @@ final class PhoneSync: NSObject, WCSessionDelegate {
         } catch { /* retry the latest snapshot on activation / next foreground push */ }
     }
 
+    // MARK: iPhone → Watch collection backup
+
+    /// The phone keeps its newest collection backup in its outgoing application
+    /// context (delivered even while the Watch app is closed, kept across launches).
+    /// Trimmed to the newest 100 hatches when the full history would not fit.
+    func publish(phoneBackup: CollectionBackup) {
+        #if os(iOS)
+        guard WCSession.isSupported(), WCSession.default.activationState == .activated,
+              WCSession.default.isPaired, WCSession.default.isWatchAppInstalled else { return }
+        var backup = phoneBackup
+        var data = try? JSONEncoder().encode(backup)
+        if let bytes = data, bytes.count > Self.maxPhoneBackupBytes {
+            backup = backup.trimmingHistory(to: 100)
+            data = try? JSONEncoder().encode(backup)
+        }
+        guard let data, data.count <= Self.maxPhoneBackupBytes else { return }
+        if let current = WCSession.default.applicationContext[Self.phoneBackupKey] as? Data,
+           let previous = try? JSONDecoder().decode(CollectionBackup.self, from: current),
+           previous.hasSameContent(as: backup) { return }
+        try? WCSession.default.updateApplicationContext([Self.phoneBackupKey: data])
+        #endif
+    }
+
+    /// Watch only: whatever backup the phone last published, if the session has one.
+    func receivedPhoneBackup() -> CollectionBackup? {
+        #if os(watchOS)
+        guard WCSession.isSupported(),
+              let data = WCSession.default.receivedApplicationContext[Self.phoneBackupKey] as? Data else { return nil }
+        return try? JSONDecoder().decode(CollectionBackup.self, from: data)
+        #else
+        return nil
+        #endif
+    }
+
     // MARK: WCSessionDelegate
 
     func session(_ session: WCSession, activationDidCompleteWith state: WCSessionActivationState, error: Error?) {
-        if state == .activated { flushPendingSave() }
-        // On the iPhone, pick up whatever the Watch sent while we were not running.
+        if state == .activated {
+            flushPendingSave()
+            Task { @MainActor in self.onActivated?() }
+        }
+        // Pick up whatever the other device sent while we were not running.
         if let data = session.receivedApplicationContext[Self.saveKey] as? Data {
             deliver(data, timestamp: session.receivedApplicationContext[Self.updatedKey] as? Double)
         }
+        deliverPhoneBackup(from: session.receivedApplicationContext)
     }
 
     func session(_ session: WCSession, didReceiveApplicationContext applicationContext: [String: Any]) {
         if let data = applicationContext[Self.saveKey] as? Data {
             deliver(data, timestamp: applicationContext[Self.updatedKey] as? Double)
         }
+        deliverPhoneBackup(from: applicationContext)
     }
 
     func session(_ session: WCSession, didReceive file: WCSessionFile) {
@@ -119,6 +168,7 @@ final class PhoneSync: NSObject, WCSessionDelegate {
             pendingLock.unlock()
         }
         try? FileManager.default.removeItem(at: file)
+        flushPendingSave() // send the newest save that queued up while this one was in flight
     }
 
     func session(_ session: WCSession, didReceiveUserInfo userInfo: [String: Any] = [:]) {
@@ -130,12 +180,9 @@ final class PhoneSync: NSObject, WCSessionDelegate {
         if let data = userInfo[Self.receiptKey] as? Data,
            let receipt = try? JSONDecoder().decode(CompanionChangeReceipt.self, from: data) {
             Task { @MainActor in self.onReceiveReceipt?(receipt) }
-            return
         }
-        let command = userInfo.compactMapValues { $0 as? String }
-        Task { @MainActor in
-            self.onReceiveCommand?(command)
-        }
+        // Anything else is ignored: every Watch-side change goes through a signed,
+        // expiring request with a saveID (no legacy free-form commands).
     }
 
     #if os(iOS)
@@ -147,5 +194,11 @@ final class PhoneSync: NSObject, WCSessionDelegate {
         Task { @MainActor in
             self.onReceiveSave?(data, timestamp.map { Date(timeIntervalSince1970: $0) })
         }
+    }
+
+    private func deliverPhoneBackup(from context: [String: Any]) {
+        guard let data = context[Self.phoneBackupKey] as? Data,
+              let backup = try? JSONDecoder().decode(CollectionBackup.self, from: data) else { return }
+        Task { @MainActor in self.onReceivePhoneBackup?(backup) }
     }
 }

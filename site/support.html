@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Batwalk Support</title>
+<meta name="description" content="Help for Batwalk, the Apple Watch bat-hatching game.">
+<style>
+  :root { --bg: #f4f1e8; --card: #fffcf4; --text: #202c28; --muted: #66766b; --accent: #547465; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #0f1c1e; --card: #1b2b2d; --text: #f4f0e2; --muted: #a9b8b0; --accent: #b7c9ac; }
+  }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 17px/1.6 -apple-system, "SF Pro", system-ui, sans-serif; }
+  main { max-width: 680px; margin: 0 auto; padding: 48px 16px 64px; }
+  h1 { font-size: 2rem; margin: 0 0 .25rem; }
+  h2 { font-size: 1.2rem; margin: 2rem 0 .5rem; color: var(--accent); }
+  .meta { color: var(--muted); margin-bottom: 2rem; }
+  details { background: var(--card); border-radius: 16px; padding: 12px 20px; margin: .75rem 0; }
+  summary { cursor: pointer; font-weight: 600; }
+  a { color: var(--accent); }
+</style>
+</head>
+<body>
+<main>
+  <h1>Batwalk Support</h1>
+  <p class="meta">A tiny bat that lives on your wrist and grows when you move.</p>
+
+  <details open>
+    <summary>My steps aren't counting</summary>
+    <p>Batwalk reads Step Count from Apple Health. On your iPhone open
+    <strong>Health › Sharing › Apps › Batwalk</strong> and make sure <em>Steps</em> is on.
+    Then open Batwalk on your Watch and pull the <em>Progress</em> page's
+    <em>Update steps</em>. Steps walked while the app was closed are credited the next
+    time it opens — nothing is lost.</p>
+  </details>
+
+  <details>
+    <summary>My egg says it's ready but nothing happens</summary>
+    <p>Turn the Digital Crown or tap the egg three times to crack it open. If you prefer
+    a button, <em>Hatch Now</em> does the same. The outcome was fixed when the egg was
+    created, so closing the app mid-hatch never loses the bat.</p>
+  </details>
+
+  <details>
+    <summary>I bought the full unlock on my iPhone but the Watch is still locked</summary>
+    <p>Open Batwalk on the Watch and wait a moment: Apple syncs purchases between your
+    devices. If it stays locked, use <strong>Settings › Restore Purchase</strong> on either
+    device. The unlock is tied to your Apple Account, not to one device.</p>
+  </details>
+
+  <details>
+    <summary>I got a new Apple Watch. Where are my bats?</summary>
+    <p>Open Batwalk on your iPhone first, then on the new Watch. The Watch offers
+    <em>Restore my bats</em> from the iPhone's copy of your collection. Your current egg
+    and step accounting start fresh; bats, names and friendship come back.</p>
+  </details>
+
+  <details>
+    <summary>What is Moon Dust?</summary>
+    <p>Once a bat reaches Friendship Lv. 5, hatching it again pays Moon Dust instead of
+    extra friendship. Four dust calls a bat you haven't met yet, from the eggs you can
+    already start.</p>
+  </details>
+
+  <details>
+    <summary>Does Batwalk ever punish me for not walking?</summary>
+    <p>No. Bats never get hungry, never leave and never lose levels. Day is for company,
+    night is for play, and your egg simply waits for you.</p>
+  </details>
+
+  <h2>Contact</h2>
+  <p>Email <a href="mailto:jack@aimanjack.com">jack@aimanjack.com</a> — include your Watch
+  model and watchOS version. Read the <a href="privacy.html">privacy policy</a>.</p>
+</main>
+</body>
+</html>

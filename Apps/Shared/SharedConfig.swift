@@ -15,6 +15,16 @@ enum SharedConfig {
     static var appGroupEnabled: Bool { enabled("BatwalkAppGroupEnabled") }
     static var cloudBackupEnabled: Bool { enabled("BatwalkCloudBackupEnabled") }
 
+    /// Highest roster wave this build ships (`BATWALK_CONTENT_WAVE`; 1 = launch
+    /// roster, 2 = + Oddball Bats). See `Roster.enabledWave` and open question Q12.
+    static var contentWave: Int {
+        if let value = Bundle.main.object(forInfoDictionaryKey: "BatwalkContentWave") as? Int { return max(1, value) }
+        if let text = Bundle.main.object(forInfoDictionaryKey: "BatwalkContentWave") as? String, let value = Int(text) {
+            return max(1, value)
+        }
+        return 1
+    }
+
     private static func enabled(_ key: String) -> Bool {
         if let value = Bundle.main.object(forInfoDictionaryKey: key) as? Bool { return value }
         return (Bundle.main.object(forInfoDictionaryKey: key) as? String)?.uppercased() == "YES"

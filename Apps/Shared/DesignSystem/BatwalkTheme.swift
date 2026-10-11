@@ -15,6 +15,20 @@ extension Color {
             opacity: opacity
         )
     }
+
+    /// Follows the system appearance on iPhone. The Watch is always dark, so it
+    /// resolves to `dark`; other platforms (tests on macOS) use `light`.
+    static func adaptive(light: UInt32, dark: UInt32) -> Color {
+        #if os(watchOS)
+        return Color(hex: dark)
+        #elseif canImport(UIKit)
+        return Color(uiColor: UIColor { traits in
+            UIColor(Color(hex: traits.userInterfaceStyle == .dark ? dark : light))
+        })
+        #else
+        return Color(hex: light)
+        #endif
+    }
 }
 
 enum BatwalkColor {
@@ -39,17 +53,18 @@ enum BatwalkColor {
     // Text
     static let textPrimaryDark = cloud
     static let textSecondaryDark = Color(hex: 0xB2C0B8)
-    static let textPrimaryLight = Color(hex: 0x202C28)
-    static let textSecondaryLight = Color(hex: 0x66766B)
+    static let textPrimaryLight = Color.adaptive(light: 0x202C28, dark: 0xF4F0E2)
+    static let textSecondaryLight = Color.adaptive(light: 0x66766B, dark: 0xA9B8B0)
 
-    // Light (iPhone) surfaces
-    static let lightBackground = Color(hex: 0xF4F1E8)
-    static let lightCard = Color(hex: 0xFFFCF4)
-    static let lightTint = Color(hex: 0xE5E9DB)
+    // Companion (iPhone) surfaces — warm cream by day, midnight teal in Dark Mode.
+    // The "light" names describe the companion app's surface role, not a fixed appearance.
+    static let lightBackground = Color.adaptive(light: 0xF4F1E8, dark: 0x0F1C1E)
+    static let lightCard = Color.adaptive(light: 0xFFFCF4, dark: 0x1B2B2D)
+    static let lightTint = Color.adaptive(light: 0xE5E9DB, dark: 0x25383A)
 
     // Locked bats
     static let lockedBatBackground = Color(hex: 0x122125)
-    static let lockedBatLight = Color(hex: 0xE1E5D8)
+    static let lockedBatLight = Color.adaptive(light: 0xE1E5D8, dark: 0x2A3C3E)
 
     // Status
     static let success = Color(hex: 0xAFC9A5)

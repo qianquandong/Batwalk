@@ -4,28 +4,40 @@ on:
   push:
     branches: [main]
   pull_request:
+  workflow_dispatch:
 
 concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
+  # The rules package is pure Swift and runs anywhere. Linux minutes bill at 1×
+  # (macOS at 10×), so every pull request gets this check even on a tight plan.
   core-tests:
-    name: BatwalkCore tests
-    runs-on: macos-15
+    name: BatwalkCore tests (Linux)
+    runs-on: ubuntu-latest
+    container: swift:5.10-jammy
     steps:
       - uses: actions/checkout@v4
-      - name: Select Xcode 26+
-        run: scripts/select-xcode.sh
       - name: Swift version
         run: swift --version
       - name: Run game-rule tests
         run: swift test --package-path Packages/BatwalkCore
+
+  script-tests:
+    name: Release-script tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
       - name: Test CI fallback detection
         run: python3 -m unittest discover -s scripts/tests -p 'test_github_ci_fallback.py'
 
+  # Simulator builds need macOS. They run for pushes to main and on demand;
+  # pull requests are verified on Codemagic (codemagic.yaml) so GitHub's macOS
+  # minutes are not spent on every push.
   build-apps:
     name: Build Watch + iPhone (simulator, unsigned)
+    if: github.event_name != 'pull_request'
     runs-on: macos-15
     needs: core-tests
     steps:

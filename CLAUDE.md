@@ -2,6 +2,7 @@
 
 Batwalk is an Apple Watch-first cozy pet game. Source of truth for product
 decisions: `docs/PRD.md`. Unresolved product questions: `docs/OPEN_QUESTIONS.md`.
+The 2026-10-10 review (scores, findings, what changed): `docs/REVIEW_2026-10-10.md`.
 
 ## Rules for changes
 
@@ -10,8 +11,16 @@ decisions: `docs/PRD.md`. Unresolved product questions: `docs/OPEN_QUESTIONS.md`
 - **Balance numbers go in `Tuning.swift`.** Don't hard-code them elsewhere.
 - **Only the Watch writes the save.** The iPhone `GameStore` (role `.phone`) is read-only.
 - **Never change a species `id` or `EggType` raw value** after shipping — they are save keys and asset names.
+  New species go in `Roster.catalog` with a `wave`; pools only include enabled waves.
+- **Egg outcomes are sealed at creation** (`GameState.freezeEgg`), pity rules included.
+  Nothing after `startEgg` may change what hatches.
+- **Only StoreKit unlocks; only an explicit revocation re-locks** (`EntitlementPolicy`).
+  An unknown entitlement result must never touch the save.
 - Respect the PRD guardrails: no punishment, no pay-to-skip, Step Count only, no AI, no backend.
+  Moon Dust never buys paid content; the trial egg is content, not a skip.
 - Battery: no GPS, no workout sessions, no polling faster than HealthKit's hourly background delivery.
+- Privacy: nothing Health-derived goes to CloudKit, WatchConnectivity backups or analytics.
+  Analytics are `AnalyticsEvent` names + small string properties only.
 
 ## Commands
 
@@ -20,7 +29,15 @@ swift test --package-path Packages/BatwalkCore   # rules + tests (works on Linux
 xcodegen generate                                # regenerate Batwalk.xcodeproj after editing project.yml
 ```
 
-CI (`.github/workflows/ci.yml`) runs the tests and unsigned simulator builds of both apps on macOS.
+No Swift toolchain? The core package runs in Docker from any OS:
+
+```bash
+docker run --rm -v "$PWD/Packages/BatwalkCore:/work" -w /work swift:5.10-jammy swift test
+```
+
+CI (`.github/workflows/ci.yml`) runs the core tests on Linux for every PR and the
+simulator builds on macOS for pushes to `main` / manual runs. `codemagic.yaml` holds
+the Mac verification and TestFlight workflows.
 
 ## When you resolve an open question
 

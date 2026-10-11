@@ -4,16 +4,18 @@ import UserNotifications
 import BatwalkCore
 
 /// Settings (board: Watch › 6. Settings): companion, notifications, Health access,
-/// restore purchase, version. Health troubleshooting lives here, not in gameplay.
+/// unlock / restore purchase, version. Health troubleshooting lives here, not in gameplay.
 struct SettingsView: View {
     @Environment(GameStore.self) private var store
     @Environment(PurchaseManager.self) private var purchases
     let steps: StepService
 
     @AppStorage(HatchNotifier.enabledKey) private var notificationsOn = true
+    @AppStorage(HatchNotifier.duskEnabledKey) private var duskOn = false
     @State private var health: HealthStatus = .noData
     @State private var notificationStatus: UNAuthorizationStatus = .notDetermined
     @State private var confirmRestore = false
+    @State private var showUnlock = false
 
     var body: some View {
         NavigationStack {
@@ -43,13 +45,25 @@ struct SettingsView: View {
                     }
 
                     Toggle(isOn: $notificationsOn) {
-                        Label("Notifications", systemImage: "bell.fill")
+                        Label("Ready to hatch", systemImage: "bell.fill")
                             .font(BatwalkFont.caption)
                     }
                     .tint(BatwalkColor.accent)
                     .batwalkGlassCard(padding: 8, radius: 14)
 
-                    if notificationsOn && notificationStatus == .denied {
+                    // "Bat Awake" (Q8, decided 2026-10-10): one optional note at dusk,
+                    // off by default, never more than one a day.
+                    Toggle(isOn: $duskOn) {
+                        Label("Bat Awake at dusk", systemImage: "moon.stars.fill")
+                            .font(BatwalkFont.caption)
+                    }
+                    .tint(BatwalkColor.accent)
+                    .batwalkGlassCard(padding: 8, radius: 14)
+                    Text("One gentle note around \(duskHourText) when your bat wakes up.")
+                        .font(BatwalkFont.micro)
+                        .foregroundStyle(BatwalkColor.textSecondaryDark)
+
+                    if (notificationsOn || duskOn) && notificationStatus == .denied {
                         Text("Notifications are blocked in device settings.")
                             .font(BatwalkFont.micro).foregroundStyle(BatwalkColor.warning)
                     }
@@ -72,6 +86,27 @@ struct SettingsView: View {
                         .batwalkGlassCard(padding: 8, radius: 14)
                     }
                     .buttonStyle(PressableStyle())
+
+                    if !purchases.isUnlocked {
+                        Button { showUnlock = true } label: {
+                            HStack(spacing: BatwalkSpacing.sm) {
+                                Image(systemName: "sparkles")
+                                    .font(.system(size: 13))
+                                    .foregroundStyle(BatwalkColor.rarityShiny)
+                                VStack(alignment: .leading, spacing: 1) {
+                                    Text("Unlock all bats").font(BatwalkFont.caption)
+                                    Text(purchases.product.map { "\($0.displayPrice) · one-time" } ?? "Every bat, every egg")
+                                        .font(BatwalkFont.micro)
+                                        .foregroundStyle(BatwalkColor.textSecondaryDark)
+                                }
+                                Spacer(minLength: 0)
+                                chevron
+                            }
+                            .foregroundStyle(.white)
+                            .batwalkGlassCard(padding: 8, radius: 14)
+                        }
+                        .buttonStyle(PressableStyle())
+                    }
 
                     Button {
                         Task { await purchases.restore() }
@@ -118,6 +153,7 @@ struct SettingsView: View {
             }
             .watchPageBackground()
         }
+        .sheet(isPresented: $showUnlock) { WatchUnlockView() }
         .task {
             health = await HealthAccessView.currentStatus(steps: steps, state: store.state)
             notificationStatus = await UNUserNotificationCenter.current().notificationSettings().authorizationStatus
@@ -138,12 +174,25 @@ struct SettingsView: View {
                 }
             }
         }
+        .onChange(of: duskOn) { _, on in
+            Task {
+                if on { await HatchNotifier.requestPermission() }
+                await HatchNotifier.scheduleDuskReminder(enabled: on, companionName: store.state.companion?.displayName,
+                                                         hour: Tuning.default.duskStartHour)
+                notificationStatus = await UNUserNotificationCenter.current().notificationSettings().authorizationStatus
+            }
+        }
     }
 
     private var chevron: some View {
         Image(systemName: "chevron.right")
             .font(.system(size: 10, weight: .bold))
             .foregroundStyle(BatwalkColor.textSecondaryDark)
+    }
+
+    private var duskHourText: String {
+        let hour = Tuning.default.duskStartHour
+        return Calendar.current.date(from: DateComponents(hour: hour))?.formatted(.dateTime.hour()) ?? "\(hour):00"
     }
 
     private var healthLabel: String {

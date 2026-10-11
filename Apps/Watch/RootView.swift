@@ -81,6 +81,14 @@ struct OnboardingView: View {
                     .multilineTextAlignment(.center)
             }
             Spacer(minLength: 0)
+            // A replaced or re-paired Watch: the iPhone (or iCloud) still remembers the collection.
+            if let backup = store.availableBackup, !backup.collection.isEmpty {
+                Button("Restore my \(backup.collection.count) bats") {
+                    do { try store.restore(backup) } catch { Haptics.failure() }
+                }
+                .font(BatwalkFont.micro)
+                .disabled(isWorking)
+            }
             Button(step < 2 ? "Next" : "Let it hatch") {
                 if step < 2 {
                     withAnimation(.easeInOut(duration: 0.6)) { step += 1 }
@@ -89,6 +97,7 @@ struct OnboardingView: View {
                 }
             }
             .buttonStyle(BatwalkPrimaryButtonStyle(minHeight: 40))
+            .doubleTapPrimaryAction()
             .disabled(isWorking)
         }
         .padding(.horizontal, BatwalkSpacing.sm)

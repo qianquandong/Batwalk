@@ -29,7 +29,7 @@ public enum EggType: String, Codable, CaseIterable, Sendable {
         }
     }
 
-    /// Available without the $1.99 unlock.
+    /// Available without the full unlock.
     public var isFree: Bool {
         switch self {
         case .starter, .tiny: return true
@@ -40,16 +40,22 @@ public enum EggType: String, Codable, CaseIterable, Sendable {
     /// The Starter Egg is given once, during onboarding. It is never offered afterwards.
     public var isPickable: Bool { self != .starter }
 
-    /// Species that can hatch from this egg for a player with the full unlock.
-    /// Derived from the "Primary Egg" column of the PRD roster (§6).
-    public var pool: [String] {
+    /// Species that can hatch from this egg for a player with the full unlock,
+    /// limited to the content waves enabled in this build (`Roster.enabledWave`).
+    /// Derived from the "Primary Egg" column of the PRD roster (§6, §6.3).
+    public var pool: [String] { designedPool.filter(Roster.isAvailable) }
+
+    /// The full designed pool, including species from waves not shipped yet.
+    public var designedPool: [String] {
         switch self {
         case .starter:
             // First hatch is always the mascot — guaranteed delightful first success.
             return ["mochi"]
         // Oddball Bats (PRD §6.3) are listed after each egg's launch species.
         case .tiny:
-            return ["mochi", "cocoa", "cave", "sleepy", "pebble",
+            // Long Ear joins the paid Tiny pool so the free roster's third bat has a
+            // free egg to come from (Q1, decided 2026-10-10: Primary Egg "Tiny / Forest").
+            return ["mochi", "cocoa", "long-ear", "cave", "sleepy", "pebble",
                     "bumblebee", "sticky"]
         case .forest:
             // Kept Common + Uncommon only, so Forest odds are unchanged (Q6).
@@ -65,11 +71,7 @@ public enum EggType: String, Codable, CaseIterable, Sendable {
         }
     }
 
-    /// Species pool for a free-tier player.
-    ///
-    /// NOTE (open question Q1 in docs/OPEN_QUESTIONS.md): the PRD's free roster is
-    /// Mochi + Cocoa + Long Ear, but Long Ear's primary egg is Forest (a paid egg).
-    /// Until that is decided, the free Tiny Egg yields exactly the three free species.
+    /// Species pool for a free-tier player: exactly the free species, from the free eggs.
     public var freePool: [String] {
         switch self {
         case .starter: return ["mochi"]
@@ -82,8 +84,14 @@ public enum EggType: String, Codable, CaseIterable, Sendable {
         isUnlocked ? pool : freePool
     }
 
-    /// Eggs the player can choose after a hatch.
+    /// Eggs the player can choose after a hatch (without the free trial egg —
+    /// see `GameState.pickableEggs`).
     public static func pickable(isUnlocked: Bool) -> [EggType] {
         allCases.filter { $0.isPickable && (isUnlocked || $0.isFree) }
+    }
+
+    /// The first pickable egg a species is designed to hatch from (Batpedia "Primary Egg").
+    public static func primaryEgg(for speciesID: String) -> EggType {
+        allCases.first { $0.isPickable && $0.designedPool.contains(speciesID) } ?? .tiny
     }
 }

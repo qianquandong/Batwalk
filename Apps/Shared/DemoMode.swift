@@ -26,7 +26,7 @@ enum HealthStatus: Equatable {
 /// Without the argument this file does nothing.
 enum DemoMode {
     // The capture script reads these two lines — keep each list on one line.
-    static let watchScenarios = ["first-egg", "home", "home-day", "home-cocoa", "home-long-ear", "hatch-ready", "reveal-rare", "progress-61", "progress-100", "friendship-1", "friendship-2", "friendship-3", "friendship-4", "fruit-available", "friendship-5", "collection-1", "collection-rare", "settings", "health-error", "pilot-mochi", "pilot-sticky", "pilot-walker"] // scenarios:watch
+    static let watchScenarios = ["first-egg", "home", "home-day", "home-cocoa", "home-long-ear", "hatch-ready", "reveal-rare", "progress-61", "progress-100", "friendship-1", "friendship-2", "friendship-3", "friendship-4", "fruit-available", "friendship-5", "collection-1", "collection-rare", "free-complete", "settings", "health-error", "pilot-mochi", "pilot-sticky", "pilot-walker"] // scenarios:watch
     static let phoneScenarios = ["phone-companion", "phone-batpedia", "phone-batpedia-rare", "phone-detail", "phone-pending", "phone-confirmed", "phone-stale", "phone-first-egg", "phone-egg-ready", "phone-history", "phone-unlock", "phone-stats", "phone-empty"] // scenarios:phone
 
     static let scenario: String? = {
@@ -57,6 +57,8 @@ enum DemoMode {
     /// Builds the in-memory game state for the current scenario.
     static func makeState() -> GameState? {
         guard let scenario else { return nil }
+        // Screenshots show the whole catalogue, including waves not shipped yet.
+        Roster.enabledWave = 2
         let now = Date()
         let day = DayKey.make(now)
         var state = GameState()
@@ -69,7 +71,8 @@ enum DemoMode {
         }
         @discardableResult
         func hatch(_ egg: EggType, _ species: String, shiny: Bool = false) -> HatchResult? {
-            guard (try? state.startEgg(egg, seed: seed(egg, species, shiny: shiny), now: now)) != nil else { return nil }
+            let paid = state.isUnlocked || !egg.isFree
+            guard (try? state.startEgg(egg, seed: seed(egg, species, shiny: shiny, isUnlocked: paid), now: now)) != nil else { return nil }
             walk(egg.targetSteps)
             return try? state.hatch(now: now)
         }
@@ -151,6 +154,13 @@ enum DemoMode {
         case "collection-1":
             page = 3
             boardEgg()
+        case "free-complete":
+            // A free player who has met all three free bats: the Collection shows
+            // what the full collection holds, and the one-time trial egg appears.
+            page = 3
+            state.setUnlocked(false)
+            hatch(.tiny, "cocoa")
+            hatch(.tiny, "long-ear")
         case "collection-rare":
             page = 3
             addCollection()
@@ -196,10 +206,10 @@ enum DemoMode {
     }
 
     /// First seed whose roll yields `species` (deterministic, so screenshots are stable).
-    private static func seed(_ egg: EggType, _ species: String, shiny: Bool) -> UInt64 {
+    private static func seed(_ egg: EggType, _ species: String, shiny: Bool, isUnlocked: Bool = true) -> UInt64 {
         var s: UInt64 = 1
         while s < 3_000_000 {
-            let roll = HatchEngine.roll(egg: egg, seed: s, isUnlocked: true)
+            let roll = HatchEngine.roll(egg: egg, seed: s, isUnlocked: isUnlocked)
             if roll.species.id == species && roll.isShiny == shiny { return s }
             s += 1
         }

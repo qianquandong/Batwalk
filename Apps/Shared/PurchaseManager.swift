@@ -5,10 +5,35 @@ import StoreKit
 struct PurchaseOffer: Equatable { let displayPrice: String }
 enum PurchaseOutcome { case purchased, pending, cancelled }
 
+/// What StoreKit says about the full unlock right now.
+enum EntitlementState: Equatable {
+    /// A verified, unrevoked transaction exists.
+    case active
+    /// The latest verified transaction was refunded or revoked by Apple.
+    case revoked
+    /// Nothing is known for this product on this device. This is *not* proof of
+    /// anything: entitlements may simply not have synced to the Watch yet.
+    case none
+}
+
+/// How an entitlement check maps onto the save (2026-10-10 review, finding 3b):
+/// only a verified entitlement unlocks and only an explicit revocation re-locks.
+/// An unknown result leaves the save alone, so one false negative can never
+/// lock a paying player out of the pools their eggs were started with.
+enum EntitlementPolicy {
+    static func unlockedValue(for state: EntitlementState) -> Bool? {
+        switch state {
+        case .active: return true
+        case .revoked: return false
+        case .none: return nil
+        }
+    }
+}
+
 @MainActor
 protocol PurchaseBackend {
     func loadOffer() async throws -> PurchaseOffer?
-    func hasUnlock() async -> Bool
+    func entitlement() async -> EntitlementState
     func buy() async throws -> PurchaseOutcome
     func restore() async throws
 }
@@ -20,13 +45,17 @@ private final class StoreKitBackend: PurchaseBackend {
         product = try await Product.products(for: [SharedConfig.fullUnlockProductID]).first
         return product.map { PurchaseOffer(displayPrice: $0.displayPrice) }
     }
-    func hasUnlock() async -> Bool {
+    func entitlement() async -> EntitlementState {
         for await result in Transaction.currentEntitlements {
             if case .verified(let transaction) = result,
                transaction.productID == SharedConfig.fullUnlockProductID,
-               transaction.revocationDate == nil { return true }
+               transaction.revocationDate == nil { return .active }
         }
-        return false
+        if let latest = await Transaction.latest(for: SharedConfig.fullUnlockProductID),
+           case .verified(let transaction) = latest, transaction.revocationDate != nil {
+            return .revoked
+        }
+        return .none
     }
     func buy() async throws -> PurchaseOutcome {
         guard let product else { throw PurchaseError.unavailable }
@@ -54,12 +83,19 @@ private enum PurchaseError: LocalizedError {
 }
 
 /// StoreKit owns the entitlement. Game saves and collection backups never grant it.
+/// Works the same on the Watch and the iPhone: both can buy (StoreKit 2 on watchOS)
+/// and a purchase on either device unlocks the other through Apple's entitlements.
 @MainActor
 @Observable
 final class PurchaseManager {
     private(set) var product: PurchaseOffer?
-    private(set) var isUnlocked = false
+    private(set) var entitlement: EntitlementState = .none
+    /// True only for a verified, active entitlement.
+    var isUnlocked: Bool { entitlement == .active }
     private(set) var hasCheckedEntitlements = false
+    /// Increments after every entitlement check, even when the result is the same,
+    /// so the app can re-apply it to a save that was loaded or restored since.
+    private(set) var entitlementVersion = 0
     private(set) var isBusy = false
     private(set) var isLoadingProduct = false
     private(set) var message: String?
@@ -97,8 +133,9 @@ final class PurchaseManager {
     }
 
     func refreshEntitlements() async {
-        isUnlocked = await backend.hasUnlock()
+        entitlement = await backend.entitlement()
         hasCheckedEntitlements = true
+        entitlementVersion += 1
     }
 
     func purchase() async {
@@ -124,7 +161,11 @@ final class PurchaseManager {
         do {
             try await backend.restore()
             await refreshEntitlements()
-            message = isUnlocked ? "Full unlock restored." : "No full unlock found for this Apple Account."
+            switch entitlement {
+            case .active: message = "Full unlock restored."
+            case .revoked: message = "This purchase was refunded, so the full unlock is no longer active."
+            case .none: message = "No full unlock found for this Apple Account."
+            }
         } catch { lastError = error.localizedDescription }
     }
 }

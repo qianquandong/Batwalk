@@ -88,13 +88,18 @@ public struct StepLedger: Codable, Equatable, Sendable {
         if timeZoneIdentifier == nil { timeZoneIdentifier = timeZone }
     }
 
-    public func reconciliationStart(now: Date, calendar: Calendar, lookbackDays: Int = 7) -> Date {
+    public func reconciliationStart(now: Date, calendar: Calendar, lookbackDays: Int = 7,
+                                    maxLookbackDays: Int = 45) -> Date {
         let today = calendar.startOfDay(for: now)
         let first = trackingStartDay.flatMap { DayKey.date(from: $0, calendar: calendar) } ?? today
         let last = dayKey.flatMap { DayKey.date(from: $0, calendar: calendar) } ?? first
         let lookback = calendar.date(byAdding: .day, value: -(max(1, lookbackDays) - 1), to: today) ?? today
-        // A long absence is queried in one statistics collection, without dropping days.
-        return min(today, max(first, min(last, lookback)))
+        // A long absence is queried in one statistics collection, without dropping
+        // days — up to `maxLookbackDays`. The Watch only keeps recent Health
+        // samples, so older days would read as 0 anyway; capping bounds the query
+        // (and the per-day fallback) instead of letting one absence query a year.
+        let floor = calendar.date(byAdding: .day, value: -(max(1, maxLookbackDays) - 1), to: today) ?? today
+        return min(today, max(first, floor, min(last, lookback)))
     }
 
     /// Used after a collection-only restore: today's existing steps are a baseline,

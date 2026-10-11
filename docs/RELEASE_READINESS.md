@@ -17,6 +17,23 @@ be read from the PR's latest green CI run; an unsigned build is not a device sig
 | Purchases | Localized price from StoreKit; unavailable product retry; pending/cancel/success/restore/no-entitlement feedback; foreground entitlement refresh and revoked entitlement handling. Watch restore displays its result. Fake backend tests cover state transitions, not Apple's purchase UI. |
 | Release checks | Core plus hosted app regression tests, both simulator builds, a capability-enabled unsigned build, screenshot artifacts, privacy manifest in all three bundles, in-app privacy text, and pre-archive test gates. |
 
+## Added by the 2026-10-10 review (`improve/review-fixes`)
+
+| Area | Behavior and verification |
+|---|---|
+| Hatch | Crown / tap cracks the egg; rarity light tease; ≈ 2.4 s reveal; haptic signature per rarity; Double Tap on Hatch Now. Verify feel on hardware. |
+| Pacing | Shiny 3 % + pity 40 + Lv.5 ×3; new-species pity 10; Moon Dust (1 per Lv.5 duplicate, 4 per call); trial Forest Egg; Long Ear in Tiny. 15 new/updated core tests (101 total, green in Docker). |
+| Purchases | Watch paywall (`WatchUnlockView`) from locked eggs, Collection card and Settings. `EntitlementPolicy`: only verified → unlock, only revoked → lock; re-applied after every check and after load/restore. |
+| Complication | Portrait + egg ring, cracks from 50 %, last known progress kept when stale, Smart Stack relevance (watchOS 11). Still needs the App Group to show live data. |
+| Step sync | Per-day HealthKit fallback when buckets don't match the ledger's time zone; 45-day lookback cap; NaN/absurd totals sanitised; `Tuning.maxDailySteps`. |
+| Backup | iPhone publishes its collection mirror over WatchConnectivity; a re-paired Watch restores from it (onboarding button, auto when the save is empty). Cloud backup rewritten only on content change. |
+| Analytics | TelemetryDeck sink behind `BATWALK_TELEMETRYDECK_APP_ID` (docs/ANALYTICS.md); privacy text updates itself. |
+| Platform | Siri "Check my egg" (App Intents), iPhone Dark Mode, share card, String Catalog, strict-concurrency warnings, content waves (Oddballs = v1.1). |
+| CI | Core tests on Linux for every PR (1× minutes); macOS builds on `main` / manual; Codemagic for PR Mac checks. |
+
+Not compiled on a Mac in that pass — the first Xcode build of the branch should
+expect small SwiftUI/API fixes (Watch, iPhone and complication targets).
+
 ## Required before release
 
 - [ ] Register and verify App Group/CloudKit capability IDs and provisioning profiles; turn on each feature with the generated configuration. Developer portal was signed out during this task.

@@ -12,7 +12,7 @@ the game; the iPhone is the companion library.
 - 🥚 5 egg types (2,000 – 6,000 steps)
 - 🌙 Day / Dusk / Night behaviour from local time
 - 💤 No death, no hunger, no streaks, no guilt — ever
-- 💵 Free + one-time $1.99 unlock · no AI · no backend
+- 💵 Free + one-time $2.99 unlock · no AI · no backend
 
 📄 **[Product Requirements (PRD v1.0)](docs/PRD.md)** · [Roadmap](docs/ROADMAP.md) · [Open questions](docs/OPEN_QUESTIONS.md) · [Test plan](docs/TEST_PLAN.md) · [Decisions](docs/decisions/)
 
@@ -81,7 +81,7 @@ open Batwalk.xcodeproj
 
 Pick the **BatwalkWatch** scheme to run the game on a Watch simulator or device.
 The **BatwalkPhone** scheme runs the companion and uses `Config/Batwalk.storekit`,
-so the $1.99 unlock can be tested without App Store Connect.
+so the $2.99 unlock can be tested without App Store Connect.
 
 ### Before running on real devices
 
@@ -117,6 +117,14 @@ See [release readiness and remaining device checks](docs/RELEASE_READINESS.md).
 Duplicates turn into Friendship EXP. The whole game state is one Codable value,
 saved by the Watch to SwiftData, mirrored to iCloud, and pushed to the iPhone.
 See [ADR 0001](docs/decisions/0001-architecture.md).
+
+## Verifying without a Mac
+
+The rules package runs anywhere, including Docker on Windows:
+
+```bash
+docker run --rm -v "$PWD/Packages/BatwalkCore:/work" -w /work swift:5.10-jammy swift test
+```
 
 ## Status
 

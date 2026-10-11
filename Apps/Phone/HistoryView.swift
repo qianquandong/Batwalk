@@ -36,6 +36,9 @@ struct HistoryView: View {
                         StatCard(title: "Steps Walked", value: state.lifetimeCreditedSteps.formatted()) {
                             Image(systemName: "figure.walk").foregroundStyle(BatwalkColor.accent)
                         }
+                        StatCard(title: "Moon Dust", value: "\(state.moonDust)") {
+                            Image(systemName: "sparkle").foregroundStyle(BatwalkColor.accent)
+                        }
                     }
 
                     Text("Your little arrivals")
@@ -83,7 +86,7 @@ private struct TimelineEntry<Content: View>: View {
                 Circle()
                     .fill(muted ? BatwalkColor.sage.opacity(0.5) : BatwalkColor.accent)
                     .frame(width: 10, height: 10)
-                    .overlay(Circle().strokeBorder(.white, lineWidth: 2))
+                    .overlay(Circle().strokeBorder(BatwalkColor.lightBackground, lineWidth: 2))
                     .padding(.top, 28)
                 if !isLast {
                     Rectangle()
