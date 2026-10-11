@@ -56,6 +56,7 @@ function copy(g,src,dx=0,dy=0,angle=0) {
   }
 }
 function scene(id,f,p={},back=()=>{},front=()=>{},options={}) {
+  p={...p,wingFold:Math.max(0,Math.abs((p.dx||0)+(options.x||0))-1)};
   const original=E.species(id),spec={...original,body:{...original.body},ears:{...original.ears},face:{...original.face},pal:{...original.pal}};
   if(options.ears)Object.assign(spec.ears,options.ears);
   if(options.face)Object.assign(spec.face,options.face);

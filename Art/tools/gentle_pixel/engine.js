@@ -125,17 +125,20 @@
   function wingsBack(c) {
     var g = c.g, P = c.P, tip = wingTip(c.pose), s;
     if (tip !== null) {
+      // Fast travelling poses tuck the outer wing fingers to keep their tips
+      // inside the canvas. Body proportions and existing universal art stay fixed.
+      var fold = c.pose.wingFold || 0;
       for (s = -1; s <= 1; s += 2) {
         var sx = c.cx + s * (c.rx - 3), sy = c.cy - 1;
-        var tx = c.cx + s * (c.rx + 16), ty = c.cy + tip;
+        var tx = c.cx + s * (c.rx + 16 - fold), ty = c.cy + tip;
         // the trailing edge drops with the wing so the down-stroke keeps a full membrane
-        var mx = c.cx + s * (c.rx + 9), my = c.cy + 7 + Math.max(0, tip) * 0.5;
+        var mx = c.cx + s * (c.rx + 9 - fold * 0.5), my = c.cy + 7 + Math.max(0, tip) * 0.5;
         g.tri(sx, sy - 3, tx, ty, mx, my, P.wing);
         g.tri(sx, sy - 3, mx, my, c.cx + s * (c.rx - 1), c.cy + 8, P.wing);
         // finger bone and scallops read as a bat wing even at 64 px
         g.line(sx, sy - 2, tx, ty, P.wingShade);
         g.ell(c.cx + s * (c.rx + 4), c.cy + 9 + Math.max(0, tip) * 0.25, 2, 2, null);
-        g.ell(c.cx + s * (c.rx + 11), my + 1, 2, 2, null);
+        g.ell(c.cx + s * (c.rx + 11 - fold * 0.5), my + 1, 2, 2, null);
       }
       return;
     }
