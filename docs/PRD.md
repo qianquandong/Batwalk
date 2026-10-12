@@ -117,10 +117,15 @@ WALK AGAIN ← NEW EGG ← BUILD FRIENDSHIP ← CHOOSE CURRENT COMPANION
 
 | Screen | Purpose |
 |---|---|
-| **HOME** | Current bat or current egg. This is where most time is spent. |
-| **WALK** | Today's steps and egg progress. Game progress first, fitness data second. |
-| **CARE** | Feed, pet, wake, and short reactions. |
-| **BATS** | Compact collection grid and current companion selector. |
+| **Companion** | Current bat or first egg. Tap the bat to pet/wake; fruit feeds it. A small egg icon shows progress and opens the second page. |
+| **Egg** | Egg progress and remaining steps; hatch or choose the next egg. More opens device settings and offline collection tools. |
+
+The Watch uses two vertically paged scenes. Keep the companion's name quiet, the
+bat prominent, and feeding/egg controls equal in size with at least 44 pt touch
+targets. Do not show friendship levels, level dots or action-unlock lists on the
+Watch home. Its opening habit expresses the unlocked personality; explanations,
+friendship details and manual action browsing belong on iPhone. Core play and
+offline collection management remain available on Watch.
 
 ### 2.5 iPhone Companion MVP
 

@@ -159,6 +159,9 @@ again. Pet/feed reactions and rare legendary moments retain their own triggers.
 The egg page’s More button retains device-local step access and notification controls,
 plus offline collection management. No save schema or character art changed.
 The Screenshots workflow accepts `watch_size: small` to check the 41/40 mm layout;
-`home-large-type` also exercises accessibility text sizes.
+`home-large-type`, `reveal-large-type` and `progress-large-type` exercise
+accessibility text sizes. Capture jobs fail if the launched app exits before the
+screenshot; diagnostic images are retained even on failure.
 
-See the [actual Watch/iPhone screenshots and remaining visual issues](docs/previews/quiet-watch-2026-10-11/README.md).
+See the [latest Watch pet-scene screenshots at both display sizes](docs/previews/watch-pet-scene-2026-10-12/README.md).
+The [previous Watch/iPhone captures](docs/previews/quiet-watch-2026-10-11/README.md) remain as historical review evidence.
