@@ -19,12 +19,22 @@ struct ProgressPage: View {
                 } else { eggScene }
             }
             .watchPageBackground()
-            .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
-                    Button { settings = true } label: { Image(systemName: "ellipsis") }
-                        .accessibilityLabel("More options")
+            // A toolbar item in the top bar trips a UINavigationBar layout assertion on
+            // watchOS 26 (SIGABRT as the page appears), so the options button lives in
+            // the scene, under the time.
+            .overlay(alignment: .topTrailing) {
+                Button { settings = true } label: {
+                    Image(systemName: "ellipsis")
+                        .font(.system(size: 13, weight: .bold))
+                        .foregroundStyle(BatwalkColor.cloud)
+                        .frame(width: 32, height: 32)
+                        .background(BatwalkColor.cloud.opacity(0.1), in: Circle())
                 }
+                .buttonStyle(.plain)
+                .padding(.trailing, BatwalkSpacing.xs)
+                .accessibilityLabel("More options")
             }
+            .navigationTitle("Egg")
         }
         .sheet(isPresented: $showEggPicker) { EggPickerView() }
         .sheet(isPresented: $settings) { SettingsView(steps: steps) }
