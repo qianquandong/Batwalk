@@ -33,8 +33,17 @@ struct HomeView: View {
                     .watchPageBackground(time, scenery: true)
             }
             .navigationTitle("")
-            // No empty title bar: the scene starts right under the time.
-            .toolbar(.hidden, for: .navigationBar)
+            .toolbar {
+                // The name sits where a Watch title lives — beside the time — so the
+                // scene below belongs entirely to the bat.
+                ToolbarItem(placement: .topBarLeading) {
+                    if let companion = store.state.companion, !store.state.isEggReady {
+                        nameRow(companion)
+                    } else if store.state.companion == nil, store.state.egg != nil {
+                        Text("First egg").font(BatwalkFont.caption).foregroundStyle(BatwalkColor.cloud)
+                    }
+                }
+            }
         }
         .fullScreenCover(item: $hatching, onDismiss: {
             // Straight into choosing the next egg — keeps the loop moving (PRD §2.1).
@@ -89,15 +98,14 @@ struct HomeView: View {
         }
     }
 
-    /// The bat is the hero: it takes every point the name row and the info row
-    /// leave free. One slim row at the bottom — fruit to give, steps to hatch.
+    /// The bat is the hero: it takes every point the one slim info row at the
+    /// bottom (fruit to give, steps to hatch) leaves free.
     private func companionScene(_ companion: OwnedBat, time: TimeOfDay) -> some View {
         GeometryReader { geo in
             let rowHeight: CGFloat = 36
-            let batSize = max(72, min(geo.size.width * 0.96, geo.size.height - rowHeight - 30))
+            let batSize = max(72, min(geo.size.width * 0.96, geo.size.height - rowHeight - 12))
             let resting = BatMood.resting(at: time)
             VStack(spacing: 0) {
-                nameRow(companion)
                 Spacer(minLength: 0)
                 // A real control, so Double Tap (watchOS 11) pets the bat too.
                 Button { pet(companion) } label: {
@@ -135,7 +143,6 @@ struct HomeView: View {
     private func accessibleCompanionScene(_ companion: OwnedBat, time: TimeOfDay) -> some View {
         ScrollView {
             VStack(spacing: BatwalkSpacing.sm) {
-                nameRow(companion)
                 Button { pet(companion) } label: {
                     BatHeroView(speciesID: companion.speciesID, shiny: companion.showsShiny,
                                 mood: reaction ?? BatMood.resting(at: time), size: 150,
