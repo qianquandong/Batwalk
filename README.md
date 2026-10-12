@@ -150,7 +150,9 @@ with credit, no commercial use without permission.
 
 ### Quiet Watch interface
 
-Watch now has two primary pages: the companion (tap to pet, fruit to feed) and its egg.
+Watch now has two primary pages: the companion (tap to pet, one Feed button) and its egg.
+The companion scene uses the available space for the bat, without a visible name
+or egg progress. Swipe or turn the Digital Crown to reach the egg page.
 Friendship levels, unlock explanations, action replays and purchases live on iPhone.
 Opening the Watch app plays one deterministic, unlocked habit appropriate to the time
 of day; page switches and step refreshes do not replay it. The next visit can greet

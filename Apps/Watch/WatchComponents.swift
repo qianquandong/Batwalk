@@ -46,22 +46,37 @@ struct WatchPetControlStyle: ButtonStyle {
     }
 }
 
-/// 🍓 Feed (n) — premium even when disabled.
+/// One quiet, centered Feed control. Inventory remains available to VoiceOver.
 struct FeedButton: View {
     let fruit: Int
     let action: () -> Void
 
     var body: some View {
-        Button(action: action) {
-            HStack(spacing: 6) {
-                FruitIcon(size: 16)
-                Text("Feed · \(fruit)")
-            }
-        }
-        .buttonStyle(BatwalkPrimaryButtonStyle(minHeight: 44))
+        Button("Feed", action: action)
+        .buttonStyle(FeedControlStyle())
         .disabled(fruit == 0)
         .accessibilityLabel("Feed")
         .accessibilityValue("\(fruit) fruit")
+        .accessibilityHint(fruit == 0 ? "Walk to find fruit" : "Use one fruit")
+    }
+
+    private struct FeedControlStyle: ButtonStyle {
+        @Environment(\.isEnabled) private var enabled
+
+        func makeBody(configuration: Configuration) -> some View {
+            configuration.label
+                .font(BatwalkFont.caption)
+                .foregroundStyle(BatwalkColor.cloud)
+                .padding(.horizontal, 16)
+                .frame(minWidth: 88, minHeight: 44)
+                .background {
+                    Capsule()
+                        .fill(BatwalkColor.cloud.opacity(configuration.isPressed ? 0.16 : 0.08))
+                        .padding(.vertical, 5)
+                }
+                .contentShape(Capsule())
+                .opacity(enabled ? 1 : 0.4)
+        }
     }
 }
 
