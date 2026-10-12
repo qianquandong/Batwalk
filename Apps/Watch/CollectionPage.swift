@@ -1,9 +1,7 @@
 import SwiftUI
 import BatwalkCore
 
-/// Collection (board: Watch › 4. Collection): 3-column grid, glowing unlocked
-/// tiles, dark locked tiles, ♥ on the companion. Newly found bats play the unlock
-/// reveal. Above the grid: the "met every free bat" card and the Moon Dust row.
+/// Offline collection tools, reached inside the Options navigation stack.
 struct CollectionPage: View {
     @Environment(GameStore.self) private var store
     /// Species the player has already seen in the grid (UI memory, not game state).
@@ -16,40 +14,38 @@ struct CollectionPage: View {
     private let columns = Array(repeating: GridItem(.flexible(), spacing: 6), count: 3)
 
     var body: some View {
-        NavigationStack {
-            ScrollView {
-                VStack(spacing: 6) {
-                    HStack {
-                        Spacer()
-                        Text("\(store.state.collection.count)/\(Roster.all.count)")
-                            .font(BatwalkFont.caption)
-                            .monospacedDigit()
-                            .foregroundStyle(BatwalkColor.textSecondaryDark)
-                            .padding(.trailing, 10)
-                    }
-                    moonDustRow
-                    LazyVGrid(columns: columns, spacing: 6) {
-                        ForEach(Roster.all) { species in
-                            if let bat = store.state.collection[species.id] {
-                                NavigationLink(value: species.id) {
-                                    BatCollectionTile(bat: bat,
-                                                      isCompanion: store.state.companionID == species.id,
-                                                      isNew: newIDs.contains(species.id))
-                                }
-                                .buttonStyle(PressableStyle())
-                            } else {
-                                LockedBatTile()
+        ScrollView {
+            VStack(spacing: 6) {
+                HStack {
+                    Spacer()
+                    Text("\(store.state.collection.count)/\(Roster.all.count)")
+                        .font(BatwalkFont.caption)
+                        .monospacedDigit()
+                        .foregroundStyle(BatwalkColor.textSecondaryDark)
+                        .padding(.trailing, 10)
+                }
+                moonDustRow
+                LazyVGrid(columns: columns, spacing: 6) {
+                    ForEach(Roster.all) { species in
+                        if let bat = store.state.collection[species.id] {
+                            NavigationLink(value: species.id) {
+                                BatCollectionTile(bat: bat,
+                                                  isCompanion: store.state.companionID == species.id,
+                                                  isNew: newIDs.contains(species.id))
                             }
+                            .buttonStyle(PressableStyle())
+                        } else {
+                            LockedBatTile()
                         }
                     }
                 }
-                .padding(.horizontal, 2)
-                .batwalkAppear()
             }
-            .navigationTitle("Bats")
-            .navigationDestination(for: String.self) { BatDetailView(speciesID: $0) }
-            .watchPageBackground()
+            .padding(.horizontal, 2)
+            .batwalkAppear()
         }
+        .navigationTitle("Bats")
+        .navigationDestination(for: String.self) { BatDetailView(speciesID: $0) }
+        .watchPageBackground()
         .onAppear(perform: markNewBats)
         .sheet(isPresented: $showUnlock) { WatchUnlockView() }
         .fullScreenCover(item: $calling) { presentation in
@@ -127,7 +123,7 @@ struct CollectionPage: View {
     }
 }
 
-/// Bat detail on the Watch: companion, nickname, Shiny toggle, Friendship.
+/// Offline companion, nickname and Shiny controls; growth details live on iPhone.
 struct BatDetailView: View {
     @Environment(GameStore.self) private var store
     let speciesID: String
