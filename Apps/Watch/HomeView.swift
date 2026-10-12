@@ -32,18 +32,9 @@ struct HomeView: View {
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .watchPageBackground(time, scenery: true)
             }
-            .navigationTitle("")
-            .toolbar {
-                // The name sits where a Watch title lives — beside the time — so the
-                // scene below belongs entirely to the bat.
-                ToolbarItem(placement: .topBarLeading) {
-                    if let companion = store.state.companion, !store.state.isEggReady {
-                        nameRow(companion)
-                    } else if store.state.companion == nil, store.state.egg != nil {
-                        Text("First egg").font(BatwalkFont.caption).foregroundStyle(BatwalkColor.cloud)
-                    }
-                }
-            }
+            // The name takes the system title slot beside the time, so the scene
+            // below belongs to the bat. (A custom view in that slot aborts on watchOS.)
+            .navigationTitle(title)
         }
         .fullScreenCover(item: $hatching, onDismiss: {
             // Straight into choosing the next egg — keeps the loop moving (PRD §2.1).
@@ -79,6 +70,13 @@ struct HomeView: View {
             welcomeCompanion()
         }
         .onDisappear { clearReaction() }
+    }
+
+    /// The companion's name; "First egg" before the first hatch; nothing over the hatch moment.
+    private var title: String {
+        if store.state.isEggReady { return "" }
+        if let companion = store.state.companion { return companion.companionTitle }
+        return store.state.egg == nil ? "" : "First egg"
     }
 
     @ViewBuilder
@@ -134,6 +132,12 @@ struct HomeView: View {
             }
             .padding(.horizontal, BatwalkSpacing.xs)
             .frame(width: geo.size.width, height: geo.size.height)
+            // Friendship dots tuck under the title; an overlay, so the bat keeps its size.
+            .overlay(alignment: .topLeading) {
+                FriendshipDots(level: Friendship.level(forEXP: companion.friendshipEXP), pulse: levelUps)
+                    .padding(.leading, BatwalkSpacing.sm)
+                    .padding(.top, 2)
+            }
         }
         .batwalkAppear()
     }
@@ -143,6 +147,9 @@ struct HomeView: View {
     private func accessibleCompanionScene(_ companion: OwnedBat, time: TimeOfDay) -> some View {
         ScrollView {
             VStack(spacing: BatwalkSpacing.sm) {
+                FriendshipDots(level: Friendship.level(forEXP: companion.friendshipEXP), pulse: levelUps)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.leading, BatwalkSpacing.xs)
                 Button { pet(companion) } label: {
                     BatHeroView(speciesID: companion.speciesID, shiny: companion.showsShiny,
                                 mood: reaction ?? BatMood.resting(at: time), size: 150,
@@ -163,18 +170,6 @@ struct HomeView: View {
             .padding(.horizontal, BatwalkSpacing.xs)
         }
         .batwalkAppear()
-    }
-
-    private func nameRow(_ companion: OwnedBat) -> some View {
-        HStack(spacing: 6) {
-            Text(companion.companionTitle)
-                .font(BatwalkFont.caption)
-                .lineLimit(1).minimumScaleFactor(0.8)
-                .foregroundStyle(BatwalkColor.cloud)
-                .accessibilityAddTraits(.isHeader)
-            FriendshipDots(level: Friendship.level(forEXP: companion.friendshipEXP), pulse: levelUps)
-            Spacer(minLength: 0)
-        }
     }
 
     private func infoRow(_ companion: OwnedBat, height: CGFloat) -> some View {
