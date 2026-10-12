@@ -35,11 +35,17 @@ for sc in $scenarios; do
   else
     echo "::warning::$platform/$sc: app was not running at capture time (crashed or exited)"
     failed=$((failed + 1))
+    echo "::group::simulator log around $sc"
+    xcrun simctl spawn "$SIM" log show --last 40s --style compact \
+      --predicate 'process CONTAINS[c] "batwalk" OR eventMessage CONTAINS[c] "batwalk"' 2>/dev/null \
+      | grep -viE 'healthd|HealthKit|CoreData|analytics' | tail -n 60
+    echo "::endgroup::"
   fi
 done
 # Crash reports from the simulator land in the host's DiagnosticReports; show the
 # newest ones for this app so a launch crash is readable from the job log.
 if [ "$failed" -gt 0 ]; then
+  sleep 6 # the report is written a moment after the crash
   for report in $(ls -t ~/Library/Logs/DiagnosticReports/*.ips 2>/dev/null | head -n 4); do
     case "$(basename "$report")" in
       *[Bb]atwalk*)

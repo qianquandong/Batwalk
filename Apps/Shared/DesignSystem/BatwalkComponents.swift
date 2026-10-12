@@ -325,8 +325,9 @@ struct NightSkyBackground: View {
         var rng = SeededGenerator(seed: 7)
         let count = scenery ? 6 : 2
         for i in 0..<count {
-            let x = (rng.nextUnit() * size.width / 2).rounded(.down) * 2
-            let y = (size.height * (0.30 + rng.nextUnit() * 0.27) / 2).rounded(.down) * 2
+            // Right half, below the time and clear of the title / friendship dots on the left.
+            let x = (size.width * (0.5 + rng.nextUnit() * 0.45) / 2).rounded(.down) * 2
+            let y = (size.height * (0.26 + rng.nextUnit() * 0.30) / 2).rounded(.down) * 2
             let alpha = time == .dusk ? 0.18 : 0.28
             context.fill(Path(CGRect(x: x, y: y, width: 2, height: 2)),
                          with: .color(BatwalkColor.cloud.opacity(alpha)))
