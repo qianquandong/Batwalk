@@ -165,5 +165,6 @@ The Screenshots workflow accepts `watch_size: small` to check the 41/40 mm layou
 accessibility text sizes. Capture jobs fail if the launched app exits before the
 screenshot; diagnostic images are retained even on failure.
 
-See the [latest Watch pet-scene screenshots at both display sizes](docs/previews/watch-pet-scene-2026-10-12/README.md).
-The [previous Watch/iPhone captures](docs/previews/quiet-watch-2026-10-11/README.md) remain as historical review evidence.
+See the [latest single-Feed Watch screenshots at both display sizes](docs/previews/watch-feed-only-2026-10-12/README.md).
+The [build 17 Watch layout](docs/previews/watch-pet-scene-2026-10-12/README.md) and
+[earlier Watch/iPhone captures](docs/previews/quiet-watch-2026-10-11/README.md) remain as historical review evidence.
