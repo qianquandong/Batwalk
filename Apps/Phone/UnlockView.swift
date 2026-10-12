@@ -13,7 +13,7 @@ struct UnlockView: View {
         ("moon.stars.fill", "Access all \(Roster.all.count) bats"),
         ("star.fill", "Discover Rare & Legendary bats"),
         ("sparkles", "Find Shiny variants — guaranteed within 40 hatches"),
-        ("circle.hexagongrid.fill", "Unlock all egg pools"),
+        ("circle.hexagongrid.fill", "Open all five egg types"),
         ("book.closed.fill", "Complete the Batpedia"),
     ]
 
@@ -86,11 +86,8 @@ struct UnlockView: View {
                     if let message = purchases.message {
                         Text(message).font(BatwalkFont.caption).foregroundStyle(BatwalkColor.textSecondaryLight).multilineTextAlignment(.center)
                     }
+                    // The thank-you belongs after the purchase (`unlockedCard`), not before it.
                     NavigationLink("Privacy & data") { PrivacyView() }
-
-                    Label("Thank you for supporting Batwalk!", systemImage: "heart.fill")
-                        .font(BatwalkFont.caption)
-                        .foregroundStyle(BatwalkColor.textSecondaryLight)
                         .padding(.bottom, BatwalkSpacing.sm)
                 }
                 .padding(BatwalkSpacing.lg)

@@ -61,16 +61,17 @@ struct PhoneRootView: View {
 
     var body: some View {
         TabView(selection: $tab) {
+            // Three distinct glyphs: home, a grid of bats, a notebook.
             CompanionView(tab: $tab)
                 .environment(\.batPageVisible, tab == .companion)
                 .tabItem { Label("Companion", systemImage: "house") }
                 .tag(PhoneTab.companion)
             BatpediaView()
                 .environment(\.batPageVisible, tab == .batpedia)
-                .tabItem { Label("Batpedia", systemImage: "book.closed.fill") }
+                .tabItem { Label("Batpedia", systemImage: "square.grid.2x2") }
                 .tag(PhoneTab.batpedia)
             HistoryView()
-                .tabItem { Label("Journal", systemImage: "text.book.closed") }
+                .tabItem { Label("Journal", systemImage: "book.closed") }
                 .tag(PhoneTab.journal)
         }
         .sheet(isPresented: $settings) { PhoneSettingsView() }

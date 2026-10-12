@@ -32,7 +32,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: screenshots-${{ inputs.watch_only && 'watch' || 'both' }}
+  group: screenshots-${{ github.ref }}-${{ inputs.watch_size || 'large' }}-${{ inputs.watch_only && 'watch' || 'both' }}
   cancel-in-progress: true
 
 jobs:
@@ -72,6 +72,7 @@ jobs:
         run: scripts/capture-screens.sh watch "$RUNNER_TEMP/out/screens/watch"
 
       - name: Save Watch screenshots immediately
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: batwalk-watch-screenshots

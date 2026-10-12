@@ -115,6 +115,7 @@ struct HatchSequenceView: View {
     }
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.dynamicTypeSize) private var typeSize
     @State private var phase: Phase
     @State private var dimmed = false
     @State private var shakeAngle: Double = 0
@@ -135,6 +136,11 @@ struct HatchSequenceView: View {
     private var rarity: Rarity { species?.rarity ?? .common }
     private var special: Bool { rarity.isSpecial || record.isShiny }
     private var teaseColor: Color { record.isShiny ? BatwalkColor.rarityShiny : special ? rarity.color : BatwalkColor.moonlight }
+    // A presented cover can resolve its size outside the root's demo override.
+    // Apply the capture override at this presentation boundary as well.
+    private var revealTypeSize: DynamicTypeSize {
+        DemoMode.scenario == "reveal-large-type" ? .accessibility3 : typeSize
+    }
 
     var body: some View {
         ZStack {
@@ -162,51 +168,68 @@ struct HatchSequenceView: View {
 
             Color(hex: 0xFFF6D6).opacity(flash).ignoresSafeArea().allowsHitTesting(false)
         }
+        .dynamicTypeSize(revealTypeSize)
         .task { await run() }
     }
 
+    /// The essential reveal fits first. Accessibility text can scroll above a
+    /// pinned Continue button, including shiny and duplicate-reward variants.
     private var reveal: some View {
-        VStack(spacing: 6) {
-            ScrollView {
+        GeometryReader { geometry in
             VStack(spacing: 4) {
-                ZStack {
-                    Circle()
-                        .fill(RadialGradient(colors: [(special ? rarity.color : BatwalkColor.accentSoft).opacity(special ? 0.22 : 0.12), .clear],
-                                             center: .center, startRadius: 4, endRadius: 64))
-                        .frame(width: 90, height: 90)
-                    if special { SparkleField(count: 6, color: record.isShiny ? BatwalkColor.rarityShiny : rarity.color, spread: 42) }
-                    BatHeroView(speciesID: record.speciesID, shiny: record.isShiny, mood: .happy, size: 70,
-                                animationRequest: revealRequest, showsKeepsake: false)
-                        .scaleEffect(revealScale)
+                if revealTypeSize.isAccessibilitySize {
+                    ScrollView { revealDetails(pictureSize: 60) }
+                } else {
+                    // Reserve space for the name, chips and Continue first. A
+                    // scroll view's flexible proposal otherwise hides the labels
+                    // behind the pinned button on a 41 mm Watch.
+                    revealDetails(pictureSize: min(70, max(36, geometry.size.height - 114)))
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
                 }
-                .frame(height: 76)
-                Text(species?.name ?? "New bat")
-                    .font(BatwalkFont.headline)
-                    .foregroundStyle(.white)
-                HStack(spacing: 4) {
-                    RarityChip(rarity: rarity)
-                    if record.isShiny { VariantChip(shiny: true) }
-                }
-                Text(record.outcome == .duplicate ? "Hello again" : "Hello, little one")
-                    .font(BatwalkFont.micro)
-                    .foregroundStyle(BatwalkColor.textSecondaryDark)
-                    .multilineTextAlignment(.center)
-                if presentation.result.moonDustGained > 0 {
-                    Label("+\(presentation.result.moonDustGained) Moon Dust", systemImage: "sparkle")
-                        .font(BatwalkFont.micro)
-                        .foregroundStyle(BatwalkColor.rarityShiny)
-                }
+                Button("Continue", action: onDone)
+                    .buttonStyle(BatwalkPrimaryButtonStyle(minHeight: 44))
+                    .doubleTapPrimaryAction()
+                    .padding(.bottom, 4)
             }
             .padding(.horizontal, BatwalkSpacing.sm)
-            }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .clipped()
-            Button("Continue", action: onDone)
-                .buttonStyle(BatwalkPrimaryButtonStyle(minHeight: 44))
-                .doubleTapPrimaryAction()
-                .padding(.horizontal, BatwalkSpacing.sm)
-                .padding(.bottom, 4)
+            .frame(width: geometry.size.width, height: geometry.size.height)
         }
+    }
+
+    private func revealDetails(pictureSize: CGFloat) -> some View {
+        VStack(spacing: 4) {
+            ZStack {
+                Circle()
+                    .fill(RadialGradient(colors: [(special ? rarity.color : BatwalkColor.accentSoft).opacity(special ? 0.22 : 0.12), .clear],
+                                         center: .center, startRadius: 4, endRadius: 64))
+                    .frame(width: pictureSize, height: pictureSize)
+                if special { SparkleField(count: 6, color: record.isShiny ? BatwalkColor.rarityShiny : rarity.color, spread: pictureSize * 0.45) }
+                BatHeroView(speciesID: record.speciesID, shiny: record.isShiny, mood: .happy, size: pictureSize,
+                            animationRequest: revealRequest, showsKeepsake: false)
+                    .scaleEffect(revealScale)
+            }
+            .frame(height: pictureSize)
+            Text(species?.name ?? "New bat")
+                .font(BatwalkFont.headline)
+                .foregroundStyle(.white)
+                .multilineTextAlignment(.center)
+                .fixedSize(horizontal: false, vertical: true)
+            ViewThatFits(in: .horizontal) {
+                HStack(spacing: 4) { revealChips }.fixedSize()
+                VStack(spacing: 4) { revealChips }
+            }
+            if presentation.result.moonDustGained > 0 {
+                Label("+\(presentation.result.moonDustGained) Moon Dust", systemImage: "sparkle")
+                    .font(BatwalkFont.rounded(.caption2))
+                    .foregroundStyle(BatwalkColor.rarityShiny)
+            }
+        }
+        .frame(maxWidth: .infinity)
+    }
+
+    @ViewBuilder private var revealChips: some View {
+        RarityChip(rarity: rarity)
+        if record.isShiny { VariantChip(shiny: true) }
     }
 
     /// Sleeps; false if the cover was dismissed (task cancelled) so the sequence stops.

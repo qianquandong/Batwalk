@@ -28,6 +28,24 @@ struct BatwalkStatRow<Icon: View>: View {
     }
 }
 
+/// Quiet icon controls with equal footprints and a full 44 pt touch target.
+struct WatchPetControlStyle: ButtonStyle {
+    @Environment(\.isEnabled) private var enabled
+
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .foregroundStyle(BatwalkColor.cloud)
+            .frame(width: 56, height: 44)
+            .background {
+                Capsule()
+                    .fill(BatwalkColor.cloud.opacity(configuration.isPressed ? 0.16 : 0.06))
+                    .frame(width: 52, height: 34)
+            }
+            .contentShape(Capsule())
+            .opacity(enabled ? 1 : 0.4)
+    }
+}
+
 /// 🍓 Feed (n) — premium even when disabled.
 struct FeedButton: View {
     let fruit: Int

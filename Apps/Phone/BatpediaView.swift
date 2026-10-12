@@ -9,7 +9,6 @@ struct BatpediaView: View {
     @State private var path: [String] = DemoMode.detailSpecies.map { [$0] } ?? []
     @State private var query = ""
     @State private var searching = false
-    @State private var settings = false
     @State private var showUnlock = false
 
     private var columns: [GridItem] {
@@ -22,12 +21,10 @@ struct BatpediaView: View {
                 VStack(alignment: .leading, spacing: 20) {
                     HStack {
                         PhoneHeader(title: "Batpedia")
+                        // Settings live on the Companion tab only.
                         Button { searching.toggle() } label: {
                             Image(systemName: "magnifyingglass").font(.title3).frame(width: 44, height: 44)
                         }.accessibilityLabel("Search bats")
-                        Button { settings = true } label: {
-                            Image(systemName: "gearshape").frame(width: 44, height: 44)
-                        }.accessibilityLabel("Settings")
                     }
                     Text("\(foundCount) / \(Roster.all.count) discovered")
                         .font(BatwalkFont.body).foregroundStyle(BatwalkColor.textSecondaryLight)
@@ -88,8 +85,8 @@ struct BatpediaView: View {
             }
             .background(BatwalkColor.lightBackground.ignoresSafeArea())
             .toolbar(.hidden, for: .navigationBar)
+            .navigationTitle("Batpedia") // hidden here; it labels the back button on a detail page
             .navigationDestination(for: String.self) { BatDetailPage(speciesID: $0) }
-            .sheet(isPresented: $settings) { PhoneSettingsView() }
             .sheet(isPresented: $showUnlock) {
                 UnlockView()
                     .safeAreaInset(edge: .top) {
@@ -134,12 +131,15 @@ struct BatDetailPage: View {
         ScrollView {
             if let bat, let species {
                 VStack(spacing: 0) {
+                    // Same inset-card hero as the Companion page.
                     BatHeroView(speciesID: speciesID, shiny: bat.showsShiny, mood: .awake,
                                 size: 160, friendshipEXP: bat.friendshipEXP, showsKeepsake: false)
                         .environment(\.batPageVisible, pageVisible && moment == nil)
                         .frame(maxWidth: .infinity).padding(.vertical, 20)
                         .background(NightSkyBackground(time: .night, scenery: true, groundLevel: 0.86))
-                        .clipShape(UnevenRoundedRectangle(bottomLeadingRadius: 28, bottomTrailingRadius: 28))
+                        .clipShape(RoundedRectangle(cornerRadius: 28, style: .continuous))
+                        .padding(.horizontal, 16)
+                        .padding(.top, 8)
                     VStack(alignment: .leading, spacing: 20) {
                         VStack(alignment: .leading, spacing: 6) {
                             Text(String(format: "No. %02d", species.number)).font(BatwalkFont.caption)
@@ -149,32 +149,37 @@ struct BatDetailPage: View {
                                 .foregroundStyle(BatwalkColor.textSecondaryLight)
                         }
                         HStack(spacing: 8) {
-                            VariantChip(shiny: bat.showsShiny, dark: false)
                             RarityChip(rarity: species.rarity, dark: false)
+                            VariantChip(shiny: bat.showsShiny, dark: false)
                         }
+                        // Context for the pinned "Choose for Watch" button below.
+                        if store.state.companionID != speciesID { CurrentCompanionRow(compact: true) }
                         BatInfoRow(title: "Friendship", value: "Lv. \(Friendship.level(forEXP: bat.friendshipEXP))") {
                             Image(systemName: "heart.fill").foregroundStyle(BatwalkColor.rose)
                         } detail: {
                             FriendshipProgressView(exp: bat.friendshipEXP, dark: false)
                         }
-                        Divider()
-                        VStack(alignment: .leading, spacing: 12) {
-                            Text("Little moments").font(BatwalkFont.title)
-                            Text("These habits happen naturally on your Watch as friendship grows. Tap a discovered moment here to watch it again.")
-                                .font(BatwalkFont.caption).foregroundStyle(BatwalkColor.textSecondaryLight)
-                            ForEach(PilotAnimationCatalog.playableActions(for: speciesID)
-                                .filter { $0.tier != .secret && $0.tier != .hatchReveal }, id: \.id) { action in
-                                let unlocked = Friendship.level(forEXP: bat.friendshipEXP) >= action.unlockLevel
-                                Button {
-                                    moment = BatMomentSelection(action: action)
-                                } label: {
-                                    Label(unlocked ? action.name : "Lv. \(action.unlockLevel) · \(action.name)",
-                                          systemImage: unlocked ? "play.circle" : "lock")
-                                        .font(BatwalkFont.body)
-                                        .frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
+                        let actions = PilotAnimationCatalog.playableActions(for: speciesID)
+                            .filter { $0.tier != .secret && $0.tier != .hatchReveal }
+                        if !actions.isEmpty { // no header without anything under it
+                            Divider()
+                            VStack(alignment: .leading, spacing: 12) {
+                                Text("Little moments").font(BatwalkFont.title)
+                                Text("These habits happen naturally on your Watch as friendship grows. Tap a discovered moment here to watch it again.")
+                                    .font(BatwalkFont.caption).foregroundStyle(BatwalkColor.textSecondaryLight)
+                                ForEach(actions, id: \.id) { action in
+                                    let unlocked = Friendship.level(forEXP: bat.friendshipEXP) >= action.unlockLevel
+                                    Button {
+                                        moment = BatMomentSelection(action: action)
+                                    } label: {
+                                        Label(unlocked ? action.name : "Lv. \(action.unlockLevel) · \(action.name)",
+                                              systemImage: unlocked ? "play.circle" : "lock")
+                                            .font(BatwalkFont.body)
+                                            .frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
+                                    }
+                                    .disabled(!unlocked)
+                                    .accessibilityHint(unlocked ? "Watch this little habit" : "Build friendship on your Watch to unlock")
                                 }
-                                .disabled(!unlocked)
-                                .accessibilityHint(unlocked ? "Watch this little habit" : "Build friendship on your Watch to unlock")
                             }
                         }
                         if let reward = Friendship.keepsake(forEXP: bat.friendshipEXP) {
@@ -223,18 +228,14 @@ struct BatDetailPage: View {
             if let bat { BatMomentPreview(bat: bat, action: selected.action) }
         }
         .safeAreaInset(edge: .bottom) {
+            // One pinned control; the current-companion context sits in the page itself.
             if store.state.collection[speciesID] != nil {
-                VStack(spacing: 10) {
-                    if store.state.companionID != speciesID || store.companionHandoff.isWaiting {
-                        CurrentCompanionRow(compact: true)
-                    }
-                    CompanionChangeControl(speciesID: speciesID)
-                }
+                CompanionChangeControl(speciesID: speciesID)
                     .padding(.horizontal, 24).padding(.vertical, 12)
                     .background(BatwalkColor.lightBackground)
             }
         }
-        .navigationTitle("Batpedia")
+        .navigationTitle(bat?.companionTitle ?? "Batpedia")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar(.visible, for: .navigationBar)
         .toolbar(.hidden, for: .tabBar)

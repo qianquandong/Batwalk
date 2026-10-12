@@ -12,55 +12,89 @@ struct ProgressPage: View {
     @State private var settings = DemoMode.scenario == "settings" || DemoMode.scenario == "health-error"
 
     var body: some View {
-        NavigationStack {
+        TimelineView(.everyMinute) { context in
             Group {
                 if typeSize.isAccessibilitySize {
-                    ScrollView { eggScene.frame(minHeight: 300) }
-                } else { eggScene }
-            }
-            .watchPageBackground()
-            .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
-                    Button { settings = true } label: { Image(systemName: "ellipsis") }
-                        .accessibilityLabel("More options")
+                    ScrollView {
+                        VStack(spacing: 12) {
+                            eggTitle
+                            eggPicture(size: 104)
+                            eggFooter
+                        }
+                        .padding(.horizontal, 8)
+                    }
+                } else {
+                    GeometryReader { geo in
+                        let size = min(100, max(64, geo.size.height - 74))
+                        VStack(spacing: 4) {
+                            eggTitle.frame(height: 18)
+                            eggPicture(size: size)
+                                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                            eggFooter
+                        }
+                        .frame(width: geo.size.width, height: geo.size.height)
+                    }
                 }
             }
+            .foregroundStyle(BatwalkColor.cloud)
+            .watchPageBackground(DemoMode.timeOfDay(at: context.date))
         }
         .sheet(isPresented: $showEggPicker) { EggPickerView() }
         .sheet(isPresented: $settings) { SettingsView(steps: steps) }
         .environment(\.batPageVisible, pageVisible && !settings && !showEggPicker)
     }
 
-    private var eggScene: some View {
-        GeometryReader { geometry in
-            let size = max(64, min(110, geometry.size.height - 92))
-            VStack(spacing: 6) {
-                Spacer(minLength: 0)
+    private var eggTitle: some View {
+        Text("Egg")
+            .font(BatwalkFont.rounded(.caption2, weight: .medium))
+            .foregroundStyle(BatwalkColor.textSecondaryDark)
+            .lineLimit(1).minimumScaleFactor(0.7)
+    }
+
+    private func eggPicture(size: CGFloat) -> some View {
+        BatwalkProgressRing(progress: store.state.egg?.progress ?? 0, lineWidth: 3, pulses: false) {
+            EggSprite(type: store.state.egg?.type ?? .tiny,
+                      state: store.state.egg?.visualState ?? .calm, size: size * 0.78)
+        }
+        .frame(width: size, height: size)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("Egg progress")
+        .accessibilityValue(store.state.egg.map { "\(Int($0.progress * 100)) percent" } ?? "No egg")
+    }
+
+    private var eggFooter: some View {
+        HStack(spacing: 8) {
+            // Stay out of the watchOS navigation toolbar; it triggered a layout
+            // assertion on the simulator. The scene control retains a 44 pt target.
+            Button { settings = true } label: {
+                Image(systemName: "ellipsis").font(.system(size: 18, weight: .semibold))
+            }
+            .buttonStyle(WatchPetControlStyle())
+            .accessibilityLabel("More options")
+
+            Group {
                 if let egg = store.state.egg {
-                    BatwalkProgressRing(progress: egg.progress, lineWidth: 5, pulses: false) {
-                        EggSprite(type: egg.type, state: egg.visualState, size: size * 0.72)
-                    }
-                    .frame(width: size, height: size)
-                    .accessibilityLabel("Egg progress")
                     if egg.isReady {
                         Button("Hatch") { page = 0 }
                             .buttonStyle(BatwalkPrimaryButtonStyle())
                     } else {
-                        Text(egg.stepsRemaining.formatted())
-                            .font(BatwalkFont.rounded(.title2, weight: .semibold)).monospacedDigit()
-                        Text("steps to hatch")
-                            .font(BatwalkFont.micro).foregroundStyle(BatwalkColor.textSecondaryDark)
+                        HStack(spacing: 6) {
+                            Image(systemName: "figure.walk")
+                                .font(BatwalkFont.caption)
+                                .foregroundStyle(BatwalkColor.textSecondaryDark)
+                            Text(egg.stepsRemaining.formatted())
+                                .font(BatwalkFont.headline).monospacedDigit()
+                        }
+                        .accessibilityElement(children: .ignore)
+                        .accessibilityLabel("\(egg.stepsRemaining) steps to hatch")
                     }
                 } else {
-                    EggIcon(size: size * 0.72).accessibilityHidden(true)
                     Button("Next egg") { showEggPicker = true }
                         .buttonStyle(BatwalkPrimaryButtonStyle())
                 }
-                Spacer(minLength: 0)
             }
-            .foregroundStyle(BatwalkColor.cloud)
-            .padding(.horizontal, BatwalkSpacing.sm)
-            .frame(width: geometry.size.width, height: geometry.size.height)
+            .frame(maxWidth: .infinity, minHeight: 44)
         }
+        .padding(.horizontal, 8)
     }
 }

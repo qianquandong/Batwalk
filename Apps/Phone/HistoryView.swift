@@ -6,19 +6,13 @@ import BatwalkCore
 struct HistoryView: View {
     @Environment(GameStore.self) private var store
 
-    @State private var settings = false
     private let columns = Array(repeating: GridItem(.flexible(), spacing: 12), count: 2)
 
     var body: some View {
         NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: BatwalkSpacing.lg) {
-                    HStack {
-                        PhoneHeader(title: "Journal")
-                        Button { settings = true } label: {
-                            Image(systemName: "gearshape").frame(width: 44, height: 44)
-                        }.accessibilityLabel("Settings")
-                    }
+                    PhoneHeader(title: "Journal")
                     Text("Little meetings, remembered.")
                         .font(BatwalkFont.body).foregroundStyle(BatwalkColor.textSecondaryLight)
                     PhoneSyncStatus()
@@ -36,6 +30,9 @@ struct HistoryView: View {
                         StatCard(title: "Steps Walked", value: state.lifetimeCreditedSteps.formatted()) {
                             Image(systemName: "figure.walk").foregroundStyle(BatwalkColor.accent)
                         }
+                    }
+                    // Moon Dust is a late-game currency: a full row once there is any, no orphan tile before.
+                    if state.moonDust > 0 {
                         StatCard(title: "Moon Dust", value: "\(state.moonDust)") {
                             Image(systemName: "sparkle").foregroundStyle(BatwalkColor.accent)
                         }
@@ -46,18 +43,22 @@ struct HistoryView: View {
                         .foregroundStyle(BatwalkColor.textPrimaryLight)
                         .accessibilityAddTraits(.isHeader)
 
-                    if state.history.isEmpty {
+                    if state.history.isEmpty && state.egg == nil {
                         PhoneEmptyState()
                     } else {
+                        // A journal records the past; the one forward-looking entry is the egg on the way.
                         VStack(spacing: 0) {
                             let records = Array(state.history.reversed())
-                            ForEach(Array(records.enumerated()), id: \.offset) { index, record in
-                                TimelineEntry(isLast: index == records.count - 1 && placeholders == 0) {
-                                    HatchHistoryRow(record: record)
+                            if let egg = state.egg {
+                                TimelineEntry(isLast: records.isEmpty, muted: true) {
+                                    HatchProgressSummary(egg: egg, dark: false, compact: true)
+                                        .batwalkLightCard(padding: 12, radius: 18)
                                 }
                             }
-                            ForEach(0..<placeholders, id: \.self) { i in
-                                TimelineEntry(isLast: i == placeholders - 1, muted: true) { UndiscoveredRow() }
+                            ForEach(Array(records.enumerated()), id: \.offset) { index, record in
+                                TimelineEntry(isLast: index == records.count - 1) {
+                                    HatchHistoryRow(record: record)
+                                }
                             }
                         }
                     }
@@ -66,12 +67,10 @@ struct HistoryView: View {
             }
             .background(BatwalkColor.lightBackground.ignoresSafeArea())
             .toolbar(.hidden, for: .navigationBar)
-            .sheet(isPresented: $settings) { PhoneSettingsView() }
         }
     }
 
     private var state: GameState { store.state }
-    private var placeholders: Int { state.collection.count < Roster.all.count ? 2 : 0 }
 }
 
 /// Timeline rail: dot + connecting line on the leading edge.

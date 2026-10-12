@@ -1,0 +1,318 @@
+{
+  "source": {
+    "workflow": "Screenshots",
+    "run": "https://github.com/qianquandong/Batwalk/actions/runs/38215919304",
+    "commit": "4d70859",
+    "branch": "design/quiet-ui-polish",
+    "published": "screenshots-output"
+  },
+  "before": "docs/previews/quiet-watch-2026-10-11/screens (compare/*.png left side)",
+  "files": [
+    {
+      "path": "compare/first-egg.png",
+      "bytes": 100703,
+      "size": "840x556",
+      "sha256": "3be3b3b1c808490f58321e332fd41824084a6f1b45bc6c8052ff3923eea41f4a"
+    },
+    {
+      "path": "compare/friendship-5.png",
+      "bytes": 106915,
+      "size": "840x556",
+      "sha256": "66ebec5c300793c7c09289b9d42ab0de54d9adb596947b146b7989c1b5498c4d"
+    },
+    {
+      "path": "compare/hatch-ready.png",
+      "bytes": 127481,
+      "size": "840x556",
+      "sha256": "cfde00f5ad034ed17206e6f332290df11f6789c87331264ea353333a536e3800"
+    },
+    {
+      "path": "compare/home-day.png",
+      "bytes": 106079,
+      "size": "840x556",
+      "sha256": "7a21236a7227ce109c567a5f288e62a636303cc2dad75c1300c891b815599deb"
+    },
+    {
+      "path": "compare/home-large-type.png",
+      "bytes": 88864,
+      "size": "840x556",
+      "sha256": "6b00ce27e879f1799a2a6595748c88cb1e422de463f0f3f48b3a048357ce358a"
+    },
+    {
+      "path": "compare/home.png",
+      "bytes": 105611,
+      "size": "840x556",
+      "sha256": "0f95fb3e2cfb2562e8d7522a4b68bf018c9165c6dfde291730c4d734b9cc4bf5"
+    },
+    {
+      "path": "compare/phone-batpedia.png",
+      "bytes": 141054,
+      "size": "664x700",
+      "sha256": "95ebd90c622c0730f634dee59421904fb073c11dfd3aaefc690ea7c222d54e2a"
+    },
+    {
+      "path": "compare/phone-companion.png",
+      "bytes": 205479,
+      "size": "664x700",
+      "sha256": "5acde985937c33f4648f4a95894d351bce4691cc80ef66f546c05817ecf5d49b"
+    },
+    {
+      "path": "compare/phone-detail.png",
+      "bytes": 135523,
+      "size": "664x700",
+      "sha256": "dc488f86c8731355791b699c71a21b4759675022c359522214b5c673cfbb3d10"
+    },
+    {
+      "path": "compare/phone-first-egg.png",
+      "bytes": 162461,
+      "size": "664x700",
+      "sha256": "8d06998a35595911aa99c426c8246d86a2a69f354ec479db29e5bcb929e34062"
+    },
+    {
+      "path": "compare/phone-history.png",
+      "bytes": 146665,
+      "size": "664x700",
+      "sha256": "bc0d092946f9220726a07ba6c95eba67d2f49e50807cafa58b43c5acc66acda3"
+    },
+    {
+      "path": "compare/phone-unlock.png",
+      "bytes": 123112,
+      "size": "664x700",
+      "sha256": "147d5feef20b39bb23f548706d814dc8eacca2ffd1d2fab442b713fadc0e4fe2"
+    },
+    {
+      "path": "compare/progress-61.png",
+      "bytes": 64683,
+      "size": "840x556",
+      "sha256": "c29530d123899c64ae3ce86b7a43e1a7d50aa96fd6c7f852f1be3705c3ebc134"
+    },
+    {
+      "path": "compare/reveal-rare.png",
+      "bytes": 147655,
+      "size": "840x556",
+      "sha256": "592d7907d696b4544821b4574f38408bfce1c51aa3a1d18512a670530dcd8597"
+    },
+    {
+      "path": "screens/phone/01-phone-companion.png",
+      "bytes": 651645,
+      "size": "1125x2436",
+      "sha256": "cca7ec32d452da3e321035b1faac6236a008871ebc86516b44517d4a31966d20"
+    },
+    {
+      "path": "screens/phone/02-phone-batpedia.png",
+      "bytes": 307601,
+      "size": "1125x2436",
+      "sha256": "6e0349a570837085ac61f37ca2e966b882ff26c37d95d25a3532c8f31e033904"
+    },
+    {
+      "path": "screens/phone/03-phone-batpedia-rare.png",
+      "bytes": 415709,
+      "size": "1125x2436",
+      "sha256": "f5f3ace7290d06ce24bf4f6a5a3c3de7b7fd6501c9ba6216d6a52fe41b2b05c2"
+    },
+    {
+      "path": "screens/phone/04-phone-detail.png",
+      "bytes": 312997,
+      "size": "1125x2436",
+      "sha256": "5edd258613d73877d5f5ee1e84d7e72b65d36e91e782253d243a7cda24a06d63"
+    },
+    {
+      "path": "screens/phone/05-phone-pending.png",
+      "bytes": 318164,
+      "size": "1125x2436",
+      "sha256": "8b6fc521e169c4f14f4f670fdb407d432aeb081681f7df0337c953ebd17ebde5"
+    },
+    {
+      "path": "screens/phone/06-phone-confirmed.png",
+      "bytes": 315372,
+      "size": "1125x2436",
+      "sha256": "074f297c8007c8cbcc1f526c3e92dee9f77daf53ee84577fc967e1a935c4fd40"
+    },
+    {
+      "path": "screens/phone/07-phone-stale.png",
+      "bytes": 664707,
+      "size": "1125x2436",
+      "sha256": "6bec47757a199ed288e0ad8312de3b3e26baeab9fd37e297a74e747342d4308d"
+    },
+    {
+      "path": "screens/phone/08-phone-first-egg.png",
+      "bytes": 465282,
+      "size": "1125x2436",
+      "sha256": "0b661720ee42e981710cc2edb21bf4ec98e740aa18830e356e9906baf2a7c06f"
+    },
+    {
+      "path": "screens/phone/09-phone-egg-ready.png",
+      "bytes": 666192,
+      "size": "1125x2436",
+      "sha256": "44192a1913f067819a4c0fa8f9cba97ca33f9412846ec361adde8f2ac7125e92"
+    },
+    {
+      "path": "screens/phone/10-phone-history.png",
+      "bytes": 551967,
+      "size": "1125x2436",
+      "sha256": "9782cb2d79d2b817d4d7e7f92d0e9763740d5d80ce4336a9b90630f864804924"
+    },
+    {
+      "path": "screens/phone/11-phone-unlock.png",
+      "bytes": 499011,
+      "size": "1125x2436",
+      "sha256": "2ce001bbd629964777eaf4c1778f047440d52afb908f2e6adca331e160ac998d"
+    },
+    {
+      "path": "screens/phone/12-phone-stats.png",
+      "bytes": 551967,
+      "size": "1125x2436",
+      "sha256": "9782cb2d79d2b817d4d7e7f92d0e9763740d5d80ce4336a9b90630f864804924"
+    },
+    {
+      "path": "screens/phone/13-phone-empty.png",
+      "bytes": 377129,
+      "size": "1125x2436",
+      "sha256": "0a5f040b13acf86faa0365a60eeeed0e57c7a08ca311037a0fa3a758bb0380cb"
+    },
+    {
+      "path": "screens/phone/14-phone-guide.png",
+      "bytes": 349472,
+      "size": "1125x2436",
+      "sha256": "a1cdfc411c9b7d8f53d96cf7ede79c375970706bae67333e7cc557bbe363c66d"
+    },
+    {
+      "path": "screens/watch/01-first-egg.png",
+      "bytes": 79730,
+      "size": "416x496",
+      "sha256": "dc0b337012c279e7f0fdf140dc27191cb91cc2d0bf139babb943ab396b2ea518"
+    },
+    {
+      "path": "screens/watch/02-home.png",
+      "bytes": 81976,
+      "size": "416x496",
+      "sha256": "fdedd3de164d26d5fc454702ae8bb55ebf55ffa7fc2c250a7036809b7ef999ed"
+    },
+    {
+      "path": "screens/watch/03-home-day.png",
+      "bytes": 80850,
+      "size": "416x496",
+      "sha256": "0fd9bd17e80aa5fdc353c79a1a87370750b2b9d6d9f39273bafa99f430bd48df"
+    },
+    {
+      "path": "screens/watch/04-home-cocoa.png",
+      "bytes": 104834,
+      "size": "416x496",
+      "sha256": "768e3a1cc53fb2a015f3dc6ac0a74f9f0ef710fa3a6aee116a35f10b23056bc1"
+    },
+    {
+      "path": "screens/watch/05-home-long-ear.png",
+      "bytes": 99898,
+      "size": "416x496",
+      "sha256": "05a35fa588a754a88659cd64d082f41fa0ea43619ef9a94aa701305a2ae2ad35"
+    },
+    {
+      "path": "screens/watch/06-hatch-ready.png",
+      "bytes": 96624,
+      "size": "416x496",
+      "sha256": "a28796311671f4981ff298903c74fef4641b906b8ae1ec700308c83f112d2369"
+    },
+    {
+      "path": "screens/watch/07-reveal-rare.png",
+      "bytes": 112747,
+      "size": "416x496",
+      "sha256": "880af10e38a121a677b01c0eab61d8f3cd20f01c744f951e41ef72a73483f06f"
+    },
+    {
+      "path": "screens/watch/08-progress-61.png",
+      "bytes": 71522,
+      "size": "416x496",
+      "sha256": "a357e947bcc3ce29637912729f2e687c371633d42acaf2864b2b0719e0b86e21"
+    },
+    {
+      "path": "screens/watch/09-progress-100.png",
+      "bytes": 67079,
+      "size": "416x496",
+      "sha256": "bd8fb550dc68398e35bbf1da383afa6e98a5aa0da7a1f1eaf310ff583e439f1b"
+    },
+    {
+      "path": "screens/watch/10-friendship-1.png",
+      "bytes": 81775,
+      "size": "416x496",
+      "sha256": "18718897b12067a0b26fbbffe31a2bd9550113f00969c242213fda5e5db310de"
+    },
+    {
+      "path": "screens/watch/11-friendship-2.png",
+      "bytes": 82230,
+      "size": "416x496",
+      "sha256": "bc5f5833191d26a82cc30f932ab6d2d1820dba5b99fd649f4d5b30065bfa87d9"
+    },
+    {
+      "path": "screens/watch/12-friendship-3.png",
+      "bytes": 82102,
+      "size": "416x496",
+      "sha256": "2cd6f7a093f1a5f809edc3bd004f5c13cb63eaf3c1730bd9d18ec956c12ffe0c"
+    },
+    {
+      "path": "screens/watch/13-friendship-4.png",
+      "bytes": 82276,
+      "size": "416x496",
+      "sha256": "952697d3a4a9bc96589f6e038ca724d803e8d7972439f44e1751d8be88fa5bea"
+    },
+    {
+      "path": "screens/watch/14-fruit-available.png",
+      "bytes": 82627,
+      "size": "416x496",
+      "sha256": "fe9b6fb7915946719af551e00b34a3dc1a2dadc816cf7ba94b0c70736b1b25aa"
+    },
+    {
+      "path": "screens/watch/15-friendship-5.png",
+      "bytes": 82231,
+      "size": "416x496",
+      "sha256": "f3245cd80ef45c02d92612153c4268af07570f411c19012c79f938b8103a3e5d"
+    },
+    {
+      "path": "screens/watch/16-settings.png",
+      "bytes": 196746,
+      "size": "416x496",
+      "sha256": "1be6c5a228fb2b9fa6d2357b315d226669cc21d44825f83809a9e83392a38b0b"
+    },
+    {
+      "path": "screens/watch/17-health-error.png",
+      "bytes": 196369,
+      "size": "416x496",
+      "sha256": "b38ad8b533eef021c22a17f4955c777f73093c187527fce73208275aa118fd0b"
+    },
+    {
+      "path": "screens/watch/18-home-large-type.png",
+      "bytes": 71649,
+      "size": "416x496",
+      "sha256": "954bf54795600b5935921982b7d0074e9f6b16ece25680629d8a8c4e78af10aa"
+    },
+    {
+      "path": "screens/watch/19-pilot-mochi.png",
+      "bytes": 82231,
+      "size": "416x496",
+      "sha256": "f3245cd80ef45c02d92612153c4268af07570f411c19012c79f938b8103a3e5d"
+    },
+    {
+      "path": "screens/watch/20-pilot-sticky.png",
+      "bytes": 83707,
+      "size": "416x496",
+      "sha256": "f13c761ace6f4387e5a92f109109d6b1bc7e00a6957bfd84d072e64620550a53"
+    },
+    {
+      "path": "screens/watch/21-pilot-walker.png",
+      "bytes": 83883,
+      "size": "416x496",
+      "sha256": "67c20ff97f14d1bc6dbe57060f9ce312ab5c684f0f581421202b479b2f30d99d"
+    },
+    {
+      "path": "screens/watch/22-pilot-cocoa.png",
+      "bytes": 104740,
+      "size": "416x496",
+      "sha256": "4f9cc8ae7d1a7f5afb34f959bc55a5fdd50854084778e1e839bd15e799b3f364"
+    },
+    {
+      "path": "screens/watch/23-pilot-long-ear.png",
+      "bytes": 99729,
+      "size": "416x496",
+      "sha256": "8ce6929b4d364ba18ff2093511d57469f69472482f8bea889e54dedff7f99535"
+    }
+  ]
+}

@@ -1,0 +1,394 @@
+{
+  "source_commit": "9bcf2e4b0476296e8c17d24fb7317f4d8707c961",
+  "captured_at": "2026-10-12",
+  "ci_url": "https://github.com/qianquandong/Batwalk/actions/runs/38260181133",
+  "ci_conclusion": "success",
+  "artwork_modified": false,
+  "capture_note": "Unmodified simulator PNGs. Process checks passed for each capture; representative images were visually inspected. Accessibility screenshots show the initial scroll viewport only. No gesture, VoiceOver, haptic, or physical-device validation is claimed.",
+  "captures": {
+    "small": {
+      "device": "Apple Watch Series 7 (41mm)",
+      "runtime": "watchOS 26.2",
+      "run_id": 38260174909,
+      "run_url": "https://github.com/qianquandong/Batwalk/actions/runs/38260174909",
+      "conclusion": "success",
+      "artifact": "batwalk-watch-screenshots",
+      "images": [
+        {
+          "path": "small/01-first-egg.png",
+          "width": 352,
+          "height": 430,
+          "sha256": "ab80bea108892f231e17d41d1312041d6ac88e6d956b86ec9cffd60a69038bc8",
+          "visually_inspected": true
+        },
+        {
+          "path": "small/02-home.png",
+          "width": 352,
+          "height": 430,
+          "sha256": "c2bc5088cd5da5538b4835603c530ff6b6c4e973505d2b2a8892b748e0482bdc",
+          "visually_inspected": true
+        },
+        {
+          "path": "small/03-home-day.png",
+          "width": 352,
+          "height": 430,
+          "sha256": "335682138683c16b41f20c8f55b19003cac3629095289ceed14593cac7b8e07a",
+          "visually_inspected": true
+        },
+        {
+          "path": "small/04-home-cocoa.png",
+          "width": 352,
+          "height": 430,
+          "sha256": "54b365da8da3288ce70f6f43b445d5a6459b7d7b2e68a8bea2fc190ba0a0dd38",
+          "visually_inspected": false
+        },
+        {
+          "path": "small/05-home-long-ear.png",
+          "width": 352,
+          "height": 430,
+          "sha256": "2e85be76b311e82faf61aadea4f9211faac2d34494fc4d73b4083b7f1eeab833",
+          "visually_inspected": false
+        },
+        {
+          "path": "small/06-hatch-ready.png",
+          "width": 352,
+          "height": 430,
+          "sha256": "fa3b69967e0fa60332a3eb312eced23b32f0b6410a09b92bad5b06e9daef0104",
+          "visually_inspected": true
+        },
+        {
+          "path": "small/07-reveal-rare.png",
+          "width": 352,
+          "height": 430,
+          "sha256": "5997c6aa2bdfcce20ca9eb247f32dcd69db301ff146adae2811735b704808e01",
+          "visually_inspected": true
+        },
+        {
+          "path": "small/08-progress-61.png",
+          "width": 352,
+          "height": 430,
+          "sha256": "a5f30ad99d6f8ac4c9b9265116082def83bd93651e0570ee7472b57e9351ed56",
+          "visually_inspected": true
+        },
+        {
+          "path": "small/09-progress-100.png",
+          "width": 352,
+          "height": 430,
+          "sha256": "9e083257da077911fac9986a5cf4103724e98c7b6dc4ba89c11e822d9351373b",
+          "visually_inspected": false
+        },
+        {
+          "path": "small/10-friendship-1.png",
+          "width": 352,
+          "height": 430,
+          "sha256": "486fec3c9362b1712ab54a7bb68bc0161a15f6e5e86ef3edb64aded50239dcac",
+          "visually_inspected": false
+        },
+        {
+          "path": "small/11-friendship-2.png",
+          "width": 352,
+          "height": 430,
+          "sha256": "0ffdfade9d6dece88b02eef8a31e913131e52dca43dac20966897e041f4e4094",
+          "visually_inspected": false
+        },
+        {
+          "path": "small/12-friendship-3.png",
+          "width": 352,
+          "height": 430,
+          "sha256": "db95b7170d886b66b4e961bfa7fb4badffb6880f97af0a25f25dbab9efbadb1f",
+          "visually_inspected": false
+        },
+        {
+          "path": "small/13-friendship-4.png",
+          "width": 352,
+          "height": 430,
+          "sha256": "db95b7170d886b66b4e961bfa7fb4badffb6880f97af0a25f25dbab9efbadb1f",
+          "visually_inspected": false
+        },
+        {
+          "path": "small/14-fruit-available.png",
+          "width": 352,
+          "height": 430,
+          "sha256": "e4a26f0d198b1efc6181569d3d0b6b41154ffa096cec907b1686ae2dc29a6103",
+          "visually_inspected": false
+        },
+        {
+          "path": "small/15-friendship-5.png",
+          "width": 352,
+          "height": 430,
+          "sha256": "db95b7170d886b66b4e961bfa7fb4badffb6880f97af0a25f25dbab9efbadb1f",
+          "visually_inspected": false
+        },
+        {
+          "path": "small/16-settings.png",
+          "width": 352,
+          "height": 430,
+          "sha256": "b4454c64eeec60f10eea6389ceb3d7ec5e5028413535a5cb87ad3ea3f64c6ae8",
+          "visually_inspected": true
+        },
+        {
+          "path": "small/17-health-error.png",
+          "width": 352,
+          "height": 430,
+          "sha256": "9e6abafdce979cbf99a4d44c7beb70bb6b61419538a392143cf428b60a2598ed",
+          "visually_inspected": true
+        },
+        {
+          "path": "small/18-home-large-type.png",
+          "width": 352,
+          "height": 430,
+          "sha256": "521cda50773a34bcbf13d7fc58534f1fda93e833f16bb9f81af95128b3b0b589",
+          "visually_inspected": true
+        },
+        {
+          "path": "small/19-pilot-mochi.png",
+          "width": 352,
+          "height": 430,
+          "sha256": "6ee08f3985255d42cb66d85f1c7241a992f0ce5ab8955bc301c51e2e68d99d0c",
+          "visually_inspected": false
+        },
+        {
+          "path": "small/20-pilot-sticky.png",
+          "width": 352,
+          "height": 430,
+          "sha256": "cdedc0730eb0d4926378c23549a110e3ffcbee60adc58c0377fd6a27694f234c",
+          "visually_inspected": false
+        },
+        {
+          "path": "small/21-pilot-walker.png",
+          "width": 352,
+          "height": 430,
+          "sha256": "00d52e71187a1aff45bb990cc51c338741c735fe2974a31c41c0e5aab9d2db4e",
+          "visually_inspected": false
+        },
+        {
+          "path": "small/22-pilot-cocoa.png",
+          "width": 352,
+          "height": 430,
+          "sha256": "78cf79afae6f16d654b4ef01682ea0e5a914954f8439a70287e699b0255402cd",
+          "visually_inspected": false
+        },
+        {
+          "path": "small/23-pilot-long-ear.png",
+          "width": 352,
+          "height": 430,
+          "sha256": "db59fb7d7bde02a5b0b224bf83d110ee145e0a25c7e1976dc10f6592bc9d9849",
+          "visually_inspected": false
+        },
+        {
+          "path": "small/24-reveal-large-type.png",
+          "width": 352,
+          "height": 430,
+          "sha256": "2307feb4f0c6c2697be2694f49b833cc150b33e346a505f098a4e6cb55329096",
+          "visually_inspected": true
+        },
+        {
+          "path": "small/25-reveal-shiny.png",
+          "width": 352,
+          "height": 430,
+          "sha256": "28aaa559bda5fda1e705ce64fa8dcec3ed6fd4ca3b12e131b920eba259f34e35",
+          "visually_inspected": true
+        },
+        {
+          "path": "small/26-progress-large-type.png",
+          "width": 352,
+          "height": 430,
+          "sha256": "281eaf03434aeea86ac0cb354668dcf7461cec8942c79e6723d8669da893aca8",
+          "visually_inspected": true
+        }
+      ]
+    },
+    "large": {
+      "device": "Apple Watch Series 10 (46mm)",
+      "runtime": "watchOS 26.2",
+      "run_id": 38260178081,
+      "run_url": "https://github.com/qianquandong/Batwalk/actions/runs/38260178081",
+      "conclusion": "success",
+      "artifact": "batwalk-watch-screenshots",
+      "images": [
+        {
+          "path": "large/01-first-egg.png",
+          "width": 416,
+          "height": 496,
+          "sha256": "d016520860199c05f97ddb635b08e61975054c10b98be8e054944380cf473279",
+          "visually_inspected": false
+        },
+        {
+          "path": "large/02-home.png",
+          "width": 416,
+          "height": 496,
+          "sha256": "d05eb5a41442249dd4928b3795afed8ec1549c39337dc008f3a0085d7912722d",
+          "visually_inspected": true
+        },
+        {
+          "path": "large/03-home-day.png",
+          "width": 416,
+          "height": 496,
+          "sha256": "fdbbcc9bb4851364cdce22254075bfc981064b32c412e0fde93fd37027356377",
+          "visually_inspected": false
+        },
+        {
+          "path": "large/04-home-cocoa.png",
+          "width": 416,
+          "height": 496,
+          "sha256": "324d8b0017d391e5ac4b7c9a2779dce6a23a66a36fdb5693d51deb06cab9ace6",
+          "visually_inspected": false
+        },
+        {
+          "path": "large/05-home-long-ear.png",
+          "width": 416,
+          "height": 496,
+          "sha256": "2b92fae9a8791cc81931449ec03a3dcb1468c05d4a53d5c24c32505dd4bfec08",
+          "visually_inspected": true
+        },
+        {
+          "path": "large/06-hatch-ready.png",
+          "width": 416,
+          "height": 496,
+          "sha256": "b5a39aa59aab7e582904e2735e6443a98f358e6660f4812c3bbbd0c7ba94210b",
+          "visually_inspected": false
+        },
+        {
+          "path": "large/07-reveal-rare.png",
+          "width": 416,
+          "height": 496,
+          "sha256": "1e79babe9115cf84f98683a698a290169f960b5bbe7f369f8ba2aa16749d67a6",
+          "visually_inspected": false
+        },
+        {
+          "path": "large/08-progress-61.png",
+          "width": 416,
+          "height": 496,
+          "sha256": "9f67959e85c93b8e6bbb7cfa0382e09cda47ef55185f185903d5685050fbf607",
+          "visually_inspected": true
+        },
+        {
+          "path": "large/09-progress-100.png",
+          "width": 416,
+          "height": 496,
+          "sha256": "8fe639383aabbff3072d6444aa5c64a777201145dab461fb399b91ec8d408b8e",
+          "visually_inspected": false
+        },
+        {
+          "path": "large/10-friendship-1.png",
+          "width": 416,
+          "height": 496,
+          "sha256": "c62c114982524393bfc30b3cad6448d5d2b52429ca5332e9716e0b90a862a650",
+          "visually_inspected": false
+        },
+        {
+          "path": "large/11-friendship-2.png",
+          "width": 416,
+          "height": 496,
+          "sha256": "33741cd8c2a509817247adb56c65c95e8c7ee70836bc6101304ff65ce790bd52",
+          "visually_inspected": false
+        },
+        {
+          "path": "large/12-friendship-3.png",
+          "width": 416,
+          "height": 496,
+          "sha256": "6d54c9711cb1094b6b9f05fa8a7914b240bef3485b6438ab343b7d4ba10951f5",
+          "visually_inspected": false
+        },
+        {
+          "path": "large/13-friendship-4.png",
+          "width": 416,
+          "height": 496,
+          "sha256": "6d54c9711cb1094b6b9f05fa8a7914b240bef3485b6438ab343b7d4ba10951f5",
+          "visually_inspected": false
+        },
+        {
+          "path": "large/14-fruit-available.png",
+          "width": 416,
+          "height": 496,
+          "sha256": "a155c86be8f6f0eae1856d63025115af1386295a5012730972dd50d8bcb94689",
+          "visually_inspected": false
+        },
+        {
+          "path": "large/15-friendship-5.png",
+          "width": 416,
+          "height": 496,
+          "sha256": "88fdce6556879981c0533fefc9a14245fe90d6feb7f52fa2f78b10dc0c3fbcea",
+          "visually_inspected": false
+        },
+        {
+          "path": "large/16-settings.png",
+          "width": 416,
+          "height": 496,
+          "sha256": "4ea86eadb668ec546ac4c6600b0af787729abccf801040206422310b886170a1",
+          "visually_inspected": false
+        },
+        {
+          "path": "large/17-health-error.png",
+          "width": 416,
+          "height": 496,
+          "sha256": "90aa0e8c1a2f2d3fc4b0d9dd780c9f82fb85d6d12063b2d477c55e3a2132b557",
+          "visually_inspected": false
+        },
+        {
+          "path": "large/18-home-large-type.png",
+          "width": 416,
+          "height": 496,
+          "sha256": "0480950c00404df631098b4e013852bf5a21599ccd0623ac074697cb1d75f7f4",
+          "visually_inspected": false
+        },
+        {
+          "path": "large/19-pilot-mochi.png",
+          "width": 416,
+          "height": 496,
+          "sha256": "88fdce6556879981c0533fefc9a14245fe90d6feb7f52fa2f78b10dc0c3fbcea",
+          "visually_inspected": false
+        },
+        {
+          "path": "large/20-pilot-sticky.png",
+          "width": 416,
+          "height": 496,
+          "sha256": "c3d6136104d40217cf69038e2ec377df1323a0417b88f1cc430d41c378184d85",
+          "visually_inspected": false
+        },
+        {
+          "path": "large/21-pilot-walker.png",
+          "width": 416,
+          "height": 496,
+          "sha256": "86f08c915db07e7061bc34df054c9befe2e13b18a1c0ce75614830fd15bbb688",
+          "visually_inspected": false
+        },
+        {
+          "path": "large/22-pilot-cocoa.png",
+          "width": 416,
+          "height": 496,
+          "sha256": "a1b4d86e00c39c61310060317fe323bc2fc8fc401feea0406ef5538ea407dffe",
+          "visually_inspected": false
+        },
+        {
+          "path": "large/23-pilot-long-ear.png",
+          "width": 416,
+          "height": 496,
+          "sha256": "a317d5c078c7f0c905193747b23ab2c7929c91cb621dc3eb0747c91b46e250d1",
+          "visually_inspected": false
+        },
+        {
+          "path": "large/24-reveal-large-type.png",
+          "width": 416,
+          "height": 496,
+          "sha256": "61910fa4600bc7cb9dbf4ac5013ca97e1e4df85a97ff657c8c884107a94ad245",
+          "visually_inspected": false
+        },
+        {
+          "path": "large/25-reveal-shiny.png",
+          "width": 416,
+          "height": 496,
+          "sha256": "819fccf7bf1f81e96f39002cc79e655168b277699eb9a604a624a40d3f1ae7bd",
+          "visually_inspected": true
+        },
+        {
+          "path": "large/26-progress-large-type.png",
+          "width": 416,
+          "height": 496,
+          "sha256": "81c739e71004238b5006235d7e39605ce291ad43ba712780e68a77463db6d79a",
+          "visually_inspected": false
+        }
+      ]
+    }
+  }
+}
