@@ -36,7 +36,7 @@ struct RootView: View {
             OnboardingView(steps: steps)
         }
         }
-        .dynamicTypeSize(DemoMode.scenario == "home-large-type" ? .accessibility3 : typeSize)
+        .dynamicTypeSize(DemoMode.scenario?.hasSuffix("large-type") == true ? .accessibility3 : typeSize)
         .onOpenURL { url in
             guard let route = WatchRoute(url: url) else { return }
             page = route == .progress ? 1 : 0

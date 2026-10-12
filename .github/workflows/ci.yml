@@ -31,6 +31,8 @@ jobs:
       - uses: actions/checkout@v4
       - name: Test CI fallback detection
         run: python3 -m unittest discover -s scripts/tests -p 'test_github_ci_fallback.py'
+      - name: Test simulator capture failure detection
+        run: python3 -m unittest discover -s scripts/tests -p 'test_capture_screens.py'
       - uses: actions/setup-node@v4
         with:
           node-version: '22'

@@ -25,22 +25,24 @@ failed=0
 for sc in $scenarios; do
   i=$((i + 1))
   xcrun simctl terminate "$SIM" "$bundle" >/dev/null 2>&1 || true
-  xcrun simctl launch "$SIM" "$bundle" -BatwalkDemo "$sc" >/dev/null
+  launch=$(xcrun simctl launch "$SIM" "$bundle" -BatwalkDemo "$sc")
+  pid=$(printf '%s\n' "$launch" | awk -F ': ' 'END {print $NF}')
+  case "$pid" in
+    ''|*[!0-9]*) echo "::error::No app PID returned for $platform/$sc"; exit 1;;
+  esac
   sleep 6
   xcrun simctl io "$SIM" screenshot "$out/$(printf '%02d' $i)-$sc.png" >/dev/null
-  # A capture of the watch face / home screen means the app is gone: say so instead of
-  # letting a wrong picture pass as the scenario. (launchctl occasionally misses a live
-  # app, so look twice before raising the flag.)
-  if xcrun simctl spawn "$SIM" launchctl list 2>/dev/null | grep -q "$bundle" \
-     || { sleep 1; xcrun simctl spawn "$SIM" launchctl list 2>/dev/null | grep -q "$bundle"; }; then
+  # Simulator apps are host processes. Check the exact PID returned by launch;
+  # launchctl can retain a job label even after the process has crashed.
+  if kill -0 "$pid" 2>/dev/null; then
     echo "captured $platform/$sc"
   else
-    echo "::warning::$platform/$sc: app not seen running at capture time — check the image (crash or exit?)"
+    echo "::error::$platform/$sc: app exited before capture (PID $pid); screenshot is not valid app evidence"
     failed=$((failed + 1))
     echo "::group::simulator log around $sc"
     xcrun simctl spawn "$SIM" log show --last 40s --style compact \
       --predicate 'process CONTAINS[c] "batwalk" OR eventMessage CONTAINS[c] "batwalk"' 2>/dev/null \
-      | grep -viE 'healthd|HealthKit|CoreData|analytics' | tail -n 60
+      | grep -viE 'healthd|HealthKit|CoreData|analytics' | tail -n 60 || true
     echo "::endgroup::"
   fi
 done
@@ -66,4 +68,6 @@ if [ "$failed" -gt 0 ]; then
         echo "::endgroup::";;
     esac
   done
+  echo "::error::$failed $platform scenario(s) exited; retained images and diagnostics for investigation"
+  exit 1
 fi
