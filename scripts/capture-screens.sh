@@ -40,11 +40,21 @@ done
 # Crash reports from the simulator land in the host's DiagnosticReports; show the
 # newest ones for this app so a launch crash is readable from the job log.
 if [ "$failed" -gt 0 ]; then
-  for report in $(ls -t ~/Library/Logs/DiagnosticReports/*.ips 2>/dev/null | head -n 6); do
+  for report in $(ls -t ~/Library/Logs/DiagnosticReports/*.ips 2>/dev/null | head -n 4); do
     case "$(basename "$report")" in
       *[Bb]atwalk*)
         echo "::group::crash report $(basename "$report")"
-        head -c 12000 "$report"; echo
+        # Line 1 is a summary header; the body is JSON. Show the abort reason and the
+        # faulting thread's top frames (image + symbol) rather than register dumps.
+        tail -n +2 "$report" | jq -r '
+          . as $r | ($r.faultingThread // 0) as $t |
+          "exception: \($r.exception.type // "?") \($r.exception.signal // "")",
+          "reason: \($r.asi // {} | tostring)",
+          "last exception backtrace: \(($r.lastExceptionBacktrace // []) | length) frames",
+          ($r.threads[$t].frames[:24][] |
+            "  \($r.usedImages[.imageIndex].name // "?")  \(.symbol // ("+" + (.imageOffset|tostring)))")
+        ' 2>/dev/null || head -c 6000 "$report"
+        echo
         echo "::endgroup::";;
     esac
   done
