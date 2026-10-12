@@ -22,12 +22,17 @@ on:
         description: "Optional exact Watch scenario for a focused visual check"
         type: string
         default: ""
+      watch_size:
+        description: "Watch display size for layout review"
+        type: choice
+        options: [large, small]
+        default: large
 
 permissions:
   contents: write
 
 concurrency:
-  group: screenshots
+  group: screenshots-${{ inputs.watch_only && 'watch' || 'both' }}
   cancel-in-progress: true
 
 jobs:
@@ -45,28 +50,36 @@ jobs:
           brew install xcodegen
           xcodegen generate
 
-      - name: Boot an Apple Watch simulator
-        run: scripts/watch-sim.sh
-
       - name: Build Watch app for the simulator
         run: |
           scripts/ci-xcodebuild.sh \
             -project Batwalk.xcodeproj \
             -scheme BatwalkWatch \
             -configuration Debug \
-            -destination "id=$SIM" \
+            -destination 'generic/platform=watchOS Simulator' \
             -derivedDataPath build \
             CODE_SIGNING_ALLOWED=NO \
             build
+
+      - name: Boot an Apple Watch simulator
+        env:
+          BATWALK_WATCH_SIZE: ${{ inputs.watch_size }}
+        run: scripts/watch-sim.sh
 
       - name: Capture Watch scenarios
         env:
           BATWALK_SCREEN_SCENARIO: ${{ inputs.watch_scenario }}
         run: scripts/capture-screens.sh watch "$RUNNER_TEMP/out/screens/watch"
 
-      - name: Boot an iPhone simulator
-        if: ${{ !inputs.watch_only }}
-        run: scripts/phone-sim.sh
+      - name: Save Watch screenshots immediately
+        uses: actions/upload-artifact@v4
+        with:
+          name: batwalk-watch-screenshots
+          path: ${{ runner.temp }}/out/screens/watch
+          if-no-files-found: error
+
+      - name: Shut down Watch before building iPhone
+        run: xcrun simctl shutdown "$SIM"
 
       - name: Build iPhone app for the simulator
         if: ${{ !inputs.watch_only }}
@@ -75,16 +88,21 @@ jobs:
             -project Batwalk.xcodeproj \
             -scheme BatwalkPhone \
             -configuration Debug \
-            -destination "id=$PHONE_SIM" \
+            -destination 'generic/platform=iOS Simulator' \
             -derivedDataPath build \
             CODE_SIGNING_ALLOWED=NO \
             build
+
+      - name: Boot an iPhone simulator
+        if: ${{ !inputs.watch_only }}
+        run: scripts/phone-sim.sh
 
       - name: Capture iPhone scenarios
         if: ${{ !inputs.watch_only }}
         run: SIM="$PHONE_SIM" scripts/capture-screens.sh phone "$RUNNER_TEMP/out/screens/phone"
 
       - name: Save review screenshots
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: batwalk-screenshots

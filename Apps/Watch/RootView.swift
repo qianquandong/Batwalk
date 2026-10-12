@@ -1,13 +1,14 @@
 import SwiftUI
 import BatwalkCore
 
-/// HOME · PROGRESS · FRIENDSHIP · BATS · SETTINGS as vertical pages (Digital Crown).
-/// Native paging is kept; each page fades/slides its content in (BatwalkAppear).
+/// Two glanceable pages. Collection and device maintenance are secondary routes;
+/// friendship explanations and action browsing live on the phone.
 struct RootView: View {
     @Environment(GameStore.self) private var store
+    @Environment(\.dynamicTypeSize) private var typeSize
     let steps: StepService
 
-    @State private var page = DemoMode.page
+    @State private var page = DemoMode.page == 1 ? 1 : 0
 
     var body: some View {
         Group {
@@ -27,19 +28,15 @@ struct RootView: View {
             }
         } else if store.state.hasStarted {
             TabView(selection: $page) {
-                HomeView().environment(\.batPageVisible, page == 0).tag(0)
+                HomeView(page: $page).environment(\.batPageVisible, page == 0).tag(0)
                 ProgressPage(page: $page, steps: steps).environment(\.batPageVisible, page == 1).tag(1)
-                if store.state.companion != nil {
-                    FriendshipPage().environment(\.batPageVisible, page == 2).tag(2)
-                    CollectionPage().environment(\.batPageVisible, page == 3).tag(3)
-                }
-                SettingsView(steps: steps).environment(\.batPageVisible, page == 4).tag(4)
             }
             .tabViewStyle(.verticalPage)
         } else {
             OnboardingView(steps: steps)
         }
         }
+        .dynamicTypeSize(DemoMode.scenario == "home-large-type" ? .accessibility3 : typeSize)
         .onOpenURL { url in
             guard let route = WatchRoute(url: url) else { return }
             page = route == .progress ? 1 : 0

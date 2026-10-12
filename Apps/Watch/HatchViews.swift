@@ -28,7 +28,7 @@ struct HatchReadyView: View {
 
     var body: some View {
         GeometryReader { geo in
-            let stage = geo.size.height * 0.46
+            let stage = geo.size.height * 0.65
             VStack(spacing: 3) {
                 ZStack {
                     Circle()
@@ -53,24 +53,14 @@ struct HatchReadyView: View {
                         .accessibilityAddTraits(.isButton)
                 }
                 .frame(height: stage)
-                Text(crack == 0 ? "Your egg is ready!" : crack < 1 ? "Keep going…" : "It's opening!")
-                    .font(BatwalkFont.headline)
-                    .foregroundStyle(.white)
-                Text(crack == 0 ? "Turn the crown or tap to crack it open." : "\(Int(crack * 100))% open")
-                    .font(BatwalkFont.micro)
-                    .foregroundStyle(BatwalkColor.textSecondaryDark)
-                    .multilineTextAlignment(.center)
-                    .lineLimit(2)
-                    .minimumScaleFactor(0.8)
-                    .monospacedDigit()
                 Spacer(minLength: 2)
                 Button(action: hatchNow) {
                     HStack(spacing: 6) {
                         EggIcon(type: egg.type, size: 16)
-                        Text("Hatch Now")
+                        Text("Hatch")
                     }
                 }
-                .buttonStyle(BatwalkPrimaryButtonStyle(minHeight: 40))
+                .buttonStyle(BatwalkPrimaryButtonStyle(minHeight: 44))
                 .doubleTapPrimaryAction()
             }
             .padding(.horizontal, BatwalkSpacing.sm)
@@ -197,7 +187,7 @@ struct HatchSequenceView: View {
                     RarityChip(rarity: rarity)
                     if record.isShiny { VariantChip(shiny: true) }
                 }
-                Text(subtitle)
+                Text(record.outcome == .duplicate ? "Hello again" : "Hello, little one")
                     .font(BatwalkFont.micro)
                     .foregroundStyle(BatwalkColor.textSecondaryDark)
                     .multilineTextAlignment(.center)
@@ -211,20 +201,11 @@ struct HatchSequenceView: View {
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .clipped()
-            Button(record.source == .moonDust ? "Continue" : "Start next egg", action: onDone)
-                .buttonStyle(BatwalkPrimaryButtonStyle(minHeight: 40))
+            Button("Continue", action: onDone)
+                .buttonStyle(BatwalkPrimaryButtonStyle(minHeight: 44))
                 .doubleTapPrimaryAction()
                 .padding(.horizontal, BatwalkSpacing.sm)
                 .padding(.bottom, 4)
-        }
-    }
-
-    private var subtitle: String {
-        if record.source == .moonDust { return "Called with Moon Dust — a new friend!" }
-        switch record.outcome {
-        case .newSpecies: return record.isShiny ? "A Shiny new friend!" : "A new friend!"
-        case .newShiny: return "A Shiny one!"
-        case .duplicate: return "Old friend! +\(presentation.result.friendshipGained) Friendship"
         }
     }
 

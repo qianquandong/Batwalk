@@ -1,0 +1,341 @@
+{
+  "source_commit": "1f7b796",
+  "source_run": "https://github.com/qianquandong/Batwalk/actions/runs/38202859075",
+  "artifact": "batwalk-screenshots",
+  "note": "Original simulator output; capture completion does not imply visual or functional acceptance.",
+  "files": [
+    {
+      "path": "screens/phone/01-phone-companion.png",
+      "sha256": "ded559f8587b2f5f175ae13cc037ec7404ee200441cb3df9044ac6954a3f6f3f",
+      "pixels": [
+        1125,
+        2436
+      ],
+      "review_status": "visually_inspected"
+    },
+    {
+      "path": "screens/phone/02-phone-batpedia.png",
+      "sha256": "3d39ba21cf50acc1abfb4fd682ac342f4e7a3b69af74542a03998ec790fcc99e",
+      "pixels": [
+        1125,
+        2436
+      ],
+      "review_status": "not_individually_reviewed"
+    },
+    {
+      "path": "screens/phone/03-phone-batpedia-rare.png",
+      "sha256": "39992dad529841eb882d0e147a7d776d49cadd2484f6506f70ad8d9973d7ff6d",
+      "pixels": [
+        1125,
+        2436
+      ],
+      "review_status": "not_individually_reviewed"
+    },
+    {
+      "path": "screens/phone/04-phone-detail.png",
+      "sha256": "85eb83d85abc0c1d296c9d58476cb269012ae34fc58f69e1ed3753410d1d7599",
+      "pixels": [
+        1125,
+        2436
+      ],
+      "review_status": "visually_inspected"
+    },
+    {
+      "path": "screens/phone/05-phone-pending.png",
+      "sha256": "83ce26d961cd5fe6f9c322d3575e7c531ce87586af0a8811889b0f4431b2d479",
+      "pixels": [
+        1125,
+        2436
+      ],
+      "review_status": "not_individually_reviewed"
+    },
+    {
+      "path": "screens/phone/06-phone-confirmed.png",
+      "sha256": "21d93bd51e3de6612a3c796b02940da4f9414ecb635028e0339a507a9050cf3b",
+      "pixels": [
+        1125,
+        2436
+      ],
+      "review_status": "not_individually_reviewed"
+    },
+    {
+      "path": "screens/phone/07-phone-stale.png",
+      "sha256": "77c9ecc19efc02d40972550b44e3cd1fe78eb0b8d5fbf03676c322ec69efb506",
+      "pixels": [
+        1125,
+        2436
+      ],
+      "review_status": "not_individually_reviewed"
+    },
+    {
+      "path": "screens/phone/08-phone-first-egg.png",
+      "sha256": "cc5c216e97a503c1b38550f220c03ed18d386cc71d0e7b7e892471b0f983f6d4",
+      "pixels": [
+        1125,
+        2436
+      ],
+      "review_status": "not_individually_reviewed"
+    },
+    {
+      "path": "screens/phone/09-phone-egg-ready.png",
+      "sha256": "70ab15799ed988310a16f7884c5651bf56d41f2b4bccde203e57d80e8131ea6c",
+      "pixels": [
+        1125,
+        2436
+      ],
+      "review_status": "not_individually_reviewed"
+    },
+    {
+      "path": "screens/phone/10-phone-history.png",
+      "sha256": "48d746cf81e97abbf17b0503a782fbcc86ee8afee35fe7b044e816265119dc3e",
+      "pixels": [
+        1125,
+        2436
+      ],
+      "review_status": "not_individually_reviewed"
+    },
+    {
+      "path": "screens/phone/11-phone-unlock.png",
+      "sha256": "7d7547afa071f7d8240bc65ba33f2ae1d31613d29984c33f8235a2e968703d50",
+      "pixels": [
+        1125,
+        2436
+      ],
+      "review_status": "not_individually_reviewed"
+    },
+    {
+      "path": "screens/phone/12-phone-stats.png",
+      "sha256": "48d746cf81e97abbf17b0503a782fbcc86ee8afee35fe7b044e816265119dc3e",
+      "pixels": [
+        1125,
+        2436
+      ],
+      "review_status": "not_individually_reviewed"
+    },
+    {
+      "path": "screens/phone/13-phone-empty.png",
+      "sha256": "3ee3e74a19c926e6e86c2614beff360b83064d0f44275a9e61a7ac065ec5276c",
+      "pixels": [
+        1125,
+        2436
+      ],
+      "review_status": "not_individually_reviewed"
+    },
+    {
+      "path": "screens/phone/14-phone-guide.png",
+      "sha256": "641151a6f05a679249ec55ff09325a9174e012ee2014fbcafc4df080fe8ca842",
+      "pixels": [
+        1125,
+        2436
+      ],
+      "review_status": "visually_inspected"
+    },
+    {
+      "path": "screens/watch/01-first-egg.png",
+      "sha256": "6ae812888aeccd4ce935cf203c57612a359f8c856ca9ee8203eb2aa3ba9f51d5",
+      "pixels": [
+        352,
+        430
+      ],
+      "review_status": "not_individually_reviewed"
+    },
+    {
+      "path": "screens/watch/02-home.png",
+      "sha256": "5fafd21926cc157417ca3e046754effd7216b02d1b05af997796f54c065ea50d",
+      "pixels": [
+        352,
+        430
+      ],
+      "review_status": "layout_needs_refinement"
+    },
+    {
+      "path": "screens/watch/03-home-day.png",
+      "sha256": "eb64c257c2f095ba999222561064fef89207728acc2d002ba5a8c1b39fc7cb29",
+      "pixels": [
+        352,
+        430
+      ],
+      "review_status": "not_individually_reviewed"
+    },
+    {
+      "path": "screens/watch/04-home-cocoa.png",
+      "sha256": "5e3900a02d19034d07abd55f6d7fd1655a2e30a765909a1ce801be893401b4ea",
+      "pixels": [
+        352,
+        430
+      ],
+      "review_status": "not_individually_reviewed"
+    },
+    {
+      "path": "screens/watch/05-home-long-ear.png",
+      "sha256": "d5fc0d473a59a43dd11f9ee7ae97b0678c40dc0275bad73b748a8d539a44be16",
+      "pixels": [
+        352,
+        430
+      ],
+      "review_status": "not_individually_reviewed"
+    },
+    {
+      "path": "screens/watch/06-hatch-ready.png",
+      "sha256": "831bccdce4c42c16ec487a83ba74166d54048b1da475a6749f2b177cedb2becf",
+      "pixels": [
+        352,
+        430
+      ],
+      "review_status": "visually_inspected"
+    },
+    {
+      "path": "screens/watch/07-reveal-rare.png",
+      "sha256": "62a61f15b709103ae41f433266f0ad6825e93e15f00bb9c2ce95b1b313bfeba4",
+      "pixels": [
+        352,
+        430
+      ],
+      "review_status": "not_individually_reviewed"
+    },
+    {
+      "path": "screens/watch/08-progress-61.png",
+      "sha256": "9de0d92424f9a8183f55f2bae65e7abb4b39ab417aeeddb3b6d36e5230649de4",
+      "pixels": [
+        352,
+        430
+      ],
+      "review_status": "invalid_capture_watch_face"
+    },
+    {
+      "path": "screens/watch/09-progress-100.png",
+      "sha256": "9de0d92424f9a8183f55f2bae65e7abb4b39ab417aeeddb3b6d36e5230649de4",
+      "pixels": [
+        352,
+        430
+      ],
+      "review_status": "invalid_capture_watch_face"
+    },
+    {
+      "path": "screens/watch/10-friendship-1.png",
+      "sha256": "23f192e788d16394c0b758bb5395f38f446c0917abba76cbc67d6f2d9c403d49",
+      "pixels": [
+        352,
+        430
+      ],
+      "review_status": "not_individually_reviewed"
+    },
+    {
+      "path": "screens/watch/11-friendship-2.png",
+      "sha256": "17aa4367aae4f95e12bfa8bac5fb62ba5aeb97030c3fb03f58ef6c5dfe68f036",
+      "pixels": [
+        352,
+        430
+      ],
+      "review_status": "not_individually_reviewed"
+    },
+    {
+      "path": "screens/watch/12-friendship-3.png",
+      "sha256": "ef41cf5e3c4608cf1ebaf6f9e7c8d57633de71a00cac3f3bdb4baab4a8c66c80",
+      "pixels": [
+        352,
+        430
+      ],
+      "review_status": "not_individually_reviewed"
+    },
+    {
+      "path": "screens/watch/13-friendship-4.png",
+      "sha256": "ef41cf5e3c4608cf1ebaf6f9e7c8d57633de71a00cac3f3bdb4baab4a8c66c80",
+      "pixels": [
+        352,
+        430
+      ],
+      "review_status": "not_individually_reviewed"
+    },
+    {
+      "path": "screens/watch/14-fruit-available.png",
+      "sha256": "335790c438b10c7b8cc6a7cd42a82d7134b01906415be07e6bd2671c61d9df8c",
+      "pixels": [
+        352,
+        430
+      ],
+      "review_status": "not_individually_reviewed"
+    },
+    {
+      "path": "screens/watch/15-friendship-5.png",
+      "sha256": "40b1a32e1dac8c43316e2a7274ec36c2db73a81a315f2d21f9dabc81bf40124a",
+      "pixels": [
+        352,
+        430
+      ],
+      "review_status": "not_individually_reviewed"
+    },
+    {
+      "path": "screens/watch/16-settings.png",
+      "sha256": "6d5f4f0bb6a74cc2299f144ac59e3e6fe0f8d3d69783bd0aeb870f4b0e06e1b5",
+      "pixels": [
+        352,
+        430
+      ],
+      "review_status": "invalid_capture_watch_face"
+    },
+    {
+      "path": "screens/watch/17-health-error.png",
+      "sha256": "6d5f4f0bb6a74cc2299f144ac59e3e6fe0f8d3d69783bd0aeb870f4b0e06e1b5",
+      "pixels": [
+        352,
+        430
+      ],
+      "review_status": "invalid_capture_watch_face"
+    },
+    {
+      "path": "screens/watch/18-home-large-type.png",
+      "sha256": "ee3514923478ef04f1c427f7b948ce802eb8c02ff596a2558cd3ee273295e90b",
+      "pixels": [
+        352,
+        430
+      ],
+      "review_status": "layout_needs_refinement"
+    },
+    {
+      "path": "screens/watch/19-pilot-mochi.png",
+      "sha256": "40b1a32e1dac8c43316e2a7274ec36c2db73a81a315f2d21f9dabc81bf40124a",
+      "pixels": [
+        352,
+        430
+      ],
+      "review_status": "not_individually_reviewed"
+    },
+    {
+      "path": "screens/watch/20-pilot-sticky.png",
+      "sha256": "afb0f9b86d031315a07d5d817a02401ee50ce524728e1c3e574373eeeed874f8",
+      "pixels": [
+        352,
+        430
+      ],
+      "review_status": "not_individually_reviewed"
+    },
+    {
+      "path": "screens/watch/21-pilot-walker.png",
+      "sha256": "bba3e69409ab11be144cd60be91b3032c640f89f74dc0c2876a167209aae656a",
+      "pixels": [
+        352,
+        430
+      ],
+      "review_status": "not_individually_reviewed"
+    },
+    {
+      "path": "screens/watch/22-pilot-cocoa.png",
+      "sha256": "cd4312f6974fc9c8a7a7bbc1074ba9e61738767b896955afd0818f1020708d51",
+      "pixels": [
+        352,
+        430
+      ],
+      "review_status": "not_individually_reviewed"
+    },
+    {
+      "path": "screens/watch/23-pilot-long-ear.png",
+      "sha256": "1ee8f1ae8e610e15a8d3c5fd063288c09cec86a14d0daf9dc85fe3ebfbc87227",
+      "pixels": [
+        352,
+        430
+      ],
+      "review_status": "not_individually_reviewed"
+    }
+  ]
+}

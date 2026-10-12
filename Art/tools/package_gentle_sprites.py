@@ -35,10 +35,37 @@ def cell_at(sheet, column, row, columns, rows):
                        round((column + 1) * width / columns), round((row + 1) * height / rows)))
 
 
+def package_app_icon(require_complete=False):
+    # The approved hatching icon is already finished artwork. Export it directly
+    # instead of reducing it to the 64 px grid used by the legacy sprite pack.
+    app_icon_path = SOURCE / "app-icon-v3.png"
+    if app_icon_path.exists():
+        with Image.open(app_icon_path) as source:
+            assert source.width == source.height, "Application icon must be square"
+            assert source.convert("RGBA").getchannel("A").getextrema() == (255, 255), "Application icon must be opaque"
+            app_icon = source.convert("RGB").resize((1024, 1024), Image.Resampling.LANCZOS)
+    else:
+        app_icon_path = SOURCE / "app-icon-v2.png"
+        if not app_icon_path.exists():
+            assert not require_complete, "Missing application icon"
+            return
+        with Image.open(app_icon_path) as source:
+            app_icon = source.convert("RGB").resize((64, 64), Image.Resampling.NEAREST).resize((1024, 1024), Image.Resampling.NEAREST)
+    for platform in ("Watch", "Phone"):
+        destination = ROOT / f"Apps/{platform}/Assets.xcassets/AppIcon.appiconset/icon-1024.png"
+        app_icon.save(destination, optimize=True)
+    app_icon.resize((256, 256), Image.Resampling.LANCZOS).save(ROOT / "Art/icon-placeholder.png", optimize=True)
+    print(f"Packaged Watch + iPhone application icon from {app_icon_path.name}")
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--require-complete", action="store_true")
+    parser.add_argument("--icons-only", action="store_true", help="Export app icons without repackaging character sprites")
     args = parser.parse_args()
+    if args.icons_only:
+        package_app_icon(args.require_complete)
+        return
     count = 0
     for species in ROSTER:
         path = SOURCE / f"{species}-sheet-v2.png"
@@ -62,15 +89,7 @@ def main():
             count += 1
     else:
         assert not args.require_complete, "Missing egg/icon sheet"
-    app_icon_path = SOURCE / "app-icon-v2.png"
-    if app_icon_path.exists():
-        app_icon = Image.open(app_icon_path).convert("RGB")
-        app_icon = app_icon.resize((64, 64), Image.Resampling.NEAREST).resize((1024, 1024), Image.Resampling.NEAREST)
-        for platform in ("Watch", "Phone"):
-            destination = ROOT / f"Apps/{platform}/Assets.xcassets/AppIcon.appiconset/icon-1024.png"
-            app_icon.save(destination, optimize=True)
-    else:
-        assert not args.require_complete, "Missing application icon"
+    package_app_icon(args.require_complete)
     print(f"Packaged {count} Gentle pixel assets")
 
 

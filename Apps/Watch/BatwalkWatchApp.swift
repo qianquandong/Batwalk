@@ -56,6 +56,7 @@ struct BatwalkWatchApp: App {
         }
         .modelContainer(container)
         .onChange(of: scenePhase) { _, phase in
+            if phase == .background { store.endCompanionVisit() }
             guard phase == .active else { return }
             Task {
                 await purchases.refreshEntitlements()

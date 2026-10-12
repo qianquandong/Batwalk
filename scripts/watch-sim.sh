@@ -17,13 +17,26 @@ if [ -z "$runtime" ]; then
 fi
 [ -n "$runtime" ] || { echo "::error::No watchOS simulator runtime available"; exit 1; }
 
-devtype=$(xcrun simctl list devicetypes -j | python3 -c '
-import json, sys
+device_types=$(xcrun simctl list devicetypes -j | python3 -c '
+import json, os, sys
 ds = [d for d in json.load(sys.stdin)["devicetypes"] if d["name"].startswith("Apple Watch")]
-pref = [d for d in ds if "46mm" in d["name"] or "45mm" in d["name"]]
-print((pref or ds)[-1]["identifier"])')
+small = os.environ.get("BATWALK_WATCH_SIZE") == "small"
+sizes = ["41mm", "40mm", "42mm"] if small else ["46mm", "45mm"]
+for size in sizes:
+    for d in reversed(ds):
+        if size in d["name"]:
+            print(d["identifier"])')
 
-udid=$(xcrun simctl create "Batwalk Watch" "$devtype" "$runtime")
+# Xcode lists obsolete device types too. Only a successful create confirms that
+# this installed runtime supports a model; try the preferred sizes in order.
+udid=""
+while IFS= read -r devtype; do
+  [ -n "$devtype" ] || continue
+  if udid=$(xcrun simctl create "Batwalk Watch" "$devtype" "$runtime" 2>/dev/null); then
+    break
+  fi
+done <<< "$device_types"
+[ -n "$udid" ] || { echo "::error::No compatible Watch model for requested size"; exit 1; }
 xcrun simctl boot "$udid"
 xcrun simctl bootstatus "$udid" -b >/dev/null 2>&1 || sleep 20
 echo "::notice::Simulator: $devtype on $runtime"

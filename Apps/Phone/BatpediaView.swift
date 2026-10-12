@@ -160,6 +160,8 @@ struct BatDetailPage: View {
                         Divider()
                         VStack(alignment: .leading, spacing: 12) {
                             Text("Little moments").font(BatwalkFont.title)
+                            Text("These habits happen naturally on your Watch as friendship grows. Tap a discovered moment here to watch it again.")
+                                .font(BatwalkFont.caption).foregroundStyle(BatwalkColor.textSecondaryLight)
                             ForEach(PilotAnimationCatalog.playableActions(for: speciesID)
                                 .filter { $0.tier != .secret && $0.tier != .hatchReveal }, id: \.id) { action in
                                 let unlocked = Friendship.level(forEXP: bat.friendshipEXP) >= action.unlockLevel
@@ -174,6 +176,13 @@ struct BatDetailPage: View {
                                 .disabled(!unlocked)
                                 .accessibilityHint(unlocked ? "Watch this little habit" : "Build friendship on your Watch to unlock")
                             }
+                        }
+                        if let reward = Friendship.keepsake(forEXP: bat.friendshipEXP) {
+                            Label(reward, systemImage: "heart.fill").font(BatwalkFont.body)
+                        }
+                        if let next = Friendship.nextKeepsake(forEXP: bat.friendshipEXP) {
+                            Text("Next: \(next)").font(BatwalkFont.caption)
+                                .foregroundStyle(BatwalkColor.textSecondaryLight)
                         }
                         if let cousin = species.realLifeCousin {
                             Text("Little habits").font(BatwalkFont.title)

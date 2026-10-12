@@ -42,13 +42,22 @@ on-device approval and pixel cleanup; new Shiny palettes currently use hue rotat
 `*-sheet-v2.png` sources are 3 columns (sleeping / awake / happy) × 2 rows
 (Normal / Shiny). `egg-icons-v2.png` is a row-major 4×4 grid: three states
 (calm / cracked / ready) for each of Starter, Tiny, Forest, Moon, Crystal, then
-the strawberry. `app-icon-v2.png` supplies both app icons.
+the strawberry. [`app-icon-v3.png`](app-icon-v3.png), the approved C · Hatching
+Mochi concept, supplies both the iPhone and Watch icons. The original artwork is
+preserved; the packager exports opaque 1024 px PNGs directly, with no baked-in
+corner mask. `app-icon-v2.png` is retained as the historical fallback.
 
 Generated with the built-in imagegen tool; complete prompts are preserved in
 [`generation-prompts.json`](generation-prompts.json). Package with:
 
 ```sh
 python3 Art/tools/package_gentle_sprites.py --require-complete
+```
+
+To update only the two app icons and the README thumbnail:
+
+```sh
+python3 Art/tools/package_gentle_sprites.py --icons-only --require-complete
 ```
 
 The packager preserves fixed cell coordinates and alpha, creates 64 px logical

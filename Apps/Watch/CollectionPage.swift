@@ -1,9 +1,7 @@
 import SwiftUI
 import BatwalkCore
 
-/// Collection (board: Watch › 4. Collection): 3-column grid, glowing unlocked
-/// tiles, dark locked tiles, ♥ on the companion. Newly found bats play the unlock
-/// reveal. Above the grid: the "met every free bat" card and the Moon Dust row.
+/// Offline collection tools, reached inside the Options navigation stack.
 struct CollectionPage: View {
     @Environment(GameStore.self) private var store
     /// Species the player has already seen in the grid (UI memory, not game state).
@@ -16,66 +14,43 @@ struct CollectionPage: View {
     private let columns = Array(repeating: GridItem(.flexible(), spacing: 6), count: 3)
 
     var body: some View {
-        NavigationStack {
-            ScrollView {
-                VStack(spacing: 6) {
-                    HStack {
-                        Spacer()
-                        Text("\(store.state.collection.count)/\(Roster.all.count)")
-                            .font(BatwalkFont.caption)
-                            .monospacedDigit()
-                            .foregroundStyle(BatwalkColor.textSecondaryDark)
-                            .padding(.trailing, 10)
-                    }
-                    if store.state.hasCompletedFreeRoster { freeCompleteCard }
-                    moonDustRow
-                    LazyVGrid(columns: columns, spacing: 6) {
-                        ForEach(Roster.all) { species in
-                            if let bat = store.state.collection[species.id] {
-                                NavigationLink(value: species.id) {
-                                    BatCollectionTile(bat: bat,
-                                                      isCompanion: store.state.companionID == species.id,
-                                                      isNew: newIDs.contains(species.id))
-                                }
-                                .buttonStyle(PressableStyle())
-                            } else {
-                                LockedBatTile()
+        ScrollView {
+            VStack(spacing: 6) {
+                HStack {
+                    Spacer()
+                    Text("\(store.state.collection.count)/\(Roster.all.count)")
+                        .font(BatwalkFont.caption)
+                        .monospacedDigit()
+                        .foregroundStyle(BatwalkColor.textSecondaryDark)
+                        .padding(.trailing, 10)
+                }
+                moonDustRow
+                LazyVGrid(columns: columns, spacing: 6) {
+                    ForEach(Roster.all) { species in
+                        if let bat = store.state.collection[species.id] {
+                            NavigationLink(value: species.id) {
+                                BatCollectionTile(bat: bat,
+                                                  isCompanion: store.state.companionID == species.id,
+                                                  isNew: newIDs.contains(species.id))
                             }
+                            .buttonStyle(PressableStyle())
+                        } else {
+                            LockedBatTile()
                         }
                     }
                 }
-                .padding(.horizontal, 2)
-                .batwalkAppear()
             }
-            .navigationTitle("Bats")
-            .navigationDestination(for: String.self) { BatDetailView(speciesID: $0) }
-            .watchPageBackground()
+            .padding(.horizontal, 2)
+            .batwalkAppear()
         }
+        .navigationTitle("Bats")
+        .navigationDestination(for: String.self) { BatDetailView(speciesID: $0) }
+        .watchPageBackground()
         .onAppear(perform: markNewBats)
         .sheet(isPresented: $showUnlock) { WatchUnlockView() }
         .fullScreenCover(item: $calling) { presentation in
             HatchSequenceView(presentation: presentation) { calling = nil }
         }
-    }
-
-    /// The free tier is finished: say so, and show what the full collection holds.
-    /// Shown only once every free bat has been met (never as a nag before that).
-    private var freeCompleteCard: some View {
-        Button { showUnlock = true } label: {
-            VStack(alignment: .leading, spacing: 3) {
-                Label("You've met all \(Roster.freeSpecies.count) free bats", systemImage: "sparkles")
-                    .font(BatwalkFont.caption)
-                Text(store.state.trialEgg() != nil
-                     ? "\(Roster.all.count - Roster.freeSpecies.count) more are waiting — and a free Forest Egg is yours to try."
-                     : "\(Roster.all.count - Roster.freeSpecies.count) more are waiting in the full collection.")
-                    .font(BatwalkFont.micro)
-                    .foregroundStyle(BatwalkColor.textSecondaryDark)
-            }
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .foregroundStyle(.white)
-            .batwalkGlassCard(padding: 8, radius: 14)
-        }
-        .buttonStyle(PressableStyle())
     }
 
     /// Duplicates of a max-Friendship bat pay Moon Dust; enough dust calls a bat the
@@ -102,7 +77,7 @@ struct CollectionPage: View {
                     Text("You've met every bat. Dust will matter again when new bats arrive.")
                         .font(BatwalkFont.micro).foregroundStyle(BatwalkColor.textSecondaryDark)
                 } else {
-                    Text("Duplicates of a Lv. 5 bat turn into dust. \(cost) dust calls a bat you haven't met.")
+                    Text("More about Moon Dust on iPhone.")
                         .font(BatwalkFont.micro).foregroundStyle(BatwalkColor.textSecondaryDark)
                 }
             }
@@ -148,7 +123,7 @@ struct CollectionPage: View {
     }
 }
 
-/// Bat detail on the Watch: companion, nickname, Shiny toggle, Friendship.
+/// Offline companion, nickname and Shiny controls; growth details live on iPhone.
 struct BatDetailView: View {
     @Environment(GameStore.self) private var store
     let speciesID: String
@@ -160,7 +135,7 @@ struct BatDetailView: View {
             if let bat = store.state.collection[speciesID], let species = bat.species {
                 VStack(spacing: 6) {
                     BatHeroView(speciesID: speciesID, shiny: bat.showsShiny, mood: .awake, size: 76,
-                                friendshipEXP: bat.friendshipEXP)
+                                friendshipEXP: bat.friendshipEXP, showsKeepsake: false)
                     Text(bat.displayName).font(BatwalkFont.headline).foregroundStyle(.white)
                     if bat.nickname != nil {
                         Text(species.name).font(BatwalkFont.micro).foregroundStyle(BatwalkColor.textSecondaryDark)
@@ -169,19 +144,6 @@ struct BatDetailView: View {
                         RarityChip(rarity: species.rarity)
                         if bat.hasShiny { VariantChip(shiny: bat.showsShiny) }
                     }
-
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text("Friendship Lv. \(Friendship.level(forEXP: bat.friendshipEXP))")
-                            .font(BatwalkFont.caption)
-                            .foregroundStyle(BatwalkColor.rose)
-                        FriendshipProgressView(exp: bat.friendshipEXP)
-                        if Friendship.level(forEXP: bat.friendshipEXP) >= Friendship.maxLevel {
-                            Label("Duplicates now pay Moon Dust", systemImage: "sparkle")
-                                .font(BatwalkFont.micro)
-                                .foregroundStyle(BatwalkColor.rarityShiny)
-                        }
-                    }
-                    .batwalkGlassCard(padding: 8, radius: 14)
 
                     if store.state.companionID == speciesID {
                         Label("Current Companion", systemImage: "heart.fill")

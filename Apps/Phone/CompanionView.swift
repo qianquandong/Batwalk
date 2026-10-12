@@ -6,6 +6,7 @@ struct CompanionView: View {
     @Environment(\.batPageVisible) private var pageVisible
     @Binding var tab: PhoneTab
     @State private var settings = false
+    @State private var guide = DemoMode.scenario == "phone-guide"
 
     var body: some View {
         NavigationStack {
@@ -29,6 +30,14 @@ struct CompanionView: View {
                                 }
                             }
                             .batwalkLightCard()
+                            NavigationLink {
+                                BatDetailPage(speciesID: bat.speciesID)
+                            } label: {
+                                Label("Little moments & friendship", systemImage: "play.circle")
+                                    .font(BatwalkFont.headline).frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
+                            }
+                            Text("Your bat greets you in its own way when you open the Watch app. Closer friendship brings new habits; daytime is for sleepy little moments.")
+                                .font(BatwalkFont.caption).foregroundStyle(BatwalkColor.textSecondaryLight)
                         }
                         if let egg = store.state.egg {
                             VStack(alignment: .leading, spacing: 10) {
@@ -50,12 +59,21 @@ struct CompanionView: View {
                         if let error = store.lastError {
                             Text(error).font(BatwalkFont.caption).foregroundStyle(BatwalkColor.textSecondaryLight)
                         }
-                        Text("Pet, feed and hatch on your Watch.")
-                            .font(BatwalkFont.caption).foregroundStyle(BatwalkColor.textSecondaryLight)
-                            .frame(maxWidth: .infinity)
+                        HStack(spacing: 20) {
+                            Label(store.state.fruit.formatted(), systemImage: "leaf")
+                            Label(store.state.bankedSteps.formatted(), systemImage: "figure.walk")
+                        }
+                        .font(BatwalkFont.headline)
+                        .accessibilityLabel("\(store.state.fruit) fruit, \(store.state.bankedSteps) steps saved for the next egg")
+                        Text("Fruit · Steps saved for your next egg")
+                            .font(BatwalkFont.micro).foregroundStyle(BatwalkColor.textSecondaryLight)
                         Button { tab = .batpedia } label: {
-                            HStack { Text("Meet your bats"); Image(systemName: "arrow.right") }
+                            HStack { Text("Choose your Watch companion"); Image(systemName: "arrow.right") }
                                 .font(BatwalkFont.headline).frame(maxWidth: .infinity, minHeight: 44)
+                        }
+                        NavigationLink { WatchGuideView() } label: {
+                            Label("How to play & Watch help", systemImage: "book")
+                                .font(BatwalkFont.body).frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
                         }
                     }
                     .foregroundStyle(BatwalkColor.textPrimaryLight)
@@ -65,6 +83,12 @@ struct CompanionView: View {
             .background(BatwalkColor.lightBackground.ignoresSafeArea())
             .toolbar(.hidden, for: .navigationBar)
             .sheet(isPresented: $settings) { PhoneSettingsView() }
+            .sheet(isPresented: $guide) {
+                NavigationStack {
+                    WatchGuideView()
+                        .toolbar { ToolbarItem(placement: .confirmationAction) { Button("Done") { guide = false } } }
+                }
+            }
         }
     }
 
@@ -119,6 +143,9 @@ struct PhoneSettingsView: View {
         NavigationStack {
             List {
                 Section("Your little world") {
+                    NavigationLink { WatchGuideView() } label: {
+                        Label("How to play & Watch help", systemImage: "book")
+                    }
                     Button { showUnlock = true } label: {
                         Label("Full collection & purchases", systemImage: "sparkles")
                     }

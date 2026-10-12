@@ -1,4 +1,4 @@
-<p align="center"><img src="Art/icon-placeholder.png" width="128" alt="Batwalk placeholder icon"></p>
+<p align="center"><img src="Art/icon-placeholder.png" width="128" alt="Batwalk app icon — hatching Mochi"></p>
 
 # Batwalk
 
@@ -147,3 +147,18 @@ Code is released under the [MIT License](LICENSE). The artwork — everything un
 `Art/` except `Art/tools/`, every image in the apps' asset catalogs, and the bat
 character designs — is licensed [CC BY-NC 4.0](Art/LICENSE): share and adapt it
 with credit, no commercial use without permission.
+
+### Quiet Watch interface
+
+Watch now has two primary pages: the companion (tap to pet, fruit to feed) and its egg.
+Friendship levels, unlock explanations, action replays and purchases live on iPhone.
+Opening the Watch app plays one deterministic, unlocked habit appropriate to the time
+of day; page switches and step refreshes do not replay it. The next visit can greet
+again. Pet/feed reactions and rare legendary moments retain their own triggers.
+
+The egg page’s More button retains device-local step access and notification controls,
+plus offline collection management. No save schema or character art changed.
+The Screenshots workflow accepts `watch_size: small` to check the 41/40 mm layout;
+`home-large-type` also exercises accessibility text sizes.
+
+See the [actual Watch/iPhone screenshots and remaining visual issues](docs/previews/quiet-watch-2026-10-11/README.md).

@@ -106,6 +106,29 @@ public enum PilotAnimationCatalog {
         return unique(for: speciesID, actionID: action.id, friendshipLevel: friendshipLevel)
     }
 
+    /// A familiar greeting on opening, chosen deterministically from shipped art.
+    /// Feeding/petting reactions and legendary secrets still need their real triggers.
+    /// Daytime never wakes a sleeping bat for a flying/night-time performance.
+    public static func opening(for speciesID: String, friendshipLevel: Int,
+                               time: TimeOfDay) -> BatAnimationClip? {
+        let eligible = playableActions(for: speciesID).filter { action in
+            guard action.unlockLevel <= friendshipLevel,
+                  action.tier == .idleQuirk || action.tier == .signature else { return false }
+            switch action.trigger {
+            case .asleep: return time == .day
+            case .dusk: return time == .dusk
+            case .idleNight: return time == .night
+            case .walkReturn, .newDay: return time != .day
+            default: return false
+            }
+        }
+        let action = eligible.sorted {
+            if $0.unlockLevel != $1.unlockLevel { return $0.unlockLevel > $1.unlockLevel }
+            return $0.id < $1.id
+        }.first
+        return action.flatMap { unique(for: speciesID, actionID: $0.id, friendshipLevel: friendshipLevel) }
+    }
+
     public static func playableActions(for speciesID: String) -> [BatAction] {
         ActionCatalog.actions(for: speciesID).filter {
             LaunchActionFrames.seconds["\(speciesID)/\($0.id)"] != nil ||
@@ -280,5 +303,21 @@ public enum BatPlaybackPolicy {
     public static func permitsAnimation(pageVisible: Bool, sceneActive: Bool,
                                         luminanceReduced: Bool, reduceMotion: Bool) -> Bool {
         pageVisible && sceneActive && !luminanceReduced && !reduceMotion
+    }
+}
+
+/// One greeting per bat during a foreground visit. Page changes, step updates and
+/// wrist dimming do not reset it. This is presentation state, never a game reward.
+public struct BatOpeningMemory: Sendable {
+    private var seen = Set<String>()
+    public init() {}
+    public mutating func leaveApp() { seen.removeAll() }
+
+    public mutating func request(speciesID: String, friendshipLevel: Int, time: TimeOfDay,
+                                 motionAllowed: Bool) -> BatAnimationRequest? {
+        guard seen.insert(speciesID).inserted, motionAllowed,
+              let clip = PilotAnimationCatalog.opening(for: speciesID, friendshipLevel: friendshipLevel, time: time)
+        else { return nil }
+        return BatAnimationRequest(actionIDs: [clip.actionID])
     }
 }

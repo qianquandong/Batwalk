@@ -22,6 +22,17 @@ on:
         description: "Upload to TestFlight (off = only archive & sign, which also registers the App IDs)"
         type: boolean
         default: true
+      build_number:
+        description: "Build number greater than the latest TestFlight build (blank = GitHub run number)"
+        type: string
+        required: false
+      runner:
+        description: "Standard Mac runner pool (Intel is a fallback when Apple Silicon is queued)"
+        type: choice
+        default: macos-15
+        options:
+          - macos-15
+          - macos-15-intel
 
 concurrency:
   group: testflight
@@ -30,14 +41,21 @@ concurrency:
 jobs:
   testflight:
     name: Archive, sign, upload
-    runs-on: macos-15
+    runs-on: ${{ inputs.runner == 'macos-15-intel' && 'macos-15-intel' || 'macos-15' }}
     timeout-minutes: 45
     env:
-      BUILD_NUMBER: ${{ github.run_number }}
+      BUILD_NUMBER: ${{ inputs.build_number || github.run_number }}
       BATWALK_APP_GROUP: ${{ vars.BATWALK_APP_GROUP_ENABLED }}
       BATWALK_CLOUD_BACKUP: ${{ vars.BATWALK_CLOUD_BACKUP_ENABLED }}
     steps:
       - uses: actions/checkout@v4
+
+      - name: Validate build number
+        run: |
+          if [[ ! "$BUILD_NUMBER" =~ ^[1-9][0-9]{0,3}$ ]]; then
+            echo "::error::Build number must be an integer from 1 to 9999"
+            exit 1
+          fi
 
       - name: Check secrets are set
         env:
