@@ -160,3 +160,5 @@ The egg page’s More button retains device-local step access and notification c
 plus offline collection management. No save schema or character art changed.
 The Screenshots workflow accepts `watch_size: small` to check the 41/40 mm layout;
 `home-large-type` also exercises accessibility text sizes.
+
+See the [actual Watch/iPhone screenshots and remaining visual issues](docs/previews/quiet-watch-2026-10-11/README.md).
