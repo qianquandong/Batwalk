@@ -115,6 +115,7 @@ struct HatchSequenceView: View {
     }
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.dynamicTypeSize) private var typeSize
     @State private var phase: Phase
     @State private var dimmed = false
     @State private var shakeAngle: Double = 0
@@ -168,33 +169,40 @@ struct HatchSequenceView: View {
     /// The essential reveal fits first. Accessibility text can scroll above a
     /// pinned Continue button, including shiny and duplicate-reward variants.
     private var reveal: some View {
-        VStack(spacing: 6) {
-            ViewThatFits(in: .vertical) {
-                revealDetails.fixedSize(horizontal: false, vertical: true)
-                ScrollView { revealDetails }
+        GeometryReader { geometry in
+            VStack(spacing: 4) {
+                if typeSize.isAccessibilitySize {
+                    ScrollView { revealDetails(pictureSize: 60) }
+                } else {
+                    // Reserve space for the name, chips and Continue first. A
+                    // scroll view's flexible proposal otherwise hides the labels
+                    // behind the pinned button on a 41 mm Watch.
+                    revealDetails(pictureSize: min(70, max(36, geometry.size.height - 114)))
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                }
+                Button("Continue", action: onDone)
+                    .buttonStyle(BatwalkPrimaryButtonStyle(minHeight: 44))
+                    .doubleTapPrimaryAction()
+                    .padding(.bottom, 4)
             }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            Button("Continue", action: onDone)
-                .buttonStyle(BatwalkPrimaryButtonStyle(minHeight: 44))
-                .doubleTapPrimaryAction()
-                .padding(.bottom, 4)
+            .padding(.horizontal, BatwalkSpacing.sm)
+            .frame(width: geometry.size.width, height: geometry.size.height)
         }
-        .padding(.horizontal, BatwalkSpacing.sm)
     }
 
-    private var revealDetails: some View {
+    private func revealDetails(pictureSize: CGFloat) -> some View {
         VStack(spacing: 4) {
             ZStack {
                 Circle()
                     .fill(RadialGradient(colors: [(special ? rarity.color : BatwalkColor.accentSoft).opacity(special ? 0.22 : 0.12), .clear],
                                          center: .center, startRadius: 4, endRadius: 64))
-                    .frame(width: 80, height: 80)
-                if special { SparkleField(count: 6, color: record.isShiny ? BatwalkColor.rarityShiny : rarity.color, spread: 36) }
-                BatHeroView(speciesID: record.speciesID, shiny: record.isShiny, mood: .happy, size: 70,
+                    .frame(width: pictureSize, height: pictureSize)
+                if special { SparkleField(count: 6, color: record.isShiny ? BatwalkColor.rarityShiny : rarity.color, spread: pictureSize * 0.45) }
+                BatHeroView(speciesID: record.speciesID, shiny: record.isShiny, mood: .happy, size: pictureSize,
                             animationRequest: revealRequest, showsKeepsake: false)
                     .scaleEffect(revealScale)
             }
-            .frame(height: 76)
+            .frame(height: pictureSize)
             Text(species?.name ?? "New bat")
                 .font(BatwalkFont.headline)
                 .foregroundStyle(.white)

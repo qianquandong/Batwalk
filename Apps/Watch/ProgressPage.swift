@@ -45,7 +45,7 @@ struct ProgressPage: View {
     }
 
     private var eggTitle: some View {
-        Text("Next little friend")
+        Text("Egg")
             .font(BatwalkFont.rounded(.caption2, weight: .medium))
             .foregroundStyle(BatwalkColor.textSecondaryDark)
             .lineLimit(1).minimumScaleFactor(0.7)
@@ -78,12 +78,12 @@ struct ProgressPage: View {
                         Button("Hatch") { page = 0 }
                             .buttonStyle(BatwalkPrimaryButtonStyle())
                     } else {
-                        VStack(spacing: 0) {
+                        HStack(spacing: 6) {
+                            Image(systemName: "figure.walk")
+                                .font(BatwalkFont.caption)
+                                .foregroundStyle(BatwalkColor.textSecondaryDark)
                             Text(egg.stepsRemaining.formatted())
                                 .font(BatwalkFont.headline).monospacedDigit()
-                            Text("steps to hatch")
-                                .font(BatwalkFont.rounded(.caption2))
-                                .foregroundStyle(BatwalkColor.textSecondaryDark)
                         }
                         .accessibilityElement(children: .ignore)
                         .accessibilityLabel("\(egg.stepsRemaining) steps to hatch")

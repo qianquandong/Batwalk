@@ -36,7 +36,11 @@ struct WatchPetControlStyle: ButtonStyle {
         configuration.label
             .foregroundStyle(BatwalkColor.cloud)
             .frame(width: 56, height: 44)
-            .background(BatwalkColor.cloud.opacity(configuration.isPressed ? 0.16 : 0.06), in: Capsule())
+            .background {
+                Capsule()
+                    .fill(BatwalkColor.cloud.opacity(configuration.isPressed ? 0.16 : 0.06))
+                    .frame(width: 52, height: 34)
+            }
             .contentShape(Capsule())
             .opacity(enabled ? 1 : 0.4)
     }
