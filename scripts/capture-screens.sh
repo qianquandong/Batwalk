@@ -29,11 +29,13 @@ for sc in $scenarios; do
   sleep 6
   xcrun simctl io "$SIM" screenshot "$out/$(printf '%02d' $i)-$sc.png" >/dev/null
   # A capture of the watch face / home screen means the app is gone: say so instead of
-  # letting a wrong picture pass as the scenario.
-  if xcrun simctl spawn "$SIM" launchctl list 2>/dev/null | grep -q "$bundle"; then
+  # letting a wrong picture pass as the scenario. (launchctl occasionally misses a live
+  # app, so look twice before raising the flag.)
+  if xcrun simctl spawn "$SIM" launchctl list 2>/dev/null | grep -q "$bundle" \
+     || { sleep 1; xcrun simctl spawn "$SIM" launchctl list 2>/dev/null | grep -q "$bundle"; }; then
     echo "captured $platform/$sc"
   else
-    echo "::warning::$platform/$sc: app was not running at capture time (crashed or exited)"
+    echo "::warning::$platform/$sc: app not seen running at capture time — check the image (crash or exit?)"
     failed=$((failed + 1))
     echo "::group::simulator log around $sc"
     xcrun simctl spawn "$SIM" log show --last 40s --style compact \
