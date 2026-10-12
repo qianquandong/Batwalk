@@ -22,6 +22,11 @@ on:
         description: "Optional exact Watch scenario for a focused visual check"
         type: string
         default: ""
+      watch_size:
+        description: "Watch display size for layout review"
+        type: choice
+        options: [large, small]
+        default: large
 
 permissions:
   contents: write
@@ -46,6 +51,8 @@ jobs:
           xcodegen generate
 
       - name: Boot an Apple Watch simulator
+        env:
+          BATWALK_WATCH_SIZE: ${{ inputs.watch_size }}
         run: scripts/watch-sim.sh
 
       - name: Build Watch app for the simulator

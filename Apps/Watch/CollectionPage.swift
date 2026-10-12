@@ -27,7 +27,6 @@ struct CollectionPage: View {
                             .foregroundStyle(BatwalkColor.textSecondaryDark)
                             .padding(.trailing, 10)
                     }
-                    if store.state.hasCompletedFreeRoster { freeCompleteCard }
                     moonDustRow
                     LazyVGrid(columns: columns, spacing: 6) {
                         ForEach(Roster.all) { species in
@@ -58,26 +57,6 @@ struct CollectionPage: View {
         }
     }
 
-    /// The free tier is finished: say so, and show what the full collection holds.
-    /// Shown only once every free bat has been met (never as a nag before that).
-    private var freeCompleteCard: some View {
-        Button { showUnlock = true } label: {
-            VStack(alignment: .leading, spacing: 3) {
-                Label("You've met all \(Roster.freeSpecies.count) free bats", systemImage: "sparkles")
-                    .font(BatwalkFont.caption)
-                Text(store.state.trialEgg() != nil
-                     ? "\(Roster.all.count - Roster.freeSpecies.count) more are waiting — and a free Forest Egg is yours to try."
-                     : "\(Roster.all.count - Roster.freeSpecies.count) more are waiting in the full collection.")
-                    .font(BatwalkFont.micro)
-                    .foregroundStyle(BatwalkColor.textSecondaryDark)
-            }
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .foregroundStyle(.white)
-            .batwalkGlassCard(padding: 8, radius: 14)
-        }
-        .buttonStyle(PressableStyle())
-    }
-
     /// Duplicates of a max-Friendship bat pay Moon Dust; enough dust calls a bat the
     /// player has not met. Hidden until dust is possible, so it never clutters a new game.
     @ViewBuilder
@@ -102,7 +81,7 @@ struct CollectionPage: View {
                     Text("You've met every bat. Dust will matter again when new bats arrive.")
                         .font(BatwalkFont.micro).foregroundStyle(BatwalkColor.textSecondaryDark)
                 } else {
-                    Text("Duplicates of a Lv. 5 bat turn into dust. \(cost) dust calls a bat you haven't met.")
+                    Text("More about Moon Dust on iPhone.")
                         .font(BatwalkFont.micro).foregroundStyle(BatwalkColor.textSecondaryDark)
                 }
             }
@@ -160,7 +139,7 @@ struct BatDetailView: View {
             if let bat = store.state.collection[speciesID], let species = bat.species {
                 VStack(spacing: 6) {
                     BatHeroView(speciesID: speciesID, shiny: bat.showsShiny, mood: .awake, size: 76,
-                                friendshipEXP: bat.friendshipEXP)
+                                friendshipEXP: bat.friendshipEXP, showsKeepsake: false)
                     Text(bat.displayName).font(BatwalkFont.headline).foregroundStyle(.white)
                     if bat.nickname != nil {
                         Text(species.name).font(BatwalkFont.micro).foregroundStyle(BatwalkColor.textSecondaryDark)
@@ -169,19 +148,6 @@ struct BatDetailView: View {
                         RarityChip(rarity: species.rarity)
                         if bat.hasShiny { VariantChip(shiny: bat.showsShiny) }
                     }
-
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text("Friendship Lv. \(Friendship.level(forEXP: bat.friendshipEXP))")
-                            .font(BatwalkFont.caption)
-                            .foregroundStyle(BatwalkColor.rose)
-                        FriendshipProgressView(exp: bat.friendshipEXP)
-                        if Friendship.level(forEXP: bat.friendshipEXP) >= Friendship.maxLevel {
-                            Label("Duplicates now pay Moon Dust", systemImage: "sparkle")
-                                .font(BatwalkFont.micro)
-                                .foregroundStyle(BatwalkColor.rarityShiny)
-                        }
-                    }
-                    .batwalkGlassCard(padding: 8, radius: 14)
 
                     if store.state.companionID == speciesID {
                         Label("Current Companion", systemImage: "heart.fill")

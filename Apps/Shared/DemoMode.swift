@@ -26,8 +26,8 @@ enum HealthStatus: Equatable {
 /// Without the argument this file does nothing.
 enum DemoMode {
     // The capture script reads these two lines — keep each list on one line.
-    static let watchScenarios = ["first-egg", "home", "home-day", "home-cocoa", "home-long-ear", "hatch-ready", "reveal-rare", "progress-61", "progress-100", "friendship-1", "friendship-2", "friendship-3", "friendship-4", "fruit-available", "friendship-5", "collection-1", "collection-rare", "free-complete", "settings", "health-error", "pilot-mochi", "pilot-sticky", "pilot-walker", "pilot-cocoa", "pilot-long-ear"] // scenarios:watch
-    static let phoneScenarios = ["phone-companion", "phone-batpedia", "phone-batpedia-rare", "phone-detail", "phone-pending", "phone-confirmed", "phone-stale", "phone-first-egg", "phone-egg-ready", "phone-history", "phone-unlock", "phone-stats", "phone-empty"] // scenarios:phone
+    static let watchScenarios = ["first-egg", "home", "home-day", "home-cocoa", "home-long-ear", "hatch-ready", "reveal-rare", "progress-61", "progress-100", "friendship-1", "friendship-2", "friendship-3", "friendship-4", "fruit-available", "friendship-5", "settings", "health-error", "home-large-type", "pilot-mochi", "pilot-sticky", "pilot-walker", "pilot-cocoa", "pilot-long-ear"] // scenarios:watch
+    static let phoneScenarios = ["phone-companion", "phone-batpedia", "phone-batpedia-rare", "phone-detail", "phone-pending", "phone-confirmed", "phone-stale", "phone-first-egg", "phone-egg-ready", "phone-history", "phone-unlock", "phone-stats", "phone-empty", "phone-guide"] // scenarios:phone
 
     static let scenario: String? = {
         let args = ProcessInfo.processInfo.arguments
@@ -39,7 +39,7 @@ enum DemoMode {
 
     /// Forced Day / Dusk / Night (nil = real clock).
     private(set) static var timeOverride: TimeOfDay?
-    /// Watch: 0 Home · 1 Progress · 2 Friendship · 3 Bats · 4 Settings.
+    /// Watch: 0 Companion · 1 Egg (Options is a sheet on the egg page).
     /// iPhone: 0 Companion · 1 Batpedia · 2 Journal. Purchases live in Settings.
     private(set) static var page = 0
     /// Hatch result shown as the reveal on launch.
@@ -136,19 +136,19 @@ enum DemoMode {
             walk(2_500)
         case "friendship-1":
             // Board: Lv. 1 · 20 / 100 · Feed (0)
-            page = 2
+            page = 0
             boardEgg()
             _ = try? state.feed("mochi")
             _ = try? state.feed("mochi")
         case "fruit-available":
-            page = 2
+            page = 0
             boardEgg()
         case "friendship-5":
-            page = 2
+            page = 0
             for _ in 0..<26 { hatch(.tiny, "mochi") } // duplicates → Friendship EXP
             boardEgg()
         case "friendship-2", "friendship-3", "friendship-4":
-            page = 2
+            page = 0
             let duplicates = scenario == "friendship-2" ? 3 : scenario == "friendship-3" ? 7 : 13
             for _ in 0..<duplicates { hatch(.tiny, "mochi") }
             boardEgg()
@@ -168,11 +168,11 @@ enum DemoMode {
             newlyUnlocked = ["galaxy"]
             boardEgg()
         case "settings":
-            page = 4
+            page = 1
             healthStatus = .connected
             boardEgg()
         case "health-error":
-            page = 4
+            page = 1
             healthStatus = .needsAttention
             boardEgg()
         case "phone-companion", "phone-batpedia", "phone-detail", "phone-pending", "phone-confirmed", "phone-stale":

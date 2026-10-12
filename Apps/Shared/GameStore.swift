@@ -32,6 +32,8 @@ final class GameStore {
     @ObservationIgnored private let onCommit: ((Data) -> Void)?
     @ObservationIgnored private var visitSaveID: UUID?
     @ObservationIgnored private var visits = BatVisitMemory()
+    @ObservationIgnored private var openingMemory = BatOpeningMemory()
+    @ObservationIgnored private var openingSaveID: UUID?
 
     init(container: ModelContainer, role: Role, archive: SaveArchive? = nil,
          commit: @escaping (ModelContext) throws -> Void = { try $0.save() },
@@ -169,6 +171,19 @@ final class GameStore {
         let events = visits.visit(speciesID: bat.speciesID, day: day, creditedSteps: state.lifetimeCreditedSteps)
         if !isDemo, previous != visits { try? archive.saveVisits(visits, saveID: state.saveID) }
         return events
+    }
+
+    func endCompanionVisit() { openingMemory.leaveApp() }
+
+    /// Called only by the visible, active Watch companion. No rewards or save writes.
+    func companionOpeningRequest(time: TimeOfDay, motionAllowed: Bool) -> BatAnimationRequest? {
+        guard role == .watch, let bat = state.companion else { return nil }
+        if openingSaveID != state.saveID {
+            openingMemory.leaveApp()
+            openingSaveID = state.saveID
+        }
+        return openingMemory.request(speciesID: bat.speciesID,
+            friendshipLevel: Friendship.level(forEXP: bat.friendshipEXP), time: time, motionAllowed: motionAllowed)
     }
 
     private func persistRecovered() throws {

@@ -18,9 +18,11 @@ fi
 [ -n "$runtime" ] || { echo "::error::No watchOS simulator runtime available"; exit 1; }
 
 devtype=$(xcrun simctl list devicetypes -j | python3 -c '
-import json, sys
+import json, os, sys
 ds = [d for d in json.load(sys.stdin)["devicetypes"] if d["name"].startswith("Apple Watch")]
-pref = [d for d in ds if "46mm" in d["name"] or "45mm" in d["name"]]
+small = os.environ.get("BATWALK_WATCH_SIZE") == "small"
+sizes = ["41mm", "40mm"] if small else ["46mm", "45mm"]
+pref = [d for d in ds if any(size in d["name"] for size in sizes)]
 print((pref or ds)[-1]["identifier"])')
 
 udid=$(xcrun simctl create "Batwalk Watch" "$devtype" "$runtime")
