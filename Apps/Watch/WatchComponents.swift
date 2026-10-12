@@ -28,6 +28,34 @@ struct BatwalkStatRow<Icon: View>: View {
     }
 }
 
+/// Five small dots under the companion's name: the quiet Watch answer to
+/// "how close are we?" without listing a level. Pulses once on a level-up.
+struct FriendshipDots: View {
+    let level: Int
+    var pulse = 0
+    var maxLevel = Friendship.maxLevel
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @State private var swelling = false
+
+    var body: some View {
+        HStack(spacing: 3) {
+            ForEach(1...maxLevel, id: \.self) { step in
+                Circle()
+                    .fill(step <= level ? BatwalkColor.rose : BatwalkColor.cloud.opacity(0.22))
+                    .frame(width: 4, height: 4)
+            }
+        }
+        .scaleEffect(swelling ? 1.35 : 1)
+        .onChange(of: pulse) { _, _ in
+            guard !reduceMotion else { return }
+            withAnimation(.spring(response: 0.25, dampingFraction: 0.5)) { swelling = true }
+            withAnimation(.easeOut(duration: 0.4).delay(0.3)) { swelling = false }
+        }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("Friendship level \(level) of \(maxLevel)")
+    }
+}
+
 /// 🍓 Feed (n) — premium even when disabled.
 struct FeedButton: View {
     let fruit: Int

@@ -70,12 +70,19 @@ enum BatwalkColor {
     static let success = Color(hex: 0xAFC9A5)
     static let warning = Color(hex: 0xE3BA7A)
 
-    // Rarity
+    // Rarity (pastel, for night surfaces)
     static let rarityCommon = Color(hex: 0xADBBAC)
     static let rarityUncommon = Color(hex: 0xB3C697)
     static let rarityRare = Color(hex: 0xA7BECF)
     static let rarityLegendary = Color(hex: 0xDEC48B)
     static let rarityShiny = Color(hex: 0xF0DCA6)
+
+    // Rarity ink (readable as text on the cream companion surfaces)
+    static let rarityCommonInk = Color.adaptive(light: 0x7A877C, dark: 0xADBBAC)
+    static let rarityUncommonInk = Color.adaptive(light: 0x66834B, dark: 0xB3C697)
+    static let rarityRareInk = Color.adaptive(light: 0x4C7391, dark: 0xA7BECF)
+    static let rarityLegendaryInk = Color.adaptive(light: 0x96762B, dark: 0xDEC48B)
+    static let rarityShinyInk = Color.adaptive(light: 0x9A7A2E, dark: 0xF0DCA6)
 }
 
 enum BatwalkGradient {
@@ -152,6 +159,16 @@ extension Rarity {
         case .uncommon: return BatwalkColor.rarityUncommon
         case .rare: return BatwalkColor.rarityRare
         case .legendary: return BatwalkColor.rarityLegendary
+        }
+    }
+
+    /// Darker tone of the same hue, for text and symbols on light surfaces.
+    var inkColor: Color {
+        switch self {
+        case .common: return BatwalkColor.rarityCommonInk
+        case .uncommon: return BatwalkColor.rarityUncommonInk
+        case .rare: return BatwalkColor.rarityRareInk
+        case .legendary: return BatwalkColor.rarityLegendaryInk
         }
     }
 

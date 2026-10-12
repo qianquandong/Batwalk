@@ -20,6 +20,7 @@ struct HomeView: View {
     @State private var animationRequest: BatAnimationRequest?
     @State private var heroVisible = false
     @State private var fruitToss = 0
+    @State private var levelUps = 0
 
     var body: some View {
         NavigationStack {
@@ -32,6 +33,8 @@ struct HomeView: View {
                     .watchPageBackground(time, scenery: true)
             }
             .navigationTitle("")
+            // No empty title bar: the scene starts right under the time.
+            .toolbar(.hidden, for: .navigationBar)
         }
         .fullScreenCover(item: $hatching, onDismiss: {
             // Straight into choosing the next egg — keeps the loop moving (PRD §2.1).
@@ -77,7 +80,7 @@ struct HomeView: View {
                 .batwalkAppear()
         } else if let companion = state.companion {
             if typeSize.isAccessibilitySize {
-                ScrollView { companionScene(companion, time: time).frame(height: 320) }
+                accessibleCompanionScene(companion, time: time)
             } else {
                 companionScene(companion, time: time)
             }
@@ -86,16 +89,15 @@ struct HomeView: View {
         }
     }
 
+    /// The bat is the hero: it takes every point the name row and the info row
+    /// leave free. One slim row at the bottom — fruit to give, steps to hatch.
     private func companionScene(_ companion: OwnedBat, time: TimeOfDay) -> some View {
         GeometryReader { geo in
-            let batSize = max(60, min(geo.size.width * 0.82, geo.size.height - 86))
+            let rowHeight: CGFloat = 36
+            let batSize = max(72, min(geo.size.width * 0.96, geo.size.height - rowHeight - 30))
             let resting = BatMood.resting(at: time)
-            VStack(spacing: 3) {
-                Text(companion.companionTitle)
-                    .font(BatwalkFont.caption)
-                    .lineLimit(1).minimumScaleFactor(0.8)
-                    .foregroundStyle(BatwalkColor.cloud)
-                    .accessibilityAddTraits(.isHeader)
+            VStack(spacing: 0) {
+                nameRow(companion)
                 Spacer(minLength: 0)
                 // A real control, so Double Tap (watchOS 11) pets the bat too.
                 Button { pet(companion) } label: {
@@ -120,27 +122,7 @@ struct HomeView: View {
                 .accessibilityLabel(companion.displayName)
                 .accessibilityHint(resting == .awake ? "Pet \(companion.displayName)" : "Wake \(companion.displayName)")
                 Spacer(minLength: 0)
-                HStack(spacing: 12) {
-                    Button { feed(companion) } label: {
-                        HStack(spacing: 5) {
-                            FruitIcon(size: 21)
-                            Text(store.state.fruit.formatted()).monospacedDigit()
-                        }
-                        .frame(maxWidth: .infinity, minHeight: 44)
-                        .background(BatwalkColor.cloud.opacity(0.09), in: Capsule())
-                    }
-                    .buttonStyle(.plain)
-                    .disabled(store.state.fruit == 0)
-                    .opacity(store.state.fruit == 0 ? 0.45 : 1)
-                    .accessibilityLabel("Feed \(companion.displayName)")
-                    .accessibilityValue("\(store.state.fruit) fruit")
-                    .accessibilityHint(store.state.fruit == 0 ? "Walk to find fruit" : "Use one fruit")
-                    progressPill
-                }
-                .font(BatwalkFont.caption)
-                .foregroundStyle(BatwalkColor.cloud)
-                .lineLimit(1).minimumScaleFactor(0.6)
-
+                infoRow(companion, height: rowHeight)
             }
             .padding(.horizontal, BatwalkSpacing.xs)
             .frame(width: geo.size.width, height: geo.size.height)
@@ -148,21 +130,96 @@ struct HomeView: View {
         .batwalkAppear()
     }
 
-    @ViewBuilder
-    private var progressPill: some View {
+    /// Larger text sizes read top to bottom and scroll; nothing is pinned to the
+    /// screen height, so the bat is never pushed off the bottom.
+    private func accessibleCompanionScene(_ companion: OwnedBat, time: TimeOfDay) -> some View {
+        ScrollView {
+            VStack(spacing: BatwalkSpacing.sm) {
+                nameRow(companion)
+                Button { pet(companion) } label: {
+                    BatHeroView(speciesID: companion.speciesID, shiny: companion.showsShiny,
+                                mood: reaction ?? BatMood.resting(at: time), size: 150,
+                                bounceTrigger: petCount, friendshipEXP: companion.friendshipEXP,
+                                animationRequest: animationRequest, showsKeepsake: false)
+                        .overlay { HeartBurst(trigger: petCount) }
+                        .overlay { FruitToss(trigger: fruitToss) }
+                        .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
+                .doubleTapPrimaryAction()
+                .onAppear { heroVisible = true; welcomeCompanion() }
+                .onDisappear { heroVisible = false; clearReaction() }
+                .accessibilityLabel(companion.displayName)
+                feedButton(companion, height: 44)
+                progressPill(height: 44)
+            }
+            .padding(.horizontal, BatwalkSpacing.xs)
+        }
+        .batwalkAppear()
+    }
+
+    private func nameRow(_ companion: OwnedBat) -> some View {
+        HStack(spacing: 6) {
+            Text(companion.companionTitle)
+                .font(BatwalkFont.caption)
+                .lineLimit(1).minimumScaleFactor(0.8)
+                .foregroundStyle(BatwalkColor.cloud)
+                .accessibilityAddTraits(.isHeader)
+            FriendshipDots(level: Friendship.level(forEXP: companion.friendshipEXP), pulse: levelUps)
+            Spacer(minLength: 0)
+        }
+    }
+
+    private func infoRow(_ companion: OwnedBat, height: CGFloat) -> some View {
+        HStack(spacing: 6) {
+            feedButton(companion, height: height)
+                .fixedSize(horizontal: true, vertical: false)
+            progressPill(height: height)
+        }
+        .foregroundStyle(BatwalkColor.cloud)
+    }
+
+    private func feedButton(_ companion: OwnedBat, height: CGFloat) -> some View {
+        Button { feed(companion) } label: {
+            HStack(spacing: 4) {
+                FruitIcon(size: 16)
+                Text(store.state.fruit.formatted())
+                    .font(BatwalkFont.caption).monospacedDigit()
+            }
+            .padding(.horizontal, 12)
+            .frame(maxWidth: .infinity, minHeight: height)
+            .background(BatwalkColor.cloud.opacity(0.1), in: Capsule())
+        }
+        .buttonStyle(.plain)
+        .disabled(store.state.fruit == 0)
+        .opacity(store.state.fruit == 0 ? 0.45 : 1)
+        .accessibilityLabel("Feed \(companion.displayName)")
+        .accessibilityValue("\(store.state.fruit) fruit")
+        .accessibilityHint(store.state.fruit == 0 ? "Walk to find fruit" : "Use one fruit")
+    }
+
+    /// "961 to hatch" — the number keeps its meaning without a label-free guess.
+    private func progressPill(height: CGFloat) -> some View {
         Button {
             withAnimation(BatwalkMotion.page) { page = 1 }
         } label: {
-            HStack(spacing: 5) {
-                EggIcon(type: store.state.egg?.type ?? .tiny, size: 21)
+            HStack(spacing: 4) {
+                EggIcon(type: store.state.egg?.type ?? .tiny, size: 16)
                 if let egg = store.state.egg {
-                    Text(egg.stepsRemaining.formatted()).monospacedDigit()
+                    Text(egg.stepsRemaining.formatted())
+                        .font(BatwalkFont.caption).monospacedDigit()
+                    Text("to hatch")
+                        .font(BatwalkFont.micro)
+                        .foregroundStyle(BatwalkColor.textSecondaryDark)
                 } else {
-                    Image(systemName: "plus")
+                    Text("Next egg").font(BatwalkFont.micro)
+                    Image(systemName: "plus").font(.system(size: 10, weight: .bold))
                 }
             }
-            .frame(maxWidth: .infinity, minHeight: 44)
-            .background(BatwalkColor.cloud.opacity(0.09), in: Capsule())
+            .lineLimit(1).minimumScaleFactor(0.7)
+            .padding(.horizontal, 10)
+            .frame(maxWidth: .infinity, minHeight: height)
+            .background(BatwalkColor.cloud.opacity(0.1), in: Capsule())
         }
         .buttonStyle(.plain)
         .accessibilityLabel(store.state.egg == nil ? "Choose an egg" : "Egg progress")
@@ -170,24 +227,28 @@ struct HomeView: View {
     }
 
     private func firstEggScene(_ egg: ActiveEgg) -> some View {
-        VStack(spacing: BatwalkSpacing.sm) {
-            Spacer(minLength: 0)
-            EggSprite(type: egg.type, state: egg.visualState, size: 96)
-                .idleFloat()
-            Spacer(minLength: 0)
-            HStack(spacing: 6) {
-                EggIcon(type: egg.type, size: 16)
-                Text("\(egg.stepsRemaining.formatted()) steps")
-                    .font(BatwalkFont.caption)
-                    .monospacedDigit()
+        GeometryReader { geo in
+            let eggSize = max(84, min(geo.size.width * 0.5, geo.size.height - 70))
+            VStack(spacing: BatwalkSpacing.sm) {
+                Spacer(minLength: 0)
+                EggSprite(type: egg.type, state: egg.visualState, size: eggSize)
+                    .idleFloat()
+                Spacer(minLength: 0)
+                HStack(spacing: 6) {
+                    EggIcon(type: egg.type, size: 16)
+                    Text(egg.stepsRemaining.formatted())
+                        .font(BatwalkFont.caption).monospacedDigit()
+                    Text("to hatch")
+                        .font(BatwalkFont.micro).foregroundStyle(BatwalkColor.textSecondaryDark)
+                }
+                .foregroundStyle(BatwalkColor.cloud)
+                .padding(.horizontal, 12)
+                .frame(minHeight: 36)
+                .background(Capsule().fill(BatwalkColor.cloud.opacity(0.1)))
             }
-            .foregroundStyle(.white)
-            .padding(.horizontal, 12)
-            .padding(.vertical, 6)
-            .background(Capsule().fill(Color.white.opacity(0.08)))
-            .overlay(Capsule().strokeBorder(.white.opacity(0.12), lineWidth: 1))
+            .padding(.bottom, BatwalkSpacing.xs)
+            .frame(width: geo.size.width, height: geo.size.height)
         }
-        .padding(.bottom, BatwalkSpacing.xs)
         .batwalkAppear()
     }
 
@@ -201,7 +262,7 @@ struct HomeView: View {
         store.analytics.log(.feedBat, properties: ["species": bat.speciesID])
         fruitToss += 1
         petCount += 1
-        if after > before { Haptics.success() } else { Haptics.light() }
+        if after > before { Haptics.success(); levelUps += 1 } else { Haptics.light() }
         animationRequest = .interaction(.feed, speciesID: bat.speciesID, levelBefore: before, levelAfter: after)
     }
 
@@ -210,7 +271,7 @@ struct HomeView: View {
         do { _ = try store.mutate { try $0.pet(bat.speciesID, dayKey: DayKey.make(.now)) } }
         catch { Haptics.failure(); return }
         let levelAfter = Friendship.level(forEXP: store.state.collection[bat.speciesID]?.friendshipEXP ?? 0)
-        if levelAfter > levelBefore { Haptics.success() } else { Haptics.light() }
+        if levelAfter > levelBefore { Haptics.success(); levelUps += 1 } else { Haptics.light() }
         petCount += 1
         if PilotAnimationCatalog.speciesIDs.contains(bat.speciesID) {
             animationRequest = .interaction(.pet, speciesID: bat.speciesID,

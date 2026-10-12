@@ -175,12 +175,15 @@ struct FriendshipProgressView: View {
 
 // MARK: - Chips
 
+/// Rarity reads in its own colour: symbol and (on light surfaces) the text itself,
+/// so Common and Rare never look like the same chip.
 struct RarityChip: View {
     let rarity: Rarity
     var dark = true
 
     var body: some View {
-        ChipView(text: rarity.displayName, symbol: rarity.symbol, color: rarity.color, dark: dark)
+        ChipView(text: rarity.displayName, symbol: rarity.symbol, color: rarity.color,
+                 ink: dark ? nil : rarity.inkColor, dark: dark)
     }
 }
 
@@ -190,8 +193,9 @@ struct VariantChip: View {
 
     var body: some View {
         ChipView(text: shiny ? "Shiny" : "Normal",
-                 symbol: shiny ? "sparkles" : "circle.fill",
-                 color: shiny ? BatwalkColor.rarityShiny : BatwalkColor.sage,
+                 symbol: shiny ? "sparkles" : nil,
+                 color: shiny ? BatwalkColor.rarityShiny : BatwalkColor.mist,
+                 ink: dark ? nil : (shiny ? BatwalkColor.rarityShinyInk : BatwalkColor.textSecondaryLight),
                  dark: dark)
     }
 }
@@ -200,20 +204,28 @@ struct ChipView: View {
     let text: String
     var symbol: String? = nil
     let color: Color
+    /// Text + symbol colour on light surfaces; the pastel `color` stays as the fill.
+    var ink: Color? = nil
     var dark = true
+
+    private var foreground: Color {
+        if let ink { return ink }
+        return dark ? Color.white : BatwalkColor.textPrimaryLight
+    }
 
     var body: some View {
         HStack(spacing: 4) {
             if let symbol {
-                Image(systemName: symbol).font(.system(size: 7, weight: .bold)).foregroundStyle(color)
+                Image(systemName: symbol).font(.system(size: 9, weight: .bold))
+                    .foregroundStyle(dark ? color : foreground)
             }
-            Text(text).font(BatwalkFont.micro)
+            Text(text).font(BatwalkFont.rounded(.caption2, weight: .semibold))
         }
-        .foregroundStyle(dark ? Color.white : BatwalkColor.textPrimaryLight)
+        .foregroundStyle(foreground)
         .padding(.horizontal, 8)
         .padding(.vertical, 3)
-        .background(Capsule().fill(color.opacity(dark ? 0.22 : 0.16)))
-        .overlay(Capsule().strokeBorder(color.opacity(dark ? 0.45 : 0.3), lineWidth: 1))
+        .background(Capsule().fill(color.opacity(dark ? 0.22 : 0.18)))
+        .overlay(Capsule().strokeBorder(color.opacity(dark ? 0.45 : 0.35), lineWidth: 1))
     }
 }
 
@@ -283,10 +295,12 @@ struct NightSkyBackground: View {
     var scenery = true
     var groundLevel: CGFloat = 0.72
 
+    /// The sky actually changes with the clock: a misty sage noon, a warm grey
+    /// dusk, midnight teal at night. Cream text stays readable on all three.
     private var colors: [Color] {
         switch time {
-        case .day: return [Color(hex: 0x304A44), Color(hex: 0x162C2D)]
-        case .dusk: return [Color(hex: 0x3B4143), Color(hex: 0x182A2E)]
+        case .day: return [Color(hex: 0x56756C), Color(hex: 0x25403E)]
+        case .dusk: return [Color(hex: 0x5C524C), Color(hex: 0x1E3033)]
         case .night: return [BatwalkColor.indigo, BatwalkColor.deepNight]
         }
     }
@@ -307,12 +321,13 @@ struct NightSkyBackground: View {
     }
 
     private func drawStars(in context: inout GraphicsContext, size: CGSize) {
+        guard time != .day else { return } // no stars at noon
         var rng = SeededGenerator(seed: 7)
         let count = scenery ? 6 : 2
         for i in 0..<count {
             let x = (rng.nextUnit() * size.width / 2).rounded(.down) * 2
             let y = (size.height * (0.30 + rng.nextUnit() * 0.27) / 2).rounded(.down) * 2
-            let alpha = time == .day ? 0.12 : 0.28
+            let alpha = time == .dusk ? 0.18 : 0.28
             context.fill(Path(CGRect(x: x, y: y, width: 2, height: 2)),
                          with: .color(BatwalkColor.cloud.opacity(alpha)))
             if scenery && i == 0 {
@@ -324,32 +339,34 @@ struct NightSkyBackground: View {
         }
     }
 
-    /// Static stepped silhouettes keep the centre quiet and cost no animation timers.
+    /// Stepped pine silhouettes at both edges — a tall one half off-screen and a
+    /// short one beside it — so they read as trees at wrist size while the centre
+    /// stays quiet. Still art: no animation timers.
     private func drawTrees(in context: inout GraphicsContext, size: CGSize) {
         let u: CGFloat = 4
+        let floor = (size.height * groundLevel / u).rounded(.down) * u
         func block(_ x: CGFloat, _ y: CGFloat, _ w: CGFloat, _ h: CGFloat, _ color: Color) {
             context.fill(Path(CGRect(x: (x / u).rounded(.down) * u, y: (y / u).rounded(.down) * u,
                                      width: max(u, (w / u).rounded(.down) * u), height: max(u, h))),
                          with: .color(color), style: FillStyle(antialiased: false))
         }
-        for side in [CGFloat(0), CGFloat(1)] {
-            let edge = side == 0 ? size.width * 0.04 : size.width * 0.93
-            let floor = size.height * groundLevel
-            block(edge, size.height * 0.12, u * 2, floor - size.height * 0.12,
-                  BatwalkColor.accent.opacity(0.24))
-            for tier in 0..<7 {
-                let width = u * CGFloat(3 + tier % 3)
-                let x = side == 0 ? edge - u : edge - width + u * 2
-                block(x, size.height * 0.12 + CGFloat(tier) * u * 3, width, u * 3,
-                      BatwalkColor.accentSoft.opacity(tier % 2 == 0 ? 0.12 : 0.08))
+        /// A pine: tiers that widen towards the ground, then a short trunk.
+        func pine(centerX: CGFloat, tiers: Int, color: Color) {
+            let tierHeight = u * 3
+            let trunk = u * 2
+            let top = floor - trunk - CGFloat(tiers) * tierHeight
+            for tier in 0..<tiers {
+                let width = u * CGFloat(3 + tier * 2)
+                block(centerX - width / 2, top + CGFloat(tier) * tierHeight, width, tierHeight, color)
             }
-            for tier in 0..<4 {
-                let x = side == 0 ? size.width * 0.12 : size.width * 0.82
-                let width = u * CGFloat(2 + tier * 2)
-                block(x - width / 2, floor - CGFloat(5 - tier) * u * 4, width, u * 4,
-                      BatwalkColor.accent.opacity(0.12))
-            }
+            block(centerX - u, floor - trunk, u * 2, trunk, color)
         }
+        let dark = BatwalkColor.deepNight.opacity(time == .day ? 0.30 : 0.55)
+        let soft = BatwalkColor.accent.opacity(time == .day ? 0.28 : 0.35)
+        pine(centerX: size.width * 0.02, tiers: 7, color: dark)
+        pine(centerX: size.width * 0.14, tiers: 4, color: soft)
+        pine(centerX: size.width * 0.98, tiers: 6, color: dark)
+        pine(centerX: size.width * 0.86, tiers: 3, color: soft)
     }
 
     private func drawGlade(in context: inout GraphicsContext, size: CGSize) {

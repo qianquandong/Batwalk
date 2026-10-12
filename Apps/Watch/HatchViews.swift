@@ -165,48 +165,45 @@ struct HatchSequenceView: View {
         .task { await run() }
     }
 
+    /// Who it is and how rare: part of the moment itself, never below a fold.
     private var reveal: some View {
-        VStack(spacing: 6) {
-            ScrollView {
-            VStack(spacing: 4) {
-                ZStack {
-                    Circle()
-                        .fill(RadialGradient(colors: [(special ? rarity.color : BatwalkColor.accentSoft).opacity(special ? 0.22 : 0.12), .clear],
-                                             center: .center, startRadius: 4, endRadius: 64))
-                        .frame(width: 90, height: 90)
-                    if special { SparkleField(count: 6, color: record.isShiny ? BatwalkColor.rarityShiny : rarity.color, spread: 42) }
-                    BatHeroView(speciesID: record.speciesID, shiny: record.isShiny, mood: .happy, size: 70,
-                                animationRequest: revealRequest, showsKeepsake: false)
-                        .scaleEffect(revealScale)
-                }
-                .frame(height: 76)
-                Text(species?.name ?? "New bat")
-                    .font(BatwalkFont.headline)
-                    .foregroundStyle(.white)
-                HStack(spacing: 4) {
-                    RarityChip(rarity: rarity)
-                    if record.isShiny { VariantChip(shiny: true) }
-                }
-                Text(record.outcome == .duplicate ? "Hello again" : "Hello, little one")
+        VStack(spacing: 4) {
+            Spacer(minLength: 0)
+            ZStack {
+                Circle()
+                    .fill(RadialGradient(colors: [(special ? rarity.color : BatwalkColor.accentSoft).opacity(special ? 0.22 : 0.12), .clear],
+                                         center: .center, startRadius: 4, endRadius: 64))
+                    .frame(width: 90, height: 90)
+                if special { SparkleField(count: 6, color: record.isShiny ? BatwalkColor.rarityShiny : rarity.color, spread: 42) }
+                BatHeroView(speciesID: record.speciesID, shiny: record.isShiny, mood: .happy, size: 70,
+                            animationRequest: revealRequest, showsKeepsake: false)
+                    .scaleEffect(revealScale)
+            }
+            .frame(height: 76)
+            Text(species?.name ?? "New bat")
+                .font(BatwalkFont.headline)
+                .foregroundStyle(.white)
+                .lineLimit(1).minimumScaleFactor(0.7)
+            HStack(spacing: 4) {
+                RarityChip(rarity: rarity)
+                if record.isShiny { VariantChip(shiny: true) }
+            }
+            Text(record.outcome == .duplicate ? "Hello again" : "Hello, little one")
+                .font(BatwalkFont.micro)
+                .foregroundStyle(BatwalkColor.textSecondaryDark)
+                .multilineTextAlignment(.center)
+            if presentation.result.moonDustGained > 0 {
+                Label("+\(presentation.result.moonDustGained) Moon Dust", systemImage: "sparkle")
                     .font(BatwalkFont.micro)
-                    .foregroundStyle(BatwalkColor.textSecondaryDark)
-                    .multilineTextAlignment(.center)
-                if presentation.result.moonDustGained > 0 {
-                    Label("+\(presentation.result.moonDustGained) Moon Dust", systemImage: "sparkle")
-                        .font(BatwalkFont.micro)
-                        .foregroundStyle(BatwalkColor.rarityShiny)
-                }
+                    .foregroundStyle(BatwalkColor.rarityShiny)
             }
-            .padding(.horizontal, BatwalkSpacing.sm)
-            }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .clipped()
+            Spacer(minLength: 0)
             Button("Continue", action: onDone)
                 .buttonStyle(BatwalkPrimaryButtonStyle(minHeight: 44))
                 .doubleTapPrimaryAction()
-                .padding(.horizontal, BatwalkSpacing.sm)
                 .padding(.bottom, 4)
         }
+        .padding(.horizontal, BatwalkSpacing.sm)
     }
 
     /// Sleeps; false if the cover was dismissed (task cancelled) so the sequence stops.

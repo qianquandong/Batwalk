@@ -61,6 +61,7 @@ struct SegmentedPill<Value: Hashable>: View {
 }
 
 /// Existing portraits retain their individual proportions; no alternate character art.
+/// Rarity always shows, in its own colour; the companion gets a small Watch badge.
 struct BatCard: View {
     let species: Species
     let shiny: Bool
@@ -81,21 +82,25 @@ struct BatCard: View {
                     .fixedSize(horizontal: false, vertical: true)
             }
             .font(BatwalkFont.caption)
-            if isCompanion {
-                Label("On Watch", systemImage: "applewatch")
-                    .font(BatwalkFont.micro)
-                    .padding(.horizontal, 8).padding(.vertical, 4)
-                    .background(BatwalkColor.accentSoft.opacity(0.55), in: Capsule())
-            } else {
-                Text(species.rarity.displayName)
-                    .font(BatwalkFont.micro).foregroundStyle(BatwalkColor.textSecondaryLight)
-                    .padding(.vertical, 4)
+            HStack(spacing: 6) {
+                RarityChip(rarity: species.rarity, dark: false)
+                if shiny { VariantChip(shiny: true, dark: false) }
             }
         }
         .foregroundStyle(BatwalkColor.textPrimaryLight)
         .padding(12)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(BatwalkColor.lightTint.opacity(0.45), in: RoundedRectangle(cornerRadius: 20))
+        .overlay(alignment: .topTrailing) {
+            if isCompanion {
+                Label("On Watch", systemImage: "applewatch")
+                    .font(BatwalkFont.rounded(.caption2, weight: .semibold))
+                    .foregroundStyle(BatwalkColor.buttonText)
+                    .padding(.horizontal, 8).padding(.vertical, 4)
+                    .background(BatwalkColor.accentSoft, in: Capsule())
+                    .padding(10)
+            }
+        }
         .accessibilityElement(children: .ignore)
         .accessibilityLabel("\(species.name), \(species.rarity.displayName)\(shiny ? ", Shiny" : "")\(isCompanion ? ", on your Watch" : "")")
     }
@@ -231,28 +236,6 @@ struct HatchHistoryRow: View {
         }
         .batwalkLightCard(padding: 10, radius: 18)
         .accessibilityElement(children: .combine)
-    }
-}
-
-/// "??? · Not discovered yet" placeholder row.
-struct UndiscoveredRow: View {
-    var body: some View {
-        HStack(spacing: 12) {
-            RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .fill(BatwalkColor.lockedBatLight)
-                .frame(width: 50, height: 50)
-                .overlay(EggIcon(size: 22).opacity(0.35))
-            VStack(alignment: .leading, spacing: 2) {
-                Text("???").font(BatwalkFont.rounded(.subheadline, weight: .semibold))
-                Text("Not discovered yet").font(BatwalkFont.rounded(.caption, weight: .medium))
-            }
-            .foregroundStyle(BatwalkColor.textSecondaryLight.opacity(0.7))
-            Spacer()
-        }
-        .padding(10)
-        .background(RoundedRectangle(cornerRadius: 18, style: .continuous).fill(BatwalkColor.lightCard.opacity(0.7)))
-        .accessibilityElement(children: .ignore)
-        .accessibilityLabel("Not discovered yet")
     }
 }
 
