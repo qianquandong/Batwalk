@@ -136,6 +136,11 @@ struct HatchSequenceView: View {
     private var rarity: Rarity { species?.rarity ?? .common }
     private var special: Bool { rarity.isSpecial || record.isShiny }
     private var teaseColor: Color { record.isShiny ? BatwalkColor.rarityShiny : special ? rarity.color : BatwalkColor.moonlight }
+    // A presented cover can resolve its size outside the root's demo override.
+    // Apply the capture override at this presentation boundary as well.
+    private var revealTypeSize: DynamicTypeSize {
+        DemoMode.scenario == "reveal-large-type" ? .accessibility3 : typeSize
+    }
 
     var body: some View {
         ZStack {
@@ -163,6 +168,7 @@ struct HatchSequenceView: View {
 
             Color(hex: 0xFFF6D6).opacity(flash).ignoresSafeArea().allowsHitTesting(false)
         }
+        .dynamicTypeSize(revealTypeSize)
         .task { await run() }
     }
 
@@ -171,7 +177,7 @@ struct HatchSequenceView: View {
     private var reveal: some View {
         GeometryReader { geometry in
             VStack(spacing: 4) {
-                if typeSize.isAccessibilitySize {
+                if revealTypeSize.isAccessibilitySize {
                     ScrollView { revealDetails(pictureSize: 60) }
                 } else {
                     // Reserve space for the name, chips and Continue first. A
