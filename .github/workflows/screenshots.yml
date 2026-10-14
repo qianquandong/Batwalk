@@ -18,6 +18,10 @@ on:
         description: "Capture only the Watch"
         type: boolean
         default: false
+      launch_roster:
+        description: "Use only shipping bats for App Store screenshots"
+        type: boolean
+        default: false
       watch_scenario:
         description: "Optional exact Watch scenario for a focused visual check"
         type: string
@@ -39,6 +43,8 @@ jobs:
   screenshots:
     runs-on: macos-15
     timeout-minutes: 60
+    env:
+      BATWALK_LAUNCH_ROSTER: ${{ inputs.launch_roster && 'true' || 'false' }}
     steps:
       - uses: actions/checkout@v4
 

@@ -9,8 +9,11 @@ print(rs[-1]["identifier"] if rs else "")')
 devtype=$(xcrun simctl list devicetypes -j | python3 -c '
 import json, sys
 ds = [d for d in json.load(sys.stdin)["devicetypes"] if d["name"].startswith("iPhone")]
-pref = [d for d in ds if d["name"].endswith("Pro") and "Max" not in d["name"]]
-print((pref or ds)[-1]["identifier"])')
+preferred = ["iPhone 16 Pro Max", "iPhone 17 Pro Max", "iPhone 15 Pro Max"]
+chosen = next((d for name in preferred for d in ds if d["name"] == name), None)
+if chosen is None:
+    sys.exit("No supported large iPhone screenshot device found")
+print(chosen["identifier"])')
 udid=$(xcrun simctl create "Batwalk iPhone" "$devtype" "$runtime")
 xcrun simctl boot "$udid"
 xcrun simctl bootstatus "$udid" -b >/dev/null 2>&1 || sleep 20

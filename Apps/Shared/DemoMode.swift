@@ -57,8 +57,10 @@ enum DemoMode {
     /// Builds the in-memory game state for the current scenario.
     static func makeState() -> GameState? {
         guard let scenario else { return nil }
-        // Screenshots show the whole catalogue, including waves not shipped yet.
-        Roster.enabledWave = 2
+        // Store captures must match the shipping roster; visual QA can still
+        // explore future waves. This only changes in-memory screenshot fixtures.
+        let launchRoster = ProcessInfo.processInfo.arguments.contains("-BatwalkLaunchRoster")
+        Roster.enabledWave = launchRoster ? SharedConfig.contentWave : 2
         let now = Date()
         let day = DayKey.make(now)
         var state = GameState()
@@ -71,6 +73,7 @@ enum DemoMode {
         }
         @discardableResult
         func hatch(_ egg: EggType, _ species: String, shiny: Bool = false) -> HatchResult? {
+            let species = launchRoster ? ["sticky": "cocoa", "walker": "snow"][species] ?? species : species
             let paid = state.isUnlocked || !egg.isFree
             guard (try? state.startEgg(egg, seed: seed(egg, species, shiny: shiny, isUnlocked: paid), now: now)) != nil else { return nil }
             walk(egg.targetSteps)
@@ -179,9 +182,10 @@ enum DemoMode {
             for _ in 0..<13 { hatch(.tiny, "mochi") }
             for _ in 0..<8 { hatch(.tiny, "sticky") }
             hatch(.crystal, "walker")
-            try? state.setCompanion(scenario == "phone-confirmed" ? "sticky" : "mochi")
+            let detailBat = launchRoster ? "cocoa" : "sticky"
+            try? state.setCompanion(scenario == "phone-confirmed" ? detailBat : "mochi")
             page = ["phone-batpedia", "phone-detail", "phone-pending", "phone-confirmed"].contains(scenario) ? 1 : 0
-            if ["phone-detail", "phone-pending", "phone-confirmed"].contains(scenario) { detailSpecies = "sticky" }
+            if ["phone-detail", "phone-pending", "phone-confirmed"].contains(scenario) { detailSpecies = detailBat }
             boardEgg()
         case "phone-batpedia-rare":
             page = 1
