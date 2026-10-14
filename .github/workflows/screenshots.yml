@@ -22,6 +22,10 @@ on:
         description: "Use only shipping bats for App Store screenshots"
         type: boolean
         default: false
+      phone_only:
+        description: "Capture only iPhone (leave Watch-only off)"
+        type: boolean
+        default: false
       watch_scenario:
         description: "Optional exact Watch scenario for a focused visual check"
         type: string
@@ -57,6 +61,7 @@ jobs:
           xcodegen generate
 
       - name: Build Watch app for the simulator
+        if: ${{ !inputs.phone_only }}
         run: |
           scripts/ci-xcodebuild.sh \
             -project Batwalk.xcodeproj \
@@ -68,17 +73,19 @@ jobs:
             build
 
       - name: Boot an Apple Watch simulator
+        if: ${{ !inputs.phone_only }}
         env:
           BATWALK_WATCH_SIZE: ${{ inputs.watch_size }}
         run: scripts/watch-sim.sh
 
       - name: Capture Watch scenarios
+        if: ${{ !inputs.phone_only }}
         env:
           BATWALK_SCREEN_SCENARIO: ${{ inputs.watch_scenario }}
         run: scripts/capture-screens.sh watch "$RUNNER_TEMP/out/screens/watch"
 
       - name: Save Watch screenshots immediately
-        if: always()
+        if: ${{ always() && !inputs.phone_only }}
         uses: actions/upload-artifact@v4
         with:
           name: batwalk-watch-screenshots
@@ -86,6 +93,7 @@ jobs:
           if-no-files-found: error
 
       - name: Shut down Watch before building iPhone
+        if: ${{ !inputs.phone_only }}
         run: xcrun simctl shutdown "$SIM"
 
       - name: Build iPhone app for the simulator

@@ -9,10 +9,12 @@ print(rs[-1]["identifier"] if rs else "")')
 devtype=$(xcrun simctl list devicetypes -j | python3 -c '
 import json, sys
 ds = [d for d in json.load(sys.stdin)["devicetypes"] if d["name"].startswith("iPhone")]
-preferred = ["iPhone 16 Pro Max", "iPhone 17 Pro Max", "iPhone 15 Pro Max"]
+# App Store Connect now uses Dynamic Island medium as its primary phone slot.
+# These render at accepted 1206x2622 or 1179x2556 sizes.
+preferred = ["iPhone 16 Pro", "iPhone 17 Pro", "iPhone 15 Pro"]
 chosen = next((d for name in preferred for d in ds if d["name"] == name), None)
 if chosen is None:
-    sys.exit("No supported large iPhone screenshot device found")
+    sys.exit("No supported Dynamic Island iPhone screenshot device found")
 print(chosen["identifier"])')
 udid=$(xcrun simctl create "Batwalk iPhone" "$devtype" "$runtime")
 xcrun simctl boot "$udid"
