@@ -20,9 +20,7 @@ if [ -n "${BATWALK_SCREEN_SCENARIO:-}" ]; then
   printf '%s\n' "$scenarios" | grep -Fxq "$BATWALK_SCREEN_SCENARIO" || { echo "::error::Unknown screenshot scenario"; exit 1; }
   scenarios="$BATWALK_SCREEN_SCENARIO"
 fi
-capture_args=()
 if [ "${BATWALK_LAUNCH_ROSTER:-false}" = true ]; then
-  capture_args=(-BatwalkLaunchRoster)
   # These QA-only pilots require future-wave companions.
   scenarios=$(printf '%s\n' "$scenarios" | grep -vE '^pilot-(sticky|walker)$')
 fi
@@ -31,7 +29,12 @@ failed=0
 for sc in $scenarios; do
   i=$((i + 1))
   xcrun simctl terminate "$SIM" "$bundle" >/dev/null 2>&1 || true
-  launch=$(xcrun simctl launch "$SIM" "$bundle" -BatwalkDemo "$sc" "${capture_args[@]}")
+  # Keep the array nonempty: macOS Bash 3.2 treats empty arrays as unset with -u.
+  launch_args=(-BatwalkDemo "$sc")
+  if [ "${BATWALK_LAUNCH_ROSTER:-false}" = true ]; then
+    launch_args+=(-BatwalkLaunchRoster)
+  fi
+  launch=$(xcrun simctl launch "$SIM" "$bundle" "${launch_args[@]}")
   pid=$(printf '%s\n' "$launch" | awk -F ': ' 'END {print $NF}')
   case "$pid" in
     ''|*[!0-9]*) echo "::error::No app PID returned for $platform/$sc"; exit 1;;
