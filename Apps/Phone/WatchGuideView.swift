@@ -8,8 +8,8 @@ struct WatchGuideView: View {
     var body: some View {
         List {
             Section("A little world on your wrist") {
-                Label("Tap your bat to pet it. Tap the fruit to feed it.", systemImage: "hand.tap")
-                Label("Tap the egg or scroll down to see how close it is to hatching.", systemImage: "circle.dotted")
+                Label("Tap your bat to pet it. Tap Feed to give it a fruit.", systemImage: "hand.tap")
+                Label("Swipe up or turn the Digital Crown to reach the egg page and check its progress.", systemImage: "circle.dotted")
                 Text("When the egg is ready, tap Hatch or gently turn the Digital Crown. Choose the next egg after saying hello.")
             }
             Section("Personality, at its own pace") {

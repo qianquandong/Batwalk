@@ -117,13 +117,14 @@ WALK AGAIN ← NEW EGG ← BUILD FRIENDSHIP ← CHOOSE CURRENT COMPANION
 
 | Screen | Purpose |
 |---|---|
-| **Companion** | Current bat or first egg. Tap the bat to pet/wake; fruit feeds it. A small egg icon shows progress and opens the second page. |
+| **Companion** | Current bat or first egg. The bat has the full activity area; tap it to pet/wake. Feed is the only visible control beside an owned companion. |
 | **Egg** | Egg progress and remaining steps; hatch or choose the next egg. More opens device settings and offline collection tools. |
 
-The Watch uses two vertically paged scenes. Keep the companion's name quiet, the
-bat prominent, and feeding/egg controls equal in size with at least 44 pt touch
-targets. Do not show friendship levels, level dots or action-unlock lists on the
-Watch home. Its opening habit expresses the unlocked personality; explanations,
+The Watch uses two vertically paged scenes. Give the companion the space freed by
+removing its visible name and egg progress from the home scene. Keep a single
+centered Feed button with a 44 pt touch target; swipe or turn the Digital Crown to
+reach the egg page. Do not show friendship levels, level dots or action-unlock lists
+on the Watch home. Its opening habit expresses the unlocked personality; explanations,
 friendship details and manual action browsing belong on iPhone. Core play and
 offline collection management remain available on Watch.
 

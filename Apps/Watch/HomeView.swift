@@ -1,7 +1,7 @@
 import SwiftUI
 import BatwalkCore
 
-/// A companion, fruit and an egg. Personality is performed, not listed.
+/// The companion has the stage; Feed is the only visible control.
 struct HomeView: View {
     @Environment(GameStore.self) private var store
     @Binding var page: Int
@@ -10,7 +10,6 @@ struct HomeView: View {
     @Environment(\.isLuminanceReduced) private var luminanceReduced
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
-    @Environment(\.dynamicTypeSize) private var typeSize
     @State private var hatching: HatchPresentation?
     @State private var showEggPicker = false
     @State private var petCount = 0
@@ -71,41 +70,30 @@ struct HomeView: View {
             HatchReadyView(egg: egg) { hatch(egg) }
                 .batwalkAppear()
         } else if let companion = state.companion {
-            if typeSize.isAccessibilitySize {
-                accessibleCompanionScene(companion, time: time)
-            } else {
-                companionScene(companion, time: time)
-            }
+            companionScene(companion, time: time)
         } else if let egg = state.egg {
             firstEggScene(egg)
         }
     }
 
-    /// A pet scene, with two quiet controls below it. Keep the complete sprite
-    /// canvas: travelling wings and signature poses must never be cropped.
+    /// Reserve only the Feed touch target below the full animation canvas.
+    /// Names and egg progress do not compete with the companion's activity space.
     private func companionScene(_ companion: OwnedBat, time: TimeOfDay) -> some View {
         GeometryReader { geo in
-            let stageHeight = max(80, geo.size.height - 66)
-            let canvas = min(geo.size.width - 12, stageHeight * 1.16)
-            VStack(spacing: 2) {
-                companionName(companion)
-                    .frame(height: 18)
+            let stageHeight = max(1, geo.size.height - 52)
+            let canvas = min(geo.size.width - 8, stageHeight)
+            VStack(spacing: 0) {
                 petButton(companion, time: time, size: canvas)
                     .frame(maxWidth: .infinity)
                     .frame(height: stageHeight)
-                companionControls(companion)
+                FeedButton(fruit: store.state.fruit) { feed(companion) }
+                    .frame(height: 44)
+                    .padding(.bottom, 8)
             }
             .frame(width: geo.size.width, height: geo.size.height)
         }
+        .ignoresSafeArea(.container, edges: .bottom)
         .batwalkAppear()
-    }
-
-    private func companionName(_ companion: OwnedBat) -> some View {
-        Text(companion.companionTitle)
-            .font(BatwalkFont.rounded(.caption2, weight: .medium))
-            .foregroundStyle(BatwalkColor.textSecondaryDark)
-            .lineLimit(1).minimumScaleFactor(0.75)
-            .accessibilityAddTraits(.isHeader)
     }
 
     private func petButton(_ companion: OwnedBat, time: TimeOfDay, size: CGFloat) -> some View {
@@ -125,54 +113,6 @@ struct HomeView: View {
         .onDisappear { heroVisible = false; clearReaction() }
         .accessibilityLabel(companion.displayName)
         .accessibilityHint(resting == .awake ? "Pet \(companion.displayName)" : "Wake \(companion.displayName)")
-    }
-
-    private func accessibleCompanionScene(_ companion: OwnedBat, time: TimeOfDay) -> some View {
-        ScrollView {
-            VStack(spacing: 6) {
-                companionName(companion)
-                petButton(companion, time: time, size: 150)
-                companionControls(companion)
-            }
-            .padding(.horizontal, 8)
-        }
-        .batwalkAppear()
-    }
-
-    private func companionControls(_ companion: OwnedBat) -> some View {
-        HStack(spacing: 24) {
-            Button { feed(companion) } label: {
-                HStack(spacing: 4) {
-                    FruitIcon(size: 20)
-                    Text(store.state.fruit.formatted())
-                        .font(BatwalkFont.rounded(.caption2, weight: .medium))
-                        .monospacedDigit()
-                        .lineLimit(1).minimumScaleFactor(0.6)
-                }
-            }
-            .buttonStyle(WatchPetControlStyle())
-            .disabled(store.state.fruit == 0)
-            .accessibilityLabel("Feed \(companion.displayName)")
-            .accessibilityValue("\(store.state.fruit) fruit")
-            .accessibilityHint(store.state.fruit == 0 ? "Walk to find fruit" : "Use one fruit")
-
-            Button { withAnimation(BatwalkMotion.page) { page = 1 } } label: {
-                ZStack {
-                    Circle().stroke(BatwalkColor.cloud.opacity(0.12), lineWidth: 2)
-                    Circle().trim(from: 0, to: store.state.egg?.progress ?? 0)
-                        .stroke(BatwalkColor.ringMint, style: StrokeStyle(lineWidth: 2, lineCap: .round))
-                        .rotationEffect(.degrees(-90))
-                    EggIcon(type: store.state.egg?.type ?? .tiny, size: 19)
-                }
-                .frame(width: 32, height: 32)
-                .accessibilityHidden(true)
-            }
-            .buttonStyle(WatchPetControlStyle())
-            .accessibilityLabel(store.state.egg == nil ? "Choose an egg" : "Egg progress")
-            .accessibilityValue(store.state.egg.map { "\($0.stepsRemaining) steps to hatch" } ?? "No egg")
-        }
-        .frame(height: 44)
-        .frame(maxWidth: .infinity)
     }
 
     private func firstEggScene(_ egg: ActiveEgg) -> some View {

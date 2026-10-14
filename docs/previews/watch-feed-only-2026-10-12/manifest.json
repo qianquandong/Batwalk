@@ -1,0 +1,126 @@
+{
+  "source_commit": "95f50b460782bf39867a65260314a7f73a7dd3a0",
+  "ci_url": "https://github.com/qianquandong/Batwalk/actions/runs/38319897568",
+  "ci_conclusion": "success",
+  "captures": {
+    "small": {
+      "run_id": 38319905068,
+      "run_url": "https://github.com/qianquandong/Batwalk/actions/runs/38319905068",
+      "conclusion": "success",
+      "device": "Apple Watch Series 7 (41mm)",
+      "runtime": "watchOS 26.2",
+      "scenarios_captured": 26,
+      "images": [
+        {
+          "path": "small/02-home.png",
+          "width": 352,
+          "height": 430,
+          "sha256": "b2b37c1b96c1b44e3a7de3e2bdfa960b3f5ea922ebb0e5e5d115fe0a0ba40cde",
+          "visually_inspected": true
+        },
+        {
+          "path": "small/03-home-day.png",
+          "width": 352,
+          "height": 430,
+          "sha256": "6de47e3e1425b84bd2f938127eded18a981acbb66b0e29c92370ba609d978b49",
+          "visually_inspected": true
+        },
+        {
+          "path": "small/04-home-cocoa.png",
+          "width": 352,
+          "height": 430,
+          "sha256": "24efb820cfc25915e9f194773d71fb0ef2daf918f97a2f06f1f57732b038c608",
+          "visually_inspected": true
+        },
+        {
+          "path": "small/05-home-long-ear.png",
+          "width": 352,
+          "height": 430,
+          "sha256": "277eedac00f78bb7c42305f894f074c3e1ceab5ad383a8411109cca42234538b",
+          "visually_inspected": true
+        },
+        {
+          "path": "small/10-friendship-1.png",
+          "width": 352,
+          "height": 430,
+          "sha256": "463cc22d9d8f611344c7a05b1ebbe1c81ab9eeb93465dbc898451f4f3e8e1b32",
+          "visually_inspected": true
+        },
+        {
+          "path": "small/18-home-large-type.png",
+          "width": 352,
+          "height": 430,
+          "sha256": "282d4a96c1b84f7760e89a8cec9471ebc22b221e64695271e50bf76f79b0b60f",
+          "visually_inspected": true
+        },
+        {
+          "path": "small/21-pilot-walker.png",
+          "width": 352,
+          "height": 430,
+          "sha256": "c56e7e982061fb2114e271e3ffa83834aa04e09e04e1f693242c3ef4ecafd4d3",
+          "visually_inspected": false
+        }
+      ]
+    },
+    "large": {
+      "run_id": 38319907722,
+      "run_url": "https://github.com/qianquandong/Batwalk/actions/runs/38319907722",
+      "conclusion": "success",
+      "device": "Apple Watch Series 10 (46mm)",
+      "runtime": "watchOS 26.2",
+      "scenarios_captured": 26,
+      "images": [
+        {
+          "path": "large/02-home.png",
+          "width": 416,
+          "height": 496,
+          "sha256": "92eda6ff82e2a5e94a1e012b7288cd21c18cc13a22b73770ce98367e105c60e7",
+          "visually_inspected": true
+        },
+        {
+          "path": "large/03-home-day.png",
+          "width": 416,
+          "height": 496,
+          "sha256": "57ccf1523b2c13bbd159f2d030aae601ab7d52682a83f733efa4c7dbd7467de0",
+          "visually_inspected": false
+        },
+        {
+          "path": "large/04-home-cocoa.png",
+          "width": 416,
+          "height": 496,
+          "sha256": "aab73d4dc6d6fa581014284c739aff2f823be01bdba8383a77b9a9c211c6b5ee",
+          "visually_inspected": false
+        },
+        {
+          "path": "large/05-home-long-ear.png",
+          "width": 416,
+          "height": 496,
+          "sha256": "7a283af6ff132ea2e6e1ce34ccb74650ffd41be36eb95d8321ec3e8ea156dca6",
+          "visually_inspected": true
+        },
+        {
+          "path": "large/10-friendship-1.png",
+          "width": 416,
+          "height": 496,
+          "sha256": "0a394dbaf13af7de282470d022be19417e945594e75d7e07cd97b9142af66cc4",
+          "visually_inspected": false
+        },
+        {
+          "path": "large/18-home-large-type.png",
+          "width": 416,
+          "height": 496,
+          "sha256": "294ec0fb136e93e7f00b90bfe5a21985e1680469a9130438c8f1db1f7cf9ac9c",
+          "visually_inspected": true
+        },
+        {
+          "path": "large/21-pilot-walker.png",
+          "width": 416,
+          "height": 496,
+          "sha256": "77d850a5891e4ae7f5347580750f57e68b2e51fcea0ac4e6005dbb16e34d1773",
+          "visually_inspected": true
+        }
+      ]
+    }
+  },
+  "note": "Original simulator PNGs, copied without resizing or editing. Only selected representative scenes are committed. Static screenshots do not validate touch, VoiceOver or real-device behavior."
+}
