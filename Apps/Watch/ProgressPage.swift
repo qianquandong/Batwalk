@@ -10,6 +10,8 @@ struct ProgressPage: View {
     let steps: StepService
     @State private var showEggPicker = false
     @State private var settings = DemoMode.scenario == "settings" || DemoMode.scenario == "health-error"
+    @State private var showStepAccess = false
+    @State private var health: HealthStatus = .noData
 
     var body: some View {
         TimelineView(.everyMinute) { context in
@@ -41,7 +43,10 @@ struct ProgressPage: View {
         }
         .sheet(isPresented: $showEggPicker) { EggPickerView() }
         .sheet(isPresented: $settings) { SettingsView(steps: steps) }
-        .environment(\.batPageVisible, pageVisible && !settings && !showEggPicker)
+        .sheet(isPresented: $showStepAccess) {
+            NavigationStack { HealthAccessView(steps: steps, status: $health) }
+        }
+        .environment(\.batPageVisible, pageVisible && !settings && !showEggPicker && !showStepAccess)
     }
 
     private var eggTitle: some View {
@@ -77,6 +82,9 @@ struct ProgressPage: View {
                     if egg.isReady {
                         Button("Hatch") { page = 0 }
                             .buttonStyle(BatwalkPrimaryButtonStyle())
+                    } else if needsStepHelp {
+                        Button("Check Steps") { showStepAccess = true }
+                            .buttonStyle(BatwalkPrimaryButtonStyle())
                     } else {
                         HStack(spacing: 6) {
                             Image(systemName: "figure.walk")
@@ -96,5 +104,14 @@ struct ProgressPage: View {
             .frame(maxWidth: .infinity, minHeight: 44)
         }
         .padding(.horizontal, 8)
+    }
+
+    private var needsStepHelp: Bool {
+        guard !store.isDemo else { return false }
+        switch StepSyncCoordinator.shared.status {
+        case .failed: return true
+        case .updated(let total, _): return total == 0
+        case .idle, .updating: return false
+        }
     }
 }
