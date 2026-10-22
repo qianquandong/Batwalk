@@ -5,6 +5,7 @@ import BatwalkCore
 struct StepSetupView: View {
     @Environment(GameStore.self) private var store
     @Environment(\.scenePhase) private var scenePhase
+    @Environment(\.dynamicTypeSize) private var typeSize
     let steps: StepService
     let setup: StepSetupCoordinator
     @State private var showHelp = false
@@ -13,32 +14,48 @@ struct StepSetupView: View {
     private var needsHelp: Bool { status == .noSteps || status == .requestFailed || status == .readFailed }
 
     var body: some View {
-        ScrollView {
-            VStack(spacing: 10) {
-                EggSprite(type: store.state.egg?.type ?? .starter, state: .calm, size: needsHelp ? 54 : 70)
-                    .accessibilityHidden(true)
-                Text(title)
-                    .font(BatwalkFont.headline)
-                    .multilineTextAlignment(.center)
-                Text(message)
-                    .font(BatwalkFont.caption)
-                    .foregroundStyle(BatwalkColor.textSecondaryDark)
-                    .multilineTextAlignment(.center)
-                    .fixedSize(horizontal: false, vertical: true)
-                Button(status == .checking ? "Checking…" : needsHelp ? "Check again" : "Enable Steps") {
+        VStack(spacing: 4) {
+            ScrollView {
+                VStack(spacing: 6) {
+                    if !needsHelp, !typeSize.isAccessibilitySize {
+                        EggSprite(type: store.state.egg?.type ?? .starter, state: .calm, size: 36)
+                            .accessibilityHidden(true)
+                    }
+                    Text(title)
+                        .font(BatwalkFont.headline)
+                        .multilineTextAlignment(.center)
+                    Text(message)
+                        .font(BatwalkFont.caption)
+                        .foregroundStyle(BatwalkColor.textSecondaryDark)
+                        .multilineTextAlignment(.center)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                .frame(maxWidth: .infinity)
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+
+            // Keep recovery controls visible on small Watches and at large
+            // text sizes; only the explanation above needs to scroll.
+            VStack(spacing: 0) {
+                Button(actionTitle) {
                     Task { await connect(requestAccess: true) }
                 }
                 .buttonStyle(BatwalkPrimaryButtonStyle(minHeight: 44))
                 .disabled(setup.isWorking)
                 if needsHelp {
-                    Button("How to enable") { showHelp = true }
+                    Button { showHelp = true } label: {
+                        Text("Help")
                         .font(BatwalkFont.caption)
-                        .frame(minHeight: 44)
+                        .frame(maxWidth: .infinity, minHeight: 44)
+                        .contentShape(Rectangle())
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityLabel("How to enable Steps")
                 }
             }
-            .padding(.horizontal, BatwalkSpacing.sm)
-            .padding(.vertical, 6)
+            .fixedSize(horizontal: false, vertical: true)
         }
+        .padding(.horizontal, BatwalkSpacing.sm)
         .watchPageBackground()
         .sheet(isPresented: $showHelp) { StepPermissionHelpView() }
         .onChange(of: scenePhase) { _, phase in
@@ -49,9 +66,15 @@ struct StepSetupView: View {
         }
     }
 
+    private var actionTitle: String {
+        if status == .checking { return "Checking…" }
+        if typeSize.isAccessibilitySize { return needsHelp ? "Retry" : "Enable" }
+        return needsHelp ? "Check again" : "Enable Steps"
+    }
+
     private var title: String {
         switch status {
-        case .idle, .ready: return "Steps hatch your bat"
+        case .idle, .ready: return "Steps hatch bats"
         case .checking: return "Connecting steps"
         case .noSteps: return "Waiting for steps"
         case .requestFailed: return "Finish step setup"
@@ -61,9 +84,9 @@ struct StepSetupView: View {
 
     private var message: String {
         switch status {
-        case .idle, .ready: return "Turn on Steps in the next screen to begin."
+        case .idle, .ready: return "Allow Steps in the next screen to begin."
         case .checking: return "Reading today's steps…"
-        case .noSteps: return "No steps received yet. Turn on Steps, walk a few steps, then check again."
+        case .noSteps: return "Allow Steps, then walk a little and check again."
         case .requestFailed: return "Step setup didn't finish. Try again, or check Watch Settings."
         case .readFailed: return "Couldn't read steps. Unlock your Watch and try again."
         }
