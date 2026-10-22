@@ -16,7 +16,7 @@ struct StepSetupView: View {
     var body: some View {
         VStack(spacing: 4) {
             ScrollView {
-                VStack(spacing: 6) {
+                VStack(spacing: 0) {
                     if !needsHelp, !typeSize.isAccessibilitySize {
                         EggSprite(type: store.state.egg?.type ?? .starter, state: .calm, size: 36)
                             .accessibilityHidden(true)
@@ -84,11 +84,11 @@ struct StepSetupView: View {
 
     private var message: String {
         switch status {
-        case .idle, .ready: return "Allow Steps in the next screen to begin."
+        case .idle, .ready: return "Allow Steps to begin."
         case .checking: return "Reading today's steps…"
-        case .noSteps: return "Allow Steps, then walk a little and check again."
-        case .requestFailed: return "Step setup didn't finish. Try again, or check Watch Settings."
-        case .readFailed: return "Couldn't read steps. Unlock your Watch and try again."
+        case .noSteps: return "Enable Steps, then walk a little."
+        case .requestFailed: return "Try again or open Help."
+        case .readFailed: return "Unlock your Watch, then retry."
         }
     }
 
