@@ -201,15 +201,22 @@ struct CollectionPosterCard: View {
         VStack(spacing: 10) {
             Text("BATWALK").font(.system(size: 12, weight: .heavy, design: .rounded)).tracking(3)
             Text("Our little world").font(.system(size: 28, weight: .semibold, design: .serif))
-            LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 6), count: 5), spacing: 8) {
-                ForEach(species) { species in
-                    VStack(spacing: 2) {
-                        if let bat = state.collection[species.id] {
-                            BatSprite(speciesID: species.id, shiny: bat.showsShiny, mood: .awake, size: 40)
-                        } else {
-                            BatSilhouette(size: 40, color: Color(red: 0.65, green: 0.69, blue: 0.61))
+            // Eager rows are required for ImageRenderer: lazy grids may never
+            // materialize their children in an off-screen export.
+            VStack(spacing: 8) {
+                ForEach(0..<4, id: \.self) { row in
+                    HStack(spacing: 6) {
+                        ForEach(Array(species.dropFirst(row * 5).prefix(5))) { species in
+                            VStack(spacing: 2) {
+                                if let bat = state.collection[species.id] {
+                                    BatSprite(speciesID: species.id, shiny: bat.showsShiny, mood: .awake, size: 40)
+                                } else {
+                                    BatSilhouette(size: 40, color: Color(red: 0.65, green: 0.69, blue: 0.61))
+                                }
+                                Text(String(format: "%02d", species.number)).font(.system(size: 8, weight: .medium))
+                            }
+                            .frame(maxWidth: .infinity)
                         }
-                        Text(String(format: "%02d", species.number)).font(.system(size: 8, weight: .medium))
                     }
                 }
             }
