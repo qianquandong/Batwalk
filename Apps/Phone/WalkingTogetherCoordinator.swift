@@ -63,6 +63,8 @@ final class WalkingTogetherCoordinator {
     @ObservationIgnored private var consentAccountID: String?
     @ObservationIgnored private var generation = 0
     @ObservationIgnored private var sent: [String: HatchLeaderboardScore] = [:]
+    @ObservationIgnored private var submissionBusy = false
+    @ObservationIgnored private var submissionWaiters: [CheckedContinuation<Void, Never>] = []
 
     static let monthlyKey = "batwalk.friends.monthly"
     static let totalKey = "batwalk.friends.total"
@@ -147,12 +149,8 @@ final class WalkingTogetherCoordinator {
             for score in scores where enabled(score.board) {
                 guard active(operation, playerID: player.id) else { return }
                 guard HatchLeaderboards.isCurrent(score, at: now()) else { status = .failed; return }
-                let key = player.id + ":" + score.board.rawValue
-                if sent[key] != score {
-                    try await backend.submit(score)
-                    guard active(operation, playerID: player.id) else { return }
-                    sent[key] = score
-                }
+                try await submitSerially(score, operation: operation, playerID: player.id)
+                guard active(operation, playerID: player.id) else { return }
             }
             var combined: [String: WalkingFriend] = [:]
             for board in HatchLeaderboard.allCases where enabled(board) {
@@ -194,6 +192,29 @@ final class WalkingTogetherCoordinator {
         let operation = generation
         let photo = await backend.photo(playerID: playerID)
         return active(operation) ? photo : nil
+    }
+
+    /// Game Center's Most Recent policy follows server completion order. An old
+    /// submission cannot be cancelled after sending, so finish it before a new
+    /// snapshot may submit. Revalidate consent after waiting for this slot.
+    private func submitSerially(_ score: HatchLeaderboardScore, operation: Int, playerID: String) async throws {
+        if submissionBusy {
+            await withCheckedContinuation { submissionWaiters.append($0) }
+        } else { submissionBusy = true }
+        defer {
+            if submissionWaiters.isEmpty { submissionBusy = false }
+            else { submissionWaiters.removeFirst().resume() }
+        }
+        guard active(operation, playerID: playerID), enabled(score.board) else { return }
+        guard HatchLeaderboards.isCurrent(score, at: now()) else { throw CancellationError() }
+        let key = playerID + ":" + score.board.rawValue
+        guard sent[key] != score else { return }
+        try await backend.submit(score)
+        guard active(operation, playerID: playerID) else {
+            sent.removeValue(forKey: key)
+            return
+        }
+        sent[key] = score
     }
 
     private func enabled(_ board: HatchLeaderboard) -> Bool { board == .month ? monthlyEnabled : totalEnabled }

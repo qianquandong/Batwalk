@@ -93,6 +93,41 @@ final class WalkingTogetherTests: XCTestCase {
     }
 
     @MainActor
+    func testNewMonthScoreWaitsForOlderSubmissionBeforeUpdatingMostRecent() async {
+        let backend = FakeWalkingBackend()
+        let subject = coordinator(backend, monthly: true)
+        let firstPending = expectation(description: "Older score is in flight")
+        let secondAuthorized = expectation(description: "Newer refresh has reached submission")
+        var releaseFirst: CheckedContinuation<Void, Never>?
+        backend.beforeSubmissionCompletes = { score in
+            if score.value == 1 {
+                await withCheckedContinuation {
+                    releaseFirst = $0
+                    firstPending.fulfill()
+                }
+            }
+        }
+        let first = Task { await subject.refresh(history: [], total: 1, monthlyCounts: ["202610": 1]) }
+        await fulfillment(of: [firstPending], timeout: 2)
+        backend.permissionRequested = { secondAuthorized.fulfill() }
+        let second = Task { await subject.refresh(history: [], total: 2, monthlyCounts: ["202610": 2]) }
+        await fulfillment(of: [secondAuthorized], timeout: 2)
+        backend.permissionRequested = nil
+        for _ in 0..<10 { await Task.yield() }
+        // Without serialization, the newer request completes first and Apple
+        // subsequently replaces its Most Recent score with the delayed old one.
+        XCTAssertEqual(backend.submissions.map(\.value), [1])
+        XCTAssertTrue(backend.completedSubmissions.isEmpty)
+        releaseFirst?.resume()
+        await first.value
+        await second.value
+        XCTAssertEqual(backend.completedSubmissions.map(\.value), [1, 2])
+        XCTAssertEqual(subject.status, .ready)
+        await subject.refresh(history: [], total: 2, monthlyCounts: ["202610": 2])
+        XCTAssertEqual(backend.submissions.map(\.value), [1, 2])
+    }
+
+    @MainActor
     func testRevokedFriendsAccessClearsRowsAndSkipsSubmission() async {
         let backend = FakeWalkingBackend()
         backend.entries = [WalkingEntry(player: WalkingAccount(id: "friend", name: "Fern"), score: 3, context: 202610)]
@@ -182,18 +217,26 @@ private final class FakeWalkingBackend: WalkingTogetherBackend {
     var authenticationError = false
     var cacheClears = 0
     var submissions: [HatchLeaderboardScore] = []
+    var completedSubmissions: [HatchLeaderboardScore] = []
     var queries: [Query] = []
     var entries: [WalkingEntry] = []
     var local: WalkingEntry?
     var beforeReturningPage: (() async -> Void)?
     var afterSubmission: (() async -> Void)?
+    var beforeSubmissionCompletes: ((HatchLeaderboardScore) async -> Void)?
+    var permissionRequested: (() -> Void)?
     func authenticate(interactively: Bool) async throws {
         authentications += 1
         if authenticationError { throw URLError(.notConnectedToInternet) }
     }
-    func friendsAllowed(requestIfNeeded: Bool) async throws -> Bool { permission }
+    func friendsAllowed(requestIfNeeded: Bool) async throws -> Bool {
+        permissionRequested?()
+        return permission
+    }
     func submit(_ score: HatchLeaderboardScore) async throws {
         submissions.append(score)
+        await beforeSubmissionCompletes?(score)
+        completedSubmissions.append(score)
         await afterSubmission?()
     }
     func friends(board: HatchLeaderboard, start: Int, count: Int) async throws -> WalkingPage {
