@@ -1,5 +1,29 @@
 # Batwalk release readiness — updated 2026-10-23
 
+## Walking together — 2026-10-23, TestFlight only
+
+Configure iPhone Game Center IDs `bats.month` (classic / Most Recent Score) and
+`bats.total` (classic / Best Score), integer scores, high to low, range 0–100,000,000.
+No `steps.week` board: the player chose not to upload Health-derived steps.
+Monthly context is UTC `YYYYMM`; details and actual verification gaps are in
+[GAME_CENTER.md](GAME_CENTER.md). Enable repository variable
+`BATWALK_GAME_CENTER_ENABLED=true` only after ASC configuration and provisioning.
+The default build leaves the optional capability off.
+
+ASC resources verified on 2026-10-23: iPhone bundle resource `GWB4A285FF` has
+Game Center enabled; Game Center detail `2e730b90-7008-4560-863d-e8337d9dc6d7`;
+`bats.month` resource `39f466ea-2ac5-40a9-b670-0d0df7caeefe`;
+`bats.total` resource `08551c7e-e3f9-4e5b-91ce-3a1c40943132`.
+Both have English localizations and the formats above. These identifiers are
+configuration evidence, not proof of real-player score submissions. Associate
+the Game Center components with the new app version when testing requires it.
+
+Before App Store submission, reconcile the app-wide privacy answers with the
+phone manifest: optional Gameplay Content + User ID for App Functionality,
+linked, not tracking. No Health/Fitness upload. This feature does not create
+or submit an App Store version. Apple account/permission behavior still requires
+paired account device testing; fake tests and screenshots are not that evidence.
+
 This implementation follows the review order: progress reliability, wrist
 experience, rewards/purchases, then release verification. Automated results must
 be read from the PR's latest green CI run; an unsigned build is not a device sign-off.

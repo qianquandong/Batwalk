@@ -47,6 +47,7 @@ jobs:
       BUILD_NUMBER: ${{ inputs.build_number || github.run_number }}
       BATWALK_APP_GROUP: ${{ vars.BATWALK_APP_GROUP_ENABLED }}
       BATWALK_CLOUD_BACKUP: ${{ vars.BATWALK_CLOUD_BACKUP_ENABLED }}
+      BATWALK_GAME_CENTER: ${{ vars.BATWALK_GAME_CENTER_ENABLED }}
     steps:
       - uses: actions/checkout@v4
 
@@ -95,6 +96,7 @@ jobs:
           args=()
           [ "$BATWALK_APP_GROUP" != "true" ] || args+=(--app-group)
           [ "$BATWALK_CLOUD_BACKUP" != "true" ] || args+=(--cloud-backup)
+          [ "$BATWALK_GAME_CENTER" != "true" ] || args+=(--game-center)
           python3 scripts/configure-capabilities.py "${args[@]}"
           xcodegen generate --spec project.capabilities.json
 

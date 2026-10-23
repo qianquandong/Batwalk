@@ -3,6 +3,7 @@ import BatwalkCore
 
 struct HistoryView: View {
     @Environment(GameStore.self) private var store
+    @State private var showFriends = DemoMode.scenario == "phone-friends"
 
     var body: some View {
         NavigationStack {
@@ -13,6 +14,10 @@ struct HistoryView: View {
                         .font(BatwalkFont.body).foregroundStyle(BatwalkColor.textSecondaryLight)
                     PhoneSyncStatus()
                     JournalCommunitySection()
+                    NavigationLink { WalkingTogetherView() } label: {
+                        Label("Walking together", systemImage: "person.2")
+                            .font(BatwalkFont.headline).frame(minHeight: 44)
+                    }
                     HStack {
                         Text("\(store.state.collection.count) friends")
                         Spacer()
@@ -39,6 +44,7 @@ struct HistoryView: View {
             }
             .background(BatwalkColor.lightBackground.ignoresSafeArea())
             .toolbar(.hidden, for: .navigationBar)
+            .navigationDestination(isPresented: $showFriends) { WalkingTogetherView() }
         }
     }
 }

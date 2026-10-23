@@ -48,3 +48,7 @@ Weekly recap uses local Monday–Sunday; monthly 1/3/6 hatch milestones reward o
 ### Birthday — decided 2026-10-23
 
 Month/day only, using the player's local timezone and Gregorian date. February 29 observes February 28 in non-leap years. Birthday hatches keep an immutable celebration year and permanent tiny hat; no-hatch companions wear it for that day only. Removing the date does not revoke earned cosmetics. The phone requests, the Watch writes and confirms; expired, foreign-save, stale and duplicate deliveries are handled explicitly.
+
+### Walking together — decided 2026-10-23
+
+No Game Center steps. Share only opt-in monthly/all-time hatch counts from iPhone. Friends-only app queries do not guarantee globally private scores; consent explains this. `bats.month` uses Most Recent Score plus UTC `YYYYMM` context, because recurring boards cannot represent variable calendar months. See `GAME_CENTER.md`.

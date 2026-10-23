@@ -33,6 +33,8 @@ jobs:
         run: python3 -m unittest discover -s scripts/tests -p 'test_github_ci_fallback.py'
       - name: Test simulator capture failure detection
         run: python3 -m unittest discover -s scripts/tests -p 'test_capture_screens.py'
+      - name: Test optional Game Center capabilities
+        run: python3 -m unittest discover -s scripts/tests -p 'test_game_center_configuration.py'
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
@@ -78,7 +80,7 @@ jobs:
             -resultBundlePath AppTests.xcresult CODE_SIGNING_ALLOWED=NO test
       - name: Validate capability-enabled configuration (unsigned)
         run: |
-          python3 scripts/configure-capabilities.py --app-group --cloud-backup
+          python3 scripts/configure-capabilities.py --app-group --cloud-backup --game-center
           xcodegen generate --spec project.capabilities.json
           scripts/ci-xcodebuild.sh -project Batwalk.xcodeproj -scheme BatwalkPhone \
             -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO build

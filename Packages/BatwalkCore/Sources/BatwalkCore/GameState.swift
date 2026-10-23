@@ -67,12 +67,14 @@ public struct HatchRecord: Codable, Equatable, Sendable {
     public let challengeMonthKey: String?
     public let birthdayYear: Int?
     public let challengeDay: Int?
+    /// Lifetime egg-hatch ordinal; absent in records written before this counter.
+    public let hatchOrdinal: Int?
 
     public init(speciesID: String, isShiny: Bool, eggType: EggType, hatchedAt: Date,
                 outcome: HatchOutcome, source: HatchSource = .egg,
                 friendshipBefore: Int? = nil, friendshipGained: Int? = nil,
                 eggStartedAt: Date? = nil, eggSteps: Int? = nil, eggTierName: String? = nil,
-                challengeMonthKey: String? = nil, challengeDay: Int? = nil, birthdayYear: Int? = nil) {
+                challengeMonthKey: String? = nil, challengeDay: Int? = nil, birthdayYear: Int? = nil, hatchOrdinal: Int? = nil) {
         self.speciesID = speciesID
         self.isShiny = isShiny
         self.eggType = eggType
@@ -87,10 +89,11 @@ public struct HatchRecord: Codable, Equatable, Sendable {
         self.challengeMonthKey = challengeMonthKey
         self.challengeDay = challengeDay
         self.birthdayYear = birthdayYear
+        self.hatchOrdinal = hatchOrdinal
     }
 
     private enum CodingKeys: String, CodingKey {
-        case speciesID, isShiny, eggType, hatchedAt, outcome, source, friendshipBefore, friendshipGained, eggStartedAt, eggSteps, eggTierName, challengeMonthKey, challengeDay, birthdayYear
+        case speciesID, isShiny, eggType, hatchedAt, outcome, source, friendshipBefore, friendshipGained, eggStartedAt, eggSteps, eggTierName, challengeMonthKey, challengeDay, birthdayYear, hatchOrdinal
     }
 
     /// Records written before `source` existed decode as ordinary egg hatches.
@@ -110,6 +113,7 @@ public struct HatchRecord: Codable, Equatable, Sendable {
         challengeMonthKey = try c.decodeIfPresent(String.self, forKey: .challengeMonthKey)
         birthdayYear = try c.decodeIfPresent(Int.self, forKey: .birthdayYear)
         challengeDay = try c.decodeIfPresent(Int.self, forKey: .challengeDay)
+        hatchOrdinal = try c.decodeIfPresent(Int.self, forKey: .hatchOrdinal)
     }
 }
 
@@ -174,6 +178,8 @@ public struct GameState: Codable, Equatable, Sendable {
     /// speciesID → (dayKey, pets that granted EXP that day)
     public private(set) var petLog: [String: PetDay] = [:]
     public private(set) var lifetimeCreditedSteps = 0
+    /// Egg hatches only; survives history trimming and excludes Moon Dust arrivals.
+    public private(set) var lifetimeHatchCount = 0
     /// Pity counters (see `Tuning.shinyPityHatches` / `newSpeciesPityHatches`).
     public private(set) var hatchesSinceShiny = 0
     public private(set) var hatchesSinceNewSpecies = 0
@@ -198,7 +204,7 @@ public struct GameState: Codable, Equatable, Sendable {
     private enum CodingKeys: String, CodingKey {
         case schemaVersion, saveID, revision, needsStepBaseline, hasStarted, egg, bankedSteps
         case ledger, collection, companionID, fruit, fruitProgressSteps, isUnlocked, history, petLog, lifetimeCreditedSteps
-        case hatchesSinceShiny, hatchesSinceNewSpecies, moonDust, trialEggUsed, outfitPreferences, earnedChallengeOutfits, challengeHatchCounts
+        case hatchesSinceShiny, hatchesSinceNewSpecies, moonDust, trialEggUsed, outfitPreferences, earnedChallengeOutfits, challengeHatchCounts, lifetimeHatchCount
         case birthday, lastBirthdayRequest, birthdayRequestFloorRevision
     }
 
@@ -222,6 +228,8 @@ public struct GameState: Codable, Equatable, Sendable {
         fruitProgressSteps = try c.decodeIfPresent(Int.self, forKey: .fruitProgressSteps) ?? 0
         isUnlocked = try c.decodeIfPresent(Bool.self, forKey: .isUnlocked) ?? false
         history = try c.decode([HatchRecord].self, forKey: .history)
+        lifetimeHatchCount = max(history.filter { $0.source == .egg }.count,
+            try c.decodeIfPresent(Int.self, forKey: .lifetimeHatchCount) ?? 0)
         petLog = try c.decodeIfPresent([String: PetDay].self, forKey: .petLog) ?? [:]
         lifetimeCreditedSteps = try c.decodeIfPresent(Int.self, forKey: .lifetimeCreditedSteps) ?? 0
         hatchesSinceShiny = try c.decodeIfPresent(Int.self, forKey: .hatchesSinceShiny) ?? 0
@@ -470,13 +478,14 @@ public struct GameState: Codable, Equatable, Sendable {
         hatchesSinceShiny = roll.isShiny ? 0 : hatchesSinceShiny + 1
         hatchesSinceNewSpecies = outcome == .newSpecies ? 0 : hatchesSinceNewSpecies + 1
 
+        lifetimeHatchCount += 1
         let record = HatchRecord(speciesID: id, isShiny: roll.isShiny, eggType: current.type,
                                  hatchedAt: now, outcome: outcome,
                                  friendshipBefore: friendshipBefore, friendshipGained: gained,
                                  eggStartedAt: current.startedAt, eggSteps: current.targetSteps,
                                  eggTierName: current.type.displayName(forTargetSteps: current.targetSteps),
                                  challengeMonthKey: SocialCalendar.monthKey(now, calendar: calendar),
-                                 challengeDay: calendar.component(.day, from: now), birthdayYear: birthdayYear)
+                                 challengeDay: calendar.component(.day, from: now), birthdayYear: birthdayYear, hatchOrdinal: lifetimeHatchCount)
         recordChallengeHatch(record, calendar: calendar)
         history.append(record)
         egg = nil
@@ -648,6 +657,7 @@ public struct GameState: Codable, Equatable, Sendable {
         collection = backup.collection
         companionID = backup.companionID.flatMap { collection[$0] == nil ? nil : $0 }
         history = backup.history
+        lifetimeHatchCount = backup.lifetimeHatchCount
         fruit = backup.fruit
         moonDust = backup.moonDust
         trialEggUsed = backup.trialEggUsed

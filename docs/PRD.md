@@ -356,6 +356,16 @@ Exact rates are tuning values for beta and may change without changing the core 
 - Store game-derived state locally and in CloudKit backup.
 - Analytics should record game events — not detailed Health history.
 
+**Walking together (2026-10-23).** iPhone-only Game Center sharing is optional,
+with independent default-off switches for monthly and all-time egg-hatch counts.
+No step leaderboard or Health upload is implemented. The custom display uses
+friends only and no ranks; consent text explains Game Center scores may also be
+public elsewhere. Monthly scores use UTC calendar months with a classic
+Most Recent Score board and month context; personal challenges remain local.
+Account changes revoke consent, and friends-access revocation clears displayed
+friends. Opt-out stops future sharing, not previously accepted Apple scores.
+Full data flow, ASC IDs and privacy-label rationale: [GAME_CENTER.md](GAME_CENTER.md).
+
 ### 4.6 Analytics Events
 
 Recommended minimum events: `onboarding_complete`, `step_permission_result`, `first_hatch`, `egg_complete`, `bat_collected`, `duplicate_friendship`, `companion_changed`, `feed_bat`, `purchase_unlock`, `restore_purchase`.
