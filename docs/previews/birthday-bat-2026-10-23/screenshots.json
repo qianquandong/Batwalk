@@ -1,0 +1,36 @@
+{
+  "launchRoster": true,
+  "uneditedSimulatorCaptures": true,
+  "images": [
+    {
+      "file": "phone-birthday-final.png",
+      "sha256": "ea8086c27cbc8346172958f9ebf11b2952b7f9e523b27a8182e39abfcceddf36",
+      "workflowRun": 39917804909,
+      "commit": "fbb6a8a8f78d9fb9239988f1489389b90696fc98"
+    },
+    {
+      "file": "phone-birthday-pending-final.png",
+      "sha256": "641d0399712fbbe8631d3a9a9f0b458bb6d0ea23487f28838577c97c72800a01",
+      "workflowRun": 39917804909,
+      "commit": "fbb6a8a8f78d9fb9239988f1489389b90696fc98"
+    },
+    {
+      "file": "phone-birthday-settings-final.png",
+      "sha256": "0dae801506af9ff576e130bba29bea0b15dd5f651552775263c212b8cff8f204",
+      "workflowRun": 39917804909,
+      "commit": "fbb6a8a8f78d9fb9239988f1489389b90696fc98"
+    },
+    {
+      "file": "phone-certificate-birthday-final.png",
+      "sha256": "cabb415d17c6e54177230aba5e628deb18c93fa3b5abadc717192b14912034d7",
+      "workflowRun": 39917804909,
+      "commit": "fbb6a8a8f78d9fb9239988f1489389b90696fc98"
+    },
+    {
+      "file": "watch-birthday.png",
+      "sha256": "0dc985da4cb689001e9b36bcd20617e89b837024593a44a4e410b3b8c6875a51",
+      "workflowRun": 39916498656,
+      "commit": "cb41bfe3dfecc1a7f870f422f507ccde9e5ddab6"
+    }
+  ]
+}
