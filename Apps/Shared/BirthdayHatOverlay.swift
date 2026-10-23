@@ -1,23 +1,36 @@
 import SwiftUI
+import BatwalkCore
 
 /// A small accessory above the existing portrait; every year gets its own colour.
 /// The anchors follow the original characters' different heads, never alter their art.
 struct BirthdayHatOverlay: View {
     let speciesID: String
     let year: Int?
+    var mood: BatMood = .awake
 
     private var crown: CGPoint {
+        // Mochi's accepted pilot frames have different resting head heights.
+        if speciesID == "mochi" {
+            let y: CGFloat
+            switch mood {
+            case .happy: y = 19
+            case .eating: y = 15
+            case .sleeping, .drowsy: y = 21
+            default: y = 25
+            }
+            return .init(x: 32, y: y)
+        }
         let anchors: [String: CGPoint] = [
-            "mochi": .init(x: 31, y: 16), "cocoa": .init(x: 32, y: 13),
-            "long-ear": .init(x: 31, y: 37), "fruit": .init(x: 32, y: 18),
-            "cave": .init(x: 32, y: 24), "sleepy": .init(x: 35, y: 21),
-            "dust": .init(x: 33, y: 20), "pebble": .init(x: 32, y: 17),
-            "strawberry": .init(x: 32, y: 23), "blossom": .init(x: 32, y: 27),
-            "moss": .init(x: 32, y: 23), "sunset": .init(x: 40, y: 22),
-            "snow": .init(x: 32, y: 17), "cloud": .init(x: 32, y: 30),
-            "moonwing": .init(x: 37, y: 25), "golden": .init(x: 32, y: 28),
-            "crystal": .init(x: 32, y: 34), "vampire": .init(x: 32, y: 20),
-            "galaxy": .init(x: 32, y: 28), "eclipse": .init(x: 32, y: 29)
+            "cocoa": .init(x: 37, y: 11), "long-ear": .init(x: 35, y: 44),
+            "fruit": .init(x: 36, y: 13), "cave": .init(x: 35, y: 30),
+            "sleepy": .init(x: 41, y: 24), "dust": .init(x: 35, y: 12),
+            "pebble": .init(x: 31, y: 15), "strawberry": .init(x: 31, y: 27),
+            "blossom": .init(x: 37, y: 24), "moss": .init(x: 34, y: 23),
+            "sunset": .init(x: 40, y: 27), "snow": .init(x: 37, y: 11),
+            "cloud": .init(x: 32, y: 24), "moonwing": .init(x: 33, y: 22),
+            "golden": .init(x: 34, y: 22), "crystal": .init(x: 32, y: 25),
+            "vampire": .init(x: 32, y: 15), "galaxy": .init(x: 31, y: 22),
+            "eclipse": .init(x: 32, y: 24)
         ]
         return anchors[speciesID] ?? .init(x: 32, y: 20)
     }

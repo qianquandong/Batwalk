@@ -91,7 +91,7 @@ struct CompanionView: View {
                                     mood: BatMood.resting(at: DemoMode.timeOfDay(at: context.date)), size: 250,
                                     friendshipEXP: bat.friendshipEXP, showsKeepsake: false)
                             .overlay { ChallengeOutfitOverlay(outfit: store.state.outfit(for: bat.speciesID)) }
-                            .overlay { BirthdayHatOverlay(speciesID: bat.speciesID, year: store.state.birthdayHatYear(for: bat.speciesID, now: context.date)) }
+                            .overlay { BirthdayHatOverlay(speciesID: bat.speciesID, year: store.state.birthdayHatYear(for: bat.speciesID, now: context.date), mood: BatMood.resting(at: DemoMode.timeOfDay(at: context.date))) }
                             .environment(\.batPageVisible, pageVisible && !settings && !guide)
                     } else {
                         EggSprite(type: store.state.egg?.type ?? .starter,

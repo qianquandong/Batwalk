@@ -18,7 +18,7 @@ struct BatShareCard: View {
                     .tracking(3)
                     .foregroundStyle(BatwalkColor.textSecondaryDark)
                 BatSprite(speciesID: species.id, shiny: bat.showsShiny, mood: .happy, size: 210)
-                    .overlay { BirthdayHatOverlay(speciesID: species.id, year: bat.birthdayYears?.max()) }
+                    .overlay { BirthdayHatOverlay(speciesID: species.id, year: bat.birthdayYears?.max(), mood: .happy) }
                 Text(bat.displayName)
                     .font(.system(size: 34, weight: .bold, design: .rounded))
                     .foregroundStyle(.white)

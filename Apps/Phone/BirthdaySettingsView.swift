@@ -45,6 +45,8 @@ struct BirthdaySettingsView: View {
                     Text(message(for: failure)).foregroundStyle(BatwalkColor.textSecondaryLight)
                 } else if !store.state.hasStarted {
                     Text("Start Batwalk on your paired Watch first, then save your birthday here.")
+                } else if draft != store.state.birthday {
+                    Text("Unsaved change. Save this choice on your Watch.")
                 } else {
                     Text(store.state.birthday == nil ? "No birthday saved." : "Saved on your Watch.")
                 }
