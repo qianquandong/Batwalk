@@ -55,7 +55,7 @@ struct BirthCertificateCard: View {
             HStack {
                 Text("BATWALK").font(.system(size: 12, weight: .heavy, design: .rounded)).tracking(2)
                 Spacer()
-                Text(record.birthdayYear.map { "BIRTHDAY · \($0)" } ?? "A LITTLE ARRIVAL").font(.system(size: 8, weight: .semibold)).tracking(1.5)
+                Text(record.birthdayYear.map { "BIRTHDAY · \(String($0))" } ?? "A LITTLE ARRIVAL").font(.system(size: 8, weight: .semibold)).tracking(1.5)
             }
             Rectangle().fill(ink.opacity(0.16)).frame(height: 1)
             HStack(alignment: .top) {
