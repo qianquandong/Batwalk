@@ -1,0 +1,61 @@
+{
+  "launchRoster": true,
+  "files": [
+    {
+      "path": "phone/certificate.png",
+      "sourceFile": "phone/15-phone-certificate.png",
+      "sourceCommit": "68f1830e8fc9d8993142ef8bfdaf67784b879889",
+      "workflow": "https://github.com/qianquandong/Batwalk/actions/runs/39914632147",
+      "sha256": "c32d3f4d492c813f0d746fc5c1494d04b32946d5dd6768346552db19ea55d767"
+    },
+    {
+      "path": "phone/certificate-shiny.png",
+      "sourceFile": "phone/16-phone-certificate-shiny.png",
+      "sourceCommit": "68f1830e8fc9d8993142ef8bfdaf67784b879889",
+      "workflow": "https://github.com/qianquandong/Batwalk/actions/runs/39914632147",
+      "sha256": "61202807d054b1c187d32807bf15602ef7b3c84f72d582967341f7b5ef4d7507"
+    },
+    {
+      "path": "phone/poster.png",
+      "sourceFile": "phone/17-phone-poster.png",
+      "sourceCommit": "68f1830e8fc9d8993142ef8bfdaf67784b879889",
+      "workflow": "https://github.com/qianquandong/Batwalk/actions/runs/39914632147",
+      "sha256": "9cf97e2eefcac5ed887fe379f788097a876249aaa7509714d31dbc4fdf785bf0"
+    },
+    {
+      "path": "phone/settings.png",
+      "sourceFile": "phone/11-phone-settings.png",
+      "sourceCommit": "68f1830e8fc9d8993142ef8bfdaf67784b879889",
+      "workflow": "https://github.com/qianquandong/Batwalk/actions/runs/39914632147",
+      "sha256": "480bfa8431c6fd08f92b23e456a3f6e3af9d4486d6241ade87019e69762869c8"
+    },
+    {
+      "path": "phone/companion.png",
+      "sourceFile": "phone/01-phone-companion.png",
+      "sourceCommit": "68f1830e8fc9d8993142ef8bfdaf67784b879889",
+      "workflow": "https://github.com/qianquandong/Batwalk/actions/runs/39914632147",
+      "sha256": "413a8b9da6fa868e07075fde302d6617039d26bd214527c70101326058af8851"
+    },
+    {
+      "path": "watch/egg-picker.png",
+      "sourceFile": "watch/01-egg-picker.png",
+      "sourceCommit": "68f1830e8fc9d8993142ef8bfdaf67784b879889",
+      "workflow": "https://github.com/qianquandong/Batwalk/actions/runs/39914632147",
+      "sha256": "7f7813765d6ff175cb683ef3fac16485057bb1bf0fe819acaeee80c153d537ec"
+    },
+    {
+      "path": "watch/home.png",
+      "sourceFile": "watch/02-home.png",
+      "sourceCommit": "48adacc21ac43cd6a1c6a7a73371fa93ef5e9abe",
+      "workflow": "https://github.com/qianquandong/Batwalk/actions/runs/39912694008",
+      "sha256": "fe652cfaf39a74253f388848cd05727f620d2f67e59f0c398e7b64f8952ef6f8"
+    },
+    {
+      "path": "watch/progress.png",
+      "sourceFile": "watch/08-progress-61.png",
+      "sourceCommit": "48adacc21ac43cd6a1c6a7a73371fa93ef5e9abe",
+      "workflow": "https://github.com/qianquandong/Batwalk/actions/runs/39912694008",
+      "sha256": "fc55f45cd537e5d670e2beee5646012175ad266ea89f8e5fb070877a2a9f2007"
+    }
+  ]
+}
