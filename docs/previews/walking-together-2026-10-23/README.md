@@ -12,22 +12,32 @@ remain the same; monthly accessories are inherited from the preceding PR.
 ## Provenance
 
 - Initial native compile / hosted-test run: [CI 39913657743](https://github.com/qianquandong/Batwalk/actions/runs/39913657743), source `8028ddc`, all jobs passed including the Game Center capability-enabled build.
-- Initial both-platform, launch-roster screenshot run: [Screenshots 39913660545](https://github.com/qianquandong/Batwalk/actions/runs/39913660545), source `8028ddc`, publish off.
-- That screenshot workflow completed successfully. `phone-friends.png` is its
-  original 1206 × 2622 simulator image; reviewed for complete copy, three rows,
+- Both-platform, launch-roster screenshot run: [Screenshots 39916161780](https://github.com/qianquandong/Batwalk/actions/runs/39916161780), source `eaa7069`, publish off, completed successfully. `watch-home.png` preserves its original 416 × 496 image of the quiet Watch companion page.
+- Final iPhone capture: [Screenshots 39918370559](https://github.com/qianquandong/Batwalk/actions/runs/39918370559), source `8e0d407`, phone-only, completed successfully. Exact source files and hashes are recorded in `manifest.json`.
+  Images are original simulator PNGs, reviewed for complete copy, three rows,
   own-row highlight, UTC month label and visible sharing disclosure.
-- This folder is completed with the final integrated screenshots and validation
-  result before merging the friends PR. A running workflow is not a pass.
+- The final PR's CI check is authoritative for the integrated source, including
+  birthday settings and privacy fixes. Cancelled superseded runs are not passes.
 
 ## Checks
 
 Core tests cover actual calendar months, legacy-save counter migration and
 history-trimmed backups. Fake-backend tests cover per-account consent, no work
-while off, permission revocation, all friend pages, stale month contexts, and
-late results after opting out. Native builds validate the real GameKit API.
+while off, permission revocation, all friend pages, stale month contexts,
+offline month rollover, and late results after opting out. The submission-order
+regression blocks an old request while a new refresh arrives: the old code
+finishes scores in the wrong order, while the serialized code preserves the
+newest score. Native builds validate the real GameKit API.
+
+Local integrated checks: 149 core tests; 12 coordinator fake-backend tests in the
+Linux harness; 13 Python capability/archive tests. The harness exercises the
+coordinator with platform stubs, not Apple's live Game Center. GitHub's native
+hosted suite exercises the same tests with the real iPhone SDK.
 
 Real account and signed-device tests remain separate: a simulator screenshot
 does not establish friend authorization, successful score posting, or public
 Game Center visibility. See [Game Center implementation and privacy](../../GAME_CENTER.md).
 
 ![Walking together, invented profiles](phone-friends.png)
+
+![Watch companion remains quiet](watch-home.png)
