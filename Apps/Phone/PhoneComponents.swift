@@ -219,7 +219,7 @@ struct HatchHistoryRow: View {
                     if record.source == .moonDust {
                         ChipView(text: "Moon Dust", symbol: "sparkle", color: BatwalkColor.rarityShiny, dark: false)
                     } else {
-                        ChipView(text: record.eggType.displayName, color: BatwalkColor.accent, dark: false)
+                        ChipView(text: record.certificateEggName, color: BatwalkColor.accent, dark: false)
                     }
                 }
             }

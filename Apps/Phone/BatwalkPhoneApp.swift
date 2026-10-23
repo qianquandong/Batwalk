@@ -58,6 +58,8 @@ enum PhoneTab: Int, Hashable {
 struct PhoneRootView: View {
     @State private var tab = PhoneTab(rawValue: DemoMode.page) ?? .companion
     @State private var settings = ["phone-settings", "phone-unlock"].contains(DemoMode.scenario ?? "")
+    @State private var sharePreview = ["phone-certificate", "phone-certificate-shiny", "phone-poster"].contains(DemoMode.scenario ?? "")
+    @Environment(GameStore.self) private var store
 
     var body: some View {
         TabView(selection: $tab) {
@@ -75,5 +77,14 @@ struct PhoneRootView: View {
                 .tag(PhoneTab.journal)
         }
         .sheet(isPresented: $settings) { PhoneSettingsView() }
+        .sheet(isPresented: $sharePreview) {
+            NavigationStack {
+                Group {
+                    if DemoMode.scenario == "phone-poster" { CollectionPosterView() }
+                    else if let record = store.state.history.last { BirthCertificateView(record: record) }
+                }
+                .toolbar { ToolbarItem(placement: .confirmationAction) { Button("Done") { sharePreview = false } } }
+            }
+        }
     }
 }

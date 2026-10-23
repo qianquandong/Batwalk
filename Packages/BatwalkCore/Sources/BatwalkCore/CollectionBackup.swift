@@ -21,7 +21,7 @@ public struct CollectionBackup: Codable, Equatable, Sendable {
         hasStarted = state.hasStarted
         collection = state.collection
         companionID = state.companionID
-        history = state.history
+        history = state.history.map { $0.withoutActivityMetrics }
         fruit = state.fruit
         moonDust = state.moonDust
         trialEggUsed = state.trialEggUsed
@@ -35,7 +35,7 @@ public struct CollectionBackup: Codable, Equatable, Sendable {
         self.hasStarted = hasStarted
         self.collection = collection
         self.companionID = companionID
-        self.history = history
+        self.history = history.map { $0.withoutActivityMetrics }
         self.fruit = fruit
         self.moonDust = moonDust
         self.trialEggUsed = trialEggUsed
@@ -54,7 +54,7 @@ public struct CollectionBackup: Codable, Equatable, Sendable {
         hasStarted = try c.decodeIfPresent(Bool.self, forKey: .hasStarted) ?? true
         collection = try c.decode([String: OwnedBat].self, forKey: .collection)
         companionID = try c.decodeIfPresent(String.self, forKey: .companionID)
-        history = try c.decodeIfPresent([HatchRecord].self, forKey: .history) ?? []
+        history = (try c.decodeIfPresent([HatchRecord].self, forKey: .history) ?? []).map { $0.withoutActivityMetrics }
         fruit = try c.decodeIfPresent(Int.self, forKey: .fruit) ?? 0
         moonDust = try c.decodeIfPresent(Int.self, forKey: .moonDust) ?? 0
         trialEggUsed = try c.decodeIfPresent(Bool.self, forKey: .trialEggUsed) ?? false

@@ -4,7 +4,7 @@ import BatwalkCore
 
 /// Best-effort Watch ↔ iPhone sync (PRD §4.1).
 ///
-/// - Watch → iPhone: the whole save goes into the Watch's application context
+/// - Watch → iPhone: a redacted collection mirror goes into the Watch's application context
 ///   (only the latest matters to a mirror; a large history uses a file transfer).
 /// - iPhone → Watch: companion-change requests (`transferUserInfo`, queued), and
 ///   the phone's latest *collection backup* in the phone's application context,
@@ -24,6 +24,32 @@ final class PhoneSync: NSObject, WCSessionDelegate {
     /// Called once the session is active (the phone publishes its backup here).
     var onActivated: (@MainActor () -> Void)?
 
+    /// Watch-only resolver; replies are read-only and never queued or saved.
+    var certificateMetrics: (@MainActor (CertificateMetricsRequest) -> CertificateMetrics?)?
+    private static let certificateKey = "certificateMetrics"
+
+    enum CertificateError: Error { case unavailable, missingReceipt }
+
+    @MainActor
+    func requestCertificateMetrics(_ request: CertificateMetricsRequest,
+                                   completion: @escaping @MainActor (Result<CertificateMetrics, CertificateError>) -> Void) {
+        guard WCSession.isSupported(), WCSession.default.activationState == .activated,
+              WCSession.default.isReachable,
+              let data = try? JSONEncoder().encode(request) else {
+            completion(.failure(.unavailable)); return
+        }
+        WCSession.default.sendMessage([Self.certificateKey: data], replyHandler: { reply in
+            let result: Result<CertificateMetrics, CertificateError>
+            if let data = reply[Self.certificateKey] as? Data,
+               let metrics = try? JSONDecoder().decode(CertificateMetrics.self, from: data) {
+                result = .success(metrics)
+            } else { result = .failure(.missingReceipt) }
+            Task { @MainActor in completion(result) }
+        }, errorHandler: { _ in
+            Task { @MainActor in completion(.failure(.unavailable)) }
+        })
+    }
+
     private static let saveKey = "save"
     private static let updatedKey = "updatedAt"
     private static let requestKey = "companionRequest"
@@ -36,6 +62,7 @@ final class PhoneSync: NSObject, WCSessionDelegate {
     private let pendingLock = NSLock()
     private let flushLock = NSLock()
     private var pendingSave: Data?
+    private var cancelledLegacyFiles: Set<URL> = []
 
     enum SendResult { case sent, noWatchApp, unavailable }
 
@@ -64,8 +91,39 @@ final class PhoneSync: NSObject, WCSessionDelegate {
     // MARK: Watch → iPhone save
 
     func push(save data: Data) {
+        // Never trust callers to remember the privacy boundary.
+        guard let data = Self.sanitizedMirrorData(data) else { return }
         pendingLock.lock(); pendingSave = data; pendingLock.unlock()
         flushPendingSave()
+    }
+
+    static func sanitizedMirrorData(_ data: Data) -> Data? {
+        guard let state = try? JSONDecoder().decode(GameState.self, from: data) else { return nil }
+        return try? JSONEncoder().encode(state.collectionMirror())
+    }
+
+    static func mirrorTransferNeedsRedaction(_ data: Data?) -> Bool {
+        guard let data, let state = try? JSONDecoder().decode(GameState.self, from: data) else { return true }
+        return state != state.collectionMirror()
+    }
+
+    private func isCancelledLegacyFile(_ url: URL) -> Bool {
+        pendingLock.lock(); defer { pendingLock.unlock() }
+        return cancelledLegacyFiles.contains(url)
+    }
+
+    /// An app update can inherit transfers queued by its previous version.
+    /// Cancel what the app can still control; activation then publishes the
+    /// current local save through the redacted push boundary. Already delivered
+    /// data cannot be recalled from the connectivity system.
+    private func cancelLegacyMirrorTransfers() {
+        for transfer in WCSession.default.outstandingFileTransfers {
+            guard transfer.file.metadata?[Self.fileSaveKey] as? Bool == true,
+                  !isCancelledLegacyFile(transfer.file.fileURL),
+                  Self.mirrorTransferNeedsRedaction(try? Data(contentsOf: transfer.file.fileURL)) else { continue }
+            pendingLock.lock(); cancelledLegacyFiles.insert(transfer.file.fileURL); pendingLock.unlock()
+            transfer.cancel()
+        }
     }
 
     private func flushPendingSave() {
@@ -73,6 +131,7 @@ final class PhoneSync: NSObject, WCSessionDelegate {
         // One flush at a time: the delegate queue and the main thread can both get
         // here, and an older snapshot must never overwrite a newer context.
         flushLock.lock(); defer { flushLock.unlock() }
+        cancelLegacyMirrorTransfers()
         pendingLock.lock(); let data = pendingSave; pendingLock.unlock()
         guard let data else { return }
         do {
@@ -81,7 +140,7 @@ final class PhoneSync: NSObject, WCSessionDelegate {
                 // One transfer in flight at a time; the newest save goes out when it
                 // finishes, so a busy Watch never builds a backlog of stale files.
                 let inFlight = WCSession.default.outstandingFileTransfers.contains {
-                    $0.file.metadata?[Self.fileSaveKey] as? Bool == true
+                    $0.file.metadata?[Self.fileSaveKey] as? Bool == true && !isCancelledLegacyFile($0.file.fileURL)
                 }
                 guard !inFlight else { return } // pendingSave stays set
                 let file = FileManager.default.temporaryDirectory.appendingPathComponent("batwalk-mirror-\(UUID().uuidString).json")
@@ -162,13 +221,32 @@ final class PhoneSync: NSObject, WCSessionDelegate {
         let file = fileTransfer.file.fileURL
         guard fileTransfer.file.metadata?[Self.fileSaveKey] as? Bool == true,
               file.lastPathComponent.hasPrefix("batwalk-mirror-") else { return }
-        if error != nil, let data = try? Data(contentsOf: file) {
+        pendingLock.lock()
+        let wasCancelledForPrivacy = cancelledLegacyFiles.remove(file) != nil
+        pendingLock.unlock()
+        // A failed transfer can belong to a version installed before mirror
+        // redaction. Never put those original bytes back into the send queue.
+        if !wasCancelledForPrivacy, error != nil, let original = try? Data(contentsOf: file),
+           let data = Self.sanitizedMirrorData(original) {
             pendingLock.lock()
             if pendingSave == nil { pendingSave = data }
             pendingLock.unlock()
         }
         try? FileManager.default.removeItem(at: file)
         flushPendingSave() // send the newest save that queued up while this one was in flight
+    }
+
+    func session(_ session: WCSession, didReceiveMessage message: [String: Any],
+                 replyHandler: @escaping ([String: Any]) -> Void) {
+        guard let data = message[Self.certificateKey] as? Data,
+              let request = try? JSONDecoder().decode(CertificateMetricsRequest.self, from: data) else {
+            replyHandler([:]); return
+        }
+        Task { @MainActor in
+            guard let metrics = self.certificateMetrics?(request),
+                  let encoded = try? JSONEncoder().encode(metrics) else { replyHandler([:]); return }
+            replyHandler([Self.certificateKey: encoded])
+        }
     }
 
     func session(_ session: WCSession, didReceiveUserInfo userInfo: [String: Any] = [:]) {

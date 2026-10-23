@@ -31,6 +31,7 @@ struct BatwalkWatchApp: App {
         }
         // The paired iPhone's mirror of the collection — a replacement Watch can restore from it.
         PhoneSync.shared.onReceivePhoneBackup = { backup in store.offerPhoneBackup(backup) }
+        PhoneSync.shared.certificateMetrics = { request in request.metrics(in: store.state) }
         PhoneSync.shared.activate()
         // Registered at launch, not in a view's .task: a HealthKit background wake
         // may never render the UI, so the observer must exist without it.

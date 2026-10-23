@@ -56,10 +56,16 @@ public struct HatchRecord: Codable, Equatable, Sendable {
     /// Nil for old records: never infer old rewards from current tuning.
     public let friendshipBefore: Int?
     public let friendshipGained: Int?
+    /// Watch-local receipt metrics. Old records and default mirrors omit these.
+    public var eggStartedAt: Date?
+    public var eggSteps: Int?
+    /// Public game tier at creation, retained without the private walk receipt.
+    public let eggTierName: String?
 
     public init(speciesID: String, isShiny: Bool, eggType: EggType, hatchedAt: Date,
                 outcome: HatchOutcome, source: HatchSource = .egg,
-                friendshipBefore: Int? = nil, friendshipGained: Int? = nil) {
+                friendshipBefore: Int? = nil, friendshipGained: Int? = nil,
+                eggStartedAt: Date? = nil, eggSteps: Int? = nil, eggTierName: String? = nil) {
         self.speciesID = speciesID
         self.isShiny = isShiny
         self.eggType = eggType
@@ -68,10 +74,13 @@ public struct HatchRecord: Codable, Equatable, Sendable {
         self.source = source
         self.friendshipBefore = friendshipBefore
         self.friendshipGained = friendshipGained
+        self.eggStartedAt = eggStartedAt
+        self.eggSteps = eggSteps
+        self.eggTierName = eggTierName
     }
 
     private enum CodingKeys: String, CodingKey {
-        case speciesID, isShiny, eggType, hatchedAt, outcome, source, friendshipBefore, friendshipGained
+        case speciesID, isShiny, eggType, hatchedAt, outcome, source, friendshipBefore, friendshipGained, eggStartedAt, eggSteps, eggTierName
     }
 
     /// Records written before `source` existed decode as ordinary egg hatches.
@@ -85,6 +94,9 @@ public struct HatchRecord: Codable, Equatable, Sendable {
         source = try c.decodeIfPresent(HatchSource.self, forKey: .source) ?? .egg
         friendshipBefore = try c.decodeIfPresent(Int.self, forKey: .friendshipBefore)
         friendshipGained = try c.decodeIfPresent(Int.self, forKey: .friendshipGained)
+        eggStartedAt = try c.decodeIfPresent(Date.self, forKey: .eggStartedAt)
+        eggSteps = try c.decodeIfPresent(Int.self, forKey: .eggSteps)
+        eggTierName = try c.decodeIfPresent(String.self, forKey: .eggTierName)
     }
 }
 
@@ -205,6 +217,20 @@ public struct GameState: Codable, Equatable, Sendable {
         }
     }
 
+    /// Explicit redaction before any paired-device mirror is encoded.
+    /// The phone is a collection viewer; exact walking progress stays on Watch.
+    public func collectionMirror() -> GameState {
+        var copy = self
+        copy.egg = nil
+        copy.bankedSteps = 0
+        copy.ledger = StepLedger()
+        copy.lifetimeCreditedSteps = 0
+        copy.fruitProgressSteps = 0
+        copy.needsStepBaseline = false
+        copy.history = history.map { $0.withoutActivityMetrics }
+        return copy
+    }
+
     public mutating func advanceRevision() { revision += 1 }
 
     public mutating func beginStepTracking(on day: String, timeZone: String) {
@@ -267,7 +293,7 @@ public struct GameState: Codable, Equatable, Sendable {
         guard !hasStarted else { return }
         hasStarted = true
         egg = ActiveEgg(type: .starter, seed: seed, creditedSteps: 0, startedAt: now,
-                        frozenTargetSteps: EggType.starter.targetSteps)
+                        frozenTargetSteps: Tuning.introEggTargetSteps)
         freezeEgg(tuning: tuning)
     }
 
@@ -414,7 +440,9 @@ public struct GameState: Codable, Equatable, Sendable {
 
         let record = HatchRecord(speciesID: id, isShiny: roll.isShiny, eggType: current.type,
                                  hatchedAt: now, outcome: outcome,
-                                 friendshipBefore: friendshipBefore, friendshipGained: gained)
+                                 friendshipBefore: friendshipBefore, friendshipGained: gained,
+                                 eggStartedAt: current.startedAt, eggSteps: current.targetSteps,
+                                 eggTierName: current.type.displayName(forTargetSteps: current.targetSteps))
         history.append(record)
         egg = nil
         return HatchResult(record: record, friendshipGained: gained, moonDustGained: dust, bat: bat)

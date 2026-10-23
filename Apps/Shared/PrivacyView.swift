@@ -6,7 +6,7 @@ struct PrivacyView: View {
             VStack(alignment: .leading, spacing: 16) {
                 Text("Privacy & data").font(.headline)
                 Text("Batwalk reads only Step Count from Apple Health to grow your eggs and find fruit. It does not write to Health or read your location, workouts, heart rate, or other Health records.")
-                Text("Your game and step accounting stay on your Watch. Your paired iPhone receives an offline mirror through Apple's WatchConnectivity. Health-derived save files are excluded from device backup.")
+                Text("Your game and step accounting stay on your Watch. Your paired iPhone receives a collection mirror through Apple's WatchConnectivity, without step history, totals, active egg progress or certificate walk details. Health-derived save files are excluded from device backup.")
                 Text(SharedConfig.appGroupEnabled
                     ? "Your Watch shares a small egg-progress summary with its own watch-face widget."
                     : "Live watch-face progress is not enabled in this build.")
@@ -18,6 +18,7 @@ struct PrivacyView: View {
                     : "There are no ads, tracking SDKs, developer analytics servers, or Batwalk accounts. This version has no purchases.")
                 Text("Siri's \"Check my egg\" reads the same small egg-progress summary the watch face uses, on your device only.")
                 Text("You can change Step Count access in the Health app and notification access in device settings. Removing Batwalk deletes its local app data; if cloud backup is enabled, manage that separately in your iCloud storage settings. Removing Health access does not erase bats you've already collected.")
+                Text("Sharing a birth certificate is your choice. Tap Include my steps and days to request that one walk receipt from your Watch; it stays in memory while you preview the card. Turning Show steps on shared cards off removes steps and days. The default setting never sends Health data by itself. You choose the destination in Apple's share sheet. Collection posters contain no steps.")
                 Text("Updated October 23, 2026").font(.caption)
             }
             .font(.footnote)

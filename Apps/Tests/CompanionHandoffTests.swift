@@ -64,7 +64,7 @@ extension AppReliabilityTests {
         XCTAssertEqual(reload.lastSyncAt, stamp)
         reload.applyMirror(data) // legacy cached context is not a new sync
         XCTAssertEqual(reload.lastSyncAt, stamp)
-        XCTAssertEqual(reload.state, watch.state)
+        XCTAssertEqual(reload.state, watch.state.collectionMirror())
     }
 
     @MainActor
@@ -82,7 +82,7 @@ extension AppReliabilityTests {
                                                                 revision: watch.state.revision, handoff: handoff))
         let reload = GameStore(container: container, role: .phone, archive: archive)
         XCTAssertTrue(reload.companionHandoff.isWaiting)
-        XCTAssertEqual(reload.state, watch.state)
+        XCTAssertEqual(reload.state, watch.state.collectionMirror())
         XCTAssertNotEqual(phone.state.saveID, reload.state.saveID)
     }
 
@@ -94,7 +94,7 @@ extension AppReliabilityTests {
         _ = try state.hatch(now: .now)
         let seed = (UInt64(1)...1000).first { HatchEngine.roll(egg: .tiny, seed: $0, isUnlocked: false).species.id == "cocoa" }!
         try state.startEgg(.tiny, seed: seed, now: .now)
-        state.ingestSteps(dayKey: "2026-10-10", dailyTotal: EggType.starter.targetSteps + EggType.tiny.targetSteps)
+        state.ingestSteps(dayKey: "2026-10-10", dailyTotal: Tuning.introEggTargetSteps + EggType.tiny.targetSteps)
         _ = try state.hatch(now: .now)
         try state.setCompanion("mochi")
         try state.startEgg(.tiny, seed: 7, now: .now)
@@ -109,13 +109,14 @@ extension AppReliabilityTests {
         let (phone, _) = try makeStore(role: .phone)
         phone.applyMirror(try JSONEncoder().encode(watch.state))
         let before = phone.state
+        let watchEgg = watch.state.egg
         var queued: [CompanionChangeRequest] = []
         phone.chooseCompanion("cocoa", send: { queued.append($0); return .sent })
         phone.chooseCompanion("cocoa", send: { queued.append($0); return .sent })
         XCTAssertEqual(queued.count, 1); XCTAssertEqual(phone.state, before)
         let receipt = watch.applyCompanionRequest(try XCTUnwrap(queued.first))
         XCTAssertEqual(receipt.outcome, .applied)
-        XCTAssertEqual(watch.state.egg, before.egg)
+        XCTAssertEqual(watch.state.egg, watchEgg)
         phone.receiveCompanionReceipt(receipt)
         XCTAssertTrue(phone.companionHandoff.isWaiting)
         XCTAssertEqual(phone.state.companionID, "mochi")
@@ -158,7 +159,7 @@ extension AppReliabilityTests {
         phone.chooseCompanion("cocoa", send: { _ in .noWatchApp })
         XCTAssertFalse(phone.companionHandoff.isWaiting)
         XCTAssertNotNil(phone.companionRequestError)
-        XCTAssertEqual(phone.state, state)
+        XCTAssertEqual(phone.state, state.collectionMirror())
     }
 }
 

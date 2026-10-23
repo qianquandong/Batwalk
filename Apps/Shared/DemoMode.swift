@@ -27,7 +27,7 @@ enum HealthStatus: Equatable {
 enum DemoMode {
     // The capture script reads these two lines — keep each list on one line.
     static let watchScenarios = ["first-egg", "home", "home-day", "home-cocoa", "home-long-ear", "hatch-ready", "reveal-rare", "progress-61", "progress-100", "friendship-1", "friendship-2", "friendship-3", "friendship-4", "fruit-available", "friendship-5", "settings", "health-error", "home-large-type", "pilot-mochi", "pilot-sticky", "pilot-walker", "pilot-cocoa", "pilot-long-ear", "reveal-large-type", "reveal-shiny", "progress-large-type", "step-setup", "step-no-data", "step-read-error", "step-no-data-large-type", "egg-picker"] // scenarios:watch
-    static let phoneScenarios = ["phone-companion", "phone-batpedia", "phone-batpedia-rare", "phone-detail", "phone-pending", "phone-confirmed", "phone-stale", "phone-first-egg", "phone-egg-ready", "phone-history", "phone-settings", "phone-stats", "phone-empty", "phone-guide"] // scenarios:phone
+    static let phoneScenarios = ["phone-companion", "phone-batpedia", "phone-batpedia-rare", "phone-detail", "phone-pending", "phone-confirmed", "phone-stale", "phone-first-egg", "phone-egg-ready", "phone-history", "phone-settings", "phone-stats", "phone-empty", "phone-guide", "phone-certificate", "phone-certificate-shiny", "phone-poster"] // scenarios:phone
 
     static let scenario: String? = {
         let args = ProcessInfo.processInfo.arguments
@@ -217,6 +217,14 @@ enum DemoMode {
         case "phone-egg-ready":
             try? state.startEgg(.tiny, seed: 7, now: now)
             walk(EggType.tiny.targetSteps)
+        case "phone-certificate", "phone-certificate-shiny":
+            page = 2
+            hatch(.moon, "moonwing", shiny: scenario == "phone-certificate-shiny")
+        case "phone-poster":
+            page = 1
+            addCollection()
+            hatch(.crystal, "snow", shiny: true)
+            hatch(.forest, "blossom")
         case "phone-history":
             page = 2
             boardEgg()

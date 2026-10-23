@@ -21,7 +21,7 @@ struct WatchGuideView: View {
             Section("Walking & fruit") {
                 Text("Every \(Tuning.default.stepsPerFruit.formatted()) credited steps finds one fruit, up to \(Tuning.default.maxFruit) fruit. Feeding uses one fruit.")
                 Text("Extra steps wait for the next egg, up to \(Tuning.default.maxBankedSteps.formatted()). Your Watch updates steps from Apple Health.")
-                Text("Currently saved: \(store.state.bankedSteps.formatted()) steps · \(store.state.fruit) fruit")
+                Text("Check saved steps and fruit on your Watch. Walking numbers stay on that device.")
             }
             Section("Eggs") {
                 ForEach(EggType.allCases.filter(\.isPickable), id: \.self) { egg in

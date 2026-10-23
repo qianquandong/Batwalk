@@ -91,7 +91,8 @@ final class AppReliabilityTests: XCTestCase {
         phone.applyMirror(try JSONEncoder().encode(state))
         phone.applyMirror(old)
         XCTAssertEqual(phone.state.revision, 2)
-        XCTAssertEqual(phone.state.egg?.creditedSteps, 1_000)
+        XCTAssertNil(phone.state.egg)
+        XCTAssertEqual(phone.state.lifetimeCreditedSteps, 0)
     }
 
     @MainActor
