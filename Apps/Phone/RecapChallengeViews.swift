@@ -64,7 +64,7 @@ struct MonthlyChallengeCard: View {
 struct JournalCommunitySection: View {
     @Environment(GameStore.self) private var store
     private var now: Date { .now }
-    private var recap: WeeklyRecap { .make(history: store.state.history, weekStart: SocialCalendar.recapStart(now)) }
+    private var recap: WeeklyRecap { .make(state: store.state, weekStart: SocialCalendar.recapStart(now)) }
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             if SocialCalendar.showsWeeklyRecap(now) || DemoMode.scenario == "phone-recap" {
@@ -88,7 +88,7 @@ struct JournalCommunitySection: View {
 struct WeeklyRecapView: View {
     @Environment(GameStore.self) private var store
     @State private var image: Image?
-    private var recap: WeeklyRecap { .make(history: store.state.history, weekStart: SocialCalendar.recapStart(.now)) }
+    private var recap: WeeklyRecap { .make(state: store.state, weekStart: SocialCalendar.recapStart(.now)) }
     var body: some View {
         ScrollView {
             VStack(spacing: 24) {

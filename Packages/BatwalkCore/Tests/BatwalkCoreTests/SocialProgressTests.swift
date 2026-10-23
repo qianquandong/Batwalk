@@ -81,6 +81,7 @@ final class SocialProgressTests: XCTestCase {
         var restored = GameState(); restored.restoreCollection(CollectionBackup(state: legacy).trimmingHistory(to: 0))
         XCTAssertEqual(restored.earnedOutfits(for: bat.speciesID).first?.tier, .bronze)
         XCTAssertEqual(MonthlyChallenge.make(state: restored, monthKey: "2026-10").hatches, 1)
+        XCTAssertEqual(WeeklyRecap.make(state: restored, weekStart: date("2026-10-26T05:00:00Z"), calendar: calendar()).weekNumber, 3)
         var backup = try XCTUnwrap(JSONSerialization.jsonObject(with: JSONEncoder().encode(CollectionBackup(state: state))) as? [String: Any])
         backup.removeValue(forKey: "earnedChallengeOutfits"); backup.removeValue(forKey: "challengeHatchCounts")
         let oldBackup = try JSONDecoder().decode(CollectionBackup.self, from: JSONSerialization.data(withJSONObject: backup))

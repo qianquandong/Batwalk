@@ -37,7 +37,12 @@ public struct WeeklyRecap: Equatable, Sendable {
         let ending = bats == 0 ? "an egg on the way" : "\(bats) \(bats == 1 ? "bat" : "bats"), \(shiny) Shiny"
         return "Batwalk · Week \(weekNumber) · \(symbolLine) · \(ending)"
     }
-    public static func make(history: [HatchRecord], weekStart: Date, calendar: Calendar = .current) -> Self {
+    public static func make(state: GameState, weekStart: Date, calendar: Calendar = .current) -> Self {
+        make(history: state.history, weekStart: weekStart, calendar: calendar,
+             firstHatch: state.collection.values.map(\.firstHatchedAt).min())
+    }
+    public static func make(history: [HatchRecord], weekStart: Date, calendar: Calendar = .current,
+                            firstHatch: Date? = nil) -> Self {
         let start = calendar.startOfDay(for: weekStart)
         let end = calendar.date(byAdding: .day, value: 7, to: start)!
         let eggs = history.filter { $0.source == .egg }
@@ -47,7 +52,7 @@ public struct WeeklyRecap: Equatable, Sendable {
             let index = calendar.dateComponents([.day], from: start, to: calendar.startOfDay(for: record.hatchedAt)).day ?? 0
             if (0..<7).contains(index), symbols[index] != .shiny { symbols[index] = record.isShiny ? .shiny : .bat }
         }
-        let first = eggs.map(\.hatchedAt).min() ?? start
+        let first = firstHatch ?? eggs.map(\.hatchedAt).min() ?? start
         let firstStart = SocialCalendar.weekStart(first, calendar: calendar)
         let days = calendar.dateComponents([.day], from: firstStart, to: start).day ?? 0
         return Self(weekStart: start, symbols: symbols, bats: records.count,
