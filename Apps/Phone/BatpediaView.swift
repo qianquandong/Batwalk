@@ -42,7 +42,8 @@ struct BatpediaView: View {
                             if isOwned(bat.id) {
                                 NavigationLink(value: bat.id) {
                                     BatCard(species: bat, shiny: variant == .shiny,
-                                            isCompanion: store.state.companionID == bat.id)
+                                            isCompanion: store.state.companionID == bat.id,
+                                            birthdayYear: store.state.birthdayHatYear(for: bat.id))
                                 }.buttonStyle(PressableStyle())
                             } else {
                                 LockedBatCard(number: bat.number)
@@ -106,6 +107,7 @@ struct BatDetailPage: View {
                     BatHeroView(speciesID: speciesID, shiny: bat.showsShiny, mood: .awake,
                                 size: 160, friendshipEXP: bat.friendshipEXP, showsKeepsake: false)
                         .overlay { ChallengeOutfitOverlay(outfit: store.state.outfit(for: bat.speciesID)) }
+                        .overlay { BirthdayHatOverlay(speciesID: bat.speciesID, year: store.state.birthdayHatYear(for: bat.speciesID)) }
                         .environment(\.batPageVisible, pageVisible && moment == nil)
                         .frame(maxWidth: .infinity).padding(.vertical, 20)
                         .background(NightSkyBackground(time: .night, scenery: true, groundLevel: 0.86))
@@ -130,6 +132,22 @@ struct BatDetailPage: View {
                             Image(systemName: "heart.fill").foregroundStyle(BatwalkColor.rose)
                         } detail: {
                             FriendshipProgressView(exp: bat.friendshipEXP, dark: false)
+                        }
+                        if let years = bat.birthdayYears, !years.isEmpty {
+                            VStack(alignment: .leading, spacing: 8) {
+                                Text("Birthday keepsakes").font(BatwalkFont.headline)
+                                ScrollView(.horizontal) {
+                                    HStack(spacing: 16) {
+                                        ForEach(years.sorted(), id: \.self) { year in
+                                            VStack(spacing: 4) {
+                                                BatSprite(speciesID: speciesID, shiny: bat.showsShiny, size: 52)
+                                                    .overlay { BirthdayHatOverlay(speciesID: speciesID, year: year) }
+                                                Text(String(year)).font(BatwalkFont.caption)
+                                            }
+                                        }
+                                    }
+                                }
+                            }
                         }
                         let actions = PilotAnimationCatalog.playableActions(for: speciesID)
                             .filter { $0.tier != .secret && $0.tier != .hatchReveal }

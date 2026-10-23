@@ -544,3 +544,10 @@ The product is not done merely because the mechanic works. At least these moment
 ---
 
 *Batwalk PRD v1.0 — consolidated from approved product decisions and the approved visual concept board. Working title and tuning values may evolve during testing; the core Watch-first, non-AI, cozy collectible-pet direction is locked for MVP.*
+
+
+### Birthday keepsakes — 2026-10-23
+
+Optional iPhone Settings stores a validated Gregorian month/day (no birth year) on the Watch through a queued settings request. The Watch remains the only save writer; confirmation waits for both a receipt and the matching collection mirror. Requests expire after 15 minutes, are save-scoped, and older/duplicate deliveries cannot overwrite a newer choice.
+
+A hatch on the local birthday freezes `HatchRecord.birthdayYear` and adds the year to `OwnedBat.birthdayYears`; these cosmetic keepsakes survive backup trimming. Each year has a different pastel hat colour, shown on portraits and certificates. On a birthday without a hatch the current companion wears that year's hat for the day, presentation only. February 29 is observed on February 28 in non-leap years. Birthday settings can be removed without taking away earned hats. Nothing changes steps, egg sealing, odds, species access or Friendship. Existing character artwork and quiet Watch controls remain intact.

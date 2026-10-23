@@ -50,6 +50,7 @@ struct SaveArchive {
         var saveID: UUID?
         var revision: UInt64?
         var handoff = CompanionHandoff()
+        var settingsHandoff: PlayerSettingsHandoff? = nil
     }
 
     func savePhoneMetadata(_ value: PhoneMetadata) throws {

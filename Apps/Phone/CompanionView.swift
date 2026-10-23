@@ -91,6 +91,7 @@ struct CompanionView: View {
                                     mood: BatMood.resting(at: DemoMode.timeOfDay(at: context.date)), size: 250,
                                     friendshipEXP: bat.friendshipEXP, showsKeepsake: false)
                             .overlay { ChallengeOutfitOverlay(outfit: store.state.outfit(for: bat.speciesID)) }
+                            .overlay { BirthdayHatOverlay(speciesID: bat.speciesID, year: store.state.birthdayHatYear(for: bat.speciesID, now: context.date)) }
                             .environment(\.batPageVisible, pageVisible && !settings && !guide)
                     } else {
                         EggSprite(type: store.state.egg?.type ?? .starter,
@@ -183,6 +184,9 @@ struct PhoneSettingsView: View {
                     Toggle("Show steps on shared cards", isOn: $showSteps)
                     Text("This only changes your cards. Walk details stay on Watch until you tap Include my steps and days for a certificate. They are never added to collection backups.")
                         .font(BatwalkFont.caption)
+                }
+                Section {
+                    NavigationLink { BirthdaySettingsView() } label: { Label("Birthday", systemImage: "gift") }
                 }
                 PhoneNotificationSettings()
                 Section("Watch connection") {

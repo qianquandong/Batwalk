@@ -26,6 +26,7 @@ struct BatwalkPhoneApp: App {
         }
         PhoneSync.shared.onReceiveSave = { data, date in store.applyMirror(data, updatedAt: date) }
         PhoneSync.shared.onReceiveReceipt = { receipt in store.receiveCompanionReceipt(receipt) }
+        PhoneSync.shared.onReceiveSettingsReceipt = { receipt in store.receiveSettingsReceipt(receipt) }
         // The phone keeps its copy of the collection within the Watch's reach.
         PhoneSync.shared.onActivated = { store.publishBackupToWatch() }
         PhoneSync.shared.activate()
@@ -67,7 +68,7 @@ enum PhoneTab: Int, Hashable {
 struct PhoneRootView: View {
     @State private var tab = PhoneTab(rawValue: DemoMode.page) ?? .companion
     @State private var settings = ["phone-settings", "phone-unlock"].contains(DemoMode.scenario ?? "")
-    @State private var sharePreview = ["phone-certificate", "phone-certificate-shiny", "phone-poster"].contains(DemoMode.scenario ?? "")
+    @State private var sharePreview = ["phone-certificate", "phone-certificate-shiny", "phone-certificate-birthday", "phone-birthday-settings", "phone-poster"].contains(DemoMode.scenario ?? "")
     @Environment(GameStore.self) private var store
 
     var body: some View {
@@ -89,7 +90,8 @@ struct PhoneRootView: View {
         .sheet(isPresented: $sharePreview) {
             NavigationStack {
                 Group {
-                    if DemoMode.scenario == "phone-poster" { CollectionPosterView() }
+                    if DemoMode.scenario == "phone-birthday-settings" { BirthdaySettingsView() }
+                    else if DemoMode.scenario == "phone-poster" { CollectionPosterView() }
                     else if let record = store.state.history.last { BirthCertificateView(record: record) }
                 }
                 .toolbar { ToolbarItem(placement: .confirmationAction) { Button("Done") { sharePreview = false } } }

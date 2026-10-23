@@ -26,8 +26,8 @@ enum HealthStatus: Equatable {
 /// Without the argument this file does nothing.
 enum DemoMode {
     // The capture script reads these two lines — keep each list on one line.
-    static let watchScenarios = ["first-egg", "home", "home-day", "home-cocoa", "home-long-ear", "hatch-ready", "reveal-rare", "progress-61", "progress-100", "friendship-1", "friendship-2", "friendship-3", "friendship-4", "fruit-available", "friendship-5", "settings", "health-error", "home-large-type", "pilot-mochi", "pilot-sticky", "pilot-walker", "pilot-cocoa", "pilot-long-ear", "reveal-large-type", "reveal-shiny", "progress-large-type", "step-setup", "step-no-data", "step-read-error", "step-no-data-large-type", "egg-picker", "outfit-gold"] // scenarios:watch
-    static let phoneScenarios = ["phone-companion", "phone-batpedia", "phone-batpedia-rare", "phone-detail", "phone-pending", "phone-confirmed", "phone-stale", "phone-first-egg", "phone-egg-ready", "phone-history", "phone-settings", "phone-stats", "phone-empty", "phone-guide", "phone-certificate", "phone-certificate-shiny", "phone-poster", "phone-recap", "phone-challenge", "phone-challenge-gold"] // scenarios:phone
+    static let watchScenarios = ["first-egg", "home", "home-day", "home-cocoa", "home-long-ear", "hatch-ready", "reveal-rare", "progress-61", "progress-100", "friendship-1", "friendship-2", "friendship-3", "friendship-4", "fruit-available", "friendship-5", "settings", "health-error", "home-large-type", "pilot-mochi", "pilot-sticky", "pilot-walker", "pilot-cocoa", "pilot-long-ear", "reveal-large-type", "reveal-shiny", "progress-large-type", "step-setup", "step-no-data", "step-read-error", "step-no-data-large-type", "egg-picker", "outfit-gold", "birthday"] // scenarios:watch
+    static let phoneScenarios = ["phone-companion", "phone-batpedia", "phone-batpedia-rare", "phone-detail", "phone-pending", "phone-confirmed", "phone-stale", "phone-first-egg", "phone-egg-ready", "phone-history", "phone-settings", "phone-stats", "phone-empty", "phone-guide", "phone-certificate", "phone-certificate-shiny", "phone-poster", "phone-recap", "phone-challenge", "phone-challenge-gold", "phone-birthday", "phone-birthday-settings", "phone-certificate-birthday"] // scenarios:phone
 
     static let scenario: String? = {
         let args = ProcessInfo.processInfo.arguments
@@ -229,6 +229,12 @@ enum DemoMode {
             page = scenario == "outfit-gold" ? 0 : 2
             let count = ["phone-challenge-gold", "outfit-gold"].contains(scenario) ? 5 : 1
             for _ in 0..<count { hatch(.tiny, "mochi") }
+            boardEgg()
+        case "birthday", "phone-birthday", "phone-birthday-settings", "phone-certificate-birthday":
+            let components = Calendar.current.dateComponents([.month, .day], from: now)
+            _ = state.applyPlayerSettings(PlayerSettingsRequest(saveID: state.saveID, baseRevision: state.revision,
+                requestedAt: now, birthday: MonthDay(month: components.month!, day: components.day!)), now: now)
+            hatch(.tiny, "mochi")
             boardEgg()
         case "phone-history":
             page = 2

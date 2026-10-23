@@ -19,6 +19,8 @@ final class PhoneSync: NSObject, WCSessionDelegate {
     var onReceiveSave: (@MainActor (Data, Date?) -> Void)?
     var onReceiveRequest: (@MainActor (CompanionChangeRequest) -> Void)?
     var onReceiveReceipt: (@MainActor (CompanionChangeReceipt) -> Void)?
+    var onReceiveSettings: (@MainActor (PlayerSettingsRequest) -> Void)?
+    var onReceiveSettingsReceipt: (@MainActor (PlayerSettingsReceipt) -> Void)?
     /// Watch only: the collection backup the paired iPhone last published.
     var onReceivePhoneBackup: (@MainActor (CollectionBackup) -> Void)?
     /// Called once the session is active (the phone publishes its backup here).
@@ -54,6 +56,8 @@ final class PhoneSync: NSObject, WCSessionDelegate {
     private static let updatedKey = "updatedAt"
     private static let requestKey = "companionRequest"
     private static let receiptKey = "companionReceipt"
+    private static let settingsKey = "playerSettingsRequest"
+    private static let settingsReceiptKey = "playerSettingsReceipt"
     private static let phoneBackupKey = "collectionBackup"
     static let fileSaveKey = "batwalk-save"
     static func usesFileTransfer(forByteCount count: Int) -> Bool { count > 50_000 }
@@ -79,6 +83,22 @@ final class PhoneSync: NSObject, WCSessionDelegate {
     func reply(_ receipt: CompanionChangeReceipt, save: Data?) {
         guard WCSession.isSupported(), let data = try? JSONEncoder().encode(receipt) else { return }
         WCSession.default.transferUserInfo([Self.receiptKey: data])
+        if let save { push(save: save) }
+    }
+
+    func send(settings request: PlayerSettingsRequest) -> SendResult {
+        guard WCSession.isSupported(), WCSession.default.activationState == .activated,
+              let data = try? JSONEncoder().encode(request) else { return .unavailable }
+        #if os(iOS)
+        guard WCSession.default.isPaired, WCSession.default.isWatchAppInstalled else { return .noWatchApp }
+        #endif
+        WCSession.default.transferUserInfo([Self.settingsKey: data])
+        return .sent
+    }
+
+    func reply(settings receipt: PlayerSettingsReceipt, save: Data?) {
+        guard WCSession.isSupported(), let data = try? JSONEncoder().encode(receipt) else { return }
+        WCSession.default.transferUserInfo([Self.settingsReceiptKey: data])
         if let save { push(save: save) }
     }
 
@@ -250,6 +270,16 @@ final class PhoneSync: NSObject, WCSessionDelegate {
     }
 
     func session(_ session: WCSession, didReceiveUserInfo userInfo: [String: Any] = [:]) {
+        if let data = userInfo[Self.settingsKey] as? Data,
+           let request = try? JSONDecoder().decode(PlayerSettingsRequest.self, from: data) {
+            Task { @MainActor in self.onReceiveSettings?(request) }
+            return
+        }
+        if let data = userInfo[Self.settingsReceiptKey] as? Data,
+           let receipt = try? JSONDecoder().decode(PlayerSettingsReceipt.self, from: data) {
+            Task { @MainActor in self.onReceiveSettingsReceipt?(receipt) }
+            return
+        }
         if let data = userInfo[Self.requestKey] as? Data,
            let request = try? JSONDecoder().decode(CompanionChangeRequest.self, from: data) {
             Task { @MainActor in self.onReceiveRequest?(request) }

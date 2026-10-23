@@ -43,3 +43,8 @@ Q1/Q13 below supersede the paid tier and one-time trial from the 2026-10-10 revi
 ### Weekly and monthly memories — decided 2026-10-23
 
 Weekly recap uses local Monday–Sunday; monthly 1/3/6 hatch milestones reward outfits only. New hatch months are frozen; earned outfits survive backup/history trimming. Phone reminders default off. No streak loss or species gates. See SOCIAL_PROGRESS.md.
+
+
+### Birthday — decided 2026-10-23
+
+Month/day only, using the player's local timezone and Gregorian date. February 29 observes February 28 in non-leap years. Birthday hatches keep an immutable celebration year and permanent tiny hat; no-hatch companions wear it for that day only. Removing the date does not revoke earned cosmetics. The phone requests, the Watch writes and confirms; expired, foreign-save, stale and duplicate deliveries are handled explicitly.

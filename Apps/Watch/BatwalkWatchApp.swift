@@ -29,6 +29,10 @@ struct BatwalkWatchApp: App {
             let receipt = store.applyCompanionRequest(request)
             PhoneSync.shared.reply(receipt, save: try? JSONEncoder().encode(store.state))
         }
+        PhoneSync.shared.onReceiveSettings = { request in
+            let receipt = store.applySettingsRequest(request)
+            PhoneSync.shared.reply(settings: receipt, save: try? JSONEncoder().encode(store.state.collectionMirror()))
+        }
         // The paired iPhone's mirror of the collection — a replacement Watch can restore from it.
         PhoneSync.shared.onReceivePhoneBackup = { backup in store.offerPhoneBackup(backup) }
         PhoneSync.shared.certificateMetrics = { request in request.metrics(in: store.state) }
