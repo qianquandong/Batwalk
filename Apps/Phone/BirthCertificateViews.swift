@@ -45,6 +45,7 @@ struct BirthCertificateCard: View {
     let nickname: String?
     let ordinal: Int?
     let showSteps: Bool
+    var outfit: ChallengeOutfit? = nil
     private var species: Species? { Roster.species(record.speciesID) }
     private let ink = Color(red: 0.20, green: 0.28, blue: 0.25)
     private let paper = Color(red: 0.96, green: 0.93, blue: 0.86)
@@ -65,6 +66,7 @@ struct BirthCertificateCard: View {
             ZStack {
                 Circle().fill(Color.white.opacity(0.45)).frame(width: 118, height: 118)
                 BatSprite(speciesID: record.speciesID, shiny: record.isShiny, mood: .happy, size: 134)
+                    .overlay { ChallengeOutfitOverlay(outfit: outfit) }
                 if record.isShiny {
                     Image(systemName: "sparkles").font(.system(size: 24)).foregroundStyle(Color.orange.opacity(0.8))
                         .offset(x: 76, y: -44)
@@ -131,7 +133,10 @@ struct BirthCertificateView: View {
         return store.state.history.prefix(index + 1).filter { $0.source == .egg }.count
     }
     private var card: BirthCertificateCard {
-        BirthCertificateCard(record: resolved, nickname: nickname, ordinal: ordinal, showSteps: showSteps)
+        BirthCertificateCard(record: resolved, nickname: nickname, ordinal: ordinal, showSteps: showSteps,
+            outfit: store.state.earnedOutfits(for: record.speciesID).first {
+                $0.monthKey == (record.challengeMonthKey ?? SocialCalendar.monthKey(record.hatchedAt))
+            })
     }
 
     var body: some View {

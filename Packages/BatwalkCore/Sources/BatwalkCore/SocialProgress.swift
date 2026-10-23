@@ -88,20 +88,44 @@ public struct MonthlyChallenge: Equatable, Sendable {
     public var cosmetic: ChallengeCosmetic { ChallengeCatalog.cosmetic(for: monthKey) }
     public var nextTier: ChallengeTier? { ChallengeTier(rawValue: tier.rawValue + 1) }
     public var hatchesToNextTier: Int? { nextTier.flatMap { Tuning.challengeThresholds[$0] }.map { max(0, $0 - hatches) } }
-    public static func make(history: [HatchRecord], monthKey: String, calendar: Calendar = .current) -> Self {
+    public static func make(state: GameState, monthKey: String, calendar: Calendar = .current) -> Self {
+        make(history: state.history, monthKey: monthKey, calendar: calendar,
+             savedCount: state.challengeHatchCounts?[monthKey])
+    }
+    public static func make(history: [HatchRecord], monthKey: String, calendar: Calendar = .current,
+                            savedCount: Int? = nil) -> Self {
         guard let start = SocialCalendar.monthStart(monthKey, calendar: calendar),
               let range = calendar.range(of: .day, in: .month, for: start) else {
             return Self(monthKey: monthKey, hatches: 0, tier: .none, symbols: [], firstWeekday: 1)
         }
         let records = history.filter { $0.source == .egg && ($0.challengeMonthKey ?? SocialCalendar.monthKey($0.hatchedAt, calendar: calendar)) == monthKey }
-        let tier = ChallengeTier.allCases.last { (Tuning.challengeThresholds[$0] ?? 0) <= records.count } ?? .none
+        let count = max(records.count, savedCount ?? 0)
+        let tier = ChallengeTier.allCases.last { (Tuning.challengeThresholds[$0] ?? 0) <= count } ?? .none
         var symbols = Array(repeating: HatchDaySymbol.egg, count: range.count)
         for record in records {
-            let index = calendar.component(.day, from: record.hatchedAt) - 1
+            let index = (record.challengeDay ?? calendar.component(.day, from: record.hatchedAt)) - 1
             if symbols.indices.contains(index), symbols[index] != .shiny { symbols[index] = record.isShiny ? .shiny : .bat }
         }
-        return Self(monthKey: monthKey, hatches: records.count, tier: tier, symbols: symbols,
+        return Self(monthKey: monthKey, hatches: count, tier: tier, symbols: symbols,
                     firstWeekday: calendar.component(.weekday, from: start))
+    }
+}
+
+/// Materialize legacy rewards before a transport trims the supporting history.
+struct ChallengeArchive {
+    var counts: [String: Int] = [:]
+    var outfits: [String: [String: ChallengeTier]] = [:]
+    init(history: [HatchRecord], calendar: Calendar = .current) {
+        let records = history.filter { $0.source == .egg }
+        for record in records {
+            let key = record.challengeMonthKey ?? SocialCalendar.monthKey(record.hatchedAt, calendar: calendar)
+            counts[key, default: 0] += 1
+        }
+        for record in records {
+            let key = record.challengeMonthKey ?? SocialCalendar.monthKey(record.hatchedAt, calendar: calendar)
+            let tier = ChallengeTier.allCases.last { (Tuning.challengeThresholds[$0] ?? 0) <= (counts[key] ?? 0) } ?? .none
+            outfits[record.speciesID, default: [:]][key] = tier
+        }
     }
 }
 
@@ -145,10 +169,11 @@ public struct PhoneReminder: Equatable, Sendable {
 public enum PhoneReminderPlan {
     /// Finite local schedule, refreshed when the mirrored collection changes or the app opens.
     public static func make(history: [HatchRecord], now: Date, weekly: Bool, challenge: Bool,
-                            calendar: Calendar = .current) -> [PhoneReminder] {
+                            calendar: Calendar = .current, savedMonthCounts: [String: Int]? = nil) -> [PhoneReminder] {
         guard weekly || challenge else { return [] }
         let currentMonth = SocialCalendar.monthKey(now, calendar: calendar)
-        let progress = MonthlyChallenge.make(history: history, monthKey: currentMonth, calendar: calendar)
+        let progress = MonthlyChallenge.make(history: history, monthKey: currentMonth, calendar: calendar,
+                                             savedCount: savedMonthCounts?[currentMonth])
         var result: [PhoneReminder] = []
         for offset in 0..<60 {
             guard let day = calendar.date(byAdding: .day, value: offset, to: calendar.startOfDay(for: now)),

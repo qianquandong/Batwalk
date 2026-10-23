@@ -93,7 +93,7 @@ struct WeeklyRecapView: View {
 struct MonthlyChallengeView: View {
     @Environment(GameStore.self) private var store
     @State private var image: Image?
-    private var challenge: MonthlyChallenge { .make(history: store.state.history, monthKey: SocialCalendar.monthKey(.now)) }
+    private var challenge: MonthlyChallenge { .make(state: store.state, monthKey: SocialCalendar.monthKey(.now)) }
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 24) {

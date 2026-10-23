@@ -18,6 +18,8 @@ public struct CollectionBackup: Codable, Equatable, Sendable {
     public let challengeHatchCounts: [String: Int]?
 
     public init(state: GameState) {
+        var state = state
+        state.materializeChallenges()
         version = 1
         saveID = state.saveID
         revision = state.revision
@@ -70,8 +72,11 @@ public struct CollectionBackup: Codable, Equatable, Sendable {
         moonDust = try c.decodeIfPresent(Int.self, forKey: .moonDust) ?? 0
         trialEggUsed = try c.decodeIfPresent(Bool.self, forKey: .trialEggUsed) ?? false
         outfitPreferences = try c.decodeIfPresent([String: OutfitPreference].self, forKey: .outfitPreferences)
+        let archive = ChallengeArchive(history: history)
         earnedChallengeOutfits = try c.decodeIfPresent([String: [String: ChallengeTier]].self, forKey: .earnedChallengeOutfits)
+            ?? (archive.outfits.isEmpty ? nil : archive.outfits)
         challengeHatchCounts = try c.decodeIfPresent([String: Int].self, forKey: .challengeHatchCounts)
+            ?? (archive.counts.isEmpty ? nil : archive.counts)
     }
 
     /// True when nothing a player would notice differs. The cloud record is only

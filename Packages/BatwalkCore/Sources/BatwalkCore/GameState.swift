@@ -63,11 +63,13 @@ public struct HatchRecord: Codable, Equatable, Sendable {
     public let eggTierName: String?
 
     public let challengeMonthKey: String?
+    public let challengeDay: Int?
 
     public init(speciesID: String, isShiny: Bool, eggType: EggType, hatchedAt: Date,
                 outcome: HatchOutcome, source: HatchSource = .egg,
                 friendshipBefore: Int? = nil, friendshipGained: Int? = nil,
-                eggStartedAt: Date? = nil, eggSteps: Int? = nil, eggTierName: String? = nil, challengeMonthKey: String? = nil) {
+                eggStartedAt: Date? = nil, eggSteps: Int? = nil, eggTierName: String? = nil,
+                challengeMonthKey: String? = nil, challengeDay: Int? = nil) {
         self.speciesID = speciesID
         self.isShiny = isShiny
         self.eggType = eggType
@@ -80,10 +82,11 @@ public struct HatchRecord: Codable, Equatable, Sendable {
         self.eggSteps = eggSteps
         self.eggTierName = eggTierName
         self.challengeMonthKey = challengeMonthKey
+        self.challengeDay = challengeDay
     }
 
     private enum CodingKeys: String, CodingKey {
-        case speciesID, isShiny, eggType, hatchedAt, outcome, source, friendshipBefore, friendshipGained, eggStartedAt, eggSteps, eggTierName, challengeMonthKey
+        case speciesID, isShiny, eggType, hatchedAt, outcome, source, friendshipBefore, friendshipGained, eggStartedAt, eggSteps, eggTierName, challengeMonthKey, challengeDay
     }
 
     /// Records written before `source` existed decode as ordinary egg hatches.
@@ -101,6 +104,7 @@ public struct HatchRecord: Codable, Equatable, Sendable {
         eggSteps = try c.decodeIfPresent(Int.self, forKey: .eggSteps)
         eggTierName = try c.decodeIfPresent(String.self, forKey: .eggTierName)
         challengeMonthKey = try c.decodeIfPresent(String.self, forKey: .challengeMonthKey)
+        challengeDay = try c.decodeIfPresent(Int.self, forKey: .challengeDay)
     }
 }
 
@@ -225,6 +229,7 @@ public struct GameState: Codable, Equatable, Sendable {
             current.frozenIsShiny = roll.isShiny
             egg = current
         }
+        materializeChallenges()
     }
 
     /// Allowlist-style redaction before any paired-device mirror is encoded.
@@ -453,7 +458,8 @@ public struct GameState: Codable, Equatable, Sendable {
                                  friendshipBefore: friendshipBefore, friendshipGained: gained,
                                  eggStartedAt: current.startedAt, eggSteps: current.targetSteps,
                                  eggTierName: current.type.displayName(forTargetSteps: current.targetSteps),
-                                 challengeMonthKey: SocialCalendar.monthKey(now, calendar: calendar))
+                                 challengeMonthKey: SocialCalendar.monthKey(now, calendar: calendar),
+                                 challengeDay: calendar.component(.day, from: now))
         recordChallengeHatch(record, calendar: calendar)
         history.append(record)
         egg = nil
@@ -568,11 +574,17 @@ public struct GameState: Codable, Equatable, Sendable {
 
     // MARK: - Purchase
 
+    mutating func materializeChallenges(calendar: Calendar = .current) {
+        guard challengeHatchCounts == nil || earnedChallengeOutfits == nil,
+              history.contains(where: { $0.source == .egg }) else { return }
+        let archive = ChallengeArchive(history: history, calendar: calendar)
+        if challengeHatchCounts == nil { challengeHatchCounts = archive.counts }
+        if earnedChallengeOutfits == nil { earnedChallengeOutfits = archive.outfits }
+    }
+
     private mutating func recordChallengeHatch(_ record: HatchRecord, calendar: Calendar) {
-        if challengeHatchCounts == nil {
-            challengeHatchCounts = [:]; earnedChallengeOutfits = [:]
-            for old in history where old.source == .egg { recordChallengeHatch(old, calendar: calendar) }
-        }
+        materializeChallenges(calendar: calendar)
+        if challengeHatchCounts == nil { challengeHatchCounts = [:] }
         let key = record.challengeMonthKey ?? SocialCalendar.monthKey(record.hatchedAt, calendar: calendar)
         challengeHatchCounts?[key, default: 0] += 1
         let count = challengeHatchCounts?[key] ?? 0
@@ -604,6 +616,7 @@ public struct GameState: Codable, Equatable, Sendable {
         outfitPreferences = backup.outfitPreferences
         earnedChallengeOutfits = backup.earnedChallengeOutfits
         challengeHatchCounts = backup.challengeHatchCounts
+        materializeChallenges()
         hatchesSinceShiny = 0
         hatchesSinceNewSpecies = 0
         egg = nil

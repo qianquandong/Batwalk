@@ -90,6 +90,7 @@ struct CompanionView: View {
                         BatHeroView(speciesID: bat.speciesID, shiny: bat.showsShiny,
                                     mood: BatMood.resting(at: DemoMode.timeOfDay(at: context.date)), size: 250,
                                     friendshipEXP: bat.friendshipEXP, showsKeepsake: false)
+                            .overlay { ChallengeOutfitOverlay(outfit: store.state.outfit(for: bat.speciesID)) }
                             .environment(\.batPageVisible, pageVisible && !settings && !guide)
                     } else {
                         EggSprite(type: store.state.egg?.type ?? .starter,

@@ -7,7 +7,7 @@ enum PhoneNotifications {
     static let weeklyKey = "batwalk.phone.weeklyRecap"
     static let challengeKey = "batwalk.phone.challengeReminders"
     private static var generation = 0
-    static func refresh(history: [HatchRecord], defaults: UserDefaults = .standard) async {
+    static func refresh(state: GameState, defaults: UserDefaults = .standard) async {
         generation += 1; let revision = generation
         let center = UNUserNotificationCenter.current()
         let pending = await center.pendingNotificationRequests()
@@ -15,8 +15,9 @@ enum PhoneNotifications {
         center.removePendingNotificationRequests(withIdentifiers: pending.map(\.identifier).filter { $0.hasPrefix("batwalk.phone.") })
         let status = await center.notificationSettings().authorizationStatus
         guard revision == generation, status == .authorized || status == .provisional else { return }
-        let plans = PhoneReminderPlan.make(history: history, now: .now,
-            weekly: defaults.bool(forKey: weeklyKey), challenge: defaults.bool(forKey: challengeKey))
+        let plans = PhoneReminderPlan.make(history: state.history, now: .now,
+            weekly: defaults.bool(forKey: weeklyKey), challenge: defaults.bool(forKey: challengeKey),
+            savedMonthCounts: state.challengeHatchCounts)
         for plan in plans {
             guard revision == generation else { return }
             let identifier = "\(plan.id).\(revision)"
@@ -51,7 +52,7 @@ struct PhoneNotificationSettings: View {
         Task {
             if weekly || challenge { _ = try? await UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound]) }
             denied = await UNUserNotificationCenter.current().notificationSettings().authorizationStatus == .denied
-            await PhoneNotifications.refresh(history: store.state.history)
+            await PhoneNotifications.refresh(state: store.state)
         }
     }
 }

@@ -70,4 +70,34 @@ final class SocialProgressTests: XCTestCase {
         XCTAssertLessThan(progress.count, 64)
         XCTAssertEqual(Set(progress.map(\.id)).count, progress.count)
     }
+
+    func testLegacyRewardsMaterializeBeforeBackupTrimming() throws {
+        var state = GameState(); let now = date("2026-10-15T12:00:00Z")
+        state.start(seed: 1, now: now); state.ingestSteps(dayKey: "2026-10-15", dailyTotal: 2_000)
+        let bat = try state.hatch(now: now).bat
+        var json = try XCTUnwrap(JSONSerialization.jsonObject(with: JSONEncoder().encode(state)) as? [String: Any])
+        json.removeValue(forKey: "earnedChallengeOutfits"); json.removeValue(forKey: "challengeHatchCounts")
+        let legacy = try JSONDecoder().decode(GameState.self, from: JSONSerialization.data(withJSONObject: json))
+        var restored = GameState(); restored.restoreCollection(CollectionBackup(state: legacy).trimmingHistory(to: 0))
+        XCTAssertEqual(restored.earnedOutfits(for: bat.speciesID).first?.tier, .bronze)
+        XCTAssertEqual(MonthlyChallenge.make(state: restored, monthKey: "2026-10").hatches, 1)
+        var backup = try XCTUnwrap(JSONSerialization.jsonObject(with: JSONEncoder().encode(CollectionBackup(state: state))) as? [String: Any])
+        backup.removeValue(forKey: "earnedChallengeOutfits"); backup.removeValue(forKey: "challengeHatchCounts")
+        let oldBackup = try JSONDecoder().decode(CollectionBackup.self, from: JSONSerialization.data(withJSONObject: backup))
+        restored.restoreCollection(oldBackup.trimmingHistory(to: 0))
+        XCTAssertEqual(restored.earnedOutfits(for: bat.speciesID).first?.tier, .bronze)
+    }
+
+    func testFrozenCalendarDayAndArchivedReminderProgress() throws {
+        var state = GameState(); let now = date("2026-11-01T00:10:00Z")
+        state.start(seed: 1, now: now); state.ingestSteps(dayKey: "2026-10-31", dailyTotal: 2_000)
+        let record = try state.hatch(now: now, calendar: calendar()).record
+        XCTAssertEqual(record.challengeDay, 31)
+        let october = MonthlyChallenge.make(state: state, monthKey: "2026-10", calendar: calendar("UTC"))
+        XCTAssertEqual(october.symbols[30], record.isShiny ? .shiny : .bat)
+        XCTAssertEqual(october.symbols[0], .egg)
+        let plans = PhoneReminderPlan.make(history: [], now: date("2026-10-10T12:00:00Z"), weekly: false,
+            challenge: true, calendar: calendar(), savedMonthCounts: ["2026-10": 3])
+        XCTAssertTrue(plans.contains { $0.body.contains("Gold is 3 away") })
+    }
 }
