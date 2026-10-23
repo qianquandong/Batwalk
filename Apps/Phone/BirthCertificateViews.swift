@@ -129,6 +129,7 @@ struct BirthCertificateView: View {
     private var recordIndex: Int? { store.state.history.lastIndex(of: record) }
     // A trimmed backup cannot reconstruct the original ordinal. Never invent one.
     private var ordinal: Int? {
+        if let ordinal = record.hatchOrdinal { return ordinal }
         guard record.source == .egg, let index = recordIndex,
               store.state.history.count == store.state.collection.values.reduce(0, { $0 + $1.hatchCount }) else { return nil }
         return store.state.history.prefix(index + 1).filter { $0.source == .egg }.count

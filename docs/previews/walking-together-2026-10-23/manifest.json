@@ -1,0 +1,31 @@
+{
+  "preview": "Walking together",
+  "date": "2026-10-23",
+  "launch_roster": true,
+  "publish": false,
+  "profiles": "Invented demo profiles; no Game Center authentication or uploads",
+  "images": [
+    {
+      "file": "phone-friends.png",
+      "source_commit": "8e0d4073bdbc9de9068603c8840f71d8b273082b",
+      "workflow_url": "https://github.com/qianquandong/Batwalk/actions/runs/39918370559",
+      "artifact": "batwalk-screenshots",
+      "source_file": "phone/25-phone-friends.png",
+      "width": 1206,
+      "height": 2622,
+      "sha256": "caea5900a570d1c4b87fce3e509c3a279183c9752ba7ac61e4ad8b94fc67594d",
+      "original_simulator_png": true
+    },
+    {
+      "file": "watch-home.png",
+      "source_commit": "eaa706958f7f436027398b53bd0c9488c8c1ff44",
+      "workflow_url": "https://github.com/qianquandong/Batwalk/actions/runs/39916161780",
+      "artifact": "batwalk-screenshots",
+      "source_file": "watch/02-home.png",
+      "width": 416,
+      "height": 496,
+      "sha256": "de4f6e20cb3481adcb013e03714fc54a6793db048d509286fb4134eddb0527ff",
+      "original_simulator_png": true
+    }
+  ]
+}

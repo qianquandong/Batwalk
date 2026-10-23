@@ -179,6 +179,9 @@ struct PhoneSettingsView: View {
                         }
                     }
                     NavigationLink { PrivacyView() } label: { Label("Privacy", systemImage: "hand.raised") }
+                    NavigationLink { WalkingTogetherSettingsView() } label: {
+                        Label("Walking together", systemImage: "person.2")
+                    }
                 }
                 Section("Shared cards") {
                     Toggle("Show steps on shared cards", isOn: $showSteps)

@@ -16,6 +16,8 @@ enum SharedConfig {
     /// entitlements in project.yml (see docs/SIGNING.md).
     static var appGroupEnabled: Bool { enabled("BatwalkAppGroupEnabled") }
     static var cloudBackupEnabled: Bool { enabled("BatwalkCloudBackupEnabled") }
+    /// Enable only after the two hatch-count boards exist in App Store Connect.
+    static var gameCenterEnabled: Bool { enabled("BatwalkGameCenterEnabled") }
 
     /// Highest roster wave this build ships (`BATWALK_CONTENT_WAVE`; 1 = launch
     /// roster, 2 = + Oddball Bats). See `Roster.enabledWave` and open question Q12.

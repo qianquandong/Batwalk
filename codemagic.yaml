@@ -55,7 +55,7 @@ workflows:
       - name: Compile optional capabilities without signing
         script: |
           set -euo pipefail
-          python3 scripts/configure-capabilities.py --app-group --cloud-backup
+          python3 scripts/configure-capabilities.py --app-group --cloud-backup --game-center
           xcodegen generate --spec project.capabilities.json
           bash scripts/ci-xcodebuild.sh -project Batwalk.xcodeproj -scheme BatwalkPhone \
             -configuration Debug -destination 'generic/platform=iOS Simulator' \

@@ -4,7 +4,7 @@ import argparse
 import json
 from pathlib import Path
 
-def specification(app_group=False, cloud_backup=False):
+def specification(app_group=False, cloud_backup=False, game_center=False):
     targets = {}
     if app_group:
         for name in ("BatwalkWatch", "BatwalkComplication"):
@@ -21,16 +21,22 @@ def specification(app_group=False, cloud_backup=False):
                 "com.apple.developer.icloud-services": ["CloudKit"],
                 "aps-environment": "development"})
         targets["BatwalkPhone"]["info"] = {"properties": {"UIBackgroundModes": ["remote-notification"]}}
+    if game_center:
+        entry = targets.setdefault("BatwalkPhone", {})
+        entitlements = entry.setdefault("entitlements", {"path": "Apps/Phone/BatwalkPhone.entitlements", "properties": {}})
+        entitlements["properties"]["com.apple.developer.game-center"] = True
     return {"include": ["project.yml"], "settings": {"base": {
         "BATWALK_APP_GROUP_ENABLED": "YES" if app_group else "NO",
-        "BATWALK_CLOUD_BACKUP_ENABLED": "YES" if cloud_backup else "NO"}}, "targets": targets}
+        "BATWALK_CLOUD_BACKUP_ENABLED": "YES" if cloud_backup else "NO",
+        "BATWALK_GAME_CENTER_ENABLED": "YES" if game_center else "NO"}}, "targets": targets}
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--app-group", action="store_true")
     parser.add_argument("--cloud-backup", action="store_true")
+    parser.add_argument("--game-center", action="store_true")
     args = parser.parse_args()
     destination = Path(__file__).resolve().parent.parent / "project.capabilities.json"
-    destination.write_text(json.dumps(specification(args.app_group, args.cloud_backup), indent=2) + "\n", encoding="utf-8")
+    destination.write_text(json.dumps(specification(args.app_group, args.cloud_backup, args.game_center), indent=2) + "\n", encoding="utf-8")
     print("Generated project.capabilities.json. Run xcodegen generate --spec project.capabilities.json.")
     print("Register enabled identifiers and refresh profiles before signed device builds.")

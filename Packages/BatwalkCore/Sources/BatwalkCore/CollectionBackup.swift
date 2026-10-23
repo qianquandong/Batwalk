@@ -10,6 +10,8 @@ public struct CollectionBackup: Codable, Equatable, Sendable {
     public let collection: [String: OwnedBat]
     public let companionID: String?
     public let history: [HatchRecord]
+    public let lifetimeHatchCount: Int
+    public let monthlyHatchCounts: [String: Int]
     public let fruit: Int
     public let moonDust: Int
     public let trialEggUsed: Bool
@@ -28,6 +30,8 @@ public struct CollectionBackup: Codable, Equatable, Sendable {
         collection = state.collection
         companionID = state.companionID
         history = state.history.map { $0.withoutActivityMetrics }
+        lifetimeHatchCount = state.lifetimeHatchCount
+        monthlyHatchCounts = state.monthlyHatchCounts
         fruit = state.fruit
         moonDust = state.moonDust
         trialEggUsed = state.trialEggUsed
@@ -38,7 +42,7 @@ public struct CollectionBackup: Codable, Equatable, Sendable {
     }
 
     private init(version: Int, saveID: UUID, revision: UInt64, hasStarted: Bool, collection: [String: OwnedBat],
-                 companionID: String?, history: [HatchRecord], fruit: Int, moonDust: Int, trialEggUsed: Bool,
+                 companionID: String?, history: [HatchRecord], lifetimeHatchCount: Int, monthlyHatchCounts: [String: Int], fruit: Int, moonDust: Int, trialEggUsed: Bool,
                  outfitPreferences: [String: OutfitPreference]?, earnedChallengeOutfits: [String: [String: ChallengeTier]]?,
                  challengeHatchCounts: [String: Int]?, birthday: MonthDay?) {
         self.version = version
@@ -48,6 +52,8 @@ public struct CollectionBackup: Codable, Equatable, Sendable {
         self.collection = collection
         self.companionID = companionID
         self.history = history.map { $0.withoutActivityMetrics }
+        self.lifetimeHatchCount = lifetimeHatchCount
+        self.monthlyHatchCounts = monthlyHatchCounts
         self.fruit = fruit
         self.moonDust = moonDust
         self.trialEggUsed = trialEggUsed
@@ -58,7 +64,7 @@ public struct CollectionBackup: Codable, Equatable, Sendable {
     }
 
     private enum CodingKeys: String, CodingKey {
-        case version, saveID, revision, hasStarted, collection, companionID, history, fruit, moonDust, trialEggUsed, outfitPreferences, earnedChallengeOutfits, challengeHatchCounts, birthday
+        case version, saveID, revision, hasStarted, collection, companionID, history, fruit, moonDust, trialEggUsed, outfitPreferences, earnedChallengeOutfits, challengeHatchCounts, birthday, lifetimeHatchCount, monthlyHatchCounts
     }
 
     /// Backups written before Moon Dust / the trial egg existed have no such keys.
@@ -71,6 +77,10 @@ public struct CollectionBackup: Codable, Equatable, Sendable {
         collection = try c.decode([String: OwnedBat].self, forKey: .collection)
         companionID = try c.decodeIfPresent(String.self, forKey: .companionID)
         history = (try c.decodeIfPresent([HatchRecord].self, forKey: .history) ?? []).map { $0.withoutActivityMetrics }
+        lifetimeHatchCount = max(history.filter { $0.source == .egg }.count,
+            try c.decodeIfPresent(Int.self, forKey: .lifetimeHatchCount) ?? 0)
+        monthlyHatchCounts = try c.decodeIfPresent([String: Int].self, forKey: .monthlyHatchCounts)
+            ?? HatchLeaderboards.monthlyCounts(history: history)
         fruit = try c.decodeIfPresent(Int.self, forKey: .fruit) ?? 0
         moonDust = try c.decodeIfPresent(Int.self, forKey: .moonDust) ?? 0
         trialEggUsed = try c.decodeIfPresent(Bool.self, forKey: .trialEggUsed) ?? false
@@ -89,6 +99,7 @@ public struct CollectionBackup: Codable, Equatable, Sendable {
     public func hasSameContent(as other: CollectionBackup) -> Bool {
         saveID == other.saveID && hasStarted == other.hasStarted && collection == other.collection
             && companionID == other.companionID && history == other.history
+            && lifetimeHatchCount == other.lifetimeHatchCount && monthlyHatchCounts == other.monthlyHatchCounts
             && moonDust == other.moonDust && trialEggUsed == other.trialEggUsed && outfitPreferences == other.outfitPreferences
             && earnedChallengeOutfits == other.earnedChallengeOutfits && challengeHatchCounts == other.challengeHatchCounts && birthday == other.birthday
     }
@@ -99,7 +110,7 @@ public struct CollectionBackup: Codable, Equatable, Sendable {
         guard history.count > limit else { return self }
         return CollectionBackup(version: version, saveID: saveID, revision: revision, hasStarted: hasStarted,
                                 collection: collection, companionID: companionID,
-                                history: Array(history.suffix(max(0, limit))), fruit: fruit,
+                                history: Array(history.suffix(max(0, limit))), lifetimeHatchCount: lifetimeHatchCount, monthlyHatchCounts: monthlyHatchCounts, fruit: fruit,
                                 moonDust: moonDust, trialEggUsed: trialEggUsed, outfitPreferences: outfitPreferences,
                                 earnedChallengeOutfits: earnedChallengeOutfits, challengeHatchCounts: challengeHatchCounts, birthday: birthday)
     }
