@@ -70,6 +70,21 @@ gameplay data this app deliberately sends and retrieves. Confirm the final ASC
 answers against the shipping binary before App Store submission; this pass is
 TestFlight only.
 
+For beta testing, do not create a release or submit the components for review.
+Apple's [API demonstration](https://developer.apple.com/videos/play/tech-talks/111377/)
+tests leaderboards with TestFlight before creating a release; the
+[WWDC25 lifecycle](https://developer.apple.com/videos/play/wwdc2025/214/?time=1604)
+likewise tests Not Live resources before App Review. The v2 API has no direct
+leaderboard-to-app-version relationship; review submission items associate the
+components for later publication. Actual score lookup/posting still needs a
+signed TestFlight device check.
+
+Read-only ASC verification on 2026-10-23 confirmed the 1.1 draft version
+`034fe867-83fd-435a-9cda-367fe4aa0bad` has enabled Game Center app-version
+`19476066-5553-45c2-af3e-4d6ad3460b0d`. Both leaderboards are unarchived and
+their version 1 metadata remains Prepare for Submission. No leaderboard
+review submission was created by this feature.
+
 ## Validation
 
 Core tests cover UTC/31-day/leap-month boundaries, old month rejection, source
