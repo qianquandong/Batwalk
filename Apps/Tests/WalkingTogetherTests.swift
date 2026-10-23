@@ -13,14 +13,15 @@ final class WalkingTogetherTests: XCTestCase {
     }
 
     @MainActor
-    private func coordinator(_ backend: FakeWalkingBackend, monthly: Bool = false, total: Bool = false) -> WalkingTogetherCoordinator {
+    private func coordinator(_ backend: FakeWalkingBackend, monthly: Bool = false, total: Bool = false,
+                             clock: (() -> Date)? = nil) -> WalkingTogetherCoordinator {
         let suite = "WalkingTogetherTests.\(UUID().uuidString)"
         suites.append(suite)
         let defaults = UserDefaults(suiteName: suite)!
         defaults.set(monthly, forKey: WalkingTogetherCoordinator.monthlyKey)
         defaults.set(total, forKey: WalkingTogetherCoordinator.totalKey)
         if monthly || total { defaults.set("me", forKey: WalkingTogetherCoordinator.accountKey) }
-        return WalkingTogetherCoordinator(backend: backend, defaults: defaults, available: true, now: { self.now })
+        return WalkingTogetherCoordinator(backend: backend, defaults: defaults, available: true, now: clock ?? { self.now })
     }
 
     @MainActor
@@ -74,6 +75,21 @@ final class WalkingTogetherTests: XCTestCase {
         XCTAssertEqual(subject.rows.first?.id, "friend-204")
         XCTAssertEqual(subject.rows.first?.month, 1)
         XCTAssertNil(subject.rows.first(where: { $0.id == "friend-0" })?.month)
+    }
+
+    @MainActor
+    func testOfflineMonthRolloverCannotShowPreviousMonthsRowsAsCurrent() async {
+        var date = now
+        let backend = FakeWalkingBackend()
+        backend.entries = [WalkingEntry(player: WalkingAccount(id: "friend", name: "Fern"), score: 3, context: 202610)]
+        let subject = coordinator(backend, monthly: true, clock: { date })
+        await subject.refresh(history: [], total: 3)
+        XCTAssertEqual(subject.rows.first?.month, 3)
+        date = ISO8601DateFormatter().date(from: "2026-11-01T00:00:00Z")!
+        backend.authenticationError = true
+        await subject.refresh(history: [], total: 3)
+        XCTAssertTrue(subject.rows.isEmpty)
+        XCTAssertEqual(subject.status, .failed)
     }
 
     @MainActor
@@ -163,6 +179,7 @@ private final class FakeWalkingBackend: WalkingTogetherBackend {
     var authenticationChanged: (() -> Void)?
     var permission = true
     var authentications = 0
+    var authenticationError = false
     var cacheClears = 0
     var submissions: [HatchLeaderboardScore] = []
     var queries: [Query] = []
@@ -170,7 +187,10 @@ private final class FakeWalkingBackend: WalkingTogetherBackend {
     var local: WalkingEntry?
     var beforeReturningPage: (() async -> Void)?
     var afterSubmission: (() async -> Void)?
-    func authenticate(interactively: Bool) async throws { authentications += 1 }
+    func authenticate(interactively: Bool) async throws {
+        authentications += 1
+        if authenticationError { throw URLError(.notConnectedToInternet) }
+    }
     func friendsAllowed(requestIfNeeded: Bool) async throws -> Bool { permission }
     func submit(_ score: HatchLeaderboardScore) async throws {
         submissions.append(score)

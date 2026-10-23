@@ -123,6 +123,9 @@ final class WalkingTogetherCoordinator {
 
     func refresh(history: [HatchRecord], total: Int, monthlyCounts: [String: Int] = [:], interactive: Bool = false) async {
         guard available, isSharing else { status = available ? .off : .unavailable; return }
+        // A new month must not display last month's rows if authentication or
+        // the network fails before a fresh leaderboard page can be read.
+        if monthContext != HatchLeaderboards.monthKey(at: now()) { rows.removeAll() }
         generation += 1
         let operation = generation
         status = .loading
