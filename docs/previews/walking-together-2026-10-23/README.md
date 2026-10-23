@@ -11,8 +11,11 @@ remain the same; monthly accessories are inherited from the preceding PR.
 
 ## Provenance
 
-- Initial native compile / hosted-test run: [CI 39913657743](https://github.com/qianquandong/Batwalk/actions/runs/39913657743), source `8028ddc`.
+- Initial native compile / hosted-test run: [CI 39913657743](https://github.com/qianquandong/Batwalk/actions/runs/39913657743), source `8028ddc`, all jobs passed including the Game Center capability-enabled build.
 - Initial both-platform, launch-roster screenshot run: [Screenshots 39913660545](https://github.com/qianquandong/Batwalk/actions/runs/39913660545), source `8028ddc`, publish off.
+- That screenshot workflow completed successfully. `phone-friends.png` is its
+  original 1206 × 2622 simulator image; reviewed for complete copy, three rows,
+  own-row highlight, UTC month label and visible sharing disclosure.
 - This folder is completed with the final integrated screenshots and validation
   result before merging the friends PR. A running workflow is not a pass.
 
@@ -26,3 +29,5 @@ late results after opting out. Native builds validate the real GameKit API.
 Real account and signed-device tests remain separate: a simulator screenshot
 does not establish friend authorization, successful score posting, or public
 Game Center visibility. See [Game Center implementation and privacy](../../GAME_CENTER.md).
+
+![Walking together, invented profiles](phone-friends.png)
