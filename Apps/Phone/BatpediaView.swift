@@ -105,6 +105,7 @@ struct BatDetailPage: View {
                     // Same inset-card hero as the Companion page.
                     BatHeroView(speciesID: speciesID, shiny: bat.showsShiny, mood: .awake,
                                 size: 160, friendshipEXP: bat.friendshipEXP, showsKeepsake: false)
+                        .overlay { ChallengeOutfitOverlay(outfit: store.state.outfit(for: bat.speciesID)) }
                         .environment(\.batPageVisible, pageVisible && moment == nil)
                         .frame(maxWidth: .infinity).padding(.vertical, 20)
                         .background(NightSkyBackground(time: .night, scenery: true, groundLevel: 0.86))

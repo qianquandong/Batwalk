@@ -200,6 +200,10 @@ Shiny must be reachable for those targets to mean anything: 3 % per hatch, a
 guaranteed Shiny at least every 40 hatches, and ×3 odds for a species already at Lv.5
 (Q14, 2026-10-10). The outcome is sealed when the egg is created.
 
+### 2.9.1 Weekly recap and monthly outfits
+
+The iPhone Journal offers a seven-day recap and a monthly calendar card. Monthly 1 / 3 / 6 hatch milestones earn cosmetic Bronze / Silver / Gold outfits only; no species is seasonal. Watch Options → Outfit selects an earned outfit. Phone reminders are opt-in, local and off by default. See [SOCIAL_PROGRESS.md](SOCIAL_PROGRESS.md) for calendar, persistence and reminder rules.
+
 ### 2.10 Monetization
 
 Launch is fully free. Paid content later is cosmetic only (habitats, costumes, egg shells, Nest). Never sold: steps, speed, odds, eggs, Friendship.

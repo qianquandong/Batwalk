@@ -103,6 +103,7 @@ struct HomeView: View {
                         mood: reaction ?? resting, size: size, bounceTrigger: petCount,
                         friendshipEXP: companion.friendshipEXP,
                         animationRequest: animationRequest, showsKeepsake: false)
+                .overlay { ChallengeOutfitOverlay(outfit: store.state.outfit(for: companion.speciesID)) }
                 .overlay { HeartBurst(trigger: petCount) }
                 .overlay { FruitToss(trigger: fruitToss) }
                 .contentShape(Rectangle())

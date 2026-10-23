@@ -90,6 +90,7 @@ struct CompanionView: View {
                         BatHeroView(speciesID: bat.speciesID, shiny: bat.showsShiny,
                                     mood: BatMood.resting(at: DemoMode.timeOfDay(at: context.date)), size: 250,
                                     friendshipEXP: bat.friendshipEXP, showsKeepsake: false)
+                            .overlay { ChallengeOutfitOverlay(outfit: store.state.outfit(for: bat.speciesID)) }
                             .environment(\.batPageVisible, pageVisible && !settings && !guide)
                     } else {
                         EggSprite(type: store.state.egg?.type ?? .starter,
@@ -183,6 +184,7 @@ struct PhoneSettingsView: View {
                     Text("This only changes your cards. Walk details stay on Watch until you tap Include my steps and days for a certificate. They are never added to collection backups.")
                         .font(BatwalkFont.caption)
                 }
+                PhoneNotificationSettings()
                 Section("Watch connection") {
                     PhoneSyncStatus()
                     Text("Your Watch saves your progress. Keep both apps updated and open Batwalk on your Watch to refresh your collection.")

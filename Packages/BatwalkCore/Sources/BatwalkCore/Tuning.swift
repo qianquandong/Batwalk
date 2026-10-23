@@ -4,6 +4,8 @@ import Foundation
 /// change balance without touching rules code. Values marked (PRD) come from
 /// the PRD; the rest are first-pass defaults — see docs/OPEN_QUESTIONS.md.
 public struct Tuning: Sendable, Equatable {
+    /// Monthly cosmetic milestones never affect hatch pools, steps or Friendship.
+    public static let challengeThresholds: [ChallengeTier: Int] = [.none: 0, .bronze: 1, .silver: 3, .gold: 6]
     // MARK: Hatch odds (PRD §4.4)
 
     /// Relative rarity weights. Renormalised over the rarities actually present

@@ -13,8 +13,13 @@ public struct CollectionBackup: Codable, Equatable, Sendable {
     public let fruit: Int
     public let moonDust: Int
     public let trialEggUsed: Bool
+    public let outfitPreferences: [String: OutfitPreference]?
+    public let earnedChallengeOutfits: [String: [String: ChallengeTier]]?
+    public let challengeHatchCounts: [String: Int]?
 
     public init(state: GameState) {
+        var state = state
+        state.materializeChallenges()
         version = 1
         saveID = state.saveID
         revision = state.revision
@@ -25,10 +30,15 @@ public struct CollectionBackup: Codable, Equatable, Sendable {
         fruit = state.fruit
         moonDust = state.moonDust
         trialEggUsed = state.trialEggUsed
+        outfitPreferences = state.outfitPreferences
+        earnedChallengeOutfits = state.earnedChallengeOutfits
+        challengeHatchCounts = state.challengeHatchCounts
     }
 
     private init(version: Int, saveID: UUID, revision: UInt64, hasStarted: Bool, collection: [String: OwnedBat],
-                 companionID: String?, history: [HatchRecord], fruit: Int, moonDust: Int, trialEggUsed: Bool) {
+                 companionID: String?, history: [HatchRecord], fruit: Int, moonDust: Int, trialEggUsed: Bool,
+                 outfitPreferences: [String: OutfitPreference]?, earnedChallengeOutfits: [String: [String: ChallengeTier]]?,
+                 challengeHatchCounts: [String: Int]?) {
         self.version = version
         self.saveID = saveID
         self.revision = revision
@@ -39,10 +49,13 @@ public struct CollectionBackup: Codable, Equatable, Sendable {
         self.fruit = fruit
         self.moonDust = moonDust
         self.trialEggUsed = trialEggUsed
+        self.outfitPreferences = outfitPreferences
+        self.earnedChallengeOutfits = earnedChallengeOutfits
+        self.challengeHatchCounts = challengeHatchCounts
     }
 
     private enum CodingKeys: String, CodingKey {
-        case version, saveID, revision, hasStarted, collection, companionID, history, fruit, moonDust, trialEggUsed
+        case version, saveID, revision, hasStarted, collection, companionID, history, fruit, moonDust, trialEggUsed, outfitPreferences, earnedChallengeOutfits, challengeHatchCounts
     }
 
     /// Backups written before Moon Dust / the trial egg existed have no such keys.
@@ -58,6 +71,12 @@ public struct CollectionBackup: Codable, Equatable, Sendable {
         fruit = try c.decodeIfPresent(Int.self, forKey: .fruit) ?? 0
         moonDust = try c.decodeIfPresent(Int.self, forKey: .moonDust) ?? 0
         trialEggUsed = try c.decodeIfPresent(Bool.self, forKey: .trialEggUsed) ?? false
+        outfitPreferences = try c.decodeIfPresent([String: OutfitPreference].self, forKey: .outfitPreferences)
+        let archive = ChallengeArchive(history: history)
+        earnedChallengeOutfits = try c.decodeIfPresent([String: [String: ChallengeTier]].self, forKey: .earnedChallengeOutfits)
+            ?? (archive.outfits.isEmpty ? nil : archive.outfits)
+        challengeHatchCounts = try c.decodeIfPresent([String: Int].self, forKey: .challengeHatchCounts)
+            ?? (archive.counts.isEmpty ? nil : archive.counts)
     }
 
     /// True when nothing a player would notice differs. The cloud record is only
@@ -66,7 +85,8 @@ public struct CollectionBackup: Codable, Equatable, Sendable {
     public func hasSameContent(as other: CollectionBackup) -> Bool {
         saveID == other.saveID && hasStarted == other.hasStarted && collection == other.collection
             && companionID == other.companionID && history == other.history
-            && moonDust == other.moonDust && trialEggUsed == other.trialEggUsed
+            && moonDust == other.moonDust && trialEggUsed == other.trialEggUsed && outfitPreferences == other.outfitPreferences
+            && earnedChallengeOutfits == other.earnedChallengeOutfits && challengeHatchCounts == other.challengeHatchCounts
     }
 
     /// A copy keeping only the newest `limit` hatch records, for size-limited
@@ -76,6 +96,7 @@ public struct CollectionBackup: Codable, Equatable, Sendable {
         return CollectionBackup(version: version, saveID: saveID, revision: revision, hasStarted: hasStarted,
                                 collection: collection, companionID: companionID,
                                 history: Array(history.suffix(max(0, limit))), fruit: fruit,
-                                moonDust: moonDust, trialEggUsed: trialEggUsed)
+                                moonDust: moonDust, trialEggUsed: trialEggUsed, outfitPreferences: outfitPreferences,
+                                earnedChallengeOutfits: earnedChallengeOutfits, challengeHatchCounts: challengeHatchCounts)
     }
 }
