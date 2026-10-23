@@ -10,7 +10,7 @@ Optional month/day settings are confirmed by the Watch. Birthday hatches retain 
 
 The hat now touches the forehead, retains the ears and face, and stays separate from the small monthly accessory. The iPhone settings clearly distinguish a saved date from a queued change. A subsequent one-line formatting fix displays celebration years as `2026`, rather than locale-grouped `2,026`; the certificate image predates that correction.
 
-The latest certificate capture exposed an intermittent missing share button despite a visible card. Its initial-render timing is under investigation; that screenshot does not establish that sharing succeeded.
+The native birthday certificate capture shows the complete card and its Share card button. The screenshot was checked against the original artifact and its SHA-256 hash; both the birthday hat and monthly accessory render together. Actual system share destinations remain a device smoke check.
 
 ## Validation
 
