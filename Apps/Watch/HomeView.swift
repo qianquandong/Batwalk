@@ -230,9 +230,14 @@ struct EggPickerView: View {
                         Button { start(type) } label: {
                             HStack(spacing: 10) {
                                 EggIcon(type: type, size: 30)
-                                Text(type.displayName).font(BatwalkFont.caption)
+                                VStack(alignment: .leading, spacing: 3) {
+                                    Text(type.displayName).font(BatwalkFont.caption)
+                                        .lineLimit(2).multilineTextAlignment(.leading)
+                                    Text("\(type.targetSteps.formatted()) steps")
+                                        .font(BatwalkFont.micro).monospacedDigit()
+                                        .foregroundStyle(BatwalkColor.textSecondaryDark)
+                                }
                                 Spacer(minLength: 0)
-                                Text(type.targetSteps.formatted()).font(BatwalkFont.micro).monospacedDigit()
                             }
                             .foregroundStyle(BatwalkColor.cloud)
                             .frame(minHeight: 44)
