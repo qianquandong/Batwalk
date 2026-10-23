@@ -55,9 +55,10 @@ final class GameStore {
 
     func load() {
         guard !isDemo else { return }
+        if role == .phone { try? archive.sanitizeMirrorCopies() }
         if role == .phone, let cached = archive.load() {
             // The read-only phone cache is newer than any legacy SwiftData row.
-            if !state.hasStarted || cached.isRicher(than: state) { state = cached }
+            if !state.hasStarted || cached.isRicher(than: state) { state = cached.collectionMirror() }
             recoveryRequired = false
             return
         }
@@ -87,12 +88,12 @@ final class GameStore {
                 return a.0.updatedAt > b.0.updatedAt
             }.first
             if let best {
-                if !state.hasStarted || best.1.isRicher(than: state) { state = best.1 }
+                if !state.hasStarted || best.1.isRicher(than: state) { state = role == .phone ? best.1.collectionMirror() : best.1 }
                 // Only point writes at the record whose state we actually selected.
                 if state.saveID == best.1.saveID || state == best.1 { record = best.0 }
                 recoveryRequired = false
             } else if let recovered = archive.load() {
-                state = recovered
+                state = role == .phone ? recovered.collectionMirror() : recovered
                 recoveryRequired = false
                 if role == .watch { try persistRecovered() }
             } else if !records.isEmpty {
@@ -232,7 +233,7 @@ final class GameStore {
 
     func applyMirror(_ data: Data, updatedAt: Date? = nil) {
         guard role == .phone, !isDemo else { return }
-        guard let incoming = try? JSONDecoder().decode(GameState.self, from: data) else {
+        guard let decoded = try? JSONDecoder().decode(GameState.self, from: data) else {
             // Tell the player why nothing is arriving instead of silently showing an old mirror.
             let json = (try? JSONSerialization.jsonObject(with: data)) as? [String: Any]
             if (json?["schemaVersion"] as? Int ?? 1) > GameState.currentSchemaVersion {
@@ -240,9 +241,10 @@ final class GameStore {
             }
             return
         }
+        let incoming = decoded.collectionMirror()
         if incoming.saveID == state.saveID, incoming.revision < state.revision { return }
         do {
-            try archive.save(data)
+            try archive.save(JSONEncoder().encode(incoming))
             let changed = state != incoming
             state = incoming
             if let updatedAt { lastSyncAt = min(updatedAt, .now) }

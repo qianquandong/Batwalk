@@ -30,7 +30,7 @@ final class ReliabilityTests: XCTestCase {
             let expectedID = state.egg?.frozenSpeciesID
             let expectedShiny = state.egg?.frozenIsShiny
             state.setUnlocked(!paid)
-            state.ingestSteps(dayKey: "2026-10-09", dailyTotal: EggType.starter.targetSteps + EggType.tiny.targetSteps)
+            state.ingestSteps(dayKey: "2026-10-09", dailyTotal: Tuning.introEggTargetSteps + EggType.tiny.targetSteps)
             let hatch = try state.hatch(now: now, tuning: Tuning(shinyChance: 1))
             XCTAssertEqual(hatch.record.speciesID, expectedID)
             XCTAssertEqual(hatch.record.isShiny, expectedShiny)

@@ -5,6 +5,7 @@ struct CompanionView: View {
     @Environment(GameStore.self) private var store
     @Environment(\.batPageVisible) private var pageVisible
     @Binding var tab: PhoneTab
+    @AppStorage("dismissedCertificateNudge") private var dismissedCertificate = ""
     @State private var settings = false
     @State private var guide = DemoMode.scenario == "phone-guide"
 
@@ -28,6 +29,7 @@ struct CompanionView: View {
                     VStack(alignment: .leading, spacing: 16) {
                         PhoneSyncStatus()
                         eggSummary
+                        certificateNudge
                         if let record = store.state.history.last {
                             NavigationLink { ReunionDetailView(record: record) } label: {
                                 HStack(spacing: 12) {
@@ -116,30 +118,50 @@ struct CompanionView: View {
         }
     }
 
+    @ViewBuilder private var certificateNudge: some View {
+        if let record = store.state.history.last {
+            let key = "\(store.state.saveID)-\(store.state.history.count)-\(record.hatchedAt.timeIntervalSince1970)"
+            if dismissedCertificate != key {
+                HStack(alignment: .center, spacing: 8) {
+                    NavigationLink {
+                        BirthCertificateView(record: record)
+                            .onAppear { dismissedCertificate = key }
+                    } label: {
+                        Label("Share \(store.state.collection[record.speciesID]?.displayName ?? "your friend")'s certificate",
+                              systemImage: "square.and.arrow.up")
+                            .font(BatwalkFont.caption).frame(minHeight: 44, alignment: .leading)
+                    }
+                    Spacer(minLength: 0)
+                    Button { dismissedCertificate = key } label: {
+                        Image(systemName: "xmark").frame(width: 44, height: 44)
+                    }.accessibilityLabel("Dismiss certificate suggestion")
+                }
+            }
+        }
+    }
+
     @ViewBuilder private var eggSummary: some View {
-        if let egg = store.state.egg {
+        if store.state.hasStarted {
             Button { guide = true } label: {
                 HStack(spacing: 14) {
-                    EggIcon(type: egg.type, size: 40)
+                    Image(systemName: "applewatch").font(.title2)
                     VStack(alignment: .leading, spacing: 7) {
-                        Text(egg.isReady ? "Someone is ready to meet you" : "Someone new is on the way")
-                            .font(BatwalkFont.headline)
-                        Text(egg.isReady ? "Open Batwalk on your Watch" : "\(egg.creditedSteps.formatted()) / \(egg.targetSteps.formatted()) steps")
+                        Text("A little walk, a little closer").font(BatwalkFont.headline)
+                        Text("Check your egg on your Watch. Your step progress stays there.")
                             .font(BatwalkFont.caption).foregroundStyle(BatwalkColor.textSecondaryLight)
-                        ProgressView(value: egg.progress).tint(BatwalkColor.accent)
                     }
                     Image(systemName: "chevron.right").font(BatwalkFont.micro)
                 }
                 .padding(16).background(BatwalkColor.lightTint, in: RoundedRectangle(cornerRadius: 22))
             }
-        } else if store.state.hasStarted {
-            Label("Pick your next egg on your Watch.", systemImage: "applewatch").font(BatwalkFont.caption)
         }
     }
+
 }
 
 struct PhoneSettingsView: View {
     @Environment(\.dismiss) private var dismiss
+    @AppStorage("shareCardShowsSteps") private var showSteps = true
     @State private var showUnlock = SharedConfig.paidContentEnabled && DemoMode.scenario == "phone-unlock"
 
     var body: some View {
@@ -155,6 +177,11 @@ struct PhoneSettingsView: View {
                         }
                     }
                     NavigationLink { PrivacyView() } label: { Label("Privacy", systemImage: "hand.raised") }
+                }
+                Section("Shared cards") {
+                    Toggle("Show steps on shared cards", isOn: $showSteps)
+                    Text("This only changes your cards. Walk details stay on Watch until you tap Include my steps and days for a certificate. They are never added to collection backups.")
+                        .font(BatwalkFont.caption)
                 }
                 Section("Watch connection") {
                     PhoneSyncStatus()

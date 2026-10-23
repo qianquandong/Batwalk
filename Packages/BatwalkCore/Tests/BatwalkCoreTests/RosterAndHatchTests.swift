@@ -118,11 +118,11 @@ final class RosterTests: XCTestCase {
     }
 
     func testEggTargets() {
-        XCTAssertEqual(EggType.starter.targetSteps, 2_000)
+        XCTAssertEqual(EggType.starter.targetSteps, 10_000)
         XCTAssertEqual(EggType.tiny.targetSteps, 10_000)
-        XCTAssertEqual(EggType.forest.targetSteps, 40_000)
-        XCTAssertEqual(EggType.moon.targetSteps, 50_000)
-        XCTAssertEqual(EggType.crystal.targetSteps, 60_000)
+        XCTAssertEqual(EggType.forest.targetSteps, 21_097)
+        XCTAssertEqual(EggType.moon.targetSteps, 42_195)
+        XCTAssertEqual(EggType.crystal.targetSteps, 100_000)
     }
 
     func testPickableEggs() {

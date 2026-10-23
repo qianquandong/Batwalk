@@ -26,7 +26,7 @@ struct HistoryView: View {
                             .foregroundStyle(BatwalkColor.textSecondaryLight)
                         LazyVStack(spacing: 12) {
                             ForEach(Array(store.state.history.reversed().enumerated()), id: \.offset) { _, record in
-                                NavigationLink { ReunionDetailView(record: record) } label: {
+                                NavigationLink { BirthCertificateView(record: record) } label: {
                                     HatchHistoryRow(record: record)
                                 }
                                 .buttonStyle(.plain)

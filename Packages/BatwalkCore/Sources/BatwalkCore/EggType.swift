@@ -8,13 +8,24 @@ public enum EggType: String, Codable, CaseIterable, Sendable {
     case moon
     case crystal
 
-    public var displayName: String {
-        switch self {
-        case .starter: return "Starter Egg"
-        case .tiny: return "Tiny Egg"
-        case .forest: return "Forest Egg"
-        case .moon: return "Moon Egg"
-        case .crystal: return "Crystal Egg"
+    public var displayName: String { displayName(forTargetSteps: targetSteps) }
+
+    /// Historical receipts use the target actually walked, not current tuning.
+    public func displayName(forTargetSteps steps: Int?) -> String {
+        switch steps {
+        case 2_000 where self == .starter: return "Starter Egg"
+        case 10_000: return "10K Egg"
+        case 21_097: return "Half Marathon Egg"
+        case 42_195: return "Marathon Egg"
+        case 100_000: return "Ultra Egg"
+        default:
+            switch self {
+            case .starter: return "Starter Egg"
+            case .tiny: return "Tiny Egg"
+            case .forest: return "Forest Egg"
+            case .moon: return "Moon Egg"
+            case .crystal: return "Crystal Egg"
+            }
         }
     }
 

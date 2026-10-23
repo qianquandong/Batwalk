@@ -138,15 +138,29 @@ offline collection management remain available on Watch.
 
 Habitat is deferred beyond MVP unless schedule permits.
 
+### 2.5.1 Shareable memories (2026-10-23)
+
+Journal rows open a 1200 × 1200 birth certificate with the existing portrait, nickname/species,
+Batpedia number, hatch ordinal when known, rarity, original egg tier, estimated moon phase,
+and real-bat fact. Shiny uses a static card with its **3% base** odds line; no video export.
+Companion suggests the latest certificate once, with a dismiss control. Batpedia shares a
+20-bat collection poster; Bat Detail keeps its existing card. All use Apple's share sheet.
+
+Certificate start dates and completed target steps are recorded on Watch from this version
+onward. Old records remain unavailable, never guessed. Days count local calendar boundaries,
+minimum one. The phone-only “Show steps on shared cards” preference defaults on, but never
+authorizes automatic transport: the player must tap “Include my steps and days” for a
+specific certificate. That read-only response stays in memory. Off omits both values.
+
 ### 2.6 Egg System
 
 | Egg | Target Steps | Purpose |
 |---|---|---|
-| Starter Egg | 2,000 | Fast first success |
-| Tiny Egg | 10,000 | Everyday walks across one or more days |
-| Forest Egg | 40,000 | Nature-themed pool |
-| Moon Egg | 50,000 | Night / Rare pool |
-| Crystal Egg | 60,000 | Higher-end Rare pool |
+| Teaching Starter Egg | 2,000 | One-time first success |
+| Starter / Tiny · 10K Egg | 10,000 | Themed everyday pools |
+| Forest · Half Marathon Egg | 21,097 | Nature-themed pool |
+| Moon · Marathon Egg | 42,195 | Night / Rare pool |
+| Crystal · Ultra Egg | 100,000 | Higher-end Rare pool |
 
 Egg progress accumulates across days. The longer eggs are multi-day goals; there is no daily hatch quota or reset.
 
@@ -166,7 +180,7 @@ Duplicates are allowed, but the Collection does not accumulate piles of identica
 
 **Simple duplicate rewards (2026-10-23).** Repeat hatches grant that species' normal rarity-based Friendship EXP and raise its level using the existing Lv.1–5 thresholds. At max level the cumulative EXP is kept. New hatches no longer award Moon Dust; do not add gifts, story chapters, invitations, or another currency. Legacy Moon Dust balances and redemption stay available only to players who already have a balance.
 
-**Longer walks (2026-10-23).** Tiny is 10,000 steps; Forest, Moon, and Crystal use ten times their previous targets. Starter stays at 2,000 steps. Targets are stored when an egg starts. Existing eggs keep their previous target and credited steps, including eggs already ready to hatch. Progress accumulates across days.
+**Walk milestones (2026-10-23).** Starter and Tiny are 10,000 steps; Forest is 21,097, Moon 42,195, and Crystal 100,000. The one-time teaching Starter stays at 2,000 steps. Targets are stored when an egg starts. Existing eggs keep their previous target and credited steps, including eggs already ready to hatch. Progress accumulates across days.
 
 The species-specific actions behind Lv.2–5 are listed in [`BAT_ACTIONS.md`](BAT_ACTIONS.md).
 
@@ -332,6 +346,8 @@ Exact rates are tuning values for beta and may change without changing the core 
 ### 4.5 Data & Privacy
 
 - Read only the Health data required for the mechanic: Step Count.
+- Step history, totals, active egg progress and certificate walk metrics never enter default mirrors, collection backups, analytics or links.
+- The only certificate transfer is the player's explicit, single-receipt request; the phone keeps it in memory and the player chooses whether to share the rendered card.
 - Do not upload raw step history to a custom server in MVP.
 - Store game-derived state locally and in CloudKit backup.
 - Analytics should record game events — not detailed Health history.

@@ -21,6 +21,21 @@ struct SaveArchive {
         try data.write(to: current, options: [.atomic, .completeFileProtectionUntilFirstUserAuthentication])
     }
 
+    /// Upgrade old phone caches in place, including the rotating fallback.
+    /// The watch archive never calls this method.
+    func sanitizeMirrorCopies() throws {
+        for name in ["current.json", "previous.json"] {
+            let url = directory.appendingPathComponent(name)
+            guard let data = try? Data(contentsOf: url),
+                  let state = try? JSONDecoder().decode(GameState.self, from: data) else { continue }
+            let redacted = state.collectionMirror()
+            if state != redacted {
+                try JSONEncoder().encode(redacted).write(to: url,
+                    options: [.atomic, .completeFileProtectionUntilFirstUserAuthentication])
+            }
+        }
+    }
+
     private func prepareDirectory() throws {
         try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
         var url = directory

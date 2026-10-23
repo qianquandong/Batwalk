@@ -27,6 +27,10 @@ struct BatpediaView: View {
                     }
                     Text("\(foundCount) / \(Roster.all.count) discovered")
                         .font(BatwalkFont.body).foregroundStyle(BatwalkColor.textSecondaryLight)
+                    NavigationLink { CollectionPosterView() } label: {
+                        Label("Share your collection", systemImage: "square.and.arrow.up").font(BatwalkFont.caption)
+                            .frame(minHeight: 44)
+                    }
                     SegmentedPill(options: [(Variant.normal, "Normal"), (Variant.shiny, "Shiny")], selection: $variant)
                     if searching {
                         TextField("Search discovered bats", text: $query)
@@ -163,7 +167,7 @@ struct BatDetailPage: View {
                         } detail: { EmptyView() }
                         if let first = store.state.history.first(where: { $0.speciesID == speciesID }) {
                             BatInfoRow(title: first.source == .moonDust ? "Called with" : "Hatch source",
-                                       value: first.source == .moonDust ? "Moon Dust" : first.eggType.displayName) {
+                                       value: first.source == .moonDust ? "Moon Dust" : first.certificateEggName) {
                                 if first.source == .moonDust {
                                     Image(systemName: "sparkle").foregroundStyle(BatwalkColor.accent)
                                 } else {
@@ -205,10 +209,7 @@ struct BatDetailPage: View {
             if let shareImage, let bat {
                 ToolbarItem(placement: .topBarTrailing) {
                     // A bat card with its "real-life cousin" fact — the thing worth sending a friend.
-                    ShareLink(item: shareImage, preview: SharePreview(bat.displayName, image: shareImage)) {
-                        Image(systemName: "square.and.arrow.up")
-                    }
-                    .accessibilityLabel("Share \(bat.displayName)")
+                    SquareShareLink(image: shareImage, title: bat.displayName, label: "Share")
                 }
             }
         }

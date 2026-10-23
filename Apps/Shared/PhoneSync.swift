@@ -4,7 +4,7 @@ import BatwalkCore
 
 /// Best-effort Watch ↔ iPhone sync (PRD §4.1).
 ///
-/// - Watch → iPhone: the whole save goes into the Watch's application context
+/// - Watch → iPhone: a redacted collection mirror goes into the Watch's application context
 ///   (only the latest matters to a mirror; a large history uses a file transfer).
 /// - iPhone → Watch: companion-change requests (`transferUserInfo`, queued), and
 ///   the phone's latest *collection backup* in the phone's application context,
@@ -23,6 +23,32 @@ final class PhoneSync: NSObject, WCSessionDelegate {
     var onReceivePhoneBackup: (@MainActor (CollectionBackup) -> Void)?
     /// Called once the session is active (the phone publishes its backup here).
     var onActivated: (@MainActor () -> Void)?
+
+    /// Watch-only resolver; replies are read-only and never queued or saved.
+    var certificateMetrics: (@MainActor (CertificateMetricsRequest) -> CertificateMetrics?)?
+    private static let certificateKey = "certificateMetrics"
+
+    enum CertificateError: Error { case unavailable, missingReceipt }
+
+    @MainActor
+    func requestCertificateMetrics(_ request: CertificateMetricsRequest,
+                                   completion: @escaping @MainActor (Result<CertificateMetrics, CertificateError>) -> Void) {
+        guard WCSession.isSupported(), WCSession.default.activationState == .activated,
+              WCSession.default.isReachable,
+              let data = try? JSONEncoder().encode(request) else {
+            completion(.failure(.unavailable)); return
+        }
+        WCSession.default.sendMessage([Self.certificateKey: data], replyHandler: { reply in
+            let result: Result<CertificateMetrics, CertificateError>
+            if let data = reply[Self.certificateKey] as? Data,
+               let metrics = try? JSONDecoder().decode(CertificateMetrics.self, from: data) {
+                result = .success(metrics)
+            } else { result = .failure(.missingReceipt) }
+            Task { @MainActor in completion(result) }
+        }, errorHandler: { _ in
+            Task { @MainActor in completion(.failure(.unavailable)) }
+        })
+    }
 
     private static let saveKey = "save"
     private static let updatedKey = "updatedAt"
@@ -64,6 +90,9 @@ final class PhoneSync: NSObject, WCSessionDelegate {
     // MARK: Watch → iPhone save
 
     func push(save data: Data) {
+        // Never trust callers to remember the privacy boundary.
+        guard let state = try? JSONDecoder().decode(GameState.self, from: data),
+              let data = try? JSONEncoder().encode(state.collectionMirror()) else { return }
         pendingLock.lock(); pendingSave = data; pendingLock.unlock()
         flushPendingSave()
     }
@@ -169,6 +198,19 @@ final class PhoneSync: NSObject, WCSessionDelegate {
         }
         try? FileManager.default.removeItem(at: file)
         flushPendingSave() // send the newest save that queued up while this one was in flight
+    }
+
+    func session(_ session: WCSession, didReceiveMessage message: [String: Any],
+                 replyHandler: @escaping ([String: Any]) -> Void) {
+        guard let data = message[Self.certificateKey] as? Data,
+              let request = try? JSONDecoder().decode(CertificateMetricsRequest.self, from: data) else {
+            replyHandler([:]); return
+        }
+        Task { @MainActor in
+            guard let metrics = self.certificateMetrics?(request),
+                  let encoded = try? JSONEncoder().encode(metrics) else { replyHandler([:]); return }
+            replyHandler([Self.certificateKey: encoded])
+        }
     }
 
     func session(_ session: WCSession, didReceiveUserInfo userInfo: [String: Any] = [:]) {

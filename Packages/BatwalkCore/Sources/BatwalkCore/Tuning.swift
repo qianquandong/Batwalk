@@ -35,8 +35,10 @@ public struct Tuning: Sendable, Equatable {
 
     /// Targets are frozen when a new egg starts; changing these never moves an
     /// existing egg's finish line. The one-time teaching egg keeps its short walk.
+    public static let introEggTargetSteps = 2_000
+
     public static let eggTargetSteps: [EggType: Int] = [
-        .starter: 2_000, .tiny: 10_000, .forest: 40_000, .moon: 50_000, .crystal: 60_000
+        .starter: 10_000, .tiny: 10_000, .forest: 21_097, .moon: 42_195, .crystal: 100_000
     ]
 
     /// Only for saves made before targets were stored on ActiveEgg.
