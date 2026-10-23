@@ -6,4 +6,4 @@ New simulator scenarios: Watch `birthday`; iPhone `phone-birthday`, `phone-birth
 
 Validation covers date/leap-day/timezone boundaries, hatch and no-hatch rules, old saves, trimmed backup, privacy redaction, request ordering/expiry, duplicate receipt delivery, Watch save failures, queued request restoration and card rendering. The simulator/hosted and Screenshots workflow provenance is added after those jobs complete; local core success alone does not certify the app build.
 
-Local Swift 5.10/Linux validation: 144 tests passed, 0 failures.
+Local Swift 5.10/Linux validation: 145 tests passed, 0 failures.

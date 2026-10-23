@@ -152,4 +152,21 @@ final class BirthdayTests: XCTestCase {
             XCTAssertFalse(handoff.isWaiting); XCTAssertNil(handoff.failure)
         }
     }
+
+    func testLateReceiptCanConfirmARequestTheWatchSavedBeforeExpiry() {
+        var watch = GameState(); let phone = watch; let now = date()
+        let request = PlayerSettingsRequest(saveID: watch.saveID, baseRevision: 0, requestedAt: now,
+                                            birthday: MonthDay(month: 10, day: 23))
+        var handoff = PlayerSettingsHandoff(); handoff.begin(request)
+        XCTAssertEqual(watch.applyPlayerSettings(request, now: now), .applied); watch.advanceRevision()
+        let later = now.addingTimeInterval(1_800)
+        handoff.reconcile(with: phone, now: later)
+        XCTAssertEqual(handoff.failure, .expired)
+        let receipt = PlayerSettingsReceipt(request: request, outcome: .applied, revision: watch.revision)
+        handoff.receive(receipt, state: phone, now: later)
+        XCTAssertTrue(handoff.isWaiting); XCTAssertNil(handoff.failure)
+        handoff.reconcile(with: watch, now: later)
+        XCTAssertFalse(handoff.isWaiting); XCTAssertNil(handoff.failure)
+    }
+
 }

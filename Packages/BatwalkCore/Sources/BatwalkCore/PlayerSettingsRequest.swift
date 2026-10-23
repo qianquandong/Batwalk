@@ -46,15 +46,18 @@ public struct PlayerSettingsHandoff: Codable, Equatable, Sendable {
         return true
     }
     public mutating func receive(_ receipt: PlayerSettingsReceipt, state: GameState, now: Date = Date()) {
-        guard receipt.request == request, failure == nil else { return }
+        guard receipt.request == request, failure == nil || failure == .expired else { return }
+        // A Watch may save within the window, then deliver its receipt later.
+        // A local timeout must not discard that authoritative confirmation.
         self.receipt = receipt
-        if receipt.outcome != .applied { failure = receipt.outcome }
+        failure = receipt.outcome == .applied ? nil : receipt.outcome
         reconcile(with: state, now: now)
     }
     public mutating func reconcile(with state: GameState, now: Date = Date()) {
         guard let request, failure == nil else { return }
         guard state.saveID == request.saveID else { failure = .saveChanged; return }
-        if let receipt, receipt.outcome == .applied, state.revision >= receipt.revision {
+        if let receipt, receipt.outcome == .applied {
+            guard state.revision >= receipt.revision else { return }
             if state.birthday == request.birthday { self = PlayerSettingsHandoff() }
             else { failure = .superseded }
         } else if now >= request.expiresAt { failure = .expired }
