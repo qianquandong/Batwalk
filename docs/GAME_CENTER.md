@@ -73,9 +73,12 @@ disclosure is Gameplay Content and User ID, linked for App Functionality, no
 tracking; Health/Fitness is not uploaded by this feature. Players who leave both
 switches off send no Game Center scores. Apple says developers need not declare
 data Apple independently collects, but that is not a blanket exemption for the
-gameplay data this app deliberately sends and retrieves. Confirm the final ASC
-answers against the shipping binary before App Store submission; this pass is
-TestFlight only.
+gameplay data this app deliberately sends and retrieves. These 1.1 answers are
+prepared in the release notes, not saved as an ASC draft. The authenticated ASC
+form says published answers must describe the current App Store version; its
+final action publishes immediately. Live 1.0 has no Game Center sharing, so the
+existing Data Not Collected label remains. Publish the prepared 1.1 answers in
+coordination with the 1.1 App Store release. This pass is TestFlight only.
 
 For beta testing, do not create a release or submit the components for review.
 Apple's [API demonstration](https://developer.apple.com/videos/play/tech-talks/111377/)

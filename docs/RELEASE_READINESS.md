@@ -24,12 +24,15 @@ before creating releases or submitting components; first verify real scores
 with the signed beta. These identifiers are configuration evidence, not proof
 of real-player score submissions. See the official references in GAME_CENTER.md.
 
-App Privacy labels have **not** been updated: the account holder's web login
-is still needed. Before App Store submission, reconcile the app-wide answers with the
-phone manifest: optional Gameplay Content + User ID for App Functionality,
-linked, not tracking. No Health/Fitness upload. This feature does not create
-or submit an App Store review. Apple account/permission behavior still requires
-paired account device testing; fake tests and screenshots are not that evidence.
+App Privacy answers for 1.1 are prepared as Gameplay Content + User ID for App
+Functionality, linked, not tracking; no Health/Fitness upload. They have **not**
+been published or saved as an ASC draft. The authenticated ASC form says published
+answers describe the current App Store version, and its final action publishes
+immediately. Live version 1.0 has no Game Center sharing, so its existing Data Not
+Collected label remains. Coordinate publication of the prepared answers with the
+1.1 App Store release; this pass only uploads TestFlight. Apple account/permission
+behavior still requires paired account device testing; fake tests and screenshots
+are not that evidence.
 
 This implementation follows the review order: progress reliability, wrist
 experience, rewards/purchases, then release verification. Automated results must
