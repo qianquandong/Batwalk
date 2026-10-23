@@ -227,6 +227,10 @@ final class GameStore {
         isDemo = true; state = demo
         if role == .phone {
             lastSyncAt = demo.hasStarted ? .now.addingTimeInterval(DemoMode.scenario == "phone-stale" ? -7200 : 0) : nil
+            if DemoMode.scenario == "phone-birthday-pending" {
+                settingsHandoff.begin(PlayerSettingsRequest(saveID: demo.saveID, baseRevision: demo.revision,
+                                                            birthday: MonthDay(month: 2, day: 29)))
+            }
             if DemoMode.scenario == "phone-pending" {
                 companionHandoff.begin(CompanionChangeRequest(speciesID: "sticky", saveID: demo.saveID))
             }
