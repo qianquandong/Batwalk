@@ -217,7 +217,7 @@ public struct GameState: Codable, Equatable, Sendable {
         }
     }
 
-    /// Allowlist-style redaction before any paired-device mirror is encoded.
+    /// Explicit redaction before any paired-device mirror is encoded.
     /// The phone is a collection viewer; exact walking progress stays on Watch.
     public func collectionMirror() -> GameState {
         var copy = self
