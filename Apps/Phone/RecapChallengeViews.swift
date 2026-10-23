@@ -28,11 +28,28 @@ struct MonthlyChallengeCard: View {
                 .lineLimit(1).minimumScaleFactor(0.65)
             HStack { Text(challenge.tier.title); Spacer(); Text("\(challenge.hatches) little meetings") }
                 .font(.system(size: 13, weight: .medium, design: .rounded))
-            LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 4), count: 7), spacing: 7) {
-                ForEach(Array(["S", "M", "T", "W", "T", "F", "S"].enumerated()), id: \.offset) { _, day in Text(day).font(.system(size: 10, weight: .bold)).foregroundStyle(BatwalkColor.textSecondaryLight) }
-                ForEach(0..<max(0, challenge.firstWeekday - 1), id: \.self) { _ in Color.clear.frame(height: 32) }
-                ForEach(Array(challenge.symbols.enumerated()), id: \.offset) { day, symbol in
-                    VStack(spacing: 0) { Text(symbol.rawValue).font(.system(size: 19)); Text("\(day + 1)").font(.system(size: 8)).foregroundStyle(BatwalkColor.textSecondaryLight) }
+            // Eager cells are also rendered when ImageRenderer exports off-screen.
+            VStack(spacing: 4) {
+                HStack(spacing: 4) {
+                    ForEach(Array(["S", "M", "T", "W", "T", "F", "S"].enumerated()), id: \.offset) { _, day in
+                        Text(day).font(.system(size: 10, weight: .bold))
+                            .foregroundStyle(BatwalkColor.textSecondaryLight).frame(maxWidth: .infinity)
+                    }
+                }
+                ForEach(0..<((max(0, challenge.firstWeekday - 1) + challenge.symbols.count + 6) / 7), id: \.self) { week in
+                    HStack(spacing: 4) {
+                        ForEach(0..<7, id: \.self) { weekday in
+                            let day = week * 7 + weekday - max(0, challenge.firstWeekday - 1)
+                            Group {
+                                if challenge.symbols.indices.contains(day) {
+                                    VStack(spacing: 0) {
+                                        Text(challenge.symbols[day].rawValue).font(.system(size: 17))
+                                        Text("\(day + 1)").font(.system(size: 8)).foregroundStyle(BatwalkColor.textSecondaryLight)
+                                    }
+                                } else { Color.clear }
+                            }.frame(maxWidth: .infinity).frame(height: 28)
+                        }
+                    }
                 }
             }
             Spacer(minLength: 0)
