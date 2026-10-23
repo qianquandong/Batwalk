@@ -55,7 +55,7 @@ struct BirthCertificateCard: View {
             HStack {
                 Text("BATWALK").font(.system(size: 12, weight: .heavy, design: .rounded)).tracking(2)
                 Spacer()
-                Text("A LITTLE ARRIVAL").font(.system(size: 8, weight: .semibold)).tracking(1.5)
+                Text(record.birthdayYear.map { "BIRTHDAY · \(String($0))" } ?? "A LITTLE ARRIVAL").font(.system(size: 8, weight: .semibold)).tracking(1.5)
             }
             Rectangle().fill(ink.opacity(0.16)).frame(height: 1)
             HStack(alignment: .top) {
@@ -67,6 +67,7 @@ struct BirthCertificateCard: View {
                 Circle().fill(Color.white.opacity(0.45)).frame(width: 118, height: 118)
                 BatSprite(speciesID: record.speciesID, shiny: record.isShiny, mood: .happy, size: 134)
                     .overlay { ChallengeOutfitOverlay(outfit: outfit) }
+                    .overlay { BirthdayHatOverlay(speciesID: record.speciesID, year: record.birthdayYear, mood: .happy) }
                 if record.isShiny {
                     Image(systemName: "sparkles").font(.system(size: 24)).foregroundStyle(Color.orange.opacity(0.8))
                         .offset(x: 76, y: -44)
@@ -215,6 +216,7 @@ struct CollectionPosterCard: View {
                             VStack(spacing: 2) {
                                 if let bat = state.collection[species.id] {
                                     BatSprite(speciesID: species.id, shiny: bat.showsShiny, mood: .awake, size: 40)
+                                        .overlay { BirthdayHatOverlay(speciesID: species.id, year: bat.birthdayYears?.max()) }
                                 } else {
                                     BatSilhouette(size: 40, color: Color(red: 0.65, green: 0.69, blue: 0.61))
                                 }

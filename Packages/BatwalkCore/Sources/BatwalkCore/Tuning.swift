@@ -85,6 +85,10 @@ public struct Tuning: Sendable, Equatable {
     public var nightStartHour: Int
     public var dayStartHour: Int
 
+    /// Offline settings requests remain short-lived; the Watch rejects old queues.
+    public static let settingsRequestLifetime: TimeInterval = 15 * 60
+    public static let settingsRequestClockSkew: TimeInterval = 2 * 60
+
     // MARK: Naming
 
     public var maxNicknameLength: Int

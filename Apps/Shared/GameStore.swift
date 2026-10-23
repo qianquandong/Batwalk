@@ -19,6 +19,8 @@ final class GameStore {
     private(set) var availableBackup: CollectionBackup?
     private(set) var lastSyncAt: Date?
     private(set) var companionHandoff = CompanionHandoff()
+    private(set) var settingsHandoff = PlayerSettingsHandoff()
+    private(set) var settingsRequestError: String?
     private(set) var companionRequestError: String?
     private(set) var companionArrival: String?
     private(set) var lastStepReadAt: Date?
@@ -49,6 +51,7 @@ final class GameStore {
         if role == .phone, let metadata = self.archive.loadPhoneMetadata() {
             if metadata.saveID == state.saveID, metadata.revision == state.revision { lastSyncAt = metadata.lastSyncAt }
             companionHandoff = metadata.handoff
+            settingsHandoff = metadata.settingsHandoff ?? PlayerSettingsHandoff()
             refreshHandoff()
         }
     }
@@ -224,6 +227,10 @@ final class GameStore {
         isDemo = true; state = demo
         if role == .phone {
             lastSyncAt = demo.hasStarted ? .now.addingTimeInterval(DemoMode.scenario == "phone-stale" ? -7200 : 0) : nil
+            if DemoMode.scenario == "phone-birthday-pending" {
+                settingsHandoff.begin(PlayerSettingsRequest(saveID: demo.saveID, baseRevision: demo.revision,
+                                                            birthday: MonthDay(month: 2, day: 29)))
+            }
             if DemoMode.scenario == "phone-pending" {
                 companionHandoff.begin(CompanionChangeRequest(speciesID: "sticky", saveID: demo.saveID))
             }
@@ -250,6 +257,7 @@ final class GameStore {
             if let updatedAt { lastSyncAt = min(updatedAt, .now) }
             else if changed || lastSyncAt == nil { lastSyncAt = .now }
             companionHandoff.reconcile(with: state)
+            settingsHandoff.reconcile(with: state)
             persistPhoneMetadata()
             recoveryRequired = false
             lastError = nil
@@ -293,8 +301,10 @@ final class GameStore {
     func refreshHandoff() {
         guard role == .phone else { return }
         let before = companionHandoff
+        let settingsBefore = settingsHandoff
         companionHandoff.reconcile(with: state)
-        if before != companionHandoff { persistPhoneMetadata() }
+        settingsHandoff.reconcile(with: state)
+        if before != companionHandoff || settingsBefore != settingsHandoff { persistPhoneMetadata() }
     }
 
     /// Return a result even for unchanged selections and failed saves; the phone must not hang.
@@ -319,15 +329,60 @@ final class GameStore {
         return receipt
     }
 
+    /// Only an expiring request is saved locally. The phone never edits the game save.
+    func chooseBirthday(_ birthday: MonthDay?, send: ((PlayerSettingsRequest) -> PhoneSync.SendResult)? = nil) {
+        guard role == .phone, state.hasStarted else { return }
+        refreshHandoff()
+        guard !settingsHandoff.isWaiting else { return }
+        if state.birthday == birthday {
+            settingsHandoff = PlayerSettingsHandoff(); settingsRequestError = nil
+            persistPhoneMetadata(); return
+        }
+        let previous = settingsHandoff
+        let request = PlayerSettingsRequest(saveID: state.saveID, baseRevision: state.revision, birthday: birthday)
+        settingsHandoff.begin(request); settingsRequestError = nil
+        do { if !isDemo { try archive.savePhoneMetadata(phoneMetadata) } }
+        catch {
+            settingsHandoff = previous
+            settingsRequestError = "Your birthday request could not be saved. Please try again."
+            return
+        }
+        let result = isDemo ? .sent : (send?(request) ?? PhoneSync.shared.send(settings: request))
+        if result != .sent {
+            settingsHandoff = previous
+            settingsRequestError = result == .noWatchApp
+                ? "Install Batwalk on your paired Apple Watch, then try again."
+                : "Watch connection is starting. Open both apps, then try again."
+            persistPhoneMetadata()
+        }
+    }
+
+    func receiveSettingsReceipt(_ receipt: PlayerSettingsReceipt) {
+        guard role == .phone, !isDemo else { return }
+        settingsHandoff.receive(receipt, state: state)
+        persistPhoneMetadata()
+    }
+
+    func applySettingsRequest(_ request: PlayerSettingsRequest, now: Date = .now) -> PlayerSettingsReceipt {
+        precondition(role == .watch)
+        let outcome: PlayerSettingsOutcome
+        do { outcome = try mutate { $0.applyPlayerSettings(request, now: now) } }
+        catch { return PlayerSettingsReceipt(request: request, outcome: .saveFailed, revision: state.revision) }
+        return PlayerSettingsReceipt(request: request, outcome: outcome, revision: state.revision)
+    }
+
     private var phoneMetadata: SaveArchive.PhoneMetadata {
         SaveArchive.PhoneMetadata(lastSyncAt: lastSyncAt, saveID: state.saveID,
-                                  revision: state.revision, handoff: companionHandoff)
+                                  revision: state.revision, handoff: companionHandoff, settingsHandoff: settingsHandoff)
     }
 
     private func persistPhoneMetadata() {
         guard !isDemo else { return }
         do { try archive.savePhoneMetadata(phoneMetadata) }
-        catch { companionRequestError = "The latest connection status could not be saved. Open both apps to refresh it." }
+        catch {
+            companionRequestError = "The latest connection status could not be saved. Open both apps to refresh it."
+            settingsRequestError = "The latest connection status could not be saved. Open both apps to refresh it."
+        }
     }
 
     // MARK: Complication / intent snapshot

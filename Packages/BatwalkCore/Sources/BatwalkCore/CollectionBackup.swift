@@ -16,6 +16,7 @@ public struct CollectionBackup: Codable, Equatable, Sendable {
     public let outfitPreferences: [String: OutfitPreference]?
     public let earnedChallengeOutfits: [String: [String: ChallengeTier]]?
     public let challengeHatchCounts: [String: Int]?
+    public let birthday: MonthDay?
 
     public init(state: GameState) {
         var state = state
@@ -33,12 +34,13 @@ public struct CollectionBackup: Codable, Equatable, Sendable {
         outfitPreferences = state.outfitPreferences
         earnedChallengeOutfits = state.earnedChallengeOutfits
         challengeHatchCounts = state.challengeHatchCounts
+        birthday = state.birthday
     }
 
     private init(version: Int, saveID: UUID, revision: UInt64, hasStarted: Bool, collection: [String: OwnedBat],
                  companionID: String?, history: [HatchRecord], fruit: Int, moonDust: Int, trialEggUsed: Bool,
                  outfitPreferences: [String: OutfitPreference]?, earnedChallengeOutfits: [String: [String: ChallengeTier]]?,
-                 challengeHatchCounts: [String: Int]?) {
+                 challengeHatchCounts: [String: Int]?, birthday: MonthDay?) {
         self.version = version
         self.saveID = saveID
         self.revision = revision
@@ -52,10 +54,11 @@ public struct CollectionBackup: Codable, Equatable, Sendable {
         self.outfitPreferences = outfitPreferences
         self.earnedChallengeOutfits = earnedChallengeOutfits
         self.challengeHatchCounts = challengeHatchCounts
+        self.birthday = birthday
     }
 
     private enum CodingKeys: String, CodingKey {
-        case version, saveID, revision, hasStarted, collection, companionID, history, fruit, moonDust, trialEggUsed, outfitPreferences, earnedChallengeOutfits, challengeHatchCounts
+        case version, saveID, revision, hasStarted, collection, companionID, history, fruit, moonDust, trialEggUsed, outfitPreferences, earnedChallengeOutfits, challengeHatchCounts, birthday
     }
 
     /// Backups written before Moon Dust / the trial egg existed have no such keys.
@@ -77,6 +80,7 @@ public struct CollectionBackup: Codable, Equatable, Sendable {
             ?? (archive.outfits.isEmpty ? nil : archive.outfits)
         challengeHatchCounts = try c.decodeIfPresent([String: Int].self, forKey: .challengeHatchCounts)
             ?? (archive.counts.isEmpty ? nil : archive.counts)
+        birthday = try c.decodeIfPresent(MonthDay.self, forKey: .birthday)
     }
 
     /// True when nothing a player would notice differs. The cloud record is only
@@ -86,7 +90,7 @@ public struct CollectionBackup: Codable, Equatable, Sendable {
         saveID == other.saveID && hasStarted == other.hasStarted && collection == other.collection
             && companionID == other.companionID && history == other.history
             && moonDust == other.moonDust && trialEggUsed == other.trialEggUsed && outfitPreferences == other.outfitPreferences
-            && earnedChallengeOutfits == other.earnedChallengeOutfits && challengeHatchCounts == other.challengeHatchCounts
+            && earnedChallengeOutfits == other.earnedChallengeOutfits && challengeHatchCounts == other.challengeHatchCounts && birthday == other.birthday
     }
 
     /// A copy keeping only the newest `limit` hatch records, for size-limited
@@ -97,6 +101,6 @@ public struct CollectionBackup: Codable, Equatable, Sendable {
                                 collection: collection, companionID: companionID,
                                 history: Array(history.suffix(max(0, limit))), fruit: fruit,
                                 moonDust: moonDust, trialEggUsed: trialEggUsed, outfitPreferences: outfitPreferences,
-                                earnedChallengeOutfits: earnedChallengeOutfits, challengeHatchCounts: challengeHatchCounts)
+                                earnedChallengeOutfits: earnedChallengeOutfits, challengeHatchCounts: challengeHatchCounts, birthday: birthday)
     }
 }

@@ -129,6 +129,7 @@ struct BatDetailView: View {
                 VStack(spacing: 6) {
                     BatHeroView(speciesID: speciesID, shiny: bat.showsShiny, mood: .awake, size: 76,
                                 friendshipEXP: bat.friendshipEXP, showsKeepsake: false)
+                        .overlay { BirthdayHatOverlay(speciesID: bat.speciesID, year: store.state.birthdayHatYear(for: bat.speciesID)) }
                     Text(bat.displayName).font(BatwalkFont.headline).foregroundStyle(.white)
                     if bat.nickname != nil {
                         Text(species.name).font(BatwalkFont.micro).foregroundStyle(BatwalkColor.textSecondaryDark)

@@ -66,11 +66,13 @@ struct BatCard: View {
     let species: Species
     let shiny: Bool
     var isCompanion = false
+    var birthdayYear: Int? = nil
 
     var body: some View {
         VStack(spacing: 6) {
             GeometryReader { geometry in
                 BatSprite(speciesID: species.id, shiny: shiny, size: min(160, geometry.size.width))
+                    .overlay { BirthdayHatOverlay(speciesID: species.id, year: birthdayYear) }
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
             .frame(height: 92)
@@ -196,6 +198,7 @@ struct HatchHistoryRow: View {
             ZStack {
                 RoundedRectangle(cornerRadius: 12, style: .continuous).fill(BatwalkGradient.lightArt)
                 BatSprite(speciesID: record.speciesID, shiny: record.isShiny, mood: .awake, size: 40)
+                    .overlay { BirthdayHatOverlay(speciesID: record.speciesID, year: record.birthdayYear) }
             }
             .frame(width: 50, height: 50)
             VStack(alignment: .leading, spacing: 4) {

@@ -14,6 +14,8 @@ public struct OwnedBat: Codable, Equatable, Identifiable, Sendable {
     public var friendshipEXP: Int
     public var hatchCount: Int
     public let firstHatchedAt: Date
+    /// Years of birthday hatches, not the player's birth year. Nil in old saves.
+    public var birthdayYears: [Int]? = nil
 
     public var species: Species? { Roster.species(speciesID) }
     public var displayName: String { nickname ?? species?.name ?? speciesID }
@@ -63,13 +65,14 @@ public struct HatchRecord: Codable, Equatable, Sendable {
     public let eggTierName: String?
 
     public let challengeMonthKey: String?
+    public let birthdayYear: Int?
     public let challengeDay: Int?
 
     public init(speciesID: String, isShiny: Bool, eggType: EggType, hatchedAt: Date,
                 outcome: HatchOutcome, source: HatchSource = .egg,
                 friendshipBefore: Int? = nil, friendshipGained: Int? = nil,
                 eggStartedAt: Date? = nil, eggSteps: Int? = nil, eggTierName: String? = nil,
-                challengeMonthKey: String? = nil, challengeDay: Int? = nil) {
+                challengeMonthKey: String? = nil, challengeDay: Int? = nil, birthdayYear: Int? = nil) {
         self.speciesID = speciesID
         self.isShiny = isShiny
         self.eggType = eggType
@@ -83,10 +86,11 @@ public struct HatchRecord: Codable, Equatable, Sendable {
         self.eggTierName = eggTierName
         self.challengeMonthKey = challengeMonthKey
         self.challengeDay = challengeDay
+        self.birthdayYear = birthdayYear
     }
 
     private enum CodingKeys: String, CodingKey {
-        case speciesID, isShiny, eggType, hatchedAt, outcome, source, friendshipBefore, friendshipGained, eggStartedAt, eggSteps, eggTierName, challengeMonthKey, challengeDay
+        case speciesID, isShiny, eggType, hatchedAt, outcome, source, friendshipBefore, friendshipGained, eggStartedAt, eggSteps, eggTierName, challengeMonthKey, challengeDay, birthdayYear
     }
 
     /// Records written before `source` existed decode as ordinary egg hatches.
@@ -104,6 +108,7 @@ public struct HatchRecord: Codable, Equatable, Sendable {
         eggSteps = try c.decodeIfPresent(Int.self, forKey: .eggSteps)
         eggTierName = try c.decodeIfPresent(String.self, forKey: .eggTierName)
         challengeMonthKey = try c.decodeIfPresent(String.self, forKey: .challengeMonthKey)
+        birthdayYear = try c.decodeIfPresent(Int.self, forKey: .birthdayYear)
         challengeDay = try c.decodeIfPresent(Int.self, forKey: .challengeDay)
     }
 }
@@ -179,6 +184,9 @@ public struct GameState: Codable, Equatable, Sendable {
     public private(set) var outfitPreferences: [String: OutfitPreference]? = nil
     public private(set) var earnedChallengeOutfits: [String: [String: ChallengeTier]]? = nil
     public private(set) var challengeHatchCounts: [String: Int]? = nil
+    public private(set) var birthday: MonthDay? = nil
+    public private(set) var lastBirthdayRequest: PlayerSettingsRequest? = nil
+    public private(set) var birthdayRequestFloorRevision: UInt64? = nil
 
     public struct PetDay: Codable, Equatable, Sendable {
         public var dayKey: String
@@ -191,6 +199,7 @@ public struct GameState: Codable, Equatable, Sendable {
         case schemaVersion, saveID, revision, needsStepBaseline, hasStarted, egg, bankedSteps
         case ledger, collection, companionID, fruit, fruitProgressSteps, isUnlocked, history, petLog, lifetimeCreditedSteps
         case hatchesSinceShiny, hatchesSinceNewSpecies, moonDust, trialEggUsed, outfitPreferences, earnedChallengeOutfits, challengeHatchCounts
+        case birthday, lastBirthdayRequest, birthdayRequestFloorRevision
     }
 
     public init(from decoder: Decoder) throws {
@@ -222,6 +231,9 @@ public struct GameState: Codable, Equatable, Sendable {
         outfitPreferences = try c.decodeIfPresent([String: OutfitPreference].self, forKey: .outfitPreferences)
         earnedChallengeOutfits = try c.decodeIfPresent([String: [String: ChallengeTier]].self, forKey: .earnedChallengeOutfits)
         challengeHatchCounts = try c.decodeIfPresent([String: Int].self, forKey: .challengeHatchCounts)
+        birthday = try c.decodeIfPresent(MonthDay.self, forKey: .birthday)
+        lastBirthdayRequest = try c.decodeIfPresent(PlayerSettingsRequest.self, forKey: .lastBirthdayRequest)
+        birthdayRequestFloorRevision = try c.decodeIfPresent(UInt64.self, forKey: .birthdayRequestFloorRevision)
         // v1 eggs are sealed once during migration, before any entitlement refresh.
         if var current = egg, current.frozenSpeciesID == nil {
             let roll = HatchEngine.legacyRoll(egg: current.type, seed: current.seed, isUnlocked: isUnlocked || !current.type.legacyIsFree)
@@ -445,6 +457,11 @@ public struct GameState: Codable, Equatable, Sendable {
                 firstHatchedAt: now
             )
         }
+        let birthdayYear = birthday?.matches(now, calendar: calendar) == true
+            ? MonthDay.year(at: now, calendar: calendar) : nil
+        if let birthdayYear {
+            bat.birthdayYears = Array(Set((bat.birthdayYears ?? []) + [birthdayYear])).sorted()
+        }
         collection[id] = bat
 
         // First bat becomes the companion (PRD §2.2 step 10).
@@ -459,7 +476,7 @@ public struct GameState: Codable, Equatable, Sendable {
                                  eggStartedAt: current.startedAt, eggSteps: current.targetSteps,
                                  eggTierName: current.type.displayName(forTargetSteps: current.targetSteps),
                                  challengeMonthKey: SocialCalendar.monthKey(now, calendar: calendar),
-                                 challengeDay: calendar.component(.day, from: now))
+                                 challengeDay: calendar.component(.day, from: now), birthdayYear: birthdayYear)
         recordChallengeHatch(record, calendar: calendar)
         history.append(record)
         egg = nil
@@ -524,6 +541,27 @@ public struct GameState: Codable, Equatable, Sendable {
     public mutating func setCompanion(_ speciesID: String) throws {
         guard collection[speciesID] != nil else { throw GameError.notOwned(speciesID) }
         companionID = speciesID
+    }
+
+    /// Last-write ordering uses the mirror revision, then request time. An unrelated
+    /// step update does not invalidate a queued preference. Duplicate delivery is a no-op.
+    @discardableResult
+    public mutating func applyPlayerSettings(_ request: PlayerSettingsRequest, now: Date = Date()) -> PlayerSettingsOutcome {
+        guard request.saveID == saveID else { return .saveChanged }
+        if lastBirthdayRequest == request { return .applied }
+        guard now < request.expiresAt,
+              request.requestedAt <= now.addingTimeInterval(Tuning.settingsRequestClockSkew) else { return .expired }
+        guard request.baseRevision <= revision else { return .saveChanged }
+        guard request.baseRevision >= (birthdayRequestFloorRevision ?? 0) else { return .superseded }
+        if let previous = lastBirthdayRequest {
+            guard request.baseRevision > previous.baseRevision ||
+                    (request.baseRevision == previous.baseRevision && request.requestedAt > previous.requestedAt) else {
+                return .superseded
+            }
+        }
+        birthday = request.birthday
+        lastBirthdayRequest = request
+        return .applied
     }
 
     public mutating func setOutfit(_ preference: OutfitPreference, for speciesID: String) throws {
@@ -616,6 +654,9 @@ public struct GameState: Codable, Equatable, Sendable {
         outfitPreferences = backup.outfitPreferences
         earnedChallengeOutfits = backup.earnedChallengeOutfits
         challengeHatchCounts = backup.challengeHatchCounts
+        birthday = backup.birthday
+        lastBirthdayRequest = nil
+        birthdayRequestFloorRevision = revision
         materializeChallenges()
         hatchesSinceShiny = 0
         hatchesSinceNewSpecies = 0

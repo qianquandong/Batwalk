@@ -19,6 +19,7 @@ struct PrivacyView: View {
                 Text("Siri's \"Check my egg\" reads the same small egg-progress summary the watch face uses, on your device only.")
                 Text("You can change Step Count access in the Health app and notification access in device settings. Removing Batwalk deletes its local app data; if cloud backup is enabled, manage that separately in your iCloud storage settings. Removing Health access does not erase bats you've already collected.")
                 Text("Sharing a birth certificate is your choice. Tap Include my steps and days to request that one walk receipt from your Watch; it stays in memory while you preview the card. Turning Show steps on shared cards off removes steps and days. The default setting never sends Health data by itself. You choose the destination in Apple's share sheet. Collection posters contain no steps.")
+                Text("Birthday hats are optional. Only month and day are saved, never your birth year. This preference and the years of earned hats travel with your paired collection and private iCloud backup when enabled. Remove the birthday in iPhone Settings; hats you already earned remain yours.")
                 Text("Updated October 23, 2026").font(.caption)
             }
             .font(.footnote)

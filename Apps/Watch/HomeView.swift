@@ -104,6 +104,7 @@ struct HomeView: View {
                         friendshipEXP: companion.friendshipEXP,
                         animationRequest: animationRequest, showsKeepsake: false)
                 .overlay { ChallengeOutfitOverlay(outfit: store.state.outfit(for: companion.speciesID)) }
+                .overlay { BirthdayHatOverlay(speciesID: companion.speciesID, year: store.state.birthdayHatYear(for: companion.speciesID), mood: reaction ?? resting) }
                 .overlay { HeartBurst(trigger: petCount) }
                 .overlay { FruitToss(trigger: fruitToss) }
                 .contentShape(Rectangle())

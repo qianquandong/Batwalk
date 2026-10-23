@@ -138,6 +138,7 @@ struct BatCollectionTile: View {
     var body: some View {
         VStack(spacing: 1) {
             BatSprite(speciesID: bat.speciesID, shiny: bat.showsShiny, mood: .awake, size: 36)
+                .overlay { BirthdayHatOverlay(speciesID: bat.speciesID, year: bat.birthdayYears?.max()) }
             Text(shortName)
                 .font(.system(size: 9, weight: .semibold, design: .rounded))
                 .lineLimit(1)
