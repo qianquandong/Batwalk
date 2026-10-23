@@ -16,6 +16,9 @@ Consent is bound to the local Game Center account. Sign-out/account change
 disables both switches and clears in-memory friends and pending work. Disabling
 a switch invalidates in-flight UI work and prevents further submissions. A score
 already accepted by Apple cannot be recalled by this client; the UI explains this.
+Submissions are serialized and consent is checked again after waiting. An older
+in-flight request therefore cannot finish after and replace a newer monthly
+score. A month change clears old rows even when the next refresh is offline.
 
 The app requests friends access in context, provides
 `NSGKFriendListUsageDescription`, respects denied/restricted access and clears
@@ -60,6 +63,10 @@ and regenerate the project. GitHub TestFlight uses repository variable
 overlay; it does not prove signing or Apple account behavior. The phone privacy
 manifest separately declares optional gameplay content and user ID for app
 functionality, linked, not tracking. The Watch manifest remains unchanged.
+The GitHub upload workflow verifies all three archived bundles, matching build
+numbers, no-tracking manifests, Watch Health entitlements, and phone-only Game
+Center before export. Only a small sanitized verification report is uploaded;
+raw entitlement files stay private to the runner and are removed afterward.
 
 App Privacy answers are app-wide, not conditional per player. Our conservative
 disclosure is Gameplay Content and User ID, linked for App Functionality, no

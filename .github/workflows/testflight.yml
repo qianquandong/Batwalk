@@ -131,8 +131,27 @@ jobs:
             CURRENT_PROJECT_VERSION="$BUILD_NUMBER" \
             archive
 
+      - name: Verify embedded apps, privacy manifests and Watch Health entitlements
+        run: |
+          umask 077
+          codesign -d --entitlements :- \
+            "$RUNNER_TEMP/Batwalk.xcarchive/Products/Applications/Batwalk.app/Watch/Batwalk.app" \
+            > "$RUNNER_TEMP/watch-entitlements.plist" \
+            2> "$RUNNER_TEMP/watch-entitlements-diagnostics.log"
+          python3 scripts/verify-testflight-archive.py "$RUNNER_TEMP/Batwalk.xcarchive" \
+            --build-number "$BUILD_NUMBER" \
+            --watch-entitlements "$RUNNER_TEMP/watch-entitlements.plist" \
+            --report "$RUNNER_TEMP/archive-verification.json"
+
       - name: Verify archived Game Center entitlement scope
         run: python3 scripts/verify-game-center-archive.py "$RUNNER_TEMP/Batwalk.xcarchive"
+
+      - name: Save sanitized archive verification
+        uses: actions/upload-artifact@v4
+        with:
+          name: archive-verification
+          path: ${{ runner.temp }}/archive-verification.json
+          if-no-files-found: error
 
       - name: Export & upload to TestFlight
         if: ${{ (github.event_name == 'workflow_dispatch' && inputs.upload) || (github.event_name == 'push' && github.ref_name == 'testflight') }}
@@ -151,6 +170,9 @@ jobs:
             -authenticationKeyIssuerID "$ASC_ISSUER_ID"
           echo "::notice::Build $BUILD_NUMBER uploaded. It appears in TestFlight after Apple finishes processing (usually 5–20 min)."
 
-      - name: Remove API key
+      - name: Remove API key and private verification files
         if: always()
-        run: rm -f "$RUNNER_TEMP"/AuthKey_*.p8
+        run: |
+          rm -f "$RUNNER_TEMP"/AuthKey_*.p8 \
+            "$RUNNER_TEMP/watch-entitlements.plist" \
+            "$RUNNER_TEMP/watch-entitlements-diagnostics.log"
