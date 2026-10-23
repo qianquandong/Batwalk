@@ -30,7 +30,7 @@ final class ReliabilityTests: XCTestCase {
             let expectedID = state.egg?.frozenSpeciesID
             let expectedShiny = state.egg?.frozenIsShiny
             state.setUnlocked(!paid)
-            state.ingestSteps(dayKey: "2026-10-09", dailyTotal: 4_500)
+            state.ingestSteps(dayKey: "2026-10-09", dailyTotal: EggType.starter.targetSteps + EggType.tiny.targetSteps)
             let hatch = try state.hatch(now: now, tuning: Tuning(shinyChance: 1))
             XCTAssertEqual(hatch.record.speciesID, expectedID)
             XCTAssertEqual(hatch.record.isShiny, expectedShiny)
@@ -52,6 +52,33 @@ final class ReliabilityTests: XCTestCase {
         XCTAssertEqual(migrated.egg?.creditedSteps, 1_500)
         XCTAssertEqual(migrated.egg?.frozenSpeciesID, "mochi")
         XCTAssertEqual(migrated.ledger.dailyTotals["2026-10-09"], 1_500)
+    }
+
+    func testLegacyUnsealedTinyKeepsItsOriginalFreePool() throws {
+        let seed = (UInt64(0)..<10_000).first {
+            let legacy = HatchEngine.legacyRoll(egg: .tiny, seed: $0, isUnlocked: false)
+            let current = HatchEngine.roll(egg: .tiny, seed: $0, isUnlocked: false)
+            return legacy.species.id != current.species.id
+        }!
+        var state = GameState()
+        state.start(seed: 1, now: now)
+        state.ingestSteps(dayKey: "2026-10-09", dailyTotal: 2_000)
+        _ = try state.hatch(now: now)
+        try state.startEgg(.tiny, seed: seed, now: now)
+        var json = try JSONSerialization.jsonObject(with: JSONEncoder().encode(state)) as! [String: Any]
+        var egg = json["egg"] as! [String: Any]
+        for key in ["frozenSpeciesID", "frozenIsShiny", "frozenTargetSteps"] { egg.removeValue(forKey: key) }
+        egg["creditedSteps"] = 2_500
+        json["egg"] = egg
+        var restored = try JSONDecoder().decode(GameState.self, from: JSONSerialization.data(withJSONObject: json))
+        let expected = HatchEngine.legacyRoll(egg: .tiny, seed: seed, isUnlocked: false)
+        XCTAssertEqual(restored.egg?.targetSteps, 2_500)
+        XCTAssertTrue(restored.isEggReady)
+        let hatched = try restored.hatch(now: now)
+        XCTAssertEqual(hatched.record.speciesID, expected.species.id)
+        XCTAssertEqual(hatched.record.isShiny, expected.isShiny)
+        XCTAssertEqual(restored.pickableEggs, EggType.allCases)
+        XCTAssertNoThrow(try restored.startEgg(.crystal, seed: 7, now: now))
     }
 
     func testFutureSaveIsRejectedRatherThanDowngraded() throws {

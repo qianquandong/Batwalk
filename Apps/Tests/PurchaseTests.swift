@@ -3,9 +3,27 @@ import XCTest
 
 final class PurchaseTests: XCTestCase {
     @MainActor
+    func testFreeLaunchMakesNoStoreKitCallsEvenWhenRequested() async {
+        XCTAssertFalse(SharedConfig.paidContentEnabled)
+        let backend = FakePurchaseBackend()
+        backend.state = .active
+        let manager = PurchaseManager(backend: backend)
+        manager.start()
+        await manager.loadProduct()
+        await manager.refreshEntitlements()
+        await manager.purchase()
+        await manager.restore()
+        XCTAssertEqual(backend.totalCalls, 0)
+        XCTAssertFalse(manager.hasCheckedEntitlements)
+        XCTAssertNil(manager.product)
+        XCTAssertNil(EntitlementPolicy.unlockedValue(for: .active))
+        XCTAssertNil(EntitlementPolicy.unlockedValue(for: .revoked))
+    }
+
+    @MainActor
     func testPendingAndCancelledNeverGrantUnlock() async throws {
         let backend = FakePurchaseBackend()
-        let manager = PurchaseManager(backend: backend)
+        let manager = PurchaseManager(backend: backend, paidContentEnabled: true)
         await manager.loadProduct()
         backend.outcome = .pending
         await manager.purchase()
@@ -20,7 +38,7 @@ final class PurchaseTests: XCTestCase {
 
     @MainActor
     func testPurchaseRestoreAndRevocationFollowVerifiedBackend() async throws {
-        let backend = FakePurchaseBackend(); let manager = PurchaseManager(backend: backend)
+        let backend = FakePurchaseBackend(); let manager = PurchaseManager(backend: backend, paidContentEnabled: true)
         await manager.loadProduct()
         backend.state = .active
         await manager.purchase()
@@ -40,7 +58,7 @@ final class PurchaseTests: XCTestCase {
 
     @MainActor
     func testEveryCheckBumpsTheVersionSoTheSaveCanBeReapplied() async throws {
-        let backend = FakePurchaseBackend(); let manager = PurchaseManager(backend: backend)
+        let backend = FakePurchaseBackend(); let manager = PurchaseManager(backend: backend, paidContentEnabled: true)
         XCTAssertEqual(manager.entitlementVersion, 0)
         await manager.refreshEntitlements()
         await manager.refreshEntitlements()
@@ -49,14 +67,14 @@ final class PurchaseTests: XCTestCase {
     }
 
     func testOnlyVerifiedResultsChangeTheSave() {
-        XCTAssertEqual(EntitlementPolicy.unlockedValue(for: .active), true)
-        XCTAssertEqual(EntitlementPolicy.unlockedValue(for: .revoked), false)
-        XCTAssertNil(EntitlementPolicy.unlockedValue(for: .none), "an unknown result must never re-lock a paying player")
+        XCTAssertEqual(EntitlementPolicy.unlockedValue(for: .active, paidContentEnabled: true), true)
+        XCTAssertEqual(EntitlementPolicy.unlockedValue(for: .revoked, paidContentEnabled: true), false)
+        XCTAssertNil(EntitlementPolicy.unlockedValue(for: .none, paidContentEnabled: true), "an unknown result must never re-lock a paying player")
     }
 
     @MainActor
     func testOfflineRestoreRetainsPreviouslyVerifiedUnlockAndAllowsRetry() async throws {
-        let backend = FakePurchaseBackend(); let manager = PurchaseManager(backend: backend)
+        let backend = FakePurchaseBackend(); let manager = PurchaseManager(backend: backend, paidContentEnabled: true)
         backend.state = .active
         await manager.refreshEntitlements()
         backend.fail = true
@@ -72,7 +90,7 @@ final class PurchaseTests: XCTestCase {
     @MainActor
     func testUnavailableOfferDoesNotAttemptPurchase() async throws {
         let backend = FakePurchaseBackend(); backend.offer = nil
-        let manager = PurchaseManager(backend: backend)
+        let manager = PurchaseManager(backend: backend, paidContentEnabled: true)
         await manager.loadProduct(); await manager.purchase()
         XCTAssertEqual(backend.buyCalls, 0)
         XCTAssertNotNil(manager.lastError)
@@ -89,10 +107,11 @@ private final class FakePurchaseBackend: PurchaseBackend {
     var outcome: PurchaseOutcome = .purchased
     var state: EntitlementState = .none
     var fail = false
+    var totalCalls = 0
     var buyCalls = 0
-    func loadOffer() async throws -> PurchaseOffer? { if fail { throw Failure.offline }; return offer }
-    func entitlement() async -> EntitlementState { state }
-    func buy() async throws -> PurchaseOutcome { buyCalls += 1; if fail { throw Failure.offline }; return outcome }
-    func restore() async throws { if fail { throw Failure.offline } }
+    func loadOffer() async throws -> PurchaseOffer? { totalCalls += 1; if fail { throw Failure.offline }; return offer }
+    func entitlement() async -> EntitlementState { totalCalls += 1; return state }
+    func buy() async throws -> PurchaseOutcome { totalCalls += 1; buyCalls += 1; if fail { throw Failure.offline }; return outcome }
+    func restore() async throws { totalCalls += 1; if fail { throw Failure.offline } }
     enum Failure: Error { case offline }
 }

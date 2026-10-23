@@ -4,6 +4,8 @@ import Foundation
 enum SharedConfig {
     static let appGroup = "group.com.aimanjack.batwalk"
     static let cloudKitContainer = "iCloud.com.aimanjack.batwalk"
+    /// Free launch. Future paid content may be cosmetic only; never gameplay access.
+    static let paidContentEnabled = false
     static let fullUnlockProductID = "com.aimanjack.batwalk.fullunlock"
 
     /// Cloud collection backup and live widgets are independent capabilities.

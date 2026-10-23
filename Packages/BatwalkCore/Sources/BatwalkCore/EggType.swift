@@ -20,27 +20,17 @@ public enum EggType: String, Codable, CaseIterable, Sendable {
 
     /// Steps required to hatch.
     public var targetSteps: Int {
-        switch self {
-        case .starter: return 2_000
-        case .tiny: return 2_500
-        case .forest: return 4_000
-        case .moon: return 5_000
-        case .crystal: return 6_000
-        }
+        Tuning.eggTargetSteps[self]!
     }
 
-    /// Available without the full unlock.
-    public var isFree: Bool {
-        switch self {
-        case .starter, .tiny: return true
-        case .forest, .moon, .crystal: return false
-        }
-    }
+    /// Every egg is free and selectable. Raw values remain stable save keys.
+    public var isFree: Bool { true }
+    public var isPickable: Bool { true }
 
-    /// The Starter Egg is given once, during onboarding. It is never offered afterwards.
-    public var isPickable: Bool { self != .starter }
+    /// Only used to seal a pre-v2 save with its original entitlement rules.
+    var legacyIsFree: Bool { self == .starter || self == .tiny }
 
-    /// Species that can hatch from this egg for a player with the full unlock,
+    /// Species that can hatch from this egg for every player,
     /// limited to the content waves enabled in this build (`Roster.enabledWave`).
     /// Derived from the "Primary Egg" column of the PRD roster (§6, §6.3).
     public var pool: [String] { designedPool.filter(Roster.isAvailable) }
@@ -53,8 +43,7 @@ public enum EggType: String, Codable, CaseIterable, Sendable {
             return ["mochi"]
         // Oddball Bats (PRD §6.3) are listed after each egg's launch species.
         case .tiny:
-            // Long Ear joins the paid Tiny pool so the free roster's third bat has a
-            // free egg to come from (Q1, decided 2026-10-10: Primary Egg "Tiny / Forest").
+            // Long Ear keeps its established Tiny / Forest identity.
             return ["mochi", "cocoa", "long-ear", "cave", "sleepy", "pebble",
                     "bumblebee", "sticky"]
         case .forest:
@@ -65,29 +54,28 @@ public enum EggType: String, Codable, CaseIterable, Sendable {
             return ["sunset", "moonwing", "vampire", "galaxy", "eclipse",
                     "tube-nose", "polka", "wrinkle"]
         case .crystal:
-            // The longest walk (6,000 steps) is where the Walker Bat lives.
+            // The longest walk is where the Walker Bat lives.
             return ["snow", "cloud", "golden", "crystal", "galaxy",
                     "walker", "fox", "ghost"]
         }
     }
 
-    /// Species pool for a free-tier player: exactly the free species, from the free eggs.
-    public var freePool: [String] {
+    /// All enabled species in the designed pool are available without payment.
+    public var freePool: [String] { pool }
+
+    /// The old argument remains source-compatible; entitlement cannot change odds.
+    public func pool(isUnlocked: Bool) -> [String] { pool }
+
+    public static func pickable(isUnlocked: Bool) -> [EggType] { allCases }
+
+    /// Migration only: do not change an unsealed v1 egg's original outcome.
+    func legacyPool(isUnlocked: Bool) -> [String] {
+        if isUnlocked { return pool }
         switch self {
         case .starter: return ["mochi"]
-        case .tiny: return Roster.freeSpecies.map(\.id)
+        case .tiny: return ["mochi", "cocoa", "long-ear"]
         case .forest, .moon, .crystal: return []
         }
-    }
-
-    public func pool(isUnlocked: Bool) -> [String] {
-        isUnlocked ? pool : freePool
-    }
-
-    /// Eggs the player can choose after a hatch (without the free trial egg —
-    /// see `GameState.pickableEggs`).
-    public static func pickable(isUnlocked: Bool) -> [EggType] {
-        allCases.filter { $0.isPickable && (isUnlocked || $0.isFree) }
     }
 
     /// The first pickable egg a species is designed to hatch from (Batpedia "Primary Egg").

@@ -2,7 +2,7 @@ import XCTest
 @testable import BatwalkCore
 
 /// Collection pacing rules added after the 2026-10-10 review: Shiny pity and
-/// max-Friendship boost, new-species pity, Moon Dust, the free trial egg,
+/// max-Friendship boost, new-species pity, legacy Moon Dust, free launch,
 /// sanity clamps and tolerant decoding.
 final class EconomyTests: XCTestCase {
     let now = Date(timeIntervalSince1970: 1_790_000_000)
@@ -31,9 +31,8 @@ final class EconomyTests: XCTestCase {
         return try s.hatch(now: now, tuning: tuning)
     }
 
-    private func paidPlayer(tuning: Tuning, total: inout Int) throws -> GameState {
+    private func player(tuning: Tuning, total: inout Int) throws -> GameState {
         var s = GameState()
-        s.setUnlocked(true)
         s.start(seed: 1, now: now, tuning: tuning)
         total = 2_000
         s.ingestSteps(dayKey: day, dailyTotal: total, tuning: tuning)
@@ -47,7 +46,7 @@ final class EconomyTests: XCTestCase {
         var tuning = quiet()
         tuning.shinyPityHatches = 5
         var total = 0
-        var s = try paidPlayer(tuning: tuning, total: &total)
+        var s = try player(tuning: tuning, total: &total)
         XCTAssertFalse(s.history[0].isShiny)
         var shinies: [Bool] = []
         for i in 0..<10 {
@@ -68,7 +67,7 @@ final class EconomyTests: XCTestCase {
             var mochi = 0, shiny = 0
             for seed in UInt64(0)..<6_000 {
                 var total = 0
-                var s = try paidPlayer(tuning: tuning, total: &total)
+                var s = try player(tuning: tuning, total: &total)
                 try s.startEgg(.tiny, seed: seed, now: now, tuning: tuning)
                 guard s.egg?.frozenSpeciesID == "mochi" else { continue }
                 mochi += 1
@@ -103,12 +102,12 @@ final class EconomyTests: XCTestCase {
         var tuning = quiet()
         tuning.newSpeciesPityHatches = 3
         var total = 0
-        var s = try paidPlayer(tuning: tuning, total: &total)
+        var s = try player(tuning: tuning, total: &total)
         let mochiSeed = seed(for: "mochi", egg: .tiny)
         for _ in 0..<3 {
             try s.startEgg(.tiny, seed: mochiSeed, now: now, tuning: tuning)
             XCTAssertEqual(s.egg?.frozenSpeciesID, "mochi")
-            total += 2_500
+            total += EggType.tiny.targetSteps
             s.ingestSteps(dayKey: day, dailyTotal: total, tuning: tuning)
             XCTAssertEqual(try s.hatch(now: now, tuning: tuning).record.outcome, .duplicate)
         }
@@ -120,7 +119,7 @@ final class EconomyTests: XCTestCase {
         XCTAssertNotEqual(sealed, "mochi")
         XCTAssertTrue(EggType.tiny.pool.contains(sealed))
         XCTAssertNil(s.collection[sealed])
-        total += 2_500
+        total += EggType.tiny.targetSteps
         s.ingestSteps(dayKey: day, dailyTotal: total, tuning: tuning)
         XCTAssertEqual(try s.hatch(now: now, tuning: tuning).record.outcome, .newSpecies)
         XCTAssertEqual(s.hatchesSinceNewSpecies, 0)
@@ -134,7 +133,7 @@ final class EconomyTests: XCTestCase {
         tuning.moonDustForNewBat = 2
         tuning.friendshipThresholds = [0, 0, 0, 0, 0]
         var total = 0
-        var s = try paidPlayer(tuning: tuning, total: &total)
+        var s = try player(tuning: tuning, total: &total)
         XCTAssertEqual(s.moonDust, 0)
         XCTAssertThrowsError(try s.callNewBat(seed: 1, now: now, tuning: tuning)) {
             XCTAssertEqual($0 as? GameError, .notEnoughMoonDust)
@@ -162,7 +161,7 @@ final class EconomyTests: XCTestCase {
     func testDuplicatesBelowMaxFriendshipStillPayEXPNotDust() throws {
         let tuning = quiet()
         var total = 0
-        var s = try paidPlayer(tuning: tuning, total: &total)
+        var s = try player(tuning: tuning, total: &total)
         let result = try walkAndHatch(&s, .tiny, seed: seed(for: "mochi", egg: .tiny), total: &total, tuning: tuning)
         XCTAssertEqual(result.record.outcome, .duplicate)
         XCTAssertEqual(result.friendshipGained, tuning.duplicateEXP[.common])
@@ -172,70 +171,37 @@ final class EconomyTests: XCTestCase {
 
     // MARK: Free tier
 
-    func testFreePlayerWhoMetEveryFreeBatGetsOneTrialEggAndCannotCallMore() throws {
-        var tuning = quiet()
-        tuning.moonDustForNewBat = 1
-        tuning.friendshipThresholds = [0, 0, 0, 0, 0]
+    func testAllEggsRemainAvailableAfterMeetingFormerFreeRoster() throws {
+        let tuning = quiet()
         var s = GameState()
         s.start(seed: 1, now: now, tuning: tuning)
         var total = 2_000
         s.ingestSteps(dayKey: day, dailyTotal: total, tuning: tuning)
         _ = try s.hatch(now: now, tuning: tuning)
-        XCTAssertEqual(s.pickableEggs(tuning: tuning), [.tiny])
+        for species in ["cocoa", "long-ear"] {
+            _ = try walkAndHatch(&s, .tiny, seed: seed(for: species, egg: .tiny), total: &total, tuning: tuning)
+        }
+        XCTAssertEqual(s.pickableEggs(tuning: tuning), EggType.allCases)
         XCTAssertNil(s.trialEgg(tuning: tuning))
         XCTAssertFalse(s.hasCompletedFreeRoster)
-        XCTAssertThrowsError(try s.startEgg(.forest, seed: 1, now: now, tuning: tuning)) {
-            XCTAssertEqual($0 as? GameError, .eggLocked(.forest))
-        }
-
-        for species in ["cocoa", "long-ear"] {
-            let result = try walkAndHatch(&s, .tiny, seed: seed(for: species, egg: .tiny, isUnlocked: false),
-                                          total: &total, tuning: tuning)
-            XCTAssertEqual(result.record.speciesID, species)
-        }
-        XCTAssertTrue(s.hasCompletedFreeRoster)
-        XCTAssertEqual(s.pickableEggs(tuning: tuning), [.tiny, .forest])
-        XCTAssertEqual(s.trialEgg(tuning: tuning), .forest)
-        XCTAssertThrowsError(try s.startEgg(.moon, seed: 1, now: now, tuning: tuning))
-
-        // Dust never buys paid content: with every free bat met there is nothing left to call.
-        let dup = try walkAndHatch(&s, .tiny, seed: seed(for: "mochi", egg: .tiny, isUnlocked: false),
-                                   total: &total, tuning: tuning)
-        XCTAssertEqual(dup.moonDustGained, 1)
-        XCTAssertFalse(s.canCallNewBat(tuning: tuning))
-        XCTAssertThrowsError(try s.callNewBat(seed: 1, now: now, tuning: tuning)) {
-            XCTAssertEqual($0 as? GameError, .nothingToDiscover)
-        }
-
-        // The trial egg uses the paid Forest pool, exactly once, at the full step target.
+        XCTAssertFalse(s.trialEggUsed)
+        XCTAssertTrue(s.reachableUnmetSpecies.contains("eclipse"))
         try s.startEgg(.forest, seed: 5, now: now, tuning: tuning)
-        XCTAssertTrue(s.trialEggUsed)
         let sealed = try XCTUnwrap(s.egg?.frozenSpeciesID)
         XCTAssertTrue(EggType.forest.pool.contains(sealed))
-        XCTAssertEqual(s.egg?.stepsRemaining, 4_000)
-        total += 4_000
-        s.ingestSteps(dayKey: day, dailyTotal: total, tuning: tuning)
-        XCTAssertEqual(try s.hatch(now: now, tuning: tuning).record.eggType, .forest)
-        XCTAssertEqual(s.pickableEggs(tuning: tuning), [.tiny])
-        XCTAssertNil(s.trialEgg(tuning: tuning))
-        XCTAssertThrowsError(try s.startEgg(.forest, seed: 6, now: now, tuning: tuning)) {
-            XCTAssertEqual($0 as? GameError, .eggLocked(.forest))
-        }
-    }
-
-    func testTrialEggCanBeDisabledByTuning() throws {
-        var tuning = quiet()
-        tuning.freeTrialEgg = nil
-        var s = GameState()
-        s.start(seed: 1, now: now, tuning: tuning)
-        var total = 2_000
+        XCTAssertEqual(s.egg?.stepsRemaining, EggType.forest.targetSteps)
+        total += EggType.forest.targetSteps
         s.ingestSteps(dayKey: day, dailyTotal: total, tuning: tuning)
         _ = try s.hatch(now: now, tuning: tuning)
-        for species in ["cocoa", "long-ear"] {
-            _ = try walkAndHatch(&s, .tiny, seed: seed(for: species, egg: .tiny, isUnlocked: false), total: &total, tuning: tuning)
-        }
-        XCTAssertTrue(s.hasCompletedFreeRoster)
-        XCTAssertEqual(s.pickableEggs(tuning: tuning), [.tiny])
+        XCTAssertNoThrow(try s.startEgg(.forest, seed: 6, now: now, tuning: tuning))
+    }
+
+    func testLegacyTrialSettingCannotReintroduceAContentGate() {
+        var tuning = quiet()
+        tuning.freeTrialEgg = .forest
+        let s = GameState()
+        XCTAssertNil(s.trialEgg(tuning: tuning))
+        XCTAssertEqual(s.pickableEggs(tuning: tuning), EggType.allCases)
     }
 
     // MARK: Safety and compatibility

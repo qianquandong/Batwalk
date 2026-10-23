@@ -37,13 +37,13 @@ struct BatwalkPhoneApp: App {
                 .environment(store)
                 .environment(purchases)
                 .tint(BatwalkColor.accent)
-                .task { if !store.isDemo { purchases.start() } }
+                .task { if SharedConfig.paidContentEnabled, !store.isDemo { purchases.start() } }
                 .onChange(of: scenePhase) { _, phase in
                     if phase == .active {
                         store.load()
                         store.refreshHandoff()
                         store.publishBackupToWatch()
-                        if !store.isDemo { Task { await purchases.refreshEntitlements() } }
+                        if SharedConfig.paidContentEnabled, !store.isDemo { Task { await purchases.refreshEntitlements() } }
                     }
                 }
         }
@@ -57,21 +57,21 @@ enum PhoneTab: Int, Hashable {
 
 struct PhoneRootView: View {
     @State private var tab = PhoneTab(rawValue: DemoMode.page) ?? .companion
-    @State private var settings = DemoMode.scenario == "phone-unlock"
+    @State private var settings = ["phone-settings", "phone-unlock"].contains(DemoMode.scenario ?? "")
 
     var body: some View {
         TabView(selection: $tab) {
             // Three distinct glyphs: home, a grid of bats, a notebook.
             CompanionView(tab: $tab)
                 .environment(\.batPageVisible, tab == .companion)
-                .tabItem { Label("Companion", systemImage: "house") }
+                .tabItem { Label("Home", systemImage: "house") }
                 .tag(PhoneTab.companion)
             BatpediaView()
                 .environment(\.batPageVisible, tab == .batpedia)
-                .tabItem { Label("Batpedia", systemImage: "square.grid.2x2") }
+                .tabItem { Label("Collection", systemImage: "square.grid.2x2") }
                 .tag(PhoneTab.batpedia)
             HistoryView()
-                .tabItem { Label("Journal", systemImage: "book.closed") }
+                .tabItem { Label("Memories", systemImage: "book.closed") }
                 .tag(PhoneTab.journal)
         }
         .sheet(isPresented: $settings) { PhoneSettingsView() }

@@ -21,7 +21,9 @@ enum EntitlementState: Equatable {
 /// An unknown result leaves the save alone, so one false negative can never
 /// lock a paying player out of the pools their eggs were started with.
 enum EntitlementPolicy {
-    static func unlockedValue(for state: EntitlementState) -> Bool? {
+    static func unlockedValue(for state: EntitlementState,
+                              paidContentEnabled: Bool = SharedConfig.paidContentEnabled) -> Bool? {
+        guard paidContentEnabled else { return nil }
         switch state {
         case .active: return true
         case .revoked: return false
@@ -100,13 +102,18 @@ final class PurchaseManager {
     private(set) var isLoadingProduct = false
     private(set) var message: String?
     var lastError: String?
+    @ObservationIgnored private let paidContentEnabled: Bool
     @ObservationIgnored private let backend: any PurchaseBackend
     @ObservationIgnored private var updatesTask: Task<Void, Never>?
 
-    init(backend: (any PurchaseBackend)? = nil) { self.backend = backend ?? StoreKitBackend() }
+    init(backend: (any PurchaseBackend)? = nil,
+         paidContentEnabled: Bool = SharedConfig.paidContentEnabled) {
+        self.backend = backend ?? StoreKitBackend()
+        self.paidContentEnabled = paidContentEnabled
+    }
 
     func start() {
-        guard updatesTask == nil else { return }
+        guard paidContentEnabled, updatesTask == nil else { return }
         updatesTask = Task { [weak self] in
             for await update in Transaction.updates {
                 guard let self else { return }
@@ -122,7 +129,7 @@ final class PurchaseManager {
     }
 
     func loadProduct() async {
-        guard !isLoadingProduct else { return }
+        guard paidContentEnabled, !isLoadingProduct else { return }
         isLoadingProduct = true
         defer { isLoadingProduct = false }
         lastError = nil
@@ -133,13 +140,14 @@ final class PurchaseManager {
     }
 
     func refreshEntitlements() async {
+        guard paidContentEnabled else { return }
         entitlement = await backend.entitlement()
         hasCheckedEntitlements = true
         entitlementVersion += 1
     }
 
     func purchase() async {
-        guard !isBusy else { return }
+        guard paidContentEnabled, !isBusy else { return }
         guard product != nil else { lastError = PurchaseError.unavailable.localizedDescription; return }
         isBusy = true; lastError = nil; message = nil
         defer { isBusy = false }
@@ -155,7 +163,7 @@ final class PurchaseManager {
     }
 
     func restore() async {
-        guard !isBusy else { return }
+        guard paidContentEnabled, !isBusy else { return }
         isBusy = true; lastError = nil; message = nil
         defer { isBusy = false }
         do {

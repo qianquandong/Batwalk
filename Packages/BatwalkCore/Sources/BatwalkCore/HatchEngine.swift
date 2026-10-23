@@ -27,7 +27,7 @@ public struct HatchRoll: Equatable, Sendable {
     public let isShiny: Bool
 }
 
-/// Picks what comes out of an egg. Pure function of (egg, seed, entitlement, tuning).
+/// Picks what comes out of an egg. Pure function of (egg, seed, tuning); payment never changes a roll.
 public enum HatchEngine {
     public static func roll(
         egg: EggType,
@@ -35,10 +35,20 @@ public enum HatchEngine {
         isUnlocked: Bool,
         tuning: Tuning = .default
     ) -> HatchRoll {
-        var rng = SeededGenerator(seed: seed)
+        roll(egg: egg, seed: seed, candidates: egg.pool, shinyAllowed: true, tuning: tuning)
+    }
 
-        let candidates = egg.pool(isUnlocked: isUnlocked).compactMap(Roster.species)
-        precondition(!candidates.isEmpty, "Egg \(egg) has no hatchable species for isUnlocked=\(isUnlocked)")
+    /// Only the v1 save migration may use the old paid/free split.
+    static func legacyRoll(egg: EggType, seed: UInt64, isUnlocked: Bool) -> HatchRoll {
+        roll(egg: egg, seed: seed, candidates: egg.legacyPool(isUnlocked: isUnlocked),
+             shinyAllowed: isUnlocked, tuning: .default)
+    }
+
+    private static func roll(egg: EggType, seed: UInt64, candidates ids: [String],
+                             shinyAllowed: Bool, tuning: Tuning) -> HatchRoll {
+        var rng = SeededGenerator(seed: seed)
+        let candidates = ids.compactMap(Roster.species)
+        precondition(!candidates.isEmpty, "Egg \(egg) has no hatchable species")
 
         // 1. Rarity, renormalised over the rarities present in this pool.
         let present = Rarity.allCases.filter { r in candidates.contains { $0.rarity == r } }
@@ -50,8 +60,8 @@ public enum HatchEngine {
         let index = Int(rng.nextUnit() * Double(tier.count))
         let species = tier[min(index, tier.count - 1)]
 
-        // 3. Shiny — paid content only (PRD §2.10).
-        let isShiny = isUnlocked && rng.nextUnit() < tuning.shinyChance
+        // 3. Shiny — the same chance for everyone.
+        let isShiny = shinyAllowed && rng.nextUnit() < tuning.shinyChance
 
         return HatchRoll(species: species, isShiny: isShiny)
     }

@@ -52,7 +52,13 @@ struct FeedButton: View {
     let action: () -> Void
 
     var body: some View {
-        Button("Feed", action: action)
+        Button(action: action) {
+            HStack(spacing: 8) {
+                FruitIcon(size: 18)
+                Text("Feed")
+                Text("\(fruit)").font(BatwalkFont.micro)
+            }
+        }
         .buttonStyle(FeedControlStyle())
         .disabled(fruit == 0)
         .accessibilityLabel("Feed")
@@ -66,12 +72,12 @@ struct FeedButton: View {
         func makeBody(configuration: Configuration) -> some View {
             configuration.label
                 .font(BatwalkFont.caption)
-                .foregroundStyle(BatwalkColor.cloud)
+                .foregroundStyle(BatwalkColor.buttonText)
                 .padding(.horizontal, 16)
-                .frame(minWidth: 88, minHeight: 44)
+                .frame(minWidth: 132, minHeight: 44)
                 .background {
                     Capsule()
-                        .fill(BatwalkColor.cloud.opacity(configuration.isPressed ? 0.16 : 0.08))
+                        .fill(BatwalkColor.accentSoft.opacity(configuration.isPressed ? 0.75 : 1))
                         .padding(.vertical, 5)
                 }
                 .contentShape(Capsule())

@@ -11,7 +11,7 @@ struct PhoneHeader: View {
     var body: some View {
         HStack(alignment: .firstTextBaseline) {
             Text(title)
-                .font(BatwalkFont.rounded(.largeTitle, weight: .bold))
+                .font(.system(.largeTitle, design: .serif).weight(.semibold))
                 .foregroundStyle(BatwalkColor.textPrimaryLight)
                 .lineLimit(1)
                 .minimumScaleFactor(0.7)
@@ -61,44 +61,37 @@ struct SegmentedPill<Value: Hashable>: View {
 }
 
 /// Existing portraits retain their individual proportions; no alternate character art.
-/// Rarity always shows, in its own colour; the companion gets a small Watch badge.
+/// Small portrait tiles keep rarity and action details on the character page.
 struct BatCard: View {
     let species: Species
     let shiny: Bool
     var isCompanion = false
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
+        VStack(spacing: 6) {
             GeometryReader { geometry in
                 BatSprite(speciesID: species.id, shiny: shiny, size: min(160, geometry.size.width))
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
-            .frame(height: 148)
-            HStack(alignment: .firstTextBaseline, spacing: 8) {
-                Text(String(format: "%02d", species.number))
-                    .foregroundStyle(BatwalkColor.textSecondaryLight)
-                Text(species.name.replacingOccurrences(of: " Bat", with: ""))
-                    .fontWeight(.semibold)
-                    .fixedSize(horizontal: false, vertical: true)
-            }
-            .font(BatwalkFont.caption)
-            HStack(spacing: 6) {
-                RarityChip(rarity: species.rarity, dark: false)
-                if shiny { VariantChip(shiny: true, dark: false) }
-            }
+            .frame(height: 92)
+            Text(species.name.replacingOccurrences(of: " Bat", with: ""))
+                .font(BatwalkFont.micro).fontWeight(.semibold)
+                .multilineTextAlignment(.center).lineLimit(2)
+            Text(String(format: "No. %02d", species.number))
+                .font(BatwalkFont.micro).foregroundStyle(BatwalkColor.textSecondaryLight)
         }
         .foregroundStyle(BatwalkColor.textPrimaryLight)
-        .padding(12)
-        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(8)
+        .frame(maxWidth: .infinity)
         .background(BatwalkColor.lightTint.opacity(0.45), in: RoundedRectangle(cornerRadius: 20))
         .overlay(alignment: .topTrailing) {
             if isCompanion {
-                Label("On Watch", systemImage: "applewatch")
+                Image(systemName: "heart.fill")
                     .font(BatwalkFont.rounded(.caption2, weight: .semibold))
                     .foregroundStyle(BatwalkColor.buttonText)
-                    .padding(.horizontal, 8).padding(.vertical, 4)
-                    .background(BatwalkColor.accentSoft, in: Capsule())
-                    .padding(10)
+                    .padding(5)
+                    .background(BatwalkColor.accentSoft, in: Circle())
+                    .padding(6)
             }
         }
         .accessibilityElement(children: .ignore)
@@ -109,18 +102,18 @@ struct BatCard: View {
 struct LockedBatCard: View {
     let number: Int
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
+        VStack(spacing: 6) {
             ZStack {
                 BatSilhouette(size: 80, color: BatwalkColor.textSecondaryLight.opacity(0.25))
                 Text("?").font(BatwalkFont.title).foregroundStyle(BatwalkColor.lightCard)
             }
-            .frame(maxWidth: .infinity).frame(height: 148)
-            Text(String(format: "%02d", number)).font(BatwalkFont.caption)
-            Text("Undiscovered").font(BatwalkFont.micro).padding(.vertical, 4)
+            .frame(maxWidth: .infinity).frame(height: 92)
+            Text("A little mystery").font(BatwalkFont.micro).multilineTextAlignment(.center).lineLimit(2)
+            Text(String(format: "No. %02d", number)).font(BatwalkFont.micro)
         }
         .foregroundStyle(BatwalkColor.textSecondaryLight)
-        .padding(12)
-        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(8)
+        .frame(maxWidth: .infinity)
         .background(BatwalkColor.lightTint.opacity(0.3), in: RoundedRectangle(cornerRadius: 20))
         .accessibilityElement(children: .ignore)
         .accessibilityLabel("Bat number \(number), not discovered yet")
@@ -216,6 +209,10 @@ struct HatchHistoryRow: View {
                             .font(BatwalkFont.rounded(.caption2, weight: .bold))
                             .foregroundStyle(BatwalkColor.rose)
                     }
+                }
+                if record.outcome == .duplicate, let xp = record.friendshipGained {
+                    Text("+\(xp) XP")
+                        .font(BatwalkFont.caption).foregroundStyle(BatwalkColor.accent)
                 }
                 HStack(spacing: 4) {
                     VariantChip(shiny: record.isShiny, dark: false)
