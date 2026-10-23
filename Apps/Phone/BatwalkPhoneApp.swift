@@ -37,13 +37,22 @@ struct BatwalkPhoneApp: App {
                 .environment(store)
                 .environment(purchases)
                 .tint(BatwalkColor.accent)
-                .task { if SharedConfig.paidContentEnabled, !store.isDemo { purchases.start() } }
+                .task {
+                    if !store.isDemo {
+                        if SharedConfig.paidContentEnabled { purchases.start() }
+                        await PhoneNotifications.refresh(history: store.state.history)
+                    }
+                }
+                .onChange(of: store.state.revision) { _, _ in
+                    if !store.isDemo { Task { await PhoneNotifications.refresh(history: store.state.history) } }
+                }
                 .onChange(of: scenePhase) { _, phase in
                     if phase == .active {
                         store.load()
                         store.refreshHandoff()
                         store.publishBackupToWatch()
                         if SharedConfig.paidContentEnabled, !store.isDemo { Task { await purchases.refreshEntitlements() } }
+                        if !store.isDemo { Task { await PhoneNotifications.refresh(history: store.state.history) } }
                     }
                 }
         }
@@ -72,7 +81,7 @@ struct PhoneRootView: View {
                 .environment(\.batPageVisible, tab == .batpedia)
                 .tabItem { Label("Collection", systemImage: "square.grid.2x2") }
                 .tag(PhoneTab.batpedia)
-            HistoryView()
+            JournalDemoDestination()
                 .tabItem { Label("Memories", systemImage: "book.closed") }
                 .tag(PhoneTab.journal)
         }
@@ -86,5 +95,15 @@ struct PhoneRootView: View {
                 .toolbar { ToolbarItem(placement: .confirmationAction) { Button("Done") { sharePreview = false } } }
             }
         }
+    }
+}
+
+struct JournalDemoDestination: View {
+    var body: some View {
+        if DemoMode.scenario == "phone-recap" {
+            NavigationStack { WeeklyRecapView() }
+        } else if ["phone-challenge", "phone-challenge-gold"].contains(DemoMode.scenario ?? "") {
+            NavigationStack { MonthlyChallengeView() }
+        } else { HistoryView() }
     }
 }

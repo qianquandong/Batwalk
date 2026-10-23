@@ -41,3 +41,7 @@ Q1/Q13 below supersede the paid tier and one-time trial from the 2026-10-10 revi
 - A phone-only show-steps preference defaults on but is not automatic transfer consent. A per-card button requests just that receipt while both apps are reachable; it is memory-only.
 - One-time teaching egg: 2,000. Pickable Starter/Tiny: 10,000; Forest: 21,097; Moon: 42,195; Crystal: 100,000. Existing active targets remain frozen.
 - Shiny ships as a static certificate with the 3% base-odds line. Moon phase is an offline mean-cycle estimate, not a precise astronomical service.
+
+### Weekly and monthly memories — decided 2026-10-23
+
+Weekly recap uses local Monday–Sunday; monthly 1/3/6 hatch milestones reward outfits only. New hatch months are frozen; earned outfits survive backup/history trimming. Phone reminders default off. No streak loss or species gates. See SOCIAL_PROGRESS.md.

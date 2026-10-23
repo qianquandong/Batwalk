@@ -25,6 +25,7 @@ struct SettingsView: View {
                     Text("Alerts off in Settings").font(BatwalkFont.micro)
                 }
                 if store.state.companion != nil {
+                    NavigationLink { OutfitPickerView() } label: { Label("Outfit", systemImage: "tshirt") }
                     // Offline fallback for nickname, appearance and Moon Dust.
                     NavigationLink { CollectionPage() } label: {
                         Label("My bats", systemImage: "square.grid.2x2")

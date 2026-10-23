@@ -62,10 +62,12 @@ public struct HatchRecord: Codable, Equatable, Sendable {
     /// Public game tier at creation, retained without the private walk receipt.
     public let eggTierName: String?
 
+    public let challengeMonthKey: String?
+
     public init(speciesID: String, isShiny: Bool, eggType: EggType, hatchedAt: Date,
                 outcome: HatchOutcome, source: HatchSource = .egg,
                 friendshipBefore: Int? = nil, friendshipGained: Int? = nil,
-                eggStartedAt: Date? = nil, eggSteps: Int? = nil, eggTierName: String? = nil) {
+                eggStartedAt: Date? = nil, eggSteps: Int? = nil, eggTierName: String? = nil, challengeMonthKey: String? = nil) {
         self.speciesID = speciesID
         self.isShiny = isShiny
         self.eggType = eggType
@@ -77,10 +79,11 @@ public struct HatchRecord: Codable, Equatable, Sendable {
         self.eggStartedAt = eggStartedAt
         self.eggSteps = eggSteps
         self.eggTierName = eggTierName
+        self.challengeMonthKey = challengeMonthKey
     }
 
     private enum CodingKeys: String, CodingKey {
-        case speciesID, isShiny, eggType, hatchedAt, outcome, source, friendshipBefore, friendshipGained, eggStartedAt, eggSteps, eggTierName
+        case speciesID, isShiny, eggType, hatchedAt, outcome, source, friendshipBefore, friendshipGained, eggStartedAt, eggSteps, eggTierName, challengeMonthKey
     }
 
     /// Records written before `source` existed decode as ordinary egg hatches.
@@ -97,6 +100,7 @@ public struct HatchRecord: Codable, Equatable, Sendable {
         eggStartedAt = try c.decodeIfPresent(Date.self, forKey: .eggStartedAt)
         eggSteps = try c.decodeIfPresent(Int.self, forKey: .eggSteps)
         eggTierName = try c.decodeIfPresent(String.self, forKey: .eggTierName)
+        challengeMonthKey = try c.decodeIfPresent(String.self, forKey: .challengeMonthKey)
     }
 }
 
@@ -168,6 +172,9 @@ public struct GameState: Codable, Equatable, Sendable {
     public private(set) var moonDust = 0
     /// Historical trial flag, retained on decode but no longer used for access.
     public private(set) var trialEggUsed = false
+    public private(set) var outfitPreferences: [String: OutfitPreference]? = nil
+    public private(set) var earnedChallengeOutfits: [String: [String: ChallengeTier]]? = nil
+    public private(set) var challengeHatchCounts: [String: Int]? = nil
 
     public struct PetDay: Codable, Equatable, Sendable {
         public var dayKey: String
@@ -179,7 +186,7 @@ public struct GameState: Codable, Equatable, Sendable {
     private enum CodingKeys: String, CodingKey {
         case schemaVersion, saveID, revision, needsStepBaseline, hasStarted, egg, bankedSteps
         case ledger, collection, companionID, fruit, fruitProgressSteps, isUnlocked, history, petLog, lifetimeCreditedSteps
-        case hatchesSinceShiny, hatchesSinceNewSpecies, moonDust, trialEggUsed
+        case hatchesSinceShiny, hatchesSinceNewSpecies, moonDust, trialEggUsed, outfitPreferences, earnedChallengeOutfits, challengeHatchCounts
     }
 
     public init(from decoder: Decoder) throws {
@@ -208,6 +215,9 @@ public struct GameState: Codable, Equatable, Sendable {
         hatchesSinceNewSpecies = try c.decodeIfPresent(Int.self, forKey: .hatchesSinceNewSpecies) ?? 0
         moonDust = try c.decodeIfPresent(Int.self, forKey: .moonDust) ?? 0
         trialEggUsed = try c.decodeIfPresent(Bool.self, forKey: .trialEggUsed) ?? false
+        outfitPreferences = try c.decodeIfPresent([String: OutfitPreference].self, forKey: .outfitPreferences)
+        earnedChallengeOutfits = try c.decodeIfPresent([String: [String: ChallengeTier]].self, forKey: .earnedChallengeOutfits)
+        challengeHatchCounts = try c.decodeIfPresent([String: Int].self, forKey: .challengeHatchCounts)
         // v1 eggs are sealed once during migration, before any entitlement refresh.
         if var current = egg, current.frozenSpeciesID == nil {
             let roll = HatchEngine.legacyRoll(egg: current.type, seed: current.seed, isUnlocked: isUnlocked || !current.type.legacyIsFree)
@@ -376,7 +386,7 @@ public struct GameState: Codable, Equatable, Sendable {
     // MARK: - Hatching
 
     /// Tap-to-reveal on the Watch. Clears the egg; the player then picks the next one.
-    public mutating func hatch(now: Date, tuning: Tuning = .default) throws -> HatchResult {
+    public mutating func hatch(now: Date, tuning: Tuning = .default, calendar: Calendar = .current) throws -> HatchResult {
         guard let current = egg else { throw GameError.noEgg }
         guard current.isReady else { throw GameError.eggNotReady }
 
@@ -442,7 +452,9 @@ public struct GameState: Codable, Equatable, Sendable {
                                  hatchedAt: now, outcome: outcome,
                                  friendshipBefore: friendshipBefore, friendshipGained: gained,
                                  eggStartedAt: current.startedAt, eggSteps: current.targetSteps,
-                                 eggTierName: current.type.displayName(forTargetSteps: current.targetSteps))
+                                 eggTierName: current.type.displayName(forTargetSteps: current.targetSteps),
+                                 challengeMonthKey: SocialCalendar.monthKey(now, calendar: calendar))
+        recordChallengeHatch(record, calendar: calendar)
         history.append(record)
         egg = nil
         return HatchResult(record: record, friendshipGained: gained, moonDustGained: dust, bat: bat)
@@ -508,6 +520,13 @@ public struct GameState: Codable, Equatable, Sendable {
         companionID = speciesID
     }
 
+    public mutating func setOutfit(_ preference: OutfitPreference, for speciesID: String) throws {
+        guard collection[speciesID] != nil else { throw GameError.notOwned(speciesID) }
+        if case .month(let key) = preference, !earnedOutfits(for: speciesID).contains(where: { $0.monthKey == key }) { return }
+        if outfitPreferences == nil { outfitPreferences = [:] }
+        outfitPreferences?[speciesID] = preference
+    }
+
     /// Empty / whitespace-only name resets to the species name.
     public mutating func rename(_ speciesID: String, to name: String, tuning: Tuning = .default) throws {
         guard var bat = collection[speciesID] else { throw GameError.notOwned(speciesID) }
@@ -549,6 +568,22 @@ public struct GameState: Codable, Equatable, Sendable {
 
     // MARK: - Purchase
 
+    private mutating func recordChallengeHatch(_ record: HatchRecord, calendar: Calendar) {
+        if challengeHatchCounts == nil {
+            challengeHatchCounts = [:]; earnedChallengeOutfits = [:]
+            for old in history where old.source == .egg { recordChallengeHatch(old, calendar: calendar) }
+        }
+        let key = record.challengeMonthKey ?? SocialCalendar.monthKey(record.hatchedAt, calendar: calendar)
+        challengeHatchCounts?[key, default: 0] += 1
+        let count = challengeHatchCounts?[key] ?? 0
+        let tier = ChallengeTier.allCases.last { (Tuning.challengeThresholds[$0] ?? 0) <= count } ?? .none
+        if earnedChallengeOutfits == nil { earnedChallengeOutfits = [:] }
+        earnedChallengeOutfits?[record.speciesID, default: [:]][key] = tier
+        for id in Array((earnedChallengeOutfits ?? [:]).keys) {
+            if earnedChallengeOutfits?[id]?[key] != nil { earnedChallengeOutfits?[id]?[key] = tier }
+        }
+    }
+
     /// One-time full unlock (or Restore Purchase). Idempotent.
     public mutating func setUnlocked(_ unlocked: Bool) {
         isUnlocked = unlocked
@@ -566,6 +601,9 @@ public struct GameState: Codable, Equatable, Sendable {
         fruit = backup.fruit
         moonDust = backup.moonDust
         trialEggUsed = backup.trialEggUsed
+        outfitPreferences = backup.outfitPreferences
+        earnedChallengeOutfits = backup.earnedChallengeOutfits
+        challengeHatchCounts = backup.challengeHatchCounts
         hatchesSinceShiny = 0
         hatchesSinceNewSpecies = 0
         egg = nil

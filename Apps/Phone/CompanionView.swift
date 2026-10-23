@@ -183,6 +183,7 @@ struct PhoneSettingsView: View {
                     Text("This only changes your cards. Walk details stay on Watch until you tap Include my steps and days for a certificate. They are never added to collection backups.")
                         .font(BatwalkFont.caption)
                 }
+                PhoneNotificationSettings()
                 Section("Watch connection") {
                     PhoneSyncStatus()
                     Text("Your Watch saves your progress. Keep both apps updated and open Batwalk on your Watch to refresh your collection.")

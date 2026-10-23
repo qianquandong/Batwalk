@@ -12,6 +12,7 @@ struct HistoryView: View {
                     Text("Every hello has a place here.")
                         .font(BatwalkFont.body).foregroundStyle(BatwalkColor.textSecondaryLight)
                     PhoneSyncStatus()
+                    JournalCommunitySection()
                     HStack {
                         Text("\(store.state.collection.count) friends")
                         Spacer()
