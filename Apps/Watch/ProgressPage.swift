@@ -41,13 +41,19 @@ struct ProgressPage: View {
     private func eggContent(size: CGFloat) -> some View {
         VStack(spacing: 6) {
             EggSprite(type: store.state.egg?.type ?? .tiny,
-                      state: store.state.egg?.visualState ?? .calm, size: size)
+                      state: store.state.egg?.visualState ?? .calm, size: size * 1.5)
+                .frame(height: size)
                 .accessibilityHidden(true)
             if let egg = store.state.egg {
                 VStack(spacing: 6) {
-                    ProgressView(value: egg.progress)
-                        .tint(BatwalkColor.ringMint)
-                        .frame(maxWidth: 100)
+                    GeometryReader { geo in
+                        ZStack(alignment: .leading) {
+                            Capsule().fill(BatwalkColor.cloud.opacity(0.18))
+                            Capsule().fill(BatwalkColor.ringMint)
+                                .frame(width: geo.size.width * egg.progress)
+                        }
+                    }
+                        .frame(width: 100, height: 3)
                         .accessibilityHidden(true)
                     if egg.isReady {
                         Text("Ready!").font(BatwalkFont.caption)
