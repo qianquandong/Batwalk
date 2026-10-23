@@ -52,6 +52,14 @@ final class WalkingTogetherTests: XCTestCase {
     }
 
     @MainActor
+    func testTrimmedHistorySubmitsPersistedCurrentMonthCount() async {
+        let backend = FakeWalkingBackend()
+        let subject = coordinator(backend, monthly: true)
+        await subject.refresh(history: [], total: 200, monthlyCounts: ["202609": 90, "202610": 8])
+        XCTAssertEqual(backend.submissions, [HatchLeaderboardScore(board: .month, value: 8, context: 202610)])
+    }
+
+    @MainActor
     func testAllFriendPagesLoadBeforeMonthContextFiltering() async {
         let backend = FakeWalkingBackend()
         backend.entries = (0..<205).map {

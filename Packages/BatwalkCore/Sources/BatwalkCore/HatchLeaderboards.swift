@@ -32,12 +32,21 @@ public enum HatchLeaderboards {
         return (parts.year ?? 0) * 100 + (parts.month ?? 0)
     }
 
-    public static func monthlyScore(history: [HatchRecord], now: Date) -> HatchLeaderboardScore {
+    public static func monthlyScore(history: [HatchRecord], now: Date, savedCounts: [String: Int] = [:]) -> HatchLeaderboardScore {
         let key = monthKey(at: now)
         let count = history.filter {
             $0.source == .egg && $0.hatchedAt <= now && monthKey(at: $0.hatchedAt) == key
         }.count
-        return HatchLeaderboardScore(board: .month, value: count, context: key)
+        return HatchLeaderboardScore(board: .month, value: max(count, savedCounts[String(key)] ?? 0), context: key)
+    }
+
+    /// Gameplay-only archive, retained independently of the display history.
+    public static func monthlyCounts(history: [HatchRecord]) -> [String: Int] {
+        var counts: [String: Int] = [:]
+        for record in history where record.source == .egg {
+            counts[String(monthKey(at: record.hatchedAt)), default: 0] += 1
+        }
+        return counts
     }
 
     public static func totalScore(hatchCount: Int) -> HatchLeaderboardScore {

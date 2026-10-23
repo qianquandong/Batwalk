@@ -41,13 +41,19 @@ final class HatchLeaderboardTests: XCTestCase {
         XCTAssertEqual(state.lifetimeHatchCount, 1)
         let backup = CollectionBackup(state: state).trimmingHistory(to: 0)
         XCTAssertEqual(backup.lifetimeHatchCount, 1)
+        XCTAssertEqual(backup.monthlyHatchCounts, ["202610": 1])
         var restored = GameState()
         restored.restoreCollection(try JSONDecoder().decode(CollectionBackup.self, from: JSONEncoder().encode(backup)))
         XCTAssertTrue(restored.history.isEmpty)
         XCTAssertEqual(restored.lifetimeHatchCount, 1)
+        XCTAssertEqual(HatchLeaderboards.monthlyScore(history: restored.history, now: date("2026-10-02T00:00:00Z"),
+            savedCounts: restored.monthlyHatchCounts).value, 1)
         var json = try XCTUnwrap(JSONSerialization.jsonObject(with: JSONEncoder().encode(state)) as? [String: Any])
         json.removeValue(forKey: "lifetimeHatchCount")
+        json.removeValue(forKey: "monthlyHatchCounts")
         let legacy = try JSONDecoder().decode(GameState.self, from: JSONSerialization.data(withJSONObject: json))
         XCTAssertEqual(legacy.lifetimeHatchCount, 1)
+        XCTAssertEqual(legacy.monthlyHatchCounts, ["202610": 1])
+        XCTAssertEqual(CollectionBackup(state: legacy).trimmingHistory(to: 0).monthlyHatchCounts, ["202610": 1])
     }
 }

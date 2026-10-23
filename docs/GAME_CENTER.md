@@ -44,7 +44,9 @@ Center can still expose leaderboard scores outside Batwalk; a query filter is
 not a privacy access-control list.
 
 Totals use `GameState.lifetimeHatchCount`, retained through collection-backup
-history trimming. Only `.egg` records count; legacy Moon Dust calls do not.
+history trimming. UTC monthly counts are also persisted independently of history.
+Both are gameplay counters retained by redacted mirrors and trimmed backups.
+Only `.egg` records count; legacy Moon Dust calls do not.
 Old saves infer a lower bound from retained egg records; already discarded old
 history cannot be reconstructed. New `hatchOrdinal` values let certificates keep
 their place after trimming. No friend information is written into the game save.
@@ -97,3 +99,4 @@ Device / Game Center tests still required before declaring live social ready:
 - [App Privacy disclosure rules](https://developer.apple.com/app-store/app-privacy-details/)
 - [HealthKit privacy](https://developer.apple.com/documentation/healthkit/protecting-user-privacy)
 - [Testing uses the live Game Center environment](https://developer.apple.com/help/app-store-connect/configure-game-center/overview-of-testing-game-center)
+

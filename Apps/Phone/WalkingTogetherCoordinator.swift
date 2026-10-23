@@ -91,7 +91,7 @@ final class WalkingTogetherCoordinator {
 
     var isSharing: Bool { monthlyEnabled || totalEnabled }
 
-    func setSharing(_ board: HatchLeaderboard, enabled: Bool, history: [HatchRecord], total: Int) async {
+    func setSharing(_ board: HatchLeaderboard, enabled: Bool, history: [HatchRecord], total: Int, monthlyCounts: [String: Int] = [:]) async {
         guard available else { status = .unavailable; return }
         generation += 1
         let action = generation
@@ -111,11 +111,11 @@ final class WalkingTogetherCoordinator {
             account = player; consentAccountID = player.id
             if board == .month { monthlyEnabled = true } else { totalEnabled = true }
             persistConsent()
-            await refresh(history: history, total: total, interactive: true)
+            await refresh(history: history, total: total, monthlyCounts: monthlyCounts, interactive: true)
         } catch { if generation == action { status = .signIn } }
     }
 
-    func refresh(history: [HatchRecord], total: Int, interactive: Bool = false) async {
+    func refresh(history: [HatchRecord], total: Int, monthlyCounts: [String: Int] = [:], interactive: Bool = false) async {
         guard available, isSharing else { status = available ? .off : .unavailable; return }
         generation += 1
         let operation = generation
@@ -133,7 +133,7 @@ final class WalkingTogetherCoordinator {
             guard permitted else { rows.removeAll(); backend.discardCachedFriends(); status = .friendsPermission; return }
             let date = now()
             monthContext = HatchLeaderboards.monthKey(at: date)
-            let scores = [HatchLeaderboards.monthlyScore(history: history, now: date),
+            let scores = [HatchLeaderboards.monthlyScore(history: history, now: date, savedCounts: monthlyCounts),
                           HatchLeaderboards.totalScore(hatchCount: total)]
             for score in scores where enabled(score.board) {
                 guard active(operation, playerID: player.id) else { return }

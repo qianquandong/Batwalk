@@ -78,7 +78,7 @@ struct WalkingTogetherView: View {
     }
 
     private func refresh(interactive: Bool = false) async {
-        await friends.refresh(history: store.state.history, total: store.state.lifetimeHatchCount, interactive: interactive)
+        await friends.refresh(history: store.state.history, total: store.state.lifetimeHatchCount, monthlyCounts: store.state.monthlyHatchCounts, interactive: interactive)
     }
 }
 
@@ -157,7 +157,7 @@ struct WalkingTogetherSettingsView: View {
     private func binding(_ board: HatchLeaderboard) -> Binding<Bool> {
         Binding(get: { board == .month ? friends.monthlyEnabled : friends.totalEnabled }, set: { enabled in
             Task { await friends.setSharing(board, enabled: enabled,
-                history: store.state.history, total: store.state.lifetimeHatchCount) }
+                history: store.state.history, total: store.state.lifetimeHatchCount, monthlyCounts: store.state.monthlyHatchCounts) }
         })
     }
 }

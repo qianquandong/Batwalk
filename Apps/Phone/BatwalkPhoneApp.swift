@@ -45,11 +45,12 @@ struct BatwalkPhoneApp: App {
                         if SharedConfig.paidContentEnabled { purchases.start() }
                         await PhoneNotifications.refresh(state: store.state)
                     }
-                    await friends.refresh(history: store.state.history, total: store.state.lifetimeHatchCount)
+                    await friends.refresh(history: store.state.history, total: store.state.lifetimeHatchCount, monthlyCounts: store.state.monthlyHatchCounts)
                 }
                 .onChange(of: store.state.revision) { _, _ in
                     if !store.isDemo { Task { await PhoneNotifications.refresh(state: store.state) } }
-                    Task { await friends.refresh(history: store.state.history, total: store.state.lifetimeHatchCount) }
+                    Task { await friends.refresh(history: store.state.history, total: store.state.lifetimeHatchCount,
+                                                 monthlyCounts: store.state.monthlyHatchCounts) }
                 }
                 .onChange(of: scenePhase) { _, phase in
                     if phase == .active {
@@ -58,7 +59,8 @@ struct BatwalkPhoneApp: App {
                         store.publishBackupToWatch()
                         if SharedConfig.paidContentEnabled, !store.isDemo { Task { await purchases.refreshEntitlements() } }
                         if !store.isDemo { Task { await PhoneNotifications.refresh(state: store.state) } }
-                    Task { await friends.refresh(history: store.state.history, total: store.state.lifetimeHatchCount) }
+                        Task { await friends.refresh(history: store.state.history, total: store.state.lifetimeHatchCount,
+                                                     monthlyCounts: store.state.monthlyHatchCounts) }
                     }
                 }
         }
