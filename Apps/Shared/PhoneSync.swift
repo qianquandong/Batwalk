@@ -62,6 +62,7 @@ final class PhoneSync: NSObject, WCSessionDelegate {
     private let pendingLock = NSLock()
     private let flushLock = NSLock()
     private var pendingSave: Data?
+    private var cancelledLegacyFiles: Set<URL> = []
 
     enum SendResult { case sent, noWatchApp, unavailable }
 
@@ -91,10 +92,38 @@ final class PhoneSync: NSObject, WCSessionDelegate {
 
     func push(save data: Data) {
         // Never trust callers to remember the privacy boundary.
-        guard let state = try? JSONDecoder().decode(GameState.self, from: data),
-              let data = try? JSONEncoder().encode(state.collectionMirror()) else { return }
+        guard let data = Self.sanitizedMirrorData(data) else { return }
         pendingLock.lock(); pendingSave = data; pendingLock.unlock()
         flushPendingSave()
+    }
+
+    static func sanitizedMirrorData(_ data: Data) -> Data? {
+        guard let state = try? JSONDecoder().decode(GameState.self, from: data) else { return nil }
+        return try? JSONEncoder().encode(state.collectionMirror())
+    }
+
+    static func mirrorTransferNeedsRedaction(_ data: Data?) -> Bool {
+        guard let data, let state = try? JSONDecoder().decode(GameState.self, from: data) else { return true }
+        return state != state.collectionMirror()
+    }
+
+    private func isCancelledLegacyFile(_ url: URL) -> Bool {
+        pendingLock.lock(); defer { pendingLock.unlock() }
+        return cancelledLegacyFiles.contains(url)
+    }
+
+    /// An app update can inherit transfers queued by its previous version.
+    /// Cancel what the app can still control; activation then publishes the
+    /// current local save through the redacted push boundary. Already delivered
+    /// data cannot be recalled from the connectivity system.
+    private func cancelLegacyMirrorTransfers() {
+        for transfer in WCSession.default.outstandingFileTransfers {
+            guard transfer.file.metadata?[Self.fileSaveKey] as? Bool == true,
+                  !isCancelledLegacyFile(transfer.file.fileURL),
+                  Self.mirrorTransferNeedsRedaction(try? Data(contentsOf: transfer.file.fileURL)) else { continue }
+            pendingLock.lock(); cancelledLegacyFiles.insert(transfer.file.fileURL); pendingLock.unlock()
+            transfer.cancel()
+        }
     }
 
     private func flushPendingSave() {
@@ -102,6 +131,7 @@ final class PhoneSync: NSObject, WCSessionDelegate {
         // One flush at a time: the delegate queue and the main thread can both get
         // here, and an older snapshot must never overwrite a newer context.
         flushLock.lock(); defer { flushLock.unlock() }
+        cancelLegacyMirrorTransfers()
         pendingLock.lock(); let data = pendingSave; pendingLock.unlock()
         guard let data else { return }
         do {
@@ -110,7 +140,7 @@ final class PhoneSync: NSObject, WCSessionDelegate {
                 // One transfer in flight at a time; the newest save goes out when it
                 // finishes, so a busy Watch never builds a backlog of stale files.
                 let inFlight = WCSession.default.outstandingFileTransfers.contains {
-                    $0.file.metadata?[Self.fileSaveKey] as? Bool == true
+                    $0.file.metadata?[Self.fileSaveKey] as? Bool == true && !isCancelledLegacyFile($0.file.fileURL)
                 }
                 guard !inFlight else { return } // pendingSave stays set
                 let file = FileManager.default.temporaryDirectory.appendingPathComponent("batwalk-mirror-\(UUID().uuidString).json")
@@ -191,7 +221,13 @@ final class PhoneSync: NSObject, WCSessionDelegate {
         let file = fileTransfer.file.fileURL
         guard fileTransfer.file.metadata?[Self.fileSaveKey] as? Bool == true,
               file.lastPathComponent.hasPrefix("batwalk-mirror-") else { return }
-        if error != nil, let data = try? Data(contentsOf: file) {
+        pendingLock.lock()
+        let wasCancelledForPrivacy = cancelledLegacyFiles.remove(file) != nil
+        pendingLock.unlock()
+        // A failed transfer can belong to a version installed before mirror
+        // redaction. Never put those original bytes back into the send queue.
+        if !wasCancelledForPrivacy, error != nil, let original = try? Data(contentsOf: file),
+           let data = Self.sanitizedMirrorData(original) {
             pendingLock.lock()
             if pendingSave == nil { pendingSave = data }
             pendingLock.unlock()

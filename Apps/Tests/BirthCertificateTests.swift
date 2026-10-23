@@ -4,6 +4,21 @@ import BatwalkCore
 @testable import Batwalk
 
 extension AppReliabilityTests {
+    func testOldTransferRetryBytesAreRedactedBeforeRequeue() throws {
+        var state = GameState()
+        state.start(seed: 1, now: .now.addingTimeInterval(-86_400))
+        state.ingestSteps(dayKey: "2026-10-23", dailyTotal: Tuning.introEggTargetSteps)
+        _ = try state.hatch(now: .now)
+        let original = try JSONEncoder().encode(state)
+        let redacted = try XCTUnwrap(PhoneSync.sanitizedMirrorData(original))
+        XCTAssertEqual(try JSONDecoder().decode(GameState.self, from: redacted), state.collectionMirror())
+        XCTAssertNil(PhoneSync.sanitizedMirrorData(Data("unknown save".utf8)))
+        XCTAssertTrue(PhoneSync.mirrorTransferNeedsRedaction(original))
+        XCTAssertFalse(PhoneSync.mirrorTransferNeedsRedaction(redacted))
+        XCTAssertTrue(PhoneSync.mirrorTransferNeedsRedaction(nil))
+        XCTAssertTrue(PhoneSync.mirrorTransferNeedsRedaction(Data("unknown save".utf8)))
+    }
+
     @MainActor
     func testCertificateAndPosterRenderAtTwelveHundredSquare() async throws {
         var state = GameState()
