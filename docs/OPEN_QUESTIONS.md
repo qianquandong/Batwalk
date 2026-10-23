@@ -30,9 +30,7 @@ Q1/Q13 below supersede the paid tier and one-time trial from the 2026-10-10 revi
 | Q12 | 2026-10-10 | The 12 Oddball Bats ship as the **first content update (v1.1)**, not at launch. They stay in `Roster.catalog` (stable IDs, numbers, assets) but are gated by `Roster.enabledWave` / `BATWALK_CONTENT_WAVE`; egg pools only include enabled waves. Launch animation work stays on the 20-bat roster and the update gives the App Store a second moment. Screenshot demos show wave 2. |
 | Q13 | 2026-10-23 | **No trial egg.** All five eggs are always available, so the one-time Forest trial and completed-free-roster upsell are retired. Preserve the legacy saved flag without using it to gate anything. |
 | Q14 | 2026-10-10 | **Collection pacing.** Shiny chance 0.5% → 3%, with a guaranteed Shiny every 40 hatches and ×3 odds for a species at Lv.5. After 10 hatches with no new species, the next egg seals an unmet species from its pool. Original rule (new income retired by Q15): duplicates of a Lv.5 bat pay **Moon Dust**; 4 dust calls a bat the player hasn't met (within enabled content waves). All numbers in `Tuning`; rules in `GameState.freezeEgg`, `hatch`, `callNewBat`; tests in `EconomyTests`. |
-
 | Q15 | 2026-10-23 | **Simple rewards and longer eggs.** Duplicates give EXP and level the existing bat (Lv.1–5); cumulative XP remains after max level. Stop new Moon Dust income, preserve old balances/redemption. Starter/Tiny 10,000; Forest 21,097; Moon 42,195; Crystal 100,000. Teaching Starter alone remains 2,000. Existing active eggs keep their old target. No new souvenir, story, or invitation systems. |
-
 | Q10 | 2026-10-23 | All players can find Shiny from every egg at the same odds and pity thresholds. Existing sealed eggs keep their original outcomes. |
 
 ### Certificate sharing and milestone eggs — decided 2026-10-23
