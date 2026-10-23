@@ -183,7 +183,7 @@ struct HatchSequenceView: View {
                     // Reserve space for the name, chips and Continue first. A
                     // scroll view's flexible proposal otherwise hides the labels
                     // behind the pinned button on a 41 mm Watch.
-                    revealDetails(pictureSize: min(70, max(36, geometry.size.height - 114)))
+                    revealDetails(pictureSize: min(112, max(36, geometry.size.height - 76)))
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                 }
                 Button("Continue", action: onDone)
@@ -209,19 +209,14 @@ struct HatchSequenceView: View {
                     .scaleEffect(revealScale)
             }
             .frame(height: pictureSize)
-            Text(species?.name ?? "New bat")
-                .font(BatwalkFont.headline)
-                .foregroundStyle(.white)
-                .multilineTextAlignment(.center)
-                .fixedSize(horizontal: false, vertical: true)
-            ViewThatFits(in: .horizontal) {
-                HStack(spacing: 4) { revealChips }.fixedSize()
-                VStack(spacing: 4) { revealChips }
-            }
-            if presentation.result.moonDustGained > 0 {
-                Label("+\(presentation.result.moonDustGained) Moon Dust", systemImage: "sparkle")
-                    .font(BatwalkFont.rounded(.caption2))
-                    .foregroundStyle(BatwalkColor.rarityShiny)
+            if record.outcome == .duplicate {
+                Label("+\(presentation.result.friendshipGained) XP", systemImage: "heart")
+                    .font(BatwalkFont.headline)
+                    .foregroundStyle(BatwalkColor.cloud)
+            } else {
+                Text(record.isShiny ? "A Shiny friend" : "A new friend")
+                    .font(BatwalkFont.caption)
+                    .foregroundStyle(BatwalkColor.cloud)
             }
         }
         .frame(maxWidth: .infinity)

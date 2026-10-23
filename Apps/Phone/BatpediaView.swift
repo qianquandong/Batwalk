@@ -12,7 +12,7 @@ struct BatpediaView: View {
     @State private var showUnlock = false
 
     private var columns: [GridItem] {
-        Array(repeating: GridItem(.flexible(), spacing: 14), count: typeSize.isAccessibilitySize ? 1 : 2)
+        Array(repeating: GridItem(.flexible(), spacing: 10), count: typeSize.isAccessibilitySize ? 1 : 3)
     }
 
     var body: some View {
@@ -20,7 +20,7 @@ struct BatpediaView: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 20) {
                     HStack {
-                        PhoneHeader(title: "Batpedia")
+                        PhoneHeader(title: "Our little world")
                         // Settings live on the Companion tab only.
                         Button { searching.toggle() } label: {
                             Image(systemName: "magnifyingglass").font(.title3).frame(width: 44, height: 44)
@@ -72,20 +72,13 @@ struct BatpediaView: View {
                     Text("Every bat has a little personality.")
                         .font(BatwalkFont.caption).foregroundStyle(BatwalkColor.textSecondaryLight)
                         .frame(maxWidth: .infinity).padding(.vertical, 8)
-                    VStack(alignment: .leading, spacing: 10) {
-                        Text("Collection milestones").font(BatwalkFont.headline)
-                        ForEach([5, 10, 20, Roster.all.count], id: \.self) { goal in
-                            Label("\(goal) bats discovered", systemImage: store.state.collection.count >= goal ? "checkmark.circle.fill" : "circle")
-                                .font(BatwalkFont.caption).foregroundStyle(BatwalkColor.accent)
-                        }
-                    }
                     PhoneSyncStatus()
                 }
                 .padding(24)
             }
             .background(BatwalkColor.lightBackground.ignoresSafeArea())
             .toolbar(.hidden, for: .navigationBar)
-            .navigationTitle("Batpedia") // hidden here; it labels the back button on a detail page
+            .navigationTitle("Collection")
             .navigationDestination(for: String.self) { BatDetailPage(speciesID: $0) }
             .sheet(isPresented: $showUnlock) {
                 UnlockView()
@@ -181,13 +174,6 @@ struct BatDetailPage: View {
                                     .accessibilityHint(unlocked ? "Watch this little habit" : "Build friendship on your Watch to unlock")
                                 }
                             }
-                        }
-                        if let reward = Friendship.keepsake(forEXP: bat.friendshipEXP) {
-                            Label(reward, systemImage: "heart.fill").font(BatwalkFont.body)
-                        }
-                        if let next = Friendship.nextKeepsake(forEXP: bat.friendshipEXP) {
-                            Text("Next: \(next)").font(BatwalkFont.caption)
-                                .foregroundStyle(BatwalkColor.textSecondaryLight)
                         }
                         if let cousin = species.realLifeCousin {
                             Text("Little habits").font(BatwalkFont.title)

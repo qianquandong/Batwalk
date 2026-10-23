@@ -108,7 +108,7 @@ final class EconomyTests: XCTestCase {
         for _ in 0..<3 {
             try s.startEgg(.tiny, seed: mochiSeed, now: now, tuning: tuning)
             XCTAssertEqual(s.egg?.frozenSpeciesID, "mochi")
-            total += 2_500
+            total += EggType.tiny.targetSteps
             s.ingestSteps(dayKey: day, dailyTotal: total, tuning: tuning)
             XCTAssertEqual(try s.hatch(now: now, tuning: tuning).record.outcome, .duplicate)
         }
@@ -120,7 +120,7 @@ final class EconomyTests: XCTestCase {
         XCTAssertNotEqual(sealed, "mochi")
         XCTAssertTrue(EggType.tiny.pool.contains(sealed))
         XCTAssertNil(s.collection[sealed])
-        total += 2_500
+        total += EggType.tiny.targetSteps
         s.ingestSteps(dayKey: day, dailyTotal: total, tuning: tuning)
         XCTAssertEqual(try s.hatch(now: now, tuning: tuning).record.outcome, .newSpecies)
         XCTAssertEqual(s.hatchesSinceNewSpecies, 0)
@@ -175,6 +175,7 @@ final class EconomyTests: XCTestCase {
     func testFreePlayerWhoMetEveryFreeBatGetsOneTrialEggAndCannotCallMore() throws {
         var tuning = quiet()
         tuning.moonDustForNewBat = 1
+        tuning.moonDustPerMaxLevelDuplicate = 1 // exercise legacy balances/redemption
         tuning.friendshipThresholds = [0, 0, 0, 0, 0]
         var s = GameState()
         s.start(seed: 1, now: now, tuning: tuning)
@@ -212,8 +213,8 @@ final class EconomyTests: XCTestCase {
         XCTAssertTrue(s.trialEggUsed)
         let sealed = try XCTUnwrap(s.egg?.frozenSpeciesID)
         XCTAssertTrue(EggType.forest.pool.contains(sealed))
-        XCTAssertEqual(s.egg?.stepsRemaining, 4_000)
-        total += 4_000
+        XCTAssertEqual(s.egg?.stepsRemaining, EggType.forest.targetSteps)
+        total += EggType.forest.targetSteps
         s.ingestSteps(dayKey: day, dailyTotal: total, tuning: tuning)
         XCTAssertEqual(try s.hatch(now: now, tuning: tuning).record.eggType, .forest)
         XCTAssertEqual(s.pickableEggs(tuning: tuning), [.tiny])

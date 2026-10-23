@@ -33,8 +33,8 @@ extension Color {
 
 enum BatwalkColor {
     // Night surfaces (Watch + dark heroes)
-    static let deepNight = Color(hex: 0x0C181B)
-    static let indigo = Color(hex: 0x1C2E32)
+    static let deepNight = Color(hex: 0x15231B)
+    static let indigo = Color(hex: 0x203126)
     static let nightSurface = Color(hex: 0x1F3033)
     static let nightCard = Color(hex: 0x2C3E40)
     static let nightCardElevated = Color(hex: 0x374B49)
@@ -58,9 +58,9 @@ enum BatwalkColor {
 
     // Companion (iPhone) surfaces — warm cream by day, midnight teal in Dark Mode.
     // The "light" names describe the companion app's surface role, not a fixed appearance.
-    static let lightBackground = Color.adaptive(light: 0xF4F1E8, dark: 0x0F1C1E)
-    static let lightCard = Color.adaptive(light: 0xFFFCF4, dark: 0x1B2B2D)
-    static let lightTint = Color.adaptive(light: 0xE5E9DB, dark: 0x25383A)
+    static let lightBackground = Color.adaptive(light: 0xFCF8EE, dark: 0x233129)
+    static let lightCard = Color.adaptive(light: 0xFFFDF6, dark: 0x2D3B30)
+    static let lightTint = Color.adaptive(light: 0xEDF0E4, dark: 0x334538)
 
     // Locked bats
     static let lockedBatBackground = Color(hex: 0x122125)

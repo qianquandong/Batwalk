@@ -156,7 +156,7 @@ final class GameStateTests: XCTestCase {
         // Find a Tiny seed that yields a non-shiny Mochi for a free player.
         let seed = (UInt64(0)..<10_000).first { HatchEngine.roll(egg: .tiny, seed: $0, isUnlocked: false).species.id == "mochi" }!
         try s.startEgg(.tiny, seed: seed, now: t0)
-        s.ingestSteps(dayKey: "2026-10-06", dailyTotal: 4_500)
+        s.ingestSteps(dayKey: "2026-10-06", dailyTotal: EggType.starter.targetSteps + EggType.tiny.targetSteps)
         let result = try s.hatch(now: t0)
         XCTAssertEqual(result.record.outcome, .duplicate)
         XCTAssertEqual(result.friendshipGained, Tuning.default.duplicateEXP[.common])
@@ -175,7 +175,7 @@ final class GameStateTests: XCTestCase {
             return r.species.id == "mochi" && r.isShiny
         }!
         try s.startEgg(.tiny, seed: seed, now: t0)
-        s.ingestSteps(dayKey: "2026-10-06", dailyTotal: 4_500)
+        s.ingestSteps(dayKey: "2026-10-06", dailyTotal: EggType.starter.targetSteps + EggType.tiny.targetSteps)
         let result = try s.hatch(now: t0)
         XCTAssertEqual(result.record.outcome, .newShiny)
         XCTAssertEqual(s.collection["mochi"]?.hasNormal, true)
@@ -190,7 +190,7 @@ final class GameStateTests: XCTestCase {
         _ = try s.hatch(now: t0)
         try s.startEgg(.moon, seed: 3, now: t0)
         s.setUnlocked(false)
-        s.ingestSteps(dayKey: "2026-10-06", dailyTotal: 7_000)
+        s.ingestSteps(dayKey: "2026-10-06", dailyTotal: EggType.starter.targetSteps + EggType.moon.targetSteps)
         XCTAssertNoThrow(try s.hatch(now: t0)) // must not crash on an empty free pool
     }
 

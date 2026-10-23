@@ -25,7 +25,7 @@
 | Mood | Cute + cozy + slightly mysterious; never horror-first |
 | Launch roster | 20 bat species |
 | Hatching cadence | Typically 1–2 bats/day; no hard daily cap |
-| Duplicates | Allowed; duplicates add Friendship EXP — and Moon Dust once a bat is at Lv.5 — instead of creating junk inventory copies |
+| Duplicates | Allowed; duplicates add Friendship EXP to level up the owned bat instead of creating junk inventory copies |
 | Companion | One current companion shown on Watch at a time |
 | Naming | Players can rename their owned companion |
 | Day/night | Based on local device time: Day / Dusk / Night |
@@ -143,16 +143,16 @@ Habitat is deferred beyond MVP unless schedule permits.
 | Egg | Target Steps | Purpose |
 |---|---|---|
 | Starter Egg | 2,000 | Fast first success |
-| Tiny Egg | 2,500 | Quick everyday hatch |
-| Forest Egg | 4,000 | Nature-themed pool |
-| Moon Egg | 5,000 | Night / Rare pool |
-| Crystal Egg | 6,000 | Higher-end Rare pool |
+| Tiny Egg | 10,000 | Everyday walks across one or more days |
+| Forest Egg | 40,000 | Nature-themed pool |
+| Moon Egg | 50,000 | Night / Rare pool |
+| Crystal Egg | 60,000 | Higher-end Rare pool |
 
-Normal players should typically hatch 1–2 bats per day. No hard cap is required.
+Egg progress accumulates across days. The longer eggs are multi-day goals; there is no daily hatch quota or reset.
 
 **Trial egg (Q13, 2026-10-10).** When a free player has met all three free bats, one
 Forest Egg appears in the picker once. It uses the full Forest pool (Shiny possible)
-and costs the full 4,000 steps — a taste of the full collection at the moment the free
+and costs the full 40,000 steps — a taste of the full collection at the moment the free
 tier runs out, never a step skip.
 
 ### 2.7 Duplicate & Friendship System
@@ -167,10 +167,9 @@ Duplicates are allowed, but the Collection does not accumulate piles of identica
 | Lv.4 | Special signature animation |
 | Lv.5 | Friendship badge + special expression/accessory |
 
-**Moon Dust (Q14, 2026-10-10).** Past Lv.5, duplicate EXP would mean nothing, so a
-duplicate of a Lv.5 bat pays 1 Moon Dust instead. 4 dust calls a bat the player has
-not met yet, from the eggs they can already start (dust never buys paid content).
-After 10 paid hatches without a new species, the next egg is sealed to an unmet one.
+**Simple duplicate rewards (2026-10-23).** Repeat hatches grant that species' normal rarity-based Friendship EXP and raise its level using the existing Lv.1–5 thresholds. At max level the cumulative EXP is kept. New hatches no longer award Moon Dust; do not add gifts, story chapters, invitations, or another currency. Legacy Moon Dust balances and redemption stay available only to players who already have a balance.
+
+**Longer walks (2026-10-23).** Tiny is 10,000 steps; Forest, Moon, and Crystal use ten times their previous targets. The one-time Starter stays at 2,000 steps. Targets are stored when an egg starts. Existing eggs keep their previous target and credited steps, including eggs already ready to hatch. Progress accumulates across days.
 
 The species-specific actions behind Lv.2–5 are listed in [`BAT_ACTIONS.md`](BAT_ACTIONS.md).
 

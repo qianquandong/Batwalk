@@ -58,8 +58,7 @@ struct CollectionPage: View {
     @ViewBuilder
     private var moonDustRow: some View {
         let cost = Tuning.default.moonDustForNewBat
-        let anyMaxed = store.state.collection.values.contains { Friendship.level(forEXP: $0.friendshipEXP) >= Friendship.maxLevel }
-        if store.state.moonDust > 0 || anyMaxed {
+        if store.state.moonDust > 0 {
             VStack(spacing: 4) {
                 HStack(spacing: 6) {
                     Image(systemName: "sparkle").foregroundStyle(BatwalkColor.rarityShiny)

@@ -71,14 +71,25 @@ enum DemoMode {
         let launchRoster = ProcessInfo.processInfo.arguments.contains("-BatwalkLaunchRoster")
         Roster.enabledWave = launchRoster ? SharedConfig.contentWave : 2
         let now = Date()
-        let day = DayKey.make(now)
+        var demoDate = now.addingTimeInterval(-90 * 86_400)
+        var day = DayKey.make(demoDate)
         var state = GameState()
         var total = 0
         timeOverride = .night
 
         func walk(_ steps: Int) {
-            total += steps
-            state.ingestSteps(dayKey: day, dailyTotal: total)
+            var remaining = steps
+            while remaining > 0 {
+                if total >= Tuning.default.maxDailySteps {
+                    demoDate = Calendar.current.date(byAdding: .day, value: 1, to: demoDate)!
+                    day = DayKey.make(demoDate)
+                    total = 0
+                }
+                let chunk = min(remaining, Tuning.default.maxDailySteps - total)
+                total += chunk
+                state.ingestSteps(dayKey: day, dailyTotal: total)
+                remaining -= chunk
+            }
         }
         @discardableResult
         func hatch(_ egg: EggType, _ species: String, shiny: Bool = false) -> HatchResult? {
@@ -88,10 +99,10 @@ enum DemoMode {
             walk(egg.targetSteps)
             return try? state.hatch(now: now)
         }
-        /// Board numbers: Tiny egg at 61 %, "961 steps to hatch", Today 3,539.
+        /// Keep the visual fixture at 61% when egg pacing changes.
         func boardEgg() {
             try? state.startEgg(.tiny, seed: 7, now: now)
-            walk(1_539)
+            walk(EggType.tiny.targetSteps * 61 / 100)
         }
         func addCollection() {
             hatch(.forest, "strawberry")
@@ -137,7 +148,7 @@ enum DemoMode {
             boardEgg()
         case "hatch-ready":
             try? state.startEgg(.tiny, seed: 7, now: now)
-            walk(2_500)
+            walk(EggType.tiny.targetSteps)
         case "reveal-rare", "reveal-large-type", "reveal-shiny":
             reveal = hatch(.moon, "moonwing", shiny: scenario != "reveal-rare")
             boardEgg()
@@ -147,7 +158,7 @@ enum DemoMode {
         case "progress-100":
             page = 1
             try? state.startEgg(.tiny, seed: 7, now: now)
-            walk(2_500)
+            walk(EggType.tiny.targetSteps)
         case "friendship-1":
             // Board: Lv. 1 · 20 / 100 · Feed (0)
             page = 0
@@ -204,7 +215,7 @@ enum DemoMode {
             boardEgg()
         case "phone-egg-ready":
             try? state.startEgg(.tiny, seed: 7, now: now)
-            walk(2_500)
+            walk(EggType.tiny.targetSteps)
         case "phone-history":
             page = 2
             boardEgg()

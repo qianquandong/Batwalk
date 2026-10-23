@@ -11,49 +11,42 @@ struct CompanionView: View {
     var body: some View {
         NavigationStack {
             ScrollView {
-                VStack(spacing: 0) {
+                VStack(spacing: 20) {
+                    HStack {
+                        VStack(alignment: .leading, spacing: 6) {
+                            Text("YOUR LITTLE WORLD").font(BatwalkFont.micro).tracking(2)
+                                .foregroundStyle(BatwalkColor.textSecondaryLight)
+                            Text("A little closer.").font(.system(.title, design: .serif).weight(.semibold))
+                        }
+                        Spacer()
+                        Button { settings = true } label: {
+                            Image(systemName: "gearshape").font(.title2).frame(width: 44, height: 44)
+                        }.accessibilityLabel("Settings")
+                    }
+                    .padding(.horizontal, 24)
                     hero
                     VStack(alignment: .leading, spacing: 16) {
                         PhoneSyncStatus()
-                        // The game's own progress first: the egg, then the bond.
-                        if let egg = store.state.egg {
-                            VStack(alignment: .leading, spacing: 10) {
-                                HatchProgressSummary(egg: egg, dark: false)
-                                if egg.isReady {
-                                    Label("Open Batwalk on your Watch to hatch.", systemImage: "applewatch")
-                                        .font(BatwalkFont.caption).foregroundStyle(BatwalkColor.accent)
-                                }
-                            }
-                            .batwalkLightCard()
-                        } else if store.state.hasStarted {
-                            Label("Pick your next egg on your Watch.", systemImage: "applewatch")
-                                .font(BatwalkFont.caption)
-                        }
-                        if let bat = store.state.companion {
-                            HStack(spacing: 14) {
-                                Image(systemName: "heart.fill")
-                                    .font(.title2).foregroundStyle(BatwalkColor.rose)
-                                VStack(alignment: .leading, spacing: 8) {
-                                    HStack {
-                                        Text("Friendship").font(BatwalkFont.headline)
-                                        Spacer()
-                                        Text("Lv. \(Friendship.level(forEXP: bat.friendshipEXP))").font(BatwalkFont.caption)
+                        eggSummary
+                        if let record = store.state.history.last {
+                            NavigationLink { ReunionDetailView(record: record) } label: {
+                                HStack(spacing: 12) {
+                                    Image(systemName: record.outcome == .duplicate ? "heart" : "sparkle")
+                                        .foregroundStyle(BatwalkColor.rose)
+                                        .frame(width: 34, height: 34)
+                                        .background(BatwalkColor.lightTint, in: Circle())
+                                    VStack(alignment: .leading, spacing: 4) {
+                                        Text(record.outcome == .duplicate ? "A familiar little face" : "A new little friend")
+                                            .font(BatwalkFont.headline)
+                                        if record.outcome == .duplicate, let xp = record.friendshipGained {
+                                            Text("+\(xp) XP · See your progress").font(BatwalkFont.caption)
+                                                .foregroundStyle(BatwalkColor.textSecondaryLight)
+                                        }
                                     }
-                                    FriendshipProgressView(exp: bat.friendshipEXP, dark: false)
+                                    Spacer(minLength: 0)
+                                    Image(systemName: "chevron.right").font(BatwalkFont.micro)
                                 }
-                            }
-                            .batwalkLightCard()
-                            NavigationLink {
-                                BatDetailPage(speciesID: bat.speciesID)
-                            } label: {
-                                VStack(alignment: .leading, spacing: 4) {
-                                    Label("Little moments & friendship", systemImage: "play.circle")
-                                        .font(BatwalkFont.headline)
-                                    Text("How \(bat.companionTitle) greets you on the Watch, and what closer friendship unlocks.")
-                                        .font(BatwalkFont.caption).foregroundStyle(BatwalkColor.textSecondaryLight)
-                                        .multilineTextAlignment(.leading)
-                                }
-                                .frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
+                                .padding(.vertical, 8).frame(minHeight: 44)
                             }
                         }
                         if let request = store.companionHandoff.request,
@@ -63,27 +56,15 @@ struct CompanionView: View {
                         if let error = store.lastError {
                             Text(error).font(BatwalkFont.caption).foregroundStyle(BatwalkColor.textSecondaryLight)
                         }
-                        // The pocket: what the next walk has to work with, labelled inline.
-                        HStack(spacing: 16) {
-                            Label { Text("\(store.state.fruit.formatted()) fruit") } icon: { FruitIcon(size: 18) }
-                            Label("\(store.state.bankedSteps.formatted()) steps saved", systemImage: "figure.walk")
-                        }
-                        .font(BatwalkFont.caption)
-                        .foregroundStyle(BatwalkColor.textSecondaryLight)
-                        .accessibilityElement(children: .combine)
-                        .accessibilityLabel("\(store.state.fruit) fruit, \(store.state.bankedSteps) steps saved for the next egg")
-                        Button { tab = .batpedia } label: {
-                            HStack { Text("Choose your Watch companion"); Image(systemName: "arrow.right") }
-                                .font(BatwalkFont.headline).frame(maxWidth: .infinity, minHeight: 44)
-                        }
                         NavigationLink { WatchGuideView() } label: {
-                            Label("How to play & Watch help", systemImage: "book")
-                                .font(BatwalkFont.body).frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
+                            Label("Made for walks without your phone.", systemImage: "arrow.up.right")
+                                .font(BatwalkFont.caption).frame(minHeight: 44, alignment: .leading)
                         }
                     }
-                    .foregroundStyle(BatwalkColor.textPrimaryLight)
-                    .padding(24)
+                    .padding(.horizontal, 24).padding(.bottom, 24)
                 }
+                .padding(.top, 12)
+                .foregroundStyle(BatwalkColor.textPrimaryLight)
             }
             .background(BatwalkColor.lightBackground.ignoresSafeArea())
             .toolbar(.hidden, for: .navigationBar)
@@ -97,50 +78,62 @@ struct CompanionView: View {
         }
     }
 
-    /// The scene is an inset card: the cream page stays continuous under the
-    /// status bar and the dark sky reads as a window, not a wall. The level lives
-    /// in the Friendship card below, not here as well.
     private var hero: some View {
         TimelineView(.everyMinute) { context in
-            let time = DemoMode.timeOfDay(at: context.date)
-            let companion = store.state.companion
-            VStack(alignment: .leading, spacing: 10) {
-                HStack(alignment: .top) {
-                    VStack(alignment: .leading, spacing: 6) {
-                        Text(companion == nil ? "FIRST EGG" : "COMPANION").font(BatwalkFont.micro).tracking(2)
-                        Text(companion?.companionTitle ?? "A little beginning")
-                            .font(BatwalkFont.rounded(.largeTitle, weight: .bold))
-                            .fixedSize(horizontal: false, vertical: true)
-                    }
-                    Spacer(minLength: 8)
-                    Button { settings = true } label: {
-                        Image(systemName: "gearshape").font(.title2).frame(width: 44, height: 44)
-                    }
-                    .accessibilityLabel("Settings")
-                }
-                Group {
-                    if let bat = companion {
+            VStack(spacing: 10) {
+                ZStack {
+                    Circle().fill(BatwalkColor.moonlight.opacity(0.25)).frame(width: 230, height: 230)
+                    Ellipse().fill(BatwalkColor.lightTint).frame(width: 300, height: 38).offset(y: 100)
+                    if let bat = store.state.companion {
                         BatHeroView(speciesID: bat.speciesID, shiny: bat.showsShiny,
-                                    mood: BatMood.resting(at: time), size: 190,
+                                    mood: BatMood.resting(at: DemoMode.timeOfDay(at: context.date)), size: 250,
                                     friendshipEXP: bat.friendshipEXP, showsKeepsake: false)
-                        .environment(\.batPageVisible, pageVisible && !settings)
-                        .padding(.bottom, 8)
+                            .environment(\.batPageVisible, pageVisible && !settings && !guide)
                     } else {
                         EggSprite(type: store.state.egg?.type ?? .starter,
-                                  state: store.state.egg?.visualState ?? .calm, size: 150)
-                        Text(store.state.hasStarted ? "Your first friend is on the way." : "Your little world begins on your Watch.")
-                            .font(BatwalkFont.caption).multilineTextAlignment(.center)
+                                  state: store.state.egg?.visualState ?? .calm, size: 170)
                     }
                 }
-                .frame(maxWidth: .infinity)
+                .frame(height: 250).frame(maxWidth: .infinity)
+                Text(store.state.companion?.companionTitle ?? "A little beginning")
+                    .font(.system(.largeTitle, design: .serif)).multilineTextAlignment(.center)
+                if let bat = store.state.companion {
+                    Text("A familiar face. A little closer to you.")
+                        .font(BatwalkFont.caption).foregroundStyle(BatwalkColor.textSecondaryLight)
+                    NavigationLink { BatDetailPage(speciesID: bat.speciesID) } label: {
+                        Label("Lv. \(Friendship.level(forEXP: bat.friendshipEXP)) · \(bat.friendshipEXP) XP", systemImage: "heart")
+                            .font(BatwalkFont.caption).padding(.horizontal, 14)
+                            .frame(minHeight: 44)
+                            .background(BatwalkColor.lightCard, in: Capsule())
+                            .overlay(Capsule().strokeBorder(BatwalkColor.lightTint, lineWidth: 1))
+                    }
+                } else {
+                    Text("Your first friend is on the way.")
+                        .font(BatwalkFont.caption).foregroundStyle(BatwalkColor.textSecondaryLight)
+                }
             }
-            .foregroundStyle(BatwalkColor.cloud)
-            .padding(20)
-            .frame(maxWidth: .infinity)
-            .background(NightSkyBackground(time: time, scenery: true, groundLevel: 0.88))
-            .clipShape(RoundedRectangle(cornerRadius: 28, style: .continuous))
-            .padding(.horizontal, 16)
-            .padding(.top, 8)
+            .padding(.horizontal, 20)
+        }
+    }
+
+    @ViewBuilder private var eggSummary: some View {
+        if let egg = store.state.egg {
+            Button { guide = true } label: {
+                HStack(spacing: 14) {
+                    EggIcon(type: egg.type, size: 40)
+                    VStack(alignment: .leading, spacing: 7) {
+                        Text(egg.isReady ? "Someone is ready to meet you" : "Someone new is on the way")
+                            .font(BatwalkFont.headline)
+                        Text(egg.isReady ? "Open Batwalk on your Watch" : "\(egg.creditedSteps.formatted()) / \(egg.targetSteps.formatted()) steps")
+                            .font(BatwalkFont.caption).foregroundStyle(BatwalkColor.textSecondaryLight)
+                        ProgressView(value: egg.progress).tint(BatwalkColor.accent)
+                    }
+                    Image(systemName: "chevron.right").font(BatwalkFont.micro)
+                }
+                .padding(16).background(BatwalkColor.lightTint, in: RoundedRectangle(cornerRadius: 22))
+            }
+        } else if store.state.hasStarted {
+            Label("Pick your next egg on your Watch.", systemImage: "applewatch").font(BatwalkFont.caption)
         }
     }
 }

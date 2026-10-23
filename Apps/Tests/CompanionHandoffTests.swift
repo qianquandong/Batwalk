@@ -94,7 +94,7 @@ extension AppReliabilityTests {
         _ = try state.hatch(now: .now)
         let seed = (UInt64(1)...1000).first { HatchEngine.roll(egg: .tiny, seed: $0, isUnlocked: false).species.id == "cocoa" }!
         try state.startEgg(.tiny, seed: seed, now: .now)
-        state.ingestSteps(dayKey: "2026-10-10", dailyTotal: 4_500)
+        state.ingestSteps(dayKey: "2026-10-10", dailyTotal: EggType.starter.targetSteps + EggType.tiny.targetSteps)
         _ = try state.hatch(now: .now)
         try state.setCompanion("mochi")
         try state.startEgg(.tiny, seed: 7, now: .now)

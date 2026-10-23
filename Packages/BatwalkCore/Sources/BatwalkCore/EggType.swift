@@ -20,13 +20,7 @@ public enum EggType: String, Codable, CaseIterable, Sendable {
 
     /// Steps required to hatch.
     public var targetSteps: Int {
-        switch self {
-        case .starter: return 2_000
-        case .tiny: return 2_500
-        case .forest: return 4_000
-        case .moon: return 5_000
-        case .crystal: return 6_000
-        }
+        Tuning.eggTargetSteps[self]!
     }
 
     /// Available without the full unlock.
@@ -65,7 +59,7 @@ public enum EggType: String, Codable, CaseIterable, Sendable {
             return ["sunset", "moonwing", "vampire", "galaxy", "eclipse",
                     "tube-nose", "polka", "wrinkle"]
         case .crystal:
-            // The longest walk (6,000 steps) is where the Walker Bat lives.
+            // The longest walk is where the Walker Bat lives.
             return ["snow", "cloud", "golden", "crystal", "galaxy",
                     "walker", "fox", "ghost"]
         }

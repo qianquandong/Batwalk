@@ -28,10 +28,13 @@ public struct ActiveEgg: Codable, Equatable, Sendable {
     public let startedAt: Date
     public var frozenSpeciesID: String? = nil
     public var frozenIsShiny: Bool? = nil
+    /// Missing in old saves: resolve to the old target, never the new balance.
+    public var frozenTargetSteps: Int? = nil
 
-    public var progress: Double { min(1, Double(creditedSteps) / Double(type.targetSteps)) }
-    public var isReady: Bool { creditedSteps >= type.targetSteps }
-    public var stepsRemaining: Int { max(0, type.targetSteps - creditedSteps) }
+    public var targetSteps: Int { frozenTargetSteps ?? Tuning.legacyEggTargetSteps[type]! }
+    public var progress: Double { min(1, Double(creditedSteps) / Double(targetSteps)) }
+    public var isReady: Bool { creditedSteps >= targetSteps }
+    public var stepsRemaining: Int { max(0, targetSteps - creditedSteps) }
     public var visualState: EggVisualState { .forProgress(progress) }
 }
 
@@ -50,19 +53,25 @@ public struct HatchRecord: Codable, Equatable, Sendable {
     public let hatchedAt: Date
     public let outcome: HatchOutcome
     public let source: HatchSource
+    /// Nil for old records: never infer old rewards from current tuning.
+    public let friendshipBefore: Int?
+    public let friendshipGained: Int?
 
     public init(speciesID: String, isShiny: Bool, eggType: EggType, hatchedAt: Date,
-                outcome: HatchOutcome, source: HatchSource = .egg) {
+                outcome: HatchOutcome, source: HatchSource = .egg,
+                friendshipBefore: Int? = nil, friendshipGained: Int? = nil) {
         self.speciesID = speciesID
         self.isShiny = isShiny
         self.eggType = eggType
         self.hatchedAt = hatchedAt
         self.outcome = outcome
         self.source = source
+        self.friendshipBefore = friendshipBefore
+        self.friendshipGained = friendshipGained
     }
 
     private enum CodingKeys: String, CodingKey {
-        case speciesID, isShiny, eggType, hatchedAt, outcome, source
+        case speciesID, isShiny, eggType, hatchedAt, outcome, source, friendshipBefore, friendshipGained
     }
 
     /// Records written before `source` existed decode as ordinary egg hatches.
@@ -74,6 +83,8 @@ public struct HatchRecord: Codable, Equatable, Sendable {
         hatchedAt = try c.decode(Date.self, forKey: .hatchedAt)
         outcome = try c.decodeIfPresent(HatchOutcome.self, forKey: .outcome) ?? .newSpecies
         source = try c.decodeIfPresent(HatchSource.self, forKey: .source) ?? .egg
+        friendshipBefore = try c.decodeIfPresent(Int.self, forKey: .friendshipBefore)
+        friendshipGained = try c.decodeIfPresent(Int.self, forKey: .friendshipGained)
     }
 }
 
@@ -272,7 +283,8 @@ public struct GameState: Codable, Equatable, Sendable {
     public mutating func start(seed: UInt64, now: Date, tuning: Tuning = .default) {
         guard !hasStarted else { return }
         hasStarted = true
-        egg = ActiveEgg(type: .starter, seed: seed, creditedSteps: 0, startedAt: now)
+        egg = ActiveEgg(type: .starter, seed: seed, creditedSteps: 0, startedAt: now,
+                        frozenTargetSteps: EggType.starter.targetSteps)
         freezeEgg(tuning: tuning)
     }
 
@@ -375,6 +387,7 @@ public struct GameState: Codable, Equatable, Sendable {
 
         let outcome: HatchOutcome
         var gained = 0
+        var friendshipBefore: Int? = nil
         var dust = 0
         var bat: OwnedBat
         if var existing = collection[id] {
@@ -388,10 +401,11 @@ public struct GameState: Codable, Equatable, Sendable {
                 existing.hasNormal = true
             } else {
                 outcome = .duplicate
+                friendshipBefore = existing.friendshipEXP
                 gained = tuning.duplicateEXP[roll.species.rarity] ?? 0
                 existing.friendshipEXP += gained
-                // Past max Friendship the EXP means nothing, so the duplicate pays
-                // in Moon Dust instead (PRD §2.7: duplicates must stay useful).
+                // New hatches only grant EXP. Keep the legacy tuning switch and
+                // stored balances compatible; default dust income is now zero.
                 if wasMaxLevel {
                     dust = max(0, tuning.moonDustPerMaxLevelDuplicate)
                     moonDust += dust
@@ -421,7 +435,8 @@ public struct GameState: Codable, Equatable, Sendable {
         hatchesSinceNewSpecies = outcome == .newSpecies ? 0 : hatchesSinceNewSpecies + 1
 
         let record = HatchRecord(speciesID: id, isShiny: roll.isShiny, eggType: current.type,
-                                 hatchedAt: now, outcome: outcome)
+                                 hatchedAt: now, outcome: outcome,
+                                 friendshipBefore: friendshipBefore, friendshipGained: gained)
         history.append(record)
         egg = nil
         return HatchResult(record: record, friendshipGained: gained, moonDustGained: dust, bat: bat)
@@ -435,14 +450,15 @@ public struct GameState: Codable, Equatable, Sendable {
         let isTrial = !isUnlocked && !type.isFree && trialEgg(tuning: tuning) == type
         guard isUnlocked || type.isFree || isTrial else { throw GameError.eggLocked(type) }
         if isTrial { trialEggUsed = true }
-        egg = ActiveEgg(type: type, seed: seed, creditedSteps: 0, startedAt: now)
+        egg = ActiveEgg(type: type, seed: seed, creditedSteps: 0, startedAt: now,
+                        frozenTargetSteps: type.targetSteps)
         freezeEgg(tuning: tuning)
 
         let banked = bankedSteps
         bankedSteps = 0
         var update = StepUpdate()
         if var current = egg, banked > 0 {
-            let applied = min(banked, current.type.targetSteps)
+            let applied = min(banked, current.targetSteps)
             current.creditedSteps = applied
             egg = current
             bankedSteps = banked - applied

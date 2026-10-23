@@ -37,9 +37,13 @@ struct WatchGuideView: View {
                 }
                 Text("Available eggs appear in the Watch's Next egg picker. Full collection and Restore Purchase are in iPhone Settings.")
             }
-            Section("Collection & Moon Dust") {
+            Section("Collection & levels") {
                 Text("Choose a companion in Batpedia. Your Watch confirms the change; keep both apps open if a request is waiting.")
-                Text("Duplicates of a Lv. 5 bat give Moon Dust. \(Tuning.default.moonDustForNewBat) dust calls a new bat. For offline management, open the egg page on Watch, tap •••, then My bats. Nicknames, Shiny appearance and Moon Dust remain available there.")
+                Text("Hatching the same bat adds XP to the one you already own. More XP raises its level, up to Lv. 5. Common / Uncommon / Rare / Legendary duplicates give \(Tuning.default.duplicateEXP[.common] ?? 0) / \(Tuning.default.duplicateEXP[.uncommon] ?? 0) / \(Tuning.default.duplicateEXP[.rare] ?? 0) / \(Tuning.default.duplicateEXP[.legendary] ?? 0) XP. Total XP is kept after max level.")
+                Text("For offline management, open the egg page on Watch, tap •••, then My bats. Nicknames and Shiny appearance remain available there.")
+                if store.state.moonDust > 0 {
+                    Text("Moon Dust saved in an earlier version is still yours. Use it in My bats on Watch; new duplicates only give XP.")
+                }
             }
             Section("Step Count help") {
                 Text("Before the first egg starts, tap Enable Steps on your Watch and allow Step Count. Batwalk starts after it receives steps. If you haven't walked yet today, walk a few steps, then tap Check again.")

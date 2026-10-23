@@ -64,14 +64,14 @@ struct PhoneRootView: View {
             // Three distinct glyphs: home, a grid of bats, a notebook.
             CompanionView(tab: $tab)
                 .environment(\.batPageVisible, tab == .companion)
-                .tabItem { Label("Companion", systemImage: "house") }
+                .tabItem { Label("Home", systemImage: "house") }
                 .tag(PhoneTab.companion)
             BatpediaView()
                 .environment(\.batPageVisible, tab == .batpedia)
-                .tabItem { Label("Batpedia", systemImage: "square.grid.2x2") }
+                .tabItem { Label("Collection", systemImage: "square.grid.2x2") }
                 .tag(PhoneTab.batpedia)
             HistoryView()
-                .tabItem { Label("Journal", systemImage: "book.closed") }
+                .tabItem { Label("Memories", systemImage: "book.closed") }
                 .tag(PhoneTab.journal)
         }
         .sheet(isPresented: $settings) { PhoneSettingsView() }
