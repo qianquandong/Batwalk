@@ -358,7 +358,7 @@ Exact rates are tuning values for beta and may change without changing the core 
 
 **Walking together (2026-10-23).** iPhone-only Game Center sharing is optional,
 with independent default-off switches for monthly and all-time egg-hatch counts.
-No step leaderboard or Health upload is implemented. The custom display uses
+No step leaderboard or Health upload to Game Center is implemented. The custom display uses
 friends only and no ranks; consent text explains Game Center scores may also be
 public elsewhere. Monthly scores use UTC calendar months with a classic
 Most Recent Score board and month context; personal challenges remain local.
