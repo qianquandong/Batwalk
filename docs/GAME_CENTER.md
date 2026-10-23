@@ -99,4 +99,3 @@ Device / Game Center tests still required before declaring live social ready:
 - [App Privacy disclosure rules](https://developer.apple.com/app-store/app-privacy-details/)
 - [HealthKit privacy](https://developer.apple.com/documentation/healthkit/protecting-user-privacy)
 - [Testing uses the live Game Center environment](https://developer.apple.com/help/app-store-connect/configure-game-center/overview-of-testing-game-center)
-

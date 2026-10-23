@@ -107,6 +107,12 @@ final class WalkingTogetherCoordinator {
             try await backend.authenticate(interactively: true)
             guard generation == action else { return }
             guard let player = backend.account else { status = .signIn; return }
+            // A foreground/account notification can arrive after this user action.
+            // The new account receives only the switch explicitly chosen now.
+            if let consentAccountID, consentAccountID != player.id {
+                monthlyEnabled = false; totalEnabled = false
+                sent.removeAll(); rows.removeAll(); backend.discardCachedFriends()
+            }
             // An explicit toggle binds this consent to this Game Center account.
             account = player; consentAccountID = player.id
             if board == .month { monthlyEnabled = true } else { totalEnabled = true }

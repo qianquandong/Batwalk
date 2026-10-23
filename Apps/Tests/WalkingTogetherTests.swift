@@ -92,6 +92,18 @@ final class WalkingTogetherTests: XCTestCase {
     }
 
     @MainActor
+    func testExplicitChoiceOnNewAccountCannotCarryOtherBoardConsent() async {
+        let backend = FakeWalkingBackend()
+        let subject = coordinator(backend, total: true)
+        backend.account = WalkingAccount(id: "new-account", name: "New player")
+        // Simulate a delayed Game Center account notification.
+        await subject.setSharing(.month, enabled: true, history: [], total: 100)
+        XCTAssertTrue(subject.monthlyEnabled)
+        XCTAssertFalse(subject.totalEnabled)
+        XCTAssertEqual(backend.submissions.map(\.board), [.month])
+    }
+
+    @MainActor
     func testAccountChangeTurnsOffConsentAndNeverPostsToNewAccount() async {
         let backend = FakeWalkingBackend()
         let subject = coordinator(backend, total: true)
