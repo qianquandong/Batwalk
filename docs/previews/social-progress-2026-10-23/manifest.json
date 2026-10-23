@@ -1,0 +1,30 @@
+{
+  "sourceCommit": "4b0ae529228707ca60a59e12d7f1a8902b3ac333",
+  "ci": "https://github.com/qianquandong/Batwalk/actions/runs/39914857413",
+  "screenshots": "https://github.com/qianquandong/Batwalk/actions/runs/39914860105",
+  "launchRoster": true,
+  "watchScenario": "outfit-gold",
+  "phoneCount": 20,
+  "files": [
+    {
+      "path": "phone/companion.png",
+      "sha256": "a4b3769200a9087a1eb70cc718a5d611eb579bd02a5dcccad0fa9bc21ade0834"
+    },
+    {
+      "path": "phone/monthly-bronze.png",
+      "sha256": "bf1989aed4dce26b391911ab77bf6dcb2921ad0a62347e1aada837af7f422950"
+    },
+    {
+      "path": "phone/monthly-gold.png",
+      "sha256": "d1b815301184905c0267d2f07c481779ac3c8fb6ca2bbf83fbc3ae399d6c6e0f"
+    },
+    {
+      "path": "phone/weekly-recap.png",
+      "sha256": "5e216d90dfaf6a9f671459b84b4fc5e7b7c3baac49448e5d8e13d77f03733172"
+    },
+    {
+      "path": "watch/outfit-gold.png",
+      "sha256": "58d057f50fd752a08f6cbd0d03deea4b79ba1bc9eaa08f63e991a8e3ded9608a"
+    }
+  ]
+}
