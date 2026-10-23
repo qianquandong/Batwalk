@@ -26,8 +26,8 @@ enum HealthStatus: Equatable {
 /// Without the argument this file does nothing.
 enum DemoMode {
     // The capture script reads these two lines — keep each list on one line.
-    static let watchScenarios = ["first-egg", "home", "home-day", "home-cocoa", "home-long-ear", "hatch-ready", "reveal-rare", "progress-61", "progress-100", "friendship-1", "friendship-2", "friendship-3", "friendship-4", "fruit-available", "friendship-5", "settings", "health-error", "home-large-type", "pilot-mochi", "pilot-sticky", "pilot-walker", "pilot-cocoa", "pilot-long-ear", "reveal-large-type", "reveal-shiny", "progress-large-type", "step-setup", "step-no-data", "step-read-error", "step-no-data-large-type"] // scenarios:watch
-    static let phoneScenarios = ["phone-companion", "phone-batpedia", "phone-batpedia-rare", "phone-detail", "phone-pending", "phone-confirmed", "phone-stale", "phone-first-egg", "phone-egg-ready", "phone-history", "phone-unlock", "phone-stats", "phone-empty", "phone-guide"] // scenarios:phone
+    static let watchScenarios = ["first-egg", "home", "home-day", "home-cocoa", "home-long-ear", "hatch-ready", "reveal-rare", "progress-61", "progress-100", "friendship-1", "friendship-2", "friendship-3", "friendship-4", "fruit-available", "friendship-5", "settings", "health-error", "home-large-type", "pilot-mochi", "pilot-sticky", "pilot-walker", "pilot-cocoa", "pilot-long-ear", "reveal-large-type", "reveal-shiny", "progress-large-type", "step-setup", "step-no-data", "step-read-error", "step-no-data-large-type", "egg-picker"] // scenarios:watch
+    static let phoneScenarios = ["phone-companion", "phone-batpedia", "phone-batpedia-rare", "phone-detail", "phone-pending", "phone-confirmed", "phone-stale", "phone-first-egg", "phone-egg-ready", "phone-history", "phone-settings", "phone-stats", "phone-empty", "phone-guide"] // scenarios:phone
 
     static let scenario: String? = {
         let args = ProcessInfo.processInfo.arguments
@@ -181,8 +181,7 @@ enum DemoMode {
             page = 3
             boardEgg()
         case "free-complete":
-            // A free player who has met all three free bats: the Collection shows
-            // what the full collection holds, and the one-time trial egg appears.
+            // A legacy three-bat save now sees the entire free collection.
             page = 3
             state.setUnlocked(false)
             hatch(.tiny, "cocoa")
@@ -192,6 +191,8 @@ enum DemoMode {
             addCollection()
             newlyUnlocked = ["galaxy"]
             boardEgg()
+        case "egg-picker":
+            page = 0
         case "settings":
             page = 1
             healthStatus = .connected
@@ -219,7 +220,7 @@ enum DemoMode {
         case "phone-history":
             page = 2
             boardEgg()
-        case "phone-unlock":
+        case "phone-settings", "phone-unlock":
             page = 0
             state.setUnlocked(false)
             boardEgg()

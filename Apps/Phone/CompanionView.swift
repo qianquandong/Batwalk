@@ -140,7 +140,7 @@ struct CompanionView: View {
 
 struct PhoneSettingsView: View {
     @Environment(\.dismiss) private var dismiss
-    @State private var showUnlock = DemoMode.scenario == "phone-unlock"
+    @State private var showUnlock = SharedConfig.paidContentEnabled && DemoMode.scenario == "phone-unlock"
 
     var body: some View {
         NavigationStack {
@@ -149,8 +149,10 @@ struct PhoneSettingsView: View {
                     NavigationLink { WatchGuideView() } label: {
                         Label("How to play & Watch help", systemImage: "book")
                     }
-                    Button { showUnlock = true } label: {
-                        Label("Full collection & purchases", systemImage: "sparkles")
+                    if SharedConfig.paidContentEnabled {
+                        Button { showUnlock = true } label: {
+                            Label("Cosmetics & purchases", systemImage: "sparkles")
+                        }
                     }
                     NavigationLink { PrivacyView() } label: { Label("Privacy", systemImage: "hand.raised") }
                 }

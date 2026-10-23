@@ -35,7 +35,7 @@ struct WatchGuideView: View {
                         }
                     }
                 }
-                Text("Available eggs appear in the Watch's Next egg picker. Full collection and Restore Purchase are in iPhone Settings.")
+                Text("All five eggs and every launch bat are free. Choose any egg in the Watch's Next egg picker. Each egg has its own pool; Shiny odds are the same for everyone.")
             }
             Section("Collection & levels") {
                 Text("Choose a companion in Batpedia. Your Watch confirms the change; keep both apps open if a request is waiting.")

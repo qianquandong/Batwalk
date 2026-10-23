@@ -1,8 +1,18 @@
-# Batwalk release readiness — updated 2026-10-10
+# Batwalk release readiness — updated 2026-10-23
 
 This implementation follows the review order: progress reliability, wrist
 experience, rewards/purchases, then release verification. Automated results must
 be read from the PR's latest green CI run; an unsigned build is not a device sign-off.
+
+## Free launch pass — 2026-10-23
+
+- All 20 wave-1 bats and all five eggs are free. No paywall, trial egg, locked-content upsell or payment-dependent odds. Oddballs stay wave 2.
+- `SharedConfig.paidContentEnabled = false`: StoreKit loading, transaction listening, refresh, purchase and restore stay dormant; tests exercise the backend only with an explicit test flag. Future sales may be cosmetic only.
+- Existing Full Unlock (`com.aimanjack.batwalk.fullunlock`, Apple ID 6821523744) is already **APPROVED** from version 1.0. It is inaccurate to call it unsubmitted. Leave that historical product record unchanged and unused; this pass does not resubmit or offer it.
+- Legacy entitlement/trial/dust save fields still decode. Sealed species, Shiny and step targets survive; unsealed v1 eggs use their original migration pool. Pity thresholds and rarity weights are unchanged.
+- Preview and CI provenance: [free-launch-2026-10-23](previews/free-launch-2026-10-23/README.md). TestFlight is requested for the completed social pass; this PR alone does not submit anything to App Review.
+
+The remaining review notes below are historical implementation/QA context; paid tiers, trial eggs, Moon Dust income and purchase routes described there are superseded by this section.
 
 ## Implemented
 
@@ -47,7 +57,7 @@ build — green after one fix (`RelevantContext.date(from:to:)` for watchOS 11).
 - [ ] Test on minimum supported watchOS 10/iOS 17 and current OS, smallest and largest screens, large text, VoiceOver, Reduce Motion, Always On, and Low Power Mode. Simulator captures cover a representative device, not this matrix.
 - [ ] On actual paired devices, revoke/regrant Health access, cross midnight/DST, travel across time zones, add late iPhone steps, stay offline, and resume after 14+ days. Record expected daily totals and exactly-once game rewards. HealthKit cannot reveal read-denial directly.
 - [ ] Measure battery and wakeups on a representative older Watch and current model over comparable 8–24 hour periods. Record foreground idle, background, widget use, Always On, and Low Power behavior; do not infer energy use from simulator timing. Verify haptic intensity on wrist.
-- [ ] Complete local StoreKit configuration and sandbox/TestFlight purchase, restore, pending approval, unverified/error, refund/revocation, reinstall, offline verified access, and phone-to-Watch propagation. Fake tests do not substitute for these.
+- [ ] Before any future cosmetic commerce release, test StoreKit purchase/restore/refund on devices. Not a free-launch blocker: purchase calls are dormant.
 - [ ] Approve the 32 independent Gentle pixel identities at real Watch size. Launch 20 have 164 clips / 656 frames; wave two retains two animated pilots and ten portrait fallbacks. Complete remaining wave-two animation sheets, pixel cleanup, dedicated v3 Shiny palettes and layered sources. Check the [pilot review matrix](PILOT_ANIMATIONS.md) on actual Watch hardware; generated frame packaging and Linux core tests do not verify watchOS playback or energy use.
 - [ ] Publish an accessible privacy-policy URL and support contact; align App Store privacy labels with actual enabled capabilities and any future analytics. The bundled privacy text is available, but a public policy/support destination has not been supplied.
 - [ ] Inspect a signed archive's three privacy manifests/entitlements, then upload to TestFlight and verify install/upgrade from an existing build. A green unsigned CI run alone does not prove App Store readiness.

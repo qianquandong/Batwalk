@@ -154,7 +154,7 @@ public struct GameState: Codable, Equatable, Sendable {
     public private(set) var hatchesSinceNewSpecies = 0
     /// Duplicates of max-Friendship bats become Moon Dust; dust calls unmet bats.
     public private(set) var moonDust = 0
-    /// The free tier's one trial egg (`Tuning.freeTrialEgg`) has been started.
+    /// Historical trial flag, retained on decode but no longer used for access.
     public private(set) var trialEggUsed = false
 
     public struct PetDay: Codable, Equatable, Sendable {
@@ -198,7 +198,7 @@ public struct GameState: Codable, Equatable, Sendable {
         trialEggUsed = try c.decodeIfPresent(Bool.self, forKey: .trialEggUsed) ?? false
         // v1 eggs are sealed once during migration, before any entitlement refresh.
         if var current = egg, current.frozenSpeciesID == nil {
-            let roll = HatchEngine.roll(egg: current.type, seed: current.seed, isUnlocked: isUnlocked || !current.type.isFree)
+            let roll = HatchEngine.legacyRoll(egg: current.type, seed: current.seed, isUnlocked: isUnlocked || !current.type.legacyIsFree)
             current.frozenSpeciesID = roll.species.id
             current.frozenIsShiny = roll.isShiny
             egg = current
@@ -221,40 +221,23 @@ public struct GameState: Codable, Equatable, Sendable {
     public var companion: OwnedBat? { companionID.flatMap { collection[$0] } }
     public var isEggReady: Bool { egg?.isReady ?? false }
 
-    /// Eggs the player can choose after a hatch, in `EggType.allCases` order.
-    /// A free player who has met every free bat also sees the one-time trial egg.
-    public var pickableEggs: [EggType] { pickableEggs(tuning: .default) }
+    /// All five eggs are available without an entitlement.
+    public var pickableEggs: [EggType] { EggType.allCases }
+    public func pickableEggs(tuning: Tuning) -> [EggType] { pickableEggs }
 
-    public func pickableEggs(tuning: Tuning) -> [EggType] {
-        var eggs = EggType.pickable(isUnlocked: isUnlocked)
-        if let trial = trialEgg(tuning: tuning), !eggs.contains(trial) { eggs.append(trial) }
-        return EggType.allCases.filter { eggs.contains($0) }
-    }
-
-    /// The free tier's trial egg, while it is still available (Q13 in OPEN_QUESTIONS).
-    public func trialEgg(tuning: Tuning = .default) -> EggType? {
-        guard !isUnlocked, !trialEggUsed, let trial = tuning.freeTrialEgg, trial.isPickable, !trial.isFree,
-              hasMetAllFreeSpecies else { return nil }
-        return trial
-    }
-
-    /// Every free species has been hatched in Normal form.
+    /// Retained for save/source compatibility; the free launch has no trial gate.
+    public func trialEgg(tuning: Tuning = .default) -> EggType? { nil }
     public var hasMetAllFreeSpecies: Bool {
-        let free = Roster.freeSpecies
-        return !free.isEmpty && free.allSatisfy { collection[$0.id]?.hasNormal == true }
+        Roster.all.allSatisfy { collection[$0.id]?.hasNormal == true }
     }
-
-    /// A free player who has seen everything the free tier offers — the moment
-    /// to show what the full collection holds (never before).
-    public var hasCompletedFreeRoster: Bool { !isUnlocked && hasMetAllFreeSpecies }
+    public var hasCompletedFreeRoster: Bool { false }
 
     /// Species IDs from `pool` the player has not hatched in Normal form yet.
     public func unmetSpecies(in pool: [String]) -> [String] {
         pool.filter { collection[$0]?.hasNormal != true }
     }
 
-    /// Species the player could still meet from the eggs of their own tier
-    /// (the free trial egg is not counted: Moon Dust never buys paid content).
+    /// All still-unmet species in enabled content waves (legacy dust redemption).
     public var reachableUnmetSpecies: [String] {
         let reachable = Set(EggType.pickable(isUnlocked: isUnlocked).flatMap { $0.pool(isUnlocked: isUnlocked) })
         return unmetSpecies(in: reachable.sorted { (Roster.species($0)?.number ?? 0) < (Roster.species($1)?.number ?? 0) })
@@ -292,15 +275,12 @@ public struct GameState: Codable, Equatable, Sendable {
     /// applied here, once, so a refund, restore or tuning change can never reroll it.
     private mutating func freezeEgg(tuning: Tuning) {
         guard var current = egg else { return }
-        // A paid-type egg (trial, or started under the unlock) always uses the
-        // paid pool: free pools are empty for Forest / Moon / Crystal.
-        let paid = isUnlocked || !current.type.isFree
-        var roll = HatchEngine.roll(egg: current.type, seed: current.seed, isUnlocked: paid, tuning: tuning)
+        var roll = HatchEngine.roll(egg: current.type, seed: current.seed, isUnlocked: isUnlocked, tuning: tuning)
         // Pity rules draw from a second stream of the same seed, so they are just
         // as deterministic as the base roll.
         var rng = SeededGenerator(seed: current.seed ^ 0x5DEE_CE66_D1CE_4E5B)
 
-        if paid, tuning.newSpeciesPityHatches > 0, hatchesSinceNewSpecies >= tuning.newSpeciesPityHatches {
+        if tuning.newSpeciesPityHatches > 0, hatchesSinceNewSpecies >= tuning.newSpeciesPityHatches {
             let unmet = unmetSpecies(in: current.type.pool(isUnlocked: true))
             if let id = HatchEngine.pick(unmet, rng: &rng), let species = Roster.species(id) {
                 roll = HatchRoll(species: species, isShiny: roll.isShiny)
@@ -308,7 +288,7 @@ public struct GameState: Codable, Equatable, Sendable {
         }
 
         var shiny = roll.isShiny
-        if paid, !shiny {
+        if !shiny {
             if tuning.shinyPityHatches > 0, hatchesSinceShiny + 1 >= tuning.shinyPityHatches {
                 shiny = true
             } else if tuning.maxFriendshipShinyMultiplier > 1,
@@ -374,14 +354,12 @@ public struct GameState: Codable, Equatable, Sendable {
         guard let current = egg else { throw GameError.noEgg }
         guard current.isReady else { throw GameError.eggNotReady }
 
-        // An egg started under the full unlock keeps its paid pool even if the
-        // entitlement later reads as false (refund, restore not yet run).
-        let paidPool = isUnlocked || !current.type.isFree
+        // Sealed eggs retain their original species and Shiny result across upgrades.
         let roll: HatchRoll
         if let id = current.frozenSpeciesID, let species = Roster.species(id), let shiny = current.frozenIsShiny {
             roll = HatchRoll(species: species, isShiny: shiny)
         } else {
-            roll = HatchEngine.roll(egg: current.type, seed: current.seed, isUnlocked: paidPool, tuning: tuning)
+            roll = HatchEngine.roll(egg: current.type, seed: current.seed, isUnlocked: isUnlocked, tuning: tuning)
         }
         let id = roll.species.id
 
@@ -447,9 +425,6 @@ public struct GameState: Codable, Equatable, Sendable {
     public mutating func startEgg(_ type: EggType, seed: UInt64, now: Date, tuning: Tuning = .default) throws -> StepUpdate {
         guard egg == nil else { throw GameError.eggAlreadyIncubating }
         guard type.isPickable else { throw GameError.eggLocked(type) }
-        let isTrial = !isUnlocked && !type.isFree && trialEgg(tuning: tuning) == type
-        guard isUnlocked || type.isFree || isTrial else { throw GameError.eggLocked(type) }
-        if isTrial { trialEggUsed = true }
         egg = ActiveEgg(type: type, seed: seed, creditedSteps: 0, startedAt: now,
                         frozenTargetSteps: type.targetSteps)
         freezeEgg(tuning: tuning)
@@ -470,8 +445,7 @@ public struct GameState: Codable, Equatable, Sendable {
 
     /// Spend Moon Dust to meet a bat the player has not hatched yet (Normal form),
     /// chosen uniformly from the unmet species of every egg they can start.
-    /// A free player who has met all three free bats gets `nothingToDiscover` —
-    /// the honest answer, and the natural moment to show the full collection.
+    /// Legacy balances remain useful; no new dust is granted by default.
     @discardableResult
     public mutating func callNewBat(seed: UInt64, now: Date, tuning: Tuning = .default) throws -> HatchResult {
         guard moonDust >= tuning.moonDustForNewBat else { throw GameError.notEnoughMoonDust }

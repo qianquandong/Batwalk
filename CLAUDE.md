@@ -14,10 +14,12 @@ The 2026-10-10 review (scores, findings, what changed): `docs/REVIEW_2026-10-10.
   New species go in `Roster.catalog` with a `wave`; pools only include enabled waves.
 - **Egg outcomes are sealed at creation** (`GameState.freezeEgg`), pity rules included.
   Nothing after `startEgg` may change what hatches.
-- **Only StoreKit unlocks; only an explicit revocation re-locks** (`EntitlementPolicy`).
-  An unknown entitlement result must never touch the save.
+- **Launch gameplay is fully free.** `SharedConfig.paidContentEnabled` is false.
+  Keep StoreKit plumbing dormant; future purchases are cosmetic only. Payment must
+  never change steps, speed, odds, eggs, species access or Friendship.
+  The legacy entitlement policy still requires verified transactions and never acts on unknown results.
 - Respect the PRD guardrails: no punishment, no pay-to-skip, Step Count only, no AI, no backend.
-  Moon Dust never buys paid content; the trial egg is content, not a skip.
+  Legacy Moon Dust balances remain redeemable; no new dust or trial gate.
 - Battery: no GPS, no workout sessions, no polling faster than HealthKit's hourly background delivery.
 - Privacy: nothing Health-derived goes to CloudKit, WatchConnectivity backups or analytics.
   Analytics are `AnalyticsEvent` names + small string properties only.

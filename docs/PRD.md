@@ -7,7 +7,7 @@
 
 | Status | Primary platform | Language | Monetization |
 |---|---|---|---|
-| Final PRD v1.1 | Apple Watch | English only | Free + $2.99 unlock |
+| Final PRD v1.1 | Apple Watch | English only | Fully free; cosmetics later |
 
 **Contents** — [Locked Decisions](#locked-product-decisions) · [1. Discovery](#1-discovery--problem--opportunity) · [2. Design](#2-design--solution-shape) · [3. Art Direction](#3-art-direction--production-spec) · [4. Build](#4-build--technical-implementation) · [5. Launch](#5-launch--deploy--operate) · [6. Content](#6-launch-content--20-bat-roster) · [7. Scope Lock](#7-mvp-scope-lock) · [8. Definition of Done](#8-mvp-definition-of-done)
 
@@ -24,15 +24,15 @@
 | Visual style | Gentle pixel: coarse readable 2D pixel characters, midnight teal, cream and sage (2026-10-10) |
 | Mood | Cute + cozy + slightly mysterious; never horror-first |
 | Launch roster | 20 bat species |
-| Hatching cadence | Typically 1–2 bats/day; no hard daily cap |
+| Hatching cadence | Multi-day walks; no hard daily hatch cap |
 | Duplicates | Allowed; duplicates add Friendship EXP to level up the owned bat instead of creating junk inventory copies |
 | Companion | One current companion shown on Watch at a time |
 | Naming | Players can rename their owned companion |
 | Day/night | Based on local device time: Day / Dusk / Night |
 | Feeding | Included; fruit rewards add interaction and Friendship. No hunger punishment. |
 | Language | English only at launch |
-| Pricing | Free download; $2.99 one-time purchase unlocks full content (2026-10-10) |
-| Free tier | 3 bats + 2 egg types + complete core hatching/care loop + one trial Forest Egg once all three are met |
+| Pricing | Fully free launch; later purchases cosmetic only (2026-10-23) |
+| Content access | All 20 launch bats and all five eggs are free; Oddballs stay wave 2 |
 | Save | Local-first + iCloud/CloudKit backup/restore |
 | Notifications | Only lightweight events such as Hatch Ready / Bat Awake |
 | AI | **None.** No AI features, AI roadmap, or AI positioning |
@@ -134,7 +134,7 @@ offline collection management remain available on Watch.
 - **Collection** — owned, missing, Normal/Shiny status.
 - **Large View** — presentation-quality bat view for screenshots.
 - **Basic History** — hatch milestones and simple activity history.
-- **Purchase / Restore Purchase.**
+- All launch content is free; purchase routes are dormant.
 
 Habitat is deferred beyond MVP unless schedule permits.
 
@@ -150,10 +150,7 @@ Habitat is deferred beyond MVP unless schedule permits.
 
 Egg progress accumulates across days. The longer eggs are multi-day goals; there is no daily hatch quota or reset.
 
-**Trial egg (Q13, 2026-10-10).** When a free player has met all three free bats, one
-Forest Egg appears in the picker once. It uses the full Forest pool (Shiny possible)
-and costs the full 40,000 steps — a taste of the full collection at the moment the free
-tier runs out, never a step skip.
+**Free launch (Q1/Q13, 2026-10-23).** All five egg types are selectable. Each keeps its designed themed pool, including all enabled species without payment. Starter also remains the first onboarding egg. There is no trial egg or free-roster gate. Oddballs remain content wave 2.
 
 ### 2.7 Duplicate & Friendship System
 
@@ -169,7 +166,7 @@ Duplicates are allowed, but the Collection does not accumulate piles of identica
 
 **Simple duplicate rewards (2026-10-23).** Repeat hatches grant that species' normal rarity-based Friendship EXP and raise its level using the existing Lv.1–5 thresholds. At max level the cumulative EXP is kept. New hatches no longer award Moon Dust; do not add gifts, story chapters, invitations, or another currency. Legacy Moon Dust balances and redemption stay available only to players who already have a balance.
 
-**Longer walks (2026-10-23).** Tiny is 10,000 steps; Forest, Moon, and Crystal use ten times their previous targets. The one-time Starter stays at 2,000 steps. Targets are stored when an egg starts. Existing eggs keep their previous target and credited steps, including eggs already ready to hatch. Progress accumulates across days.
+**Longer walks (2026-10-23).** Tiny is 10,000 steps; Forest, Moon, and Crystal use ten times their previous targets. Starter stays at 2,000 steps. Targets are stored when an egg starts. Existing eggs keep their previous target and credited steps, including eggs already ready to hatch. Progress accumulates across days.
 
 The species-specific actions behind Lv.2–5 are listed in [`BAT_ACTIONS.md`](BAT_ACTIONS.md).
 
@@ -185,18 +182,15 @@ Every species can have a Normal and Shiny variant. Shiny is a palette/visual var
 
 Example: Moonwing → Normal ✅ / Shiny ⬜. Twenty species therefore create up to forty meaningful visual collection targets.
 
-Shiny must be reachable for those targets to mean anything: 3 % per paid hatch, a
+Shiny must be reachable for those targets to mean anything: 3 % per hatch, a
 guaranteed Shiny at least every 40 hatches, and ×3 odds for a species already at Lv.5
 (Q14, 2026-10-10). The outcome is sealed when the egg is created.
 
 ### 2.10 Monetization
 
-| Tier | Contents | Price |
-|---|---|---|
-| Free | 3 bat species, 2 egg types, full basic hatch/care/Friendship loop | $0 |
-| Full Unlock | Every bat, all egg pools, Rare/Legendary/Shiny access, full Friendship progression | $2.99 one-time |
+Launch is fully free. Paid content later is cosmetic only (habitats, costumes, egg shells, Nest). Never sold: steps, speed, odds, eggs, Friendship.
 
-> **Never** sell step skips, better hatch odds, energy, Friendship boosts, or any shortcut that undermines walking.
+All five eggs, the full enabled roster, Shiny, and every Friendship level are available without an entitlement. `SharedConfig.paidContentEnabled` is false. `GameState.isUnlocked`, `EntitlementPolicy`, and `PurchaseManager` remain compatible but dormant. The legacy Full Unlock product is not offered by this version; see RELEASE_READINESS for its existing App Store Connect status.
 
 ---
 
@@ -331,7 +325,7 @@ Minimum states: `egg`, `hatchReady`, `sleeping`, `drowsy`, `awake`, `happy`, `ea
 | Uncommon | 25% |
 | Rare | 8% |
 | Legendary | 1.5% |
-| Shiny modifier | 3% per paid hatch; guaranteed within 40 hatches; ×3 for a Lv.5 species (2026-10-10) |
+| Shiny modifier | 3% per hatch; guaranteed within 40 hatches; ×3 for a Lv.5 species (2026-10-10) |
 
 Exact rates are tuning values for beta and may change without changing the core design.
 
@@ -385,7 +379,7 @@ See [TEST_PLAN.md](TEST_PLAN.md) for which of these are covered by unit tests an
 |---|---|---|---|
 | Alpha | 10–20 testers | Prove the loop feels delightful | ≥80% first-hatch completion; no critical save bugs |
 | Closed Beta | 50–100 Apple Watch users | Validate retention and walking motivation | D7 ~25–30%+; Health permission ≥70%; stable battery feedback |
-| GA | Global App Store, English-only | Test scalable retention and paid conversion | Crash-free >99.5%; core KPIs stable |
+| GA | Global App Store, English-only | Test retention and walking motivation | Crash-free >99.5%; core KPIs stable |
 
 ### 5.2 North Star
 
@@ -442,20 +436,20 @@ See [TEST_PLAN.md](TEST_PLAN.md) for which of these are covered by unit tests an
 | 19 | Galaxy Bat | Legendary | Starfield body, premium particles | Moon / Crystal |
 | 20 | Eclipse Bat | Legendary | Black/gold halo, silent and rare | Special / Moon |
 
-### 6.1 Free Tier Species
+### 6.1 Free Launch Species
 
-Recommended free roster: **Mochi Bat, Cocoa Bat, Long Ear Bat.** Free egg types: **Starter Egg and Tiny Egg.**
+All 20 launch species and all five egg types are free. Pool themes, rarity odds, sealed outcomes and pity rules stay intact. The 12 Oddballs are a content-wave update, never a paid roster tier.
 
 ### 6.2 Current Companion Naming
 
-Species identity remains fixed, but the player can give the owned companion a personal name. Example: Species = Moonwing, Player Name = Luna. The Watch home shows the personal name.
+Species identity remains fixed, but the player can give the owned companion a personal name. Example: Species = Moonwing, Player Name = Luna. The personal name appears in collection and iPhone detail; the quiet Watch home shows only the bat and Feed.
 
 ### 6.3 Oddball Bats (roster expansion, #21–32)
 
 Twelve extra species, each a cute Batwalk take on a **real, genuinely strange bat**.
 They keep the cozy art rules (§3): the real animal is only the hook — round body,
 big eyes, never realistic or scary. Batpedia shows each one's *Real-life Cousin*
-as a one-line fun fact. All are Full Unlock content; the free tier is unchanged.
+as a one-line fun fact. All are free when their content wave is enabled.
 
 | # | Bat | Rarity | Personality / Visual Hook | Primary Egg | Real-life Cousin |
 |---|---|---|---|---|---|
@@ -499,7 +493,7 @@ the App Store a second moment.
 - [ ] SwiftData local save
 - [ ] CloudKit backup / restore
 - [ ] iPhone Batpedia / Collection / Basic History
-- [ ] $2.99 one-time full unlock + Restore Purchase — on the Watch as well as the iPhone
+- [x] Fully free launch; dormant purchase plumbing reserved for future cosmetic content
 - [ ] English-only launch copy
 
 ### 7.2 Explicitly Deferred

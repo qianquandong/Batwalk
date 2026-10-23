@@ -9,17 +9,17 @@ public struct Tuning: Sendable, Equatable {
     /// Relative rarity weights. Renormalised over the rarities actually present
     /// in an egg's pool, so a Tiny Egg (all Common) always yields Common.
     public var rarityWeights: [Rarity: Double]
-    /// Shiny chance per paid hatch. Raised from the PRD's 0.5% target (2026-10-10
+    /// Shiny chance per hatch. Raised from the PRD's 0.5% target (2026-10-10
     /// review): at 1–2 hatches a day, 0.5% made a Shiny a once-a-year event and
     /// left the "64 collection targets" unreachable. ≈ 1 in 33 hatches now.
     public var shinyChance: Double
-    /// A paid player is guaranteed a Shiny at least once every N hatches: the
+    /// Every player is guaranteed a Shiny at least once every N hatches: the
     /// Nth hatch after the last Shiny is sealed Shiny. 0 disables the pity.
     public var shinyPityHatches: Int
     /// Species already at max Friendship roll Shiny with this multiplier, so
     /// bonding with one bat makes *its* Shiny more likely. 1 disables the boost.
     public var maxFriendshipShinyMultiplier: Double
-    /// After N consecutive paid hatches without a new species, the next egg is
+    /// After N consecutive hatches without a new species, the next egg is
     /// sealed to a species the player has not met yet (if its pool still has
     /// one). Keeps the last few bats of a collection from taking months. 0 disables.
     public var newSpeciesPityHatches: Int
@@ -70,11 +70,9 @@ public struct Tuning: Sendable, Equatable {
     /// Fruit inventory cap. Reaching it is never a punishment — extra fruit is simply not added.
     public var maxFruit: Int
 
-    // MARK: Free tier
+    // MARK: Legacy compatibility
 
-    /// One paid-pool egg a free player may start once, after meeting every free
-    /// species — a taste of the full collection (never a skip: it still takes
-    /// the egg's full step target). nil disables the trial.
+    /// Retained for old tooling; the free launch ignores this retired trial setting.
     public var freeTrialEgg: EggType?
 
     // MARK: Day / Dusk / Night (PRD §2.3), local hours, [start, end)
@@ -104,7 +102,7 @@ public struct Tuning: Sendable, Equatable {
         petEXPDailyCap: Int = 10,
         stepsPerFruit: Int = 1_500,
         maxFruit: Int = 9,
-        freeTrialEgg: EggType? = .forest,
+        freeTrialEgg: EggType? = nil,
         duskStartHour: Int = 18,
         nightStartHour: Int = 19,
         dayStartHour: Int = 7,

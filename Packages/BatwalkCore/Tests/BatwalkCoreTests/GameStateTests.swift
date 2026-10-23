@@ -134,19 +134,19 @@ final class GameStateTests: XCTestCase {
         XCTAssertEqual(s.bankedSteps, 0)
     }
 
-    func testCannotStartTwoEggsOrStarterAgainOrLockedEgg() throws {
+    func testCannotStartTwoEggsButAllFiveCanBeChosenAfterHatch() throws {
         var s = started()
         XCTAssertThrowsError(try s.startEgg(.tiny, seed: 1, now: t0)) {
             XCTAssertEqual($0 as? GameError, .eggAlreadyIncubating)
         }
         s.ingestSteps(dayKey: "2026-10-06", dailyTotal: 2_000)
         _ = try s.hatch(now: t0)
-        XCTAssertThrowsError(try s.startEgg(.starter, seed: 1, now: t0))
-        XCTAssertThrowsError(try s.startEgg(.moon, seed: 1, now: t0)) {
-            XCTAssertEqual($0 as? GameError, .eggLocked(.moon))
+        for egg in EggType.allCases {
+            var next = s
+            XCTAssertFalse(next.isUnlocked, "The saved legacy entitlement stays dormant")
+            XCTAssertNoThrow(try next.startEgg(egg, seed: 1, now: t0))
+            XCTAssertEqual(next.egg?.type, egg)
         }
-        s.setUnlocked(true)
-        XCTAssertNoThrow(try s.startEgg(.moon, seed: 1, now: t0))
     }
 
     func testDuplicateAddsFriendshipInsteadOfCopy() throws {

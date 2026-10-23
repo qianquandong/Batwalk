@@ -9,7 +9,6 @@ struct BatpediaView: View {
     @State private var path: [String] = DemoMode.detailSpecies.map { [$0] } ?? []
     @State private var query = ""
     @State private var searching = false
-    @State private var showUnlock = false
 
     private var columns: [GridItem] {
         Array(repeating: GridItem(.flexible(), spacing: 10), count: typeSize.isAccessibilitySize ? 1 : 3)
@@ -41,11 +40,6 @@ struct BatpediaView: View {
                                     BatCard(species: bat, shiny: variant == .shiny,
                                             isCompanion: store.state.companionID == bat.id)
                                 }.buttonStyle(PressableStyle())
-                            } else if !store.state.isUnlocked && !bat.isFree {
-                                // A locked card is the natural place to ask "how do I get this one?"
-                                Button { showUnlock = true } label: { LockedBatCard(number: bat.number) }
-                                    .buttonStyle(PressableStyle())
-                                    .accessibilityHint("Part of the full collection. Shows the unlock.")
                             } else {
                                 LockedBatCard(number: bat.number)
                             }
@@ -54,20 +48,6 @@ struct BatpediaView: View {
                     if species.isEmpty {
                         Text("No discovered bats match your search.")
                             .font(BatwalkFont.body).foregroundStyle(BatwalkColor.textSecondaryLight)
-                    }
-                    if store.state.hasCompletedFreeRoster {
-                        Button { showUnlock = true } label: {
-                            VStack(alignment: .leading, spacing: 4) {
-                                Label("You've met all \(Roster.freeSpecies.count) free bats", systemImage: "sparkles")
-                                    .font(BatwalkFont.headline)
-                                Text("\(Roster.all.count - Roster.freeSpecies.count) more are waiting in the full collection.")
-                                    .font(BatwalkFont.caption).foregroundStyle(BatwalkColor.textSecondaryLight)
-                            }
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .foregroundStyle(BatwalkColor.textPrimaryLight)
-                            .batwalkLightCard()
-                        }
-                        .buttonStyle(PressableStyle())
                     }
                     Text("Every bat has a little personality.")
                         .font(BatwalkFont.caption).foregroundStyle(BatwalkColor.textSecondaryLight)
@@ -80,13 +60,7 @@ struct BatpediaView: View {
             .toolbar(.hidden, for: .navigationBar)
             .navigationTitle("Collection")
             .navigationDestination(for: String.self) { BatDetailPage(speciesID: $0) }
-            .sheet(isPresented: $showUnlock) {
-                UnlockView()
-                    .safeAreaInset(edge: .top) {
-                        HStack { Spacer(); Button("Done") { showUnlock = false }.padding() }
-                            .background(BatwalkColor.lightBackground)
-                    }
-            }
+
         }
         .toolbar(path.isEmpty ? .visible : .hidden, for: .tabBar)
     }

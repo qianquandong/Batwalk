@@ -22,7 +22,7 @@ the game; the iPhone is the companion library.
 
 ```
 Packages/BatwalkCore/   Pure-Swift game rules + unit tests (no UI, no HealthKit)
-  Species.swift           20-bat roster, rarities, free tier
+  Species.swift           20-bat free roster, rarities, content waves
   EggType.swift           egg targets + hatch pools
   HatchEngine.swift       seeded rarity/species/Shiny roll
   StepLedger.swift        HealthKit daily totals → exactly-once step credit
@@ -85,7 +85,7 @@ so the $2.99 unlock can be tested without App Store Connect.
 
 ### Before running on real devices
 
-Sign in to Xcode with the AI Man Jack LLC account. Register the capabilities described in [Signing](docs/SIGNING.md) before enabling them. The default project keeps live widget sharing and cloud backup disabled until that setup is complete. Create the in-app purchase in App Store Connect; `Batwalk.storekit` covers local testing:
+Sign in to Xcode with the AI Man Jack LLC account. Register the capabilities described in [Signing](docs/SIGNING.md) before enabling them. The default project keeps live widget sharing and cloud backup disabled until that setup is complete. The historical Full Unlock IAP is already approved; this free version does not offer it. `Batwalk.storekit` and purchase code remain dormant for future cosmetic-only work:
 
 | Thing | ID |
 |---|---|
@@ -153,7 +153,7 @@ with credit, no commercial use without permission.
 Watch now has two primary pages: the companion (tap to pet, one Feed button) and its egg.
 The companion scene uses the available space for the bat, without a visible name
 or egg progress. Swipe or turn the Digital Crown to reach the egg page.
-Friendship levels, unlock explanations, action replays and purchases live on iPhone.
+Friendship levels, action explanations and replays live on iPhone. Every launch bat and egg is free; no purchase route is shown.
 Opening the Watch app plays one deterministic, unlocked habit appropriate to the time
 of day; page switches and step refreshes do not replay it. The next visit can greet
 again. Pet/feed reactions and rare legendary moments retain their own triggers.

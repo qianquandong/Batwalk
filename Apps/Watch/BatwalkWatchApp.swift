@@ -46,7 +46,7 @@ struct BatwalkWatchApp: App {
                 .environment(store)
                 .environment(purchases)
                 .task {
-                    if !store.isDemo { purchases.start() }
+                    if SharedConfig.paidContentEnabled, !store.isDemo { purchases.start() }
                 }
                 // View-level onChange: reliably tracks @Observable reads (Scene-level may not).
                 // Every entitlement check re-applies, so a save loaded or restored since
@@ -60,8 +60,10 @@ struct BatwalkWatchApp: App {
                         // Refresh on first presentation and after returning from
                         // Settings. Step recovery must not wait for StoreKit.
                         await Self.foregroundSync(store: store, steps: steps)
-                        await purchases.refreshEntitlements()
-                        applyEntitlement()
+                        if SharedConfig.paidContentEnabled {
+                            await purchases.refreshEntitlements()
+                            applyEntitlement()
+                        }
                     }
                 }
         }
@@ -71,7 +73,7 @@ struct BatwalkWatchApp: App {
     /// Only a verified entitlement unlocks and only an explicit revocation re-locks;
     /// an unknown result never changes the save (2026-10-10 review, finding 3b).
     private func applyEntitlement() {
-        guard purchases.hasCheckedEntitlements, !store.isDemo, !store.recoveryRequired,
+        guard SharedConfig.paidContentEnabled, purchases.hasCheckedEntitlements, !store.isDemo, !store.recoveryRequired,
               let unlocked = EntitlementPolicy.unlockedValue(for: purchases.entitlement),
               unlocked != store.state.isUnlocked else { return }
         do { try store.mutate { $0.setUnlocked(unlocked) } } catch { return }

@@ -39,14 +39,14 @@ final class RosterTests: XCTestCase {
         XCTAssertEqual(Roster.all.map(\.id), launch)
     }
 
-    func testOddballBatsArePaidWaveTwoAndHaveARealLifeCousin() {
+    func testOddballBatsAreFreeWaveTwoAndHaveARealLifeCousin() {
         let oddballs = Roster.catalog.filter { $0.number > 20 }
         XCTAssertEqual(oddballs.map(\.id), [
             "bumblebee", "sticky", "marshmallow", "honk", "ember", "nectar",
             "tube-nose", "polka", "wrinkle", "walker", "fox", "ghost",
         ])
         for bat in oddballs {
-            XCTAssertFalse(bat.isFree, "\(bat.id) should need the full unlock")
+            XCTAssertTrue(bat.isFree, "\(bat.id) must never need payment")
             XCTAssertFalse(bat.realLifeCousin?.isEmpty ?? true, "\(bat.id) is missing its real-life cousin")
             XCTAssertEqual(bat.wave, 2, "\(bat.id) ships in the first content update (Q12)")
         }
@@ -79,9 +79,9 @@ final class RosterTests: XCTestCase {
         }
     }
 
-    func testFreeTierIsMochiCocoaLongEar() {
-        XCTAssertEqual(Roster.freeSpecies.map(\.id), ["mochi", "cocoa", "long-ear"])
-        XCTAssertEqual(EggType.allCases.filter(\.isFree), [.starter, .tiny])
+    func testEveryEnabledBatAndEggIsFree() {
+        XCTAssertEqual(Roster.freeSpecies, Roster.all)
+        XCTAssertEqual(EggType.allCases.filter(\.isFree), EggType.allCases)
     }
 
     func testLongEarHatchesFromTinyAndForest() {
@@ -126,8 +126,8 @@ final class RosterTests: XCTestCase {
     }
 
     func testPickableEggs() {
-        XCTAssertEqual(EggType.pickable(isUnlocked: false), [.tiny])
-        XCTAssertEqual(EggType.pickable(isUnlocked: true), [.tiny, .forest, .moon, .crystal])
+        XCTAssertEqual(EggType.pickable(isUnlocked: false), EggType.allCases)
+        XCTAssertEqual(EggType.pickable(isUnlocked: true), EggType.allCases)
     }
 }
 
@@ -146,17 +146,22 @@ final class HatchEngineTests: XCTestCase {
         }
     }
 
-    func testFreePlayerNeverGetsPaidContentOrShiny() {
-        for seed in UInt64(0)..<20_000 {
-            let roll = HatchEngine.roll(egg: .tiny, seed: seed, isUnlocked: false)
-            XCTAssertTrue(roll.species.isFree)
-            XCTAssertFalse(roll.isShiny)
+    func testEntitlementNeverChangesAnyPoolOrShinyOutcome() {
+        for egg in EggType.allCases {
+            XCTAssertEqual(egg.pool(isUnlocked: false), egg.pool(isUnlocked: true))
+            var sawShiny = false
+            for seed in UInt64(0)..<2_000 {
+                let free = HatchEngine.roll(egg: egg, seed: seed, isUnlocked: false)
+                XCTAssertEqual(free, HatchEngine.roll(egg: egg, seed: seed, isUnlocked: true))
+                sawShiny = sawShiny || free.isShiny
+            }
+            XCTAssertTrue(sawShiny, "Every egg can hatch Shiny without payment")
         }
     }
 
-    func testFreeTinyEggCanYieldAllThreeFreeSpecies() {
+    func testTinyEggCanYieldEveryEnabledCommon() {
         let seen = Set((UInt64(0)..<2_000).map { HatchEngine.roll(egg: .tiny, seed: $0, isUnlocked: false).species.id })
-        XCTAssertEqual(seen, ["mochi", "cocoa", "long-ear"])
+        XCTAssertEqual(seen, Set(EggType.tiny.pool))
     }
 
     func testForestRarityDistributionRoughlyMatchesWeights() {

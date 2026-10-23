@@ -40,7 +40,7 @@ public struct Species: Identifiable, Hashable, Codable, Sendable {
     /// Personality / visual hook from the PRD roster (art brief).
     public let hook: String
     /// Part of the free tier.
-    public let isFree: Bool
+    public var isFree: Bool { true }
     /// Display-only lore from the concept board. Does not affect Friendship gain.
     public let favoriteFruit: String?
     /// Display-only Batpedia fun fact: the real bat species this one is based on
@@ -58,7 +58,6 @@ public struct Species: Identifiable, Hashable, Codable, Sendable {
         self.name = name
         self.rarity = rarity
         self.hook = hook
-        self.isFree = isFree
         self.favoriteFruit = favoriteFruit
         self.realLifeCousin = realLifeCousin
         self.wave = wave

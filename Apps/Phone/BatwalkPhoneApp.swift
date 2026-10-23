@@ -37,13 +37,13 @@ struct BatwalkPhoneApp: App {
                 .environment(store)
                 .environment(purchases)
                 .tint(BatwalkColor.accent)
-                .task { if !store.isDemo { purchases.start() } }
+                .task { if SharedConfig.paidContentEnabled, !store.isDemo { purchases.start() } }
                 .onChange(of: scenePhase) { _, phase in
                     if phase == .active {
                         store.load()
                         store.refreshHandoff()
                         store.publishBackupToWatch()
-                        if !store.isDemo { Task { await purchases.refreshEntitlements() } }
+                        if SharedConfig.paidContentEnabled, !store.isDemo { Task { await purchases.refreshEntitlements() } }
                     }
                 }
         }
@@ -57,7 +57,7 @@ enum PhoneTab: Int, Hashable {
 
 struct PhoneRootView: View {
     @State private var tab = PhoneTab(rawValue: DemoMode.page) ?? .companion
-    @State private var settings = DemoMode.scenario == "phone-unlock"
+    @State private var settings = ["phone-settings", "phone-unlock"].contains(DemoMode.scenario ?? "")
 
     var body: some View {
         TabView(selection: $tab) {

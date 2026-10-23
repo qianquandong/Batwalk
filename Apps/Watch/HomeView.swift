@@ -11,7 +11,7 @@ struct HomeView: View {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     @State private var hatching: HatchPresentation?
-    @State private var showEggPicker = false
+    @State private var showEggPicker = DemoMode.scenario == "egg-picker"
     @State private var petCount = 0
     @State private var reaction: BatMood?
     @State private var reactionTask: Task<Void, Never>?
@@ -216,7 +216,7 @@ struct HomeView: View {
     }
 }
 
-/// A quick choice on the wrist; pools, trials and purchase details live on iPhone.
+/// A quick choice on the wrist; pool explanations live on iPhone.
 struct EggPickerView: View {
     @Environment(GameStore.self) private var store
     @Environment(\.dismiss) private var dismiss
@@ -238,10 +238,6 @@ struct EggPickerView: View {
                         }
                         .buttonStyle(.plain)
                         .accessibilityHint("Start this egg. \(type.targetSteps) steps to hatch.")
-                    }
-                    if !store.state.isUnlocked {
-                        Label("More on iPhone", systemImage: "iphone")
-                            .font(BatwalkFont.micro).foregroundStyle(BatwalkColor.textSecondaryDark)
                     }
                 }
                 .padding(.horizontal, BatwalkSpacing.xs)

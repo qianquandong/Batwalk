@@ -8,7 +8,6 @@ struct CollectionPage: View {
     @AppStorage("batwalk.seenBats") private var seenRaw = ""
     @AppStorage("batwalk.seenBatsInitialized") private var seenInitialized = false
     @State private var newIDs: Set<String> = []
-    @State private var showUnlock = false
     @State private var calling: HatchPresentation?
 
     private let columns = Array(repeating: GridItem(.flexible(), spacing: 6), count: 3)
@@ -47,14 +46,12 @@ struct CollectionPage: View {
         .navigationDestination(for: String.self) { BatDetailView(speciesID: $0) }
         .watchPageBackground()
         .onAppear(perform: markNewBats)
-        .sheet(isPresented: $showUnlock) { WatchUnlockView() }
         .fullScreenCover(item: $calling) { presentation in
             HatchSequenceView(presentation: presentation) { calling = nil }
         }
     }
 
-    /// Duplicates of a max-Friendship bat pay Moon Dust; enough dust calls a bat the
-    /// player has not met. Hidden until dust is possible, so it never clutters a new game.
+    /// Earlier versions awarded Moon Dust. Only existing balances show this route.
     @ViewBuilder
     private var moonDustRow: some View {
         let cost = Tuning.default.moonDustForNewBat
@@ -69,9 +66,6 @@ struct CollectionPage: View {
                 if store.state.canCallNewBat() {
                     Button("Call a new bat") { callNewBat() }
                         .buttonStyle(BatwalkPrimaryButtonStyle(minHeight: 34))
-                } else if store.state.moonDust >= cost, !store.state.isUnlocked {
-                    Button("Nothing new to call — see the full collection") { showUnlock = true }
-                        .font(BatwalkFont.micro)
                 } else if store.state.moonDust >= cost {
                     Text("You've met every bat. Dust will matter again when new bats arrive.")
                         .font(BatwalkFont.micro).foregroundStyle(BatwalkColor.textSecondaryDark)
