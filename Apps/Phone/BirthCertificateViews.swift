@@ -96,7 +96,7 @@ struct BirthCertificateCard: View {
             HStack {
                 Text(record.hatchedAt.formatted(date: .abbreviated, time: .omitted))
                 Spacer()
-                Text(record.isShiny ? "3% base Shiny chance" : "A walk worth remembering")
+                Text(record.isShiny ? "\(Int((Tuning.default.shinyChance * 100).rounded()))% base Shiny chance" : "A walk worth remembering")
             }
             .font(.system(size: 8, weight: .medium)).opacity(0.7)
         }

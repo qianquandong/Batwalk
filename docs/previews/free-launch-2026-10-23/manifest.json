@@ -1,0 +1,34 @@
+{
+  "sourceCommit": "920895b3242748c6aea715af4d95f1d852b1f34b",
+  "ci": "https://github.com/qianquandong/Batwalk/actions/runs/39911941462",
+  "screenshots": "https://github.com/qianquandong/Batwalk/actions/runs/39911940378",
+  "launchRoster": true,
+  "watchCount": 29,
+  "phoneCount": 14,
+  "files": [
+    {
+      "path": "phone/collection.png",
+      "sha256": "5fda8b5f797c40830f96b17f720fe68b2c25a18a2d7fc8abcba48d5ad04b59e0"
+    },
+    {
+      "path": "phone/home.png",
+      "sha256": "5175338ffe780dea553f2758f63fd6a53808b8c84085c0cabfcb76625f3f3693"
+    },
+    {
+      "path": "phone/settings.png",
+      "sha256": "2e18b2748b320ae0ffe52341965be6fa14f1e2afd14bb5366801463292d57c72"
+    },
+    {
+      "path": "watch/egg-picker.png",
+      "sha256": "270e5d598ddf13c7ea7c3c72506a2fb26373ca793962d78746d5ce53d764928f"
+    },
+    {
+      "path": "watch/home.png",
+      "sha256": "0df170e25c160648347f572f175e6bdaca95b4fd54f4df48a02a857bbab84b9f"
+    },
+    {
+      "path": "watch/progress.png",
+      "sha256": "bd4d9e1882c79aa790f6c0cdf299112cd39662fe0042db6bd8a6026239999466"
+    }
+  ]
+}
