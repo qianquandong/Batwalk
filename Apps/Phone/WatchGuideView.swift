@@ -42,7 +42,9 @@ struct WatchGuideView: View {
                 Text("Duplicates of a Lv. 5 bat give Moon Dust. \(Tuning.default.moonDustForNewBat) dust calls a new bat. For offline management, open the egg page on Watch, tap •••, then My bats. Nicknames, Shiny appearance and Moon Dust remain available there.")
             }
             Section("Step Count help") {
-                Text("If steps are missing, check Batwalk's Step Count permission in the Health app on your iPhone. Then open Batwalk on Watch → egg page → ••• → Step access → Update steps.")
+                Text("Before the first egg starts, tap Enable Steps on your Watch and allow Step Count. Batwalk starts after it receives steps. If you haven't walked yet today, walk a few steps, then tap Check again.")
+                Text("If you dismissed the permission screen or turned Steps off, open Settings on your Watch → Health → Apps → Batwalk and turn on Steps. Return to Batwalk to check again. You can also manage access in iPhone Health → profile → Apps.")
+                Text("Already playing? Tap Check Steps on the egg page when it appears, or open ••• → Step access → Update steps. Batwalk reads the Health data available on your Watch; the iPhone companion does not send phone step totals to it.")
                 Text("Zero steps can mean no recorded walking or limited access; it does not prove permission was denied. Batwalk only reads Step Count and never writes to Health.")
                 Text("Hatch and dusk alerts are optional. Change them in Watch → egg page → •••. If alerts are blocked, review notification permissions in device settings.")
             }

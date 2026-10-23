@@ -9,6 +9,7 @@ struct RootView: View {
     let steps: StepService
 
     @State private var page = DemoMode.page == 1 ? 1 : 0
+    @State private var stepSetup = StepSetupCoordinator()
 
     var body: some View {
         Group {
@@ -26,6 +27,9 @@ struct RootView: View {
                     }
                 }.padding()
             }
+        } else if DemoMode.stepSetupStatus != nil ||
+                    (store.state.hasStarted && !store.isDemo && StepSetupCoordinator.needsSetup(for: store.state)) {
+            StepSetupView(steps: steps, setup: stepSetup)
         } else if store.state.hasStarted {
             TabView(selection: $page) {
                 HomeView(page: $page).environment(\.batPageVisible, page == 0).tag(0)
@@ -33,7 +37,7 @@ struct RootView: View {
             }
             .tabViewStyle(.verticalPage)
         } else {
-            OnboardingView(steps: steps)
+            OnboardingView(steps: steps, setup: stepSetup)
         }
         }
         .dynamicTypeSize(DemoMode.scenario?.hasSuffix("large-type") == true ? .accessibility3 : typeSize)
@@ -55,11 +59,14 @@ struct RootView: View {
 struct OnboardingView: View {
     @Environment(GameStore.self) private var store
     let steps: StepService
+    let setup: StepSetupCoordinator
 
     @State private var step = 0
-    @State private var isWorking = false
 
     var body: some View {
+        if step == 2 {
+            StepSetupView(steps: steps, setup: setup)
+        } else {
         VStack(spacing: BatwalkSpacing.sm) {
             Spacer(minLength: 0)
             if step == 0 {
@@ -84,34 +91,15 @@ struct OnboardingView: View {
                     do { try store.restore(backup) } catch { Haptics.failure() }
                 }
                 .font(BatwalkFont.micro)
-                .disabled(isWorking)
             }
-            Button(step < 2 ? "Next" : "Let it hatch") {
-                if step < 2 {
-                    withAnimation(.easeInOut(duration: 0.6)) { step += 1 }
-                } else {
-                    begin()
-                }
+            Button("Next") {
+                withAnimation(.easeInOut(duration: 0.6)) { step += 1 }
             }
             .buttonStyle(BatwalkPrimaryButtonStyle(minHeight: 40))
             .doubleTapPrimaryAction()
-            .disabled(isWorking)
         }
         .padding(.horizontal, BatwalkSpacing.sm)
         .watchPageBackground(.night, scenery: step > 0)
-    }
-
-    private func begin() {
-        isWorking = true
-        Task { @MainActor in
-            let granted = await steps.requestAuthorization()
-            store.analytics.log(.stepPermissionResult, properties: ["completed": granted ? "true" : "false"])
-            do { try store.mutate { $0.start(seed: UInt64.random(in: .min ... .max), now: .now) } }
-            catch { isWorking = false; return }
-            // Credit steps already earned today (PRD §2.2 step 6).
-            await store.syncSteps(using: steps)
-            store.analytics.log(.onboardingComplete, properties: [:])
-            isWorking = false
         }
     }
 }

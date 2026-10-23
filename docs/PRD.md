@@ -96,8 +96,8 @@ WALK AGAIN ← NEW EGG ← BUILD FRIENDSHIP ← CHOOSE CURRENT COMPANION
 2. Dark screen: "Something is sleeping in here..."
 3. An egg appears.
 4. Message: "Your steps help it hatch."
-5. Ask for Step Count permission.
-6. Read already-earned steps from today and credit them immediately.
+5. Show a dedicated **Enable Steps** screen, then ask for Step Count permission on Watch.
+6. Verify a positive HealthKit reading before starting the first playable egg; credit today's steps through the normal ledger. Dismissal, query failure or zero readings keep a recoverable setup screen. Zero is not proof of denial: ask the player to enable Steps, walk a few steps and check again, with Watch Settings → Health → Apps → Batwalk instructions. Returning from Settings rechecks automatically. Existing zero-reading saves get the same recovery flow without replacing their egg. Players with previous step credit remain able to visit their bats on zero-step days.
 7. Starter Egg target: 2,000 steps.
 8. At 100%, Watch haptic + "Ready to hatch."
 9. User turns the Digital Crown (or taps the egg) to crack it open, entirely on Watch; light in the rarity's colour leaks out before the reveal.

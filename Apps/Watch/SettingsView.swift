@@ -70,9 +70,11 @@ struct SettingsView: View {
 
 struct HealthAccessView: View {
     @Environment(GameStore.self) private var store
+    @Environment(\.scenePhase) private var scenePhase
     let steps: StepService
     @Binding var status: HealthStatus
     @State private var isWorking = false
+    @State private var showHelp = false
 
     var body: some View {
         ScrollView {
@@ -80,22 +82,40 @@ struct HealthAccessView: View {
                 Label(status.label, systemImage: status == .connected ? "checkmark.circle" : "heart")
                     .font(BatwalkFont.caption)
                 Button(isWorking ? "Updating…" : "Update steps") {
-                    isWorking = true
-                    Task { @MainActor in
-                        _ = await steps.requestAuthorization()
-                        await store.syncSteps(using: steps)
-                        status = await Self.currentStatus(steps: steps, state: store.state)
-                        isWorking = false
-                    }
+                    Task { await update(requestAccess: true) }
                 }
                 .buttonStyle(BatwalkPrimaryButtonStyle())
                 .disabled(isWorking)
-                Label("Help on iPhone", systemImage: "iphone")
-                    .font(BatwalkFont.micro).foregroundStyle(BatwalkColor.textSecondaryDark)
+                if status != .connected {
+                    Button("How to enable Steps") { showHelp = true }
+                        .font(BatwalkFont.caption)
+                        .frame(minHeight: 44)
+                }
             }.padding(.horizontal, BatwalkSpacing.xs)
         }
         .navigationTitle("Steps")
         .watchPageBackground()
+        .sheet(isPresented: $showHelp) { StepPermissionHelpView() }
+        .task { await update(requestAccess: false) }
+        .onChange(of: scenePhase) { _, phase in
+            if phase == .active { Task { await update(requestAccess: false) } }
+        }
+    }
+
+    private func update(requestAccess: Bool) async {
+        guard !isWorking else { return }
+        guard !store.isDemo else {
+            status = DemoMode.healthStatus ?? .connected
+            return
+        }
+        isWorking = true
+        defer { isWorking = false }
+        if requestAccess, !(await steps.requestAuthorization()) {
+            status = .needsAttention
+            return
+        }
+        await store.syncSteps(using: steps)
+        status = await Self.currentStatus(steps: steps, state: store.state)
     }
 
     @MainActor

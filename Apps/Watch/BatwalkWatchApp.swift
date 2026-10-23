@@ -53,17 +53,19 @@ struct BatwalkWatchApp: App {
                 // the last check still picks up the verified result.
                 .onChange(of: purchases.entitlementVersion) { _, _ in applyEntitlement() }
                 .onChange(of: store.state.saveID) { _, _ in applyEntitlement() }
+                .onChange(of: scenePhase, initial: true) { _, phase in
+                    if phase == .background { store.endCompanionVisit() }
+                    guard phase == .active, !store.isDemo else { return }
+                    Task {
+                        // Refresh on first presentation and after returning from
+                        // Settings. Step recovery must not wait for StoreKit.
+                        await Self.foregroundSync(store: store, steps: steps)
+                        await purchases.refreshEntitlements()
+                        applyEntitlement()
+                    }
+                }
         }
         .modelContainer(container)
-        .onChange(of: scenePhase) { _, phase in
-            if phase == .background { store.endCompanionVisit() }
-            guard phase == .active else { return }
-            Task {
-                await purchases.refreshEntitlements()
-                await Self.foregroundSync(store: store, steps: steps)
-                applyEntitlement()
-            }
-        }
     }
 
     /// Only a verified entitlement unlocks and only an explicit revocation re-locks;
