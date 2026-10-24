@@ -39,7 +39,7 @@ final class GameStore {
     @ObservationIgnored private var openingSaveID: UUID?
 
     init(container: ModelContainer, role: Role, archive: SaveArchive? = nil,
-         tuning: Tuning = SharedConfig.gameTuning,
+         tuning: Tuning = SharedConfig.animationTestingEnabled ? .animationTesting : .default,
          commit: @escaping (ModelContext) throws -> Void = { try $0.save() },
          onCommit: ((Data) -> Void)? = nil) {
         self.container = container

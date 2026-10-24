@@ -1,5 +1,4 @@
 import Foundation
-import BatwalkCore
 
 /// Identifiers that must match project.yml, the entitlements, and App Store Connect.
 enum SharedConfig {
@@ -11,7 +10,6 @@ enum SharedConfig {
 
     /// Explicit opt-in for an animation review build; ordinary releases stay off.
     static var animationTestingEnabled: Bool { enabled("BatwalkAnimationTesting") }
-    static var gameTuning: Tuning { animationTestingEnabled ? .animationTesting : .default }
 
     /// Cloud collection backup and live widgets are independent capabilities.
     /// They need an App Group and an
