@@ -23,9 +23,13 @@ on:
         type: boolean
         default: true
       build_number:
-        description: "Build number greater than the latest TestFlight build (blank = GitHub run number)"
+        description: "Build number greater than the latest Apple build (blank = latest Apple build + 1)"
         type: string
         required: false
+      animation_testing:
+        description: "Animation review: every egg takes 1 step and all animations can be previewed"
+        type: boolean
+        default: false
       runner:
         description: "Standard Mac runner pool (Intel is a fallback when Apple Silicon is queued)"
         type: choice
@@ -42,21 +46,15 @@ jobs:
   testflight:
     name: Archive, sign, upload
     runs-on: ${{ inputs.runner == 'macos-15-intel' && 'macos-15-intel' || 'macos-15' }}
-    timeout-minutes: 45
+    timeout-minutes: 60
     env:
-      BUILD_NUMBER: ${{ inputs.build_number || github.run_number }}
+      REQUESTED_BUILD_NUMBER: ${{ inputs.build_number }}
+      BATWALK_ANIMATION_TESTING: ${{ inputs.animation_testing && 'YES' || 'NO' }}
       BATWALK_APP_GROUP: ${{ vars.BATWALK_APP_GROUP_ENABLED }}
       BATWALK_CLOUD_BACKUP: ${{ vars.BATWALK_CLOUD_BACKUP_ENABLED }}
       BATWALK_GAME_CENTER: ${{ vars.BATWALK_GAME_CENTER_ENABLED }}
     steps:
       - uses: actions/checkout@v4
-
-      - name: Validate build number
-        run: |
-          if [[ ! "$BUILD_NUMBER" =~ ^[1-9][0-9]{0,3}$ ]]; then
-            echo "::error::Build number must be an integer from 1 to 9999"
-            exit 1
-          fi
 
       - name: Check secrets are set
         env:
@@ -86,6 +84,22 @@ jobs:
           printf '%s\n' "$ASC_KEY_P8" > "$key_path"
           chmod 600 "$key_path"
           echo "ASC_KEY_PATH=$key_path" >> "$GITHUB_ENV"
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install App Store Connect signing library
+        run: python3 -m pip install 'PyJWT[crypto]==2.10.1'
+
+      - name: Select an unused build number from Apple
+        env:
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+        run: |
+          python3 scripts/testflight-status.py preflight --app-id 6819895282 \
+            --requested-build "$REQUESTED_BUILD_NUMBER" --github-env "$GITHUB_ENV" \
+            --report "$RUNNER_TEMP/testflight-preflight.json"
 
       - name: Select Xcode 26+
         run: scripts/select-xcode.sh
@@ -129,6 +143,7 @@ jobs:
             AD_HOC_CODE_SIGNING_ALLOWED=YES \
             PROVISIONING_PROFILE_SPECIFIER= \
             CURRENT_PROJECT_VERSION="$BUILD_NUMBER" \
+            BATWALK_ANIMATION_TESTING="$BATWALK_ANIMATION_TESTING" \
             archive
 
       - name: Verify embedded apps, privacy manifests and Watch Health entitlements
@@ -140,6 +155,7 @@ jobs:
             2> "$RUNNER_TEMP/watch-entitlements-diagnostics.log"
           python3 scripts/verify-testflight-archive.py "$RUNNER_TEMP/Batwalk.xcarchive" \
             --build-number "$BUILD_NUMBER" \
+            --animation-testing "$BATWALK_ANIMATION_TESTING" \
             --watch-entitlements "$RUNNER_TEMP/watch-entitlements.plist" \
             --report "$RUNNER_TEMP/archive-verification.json"
 
@@ -159,16 +175,40 @@ jobs:
           ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
           ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
         run: |
+          cp Config/ExportOptions.plist "$RUNNER_TEMP/ExportOptions.plist"
+          if [ "$BATWALK_ANIMATION_TESTING" = "YES" ]; then
+            /usr/libexec/PlistBuddy -c 'Set :testFlightInternalTestingOnly true' "$RUNNER_TEMP/ExportOptions.plist"
+          fi
           scripts/ci-xcodebuild.sh \
             -exportArchive \
             -archivePath "$RUNNER_TEMP/Batwalk.xcarchive" \
-            -exportOptionsPlist Config/ExportOptions.plist \
+            -exportOptionsPlist "$RUNNER_TEMP/ExportOptions.plist" \
             -exportPath "$RUNNER_TEMP/export" \
             -allowProvisioningUpdates \
             -authenticationKeyPath "$ASC_KEY_PATH" \
             -authenticationKeyID "$ASC_KEY_ID" \
             -authenticationKeyIssuerID "$ASC_ISSUER_ID"
           echo "::notice::Build $BUILD_NUMBER uploaded. It appears in TestFlight after Apple finishes processing (usually 5–20 min)."
+
+      - name: Verify Apple processing and internal beta availability
+        if: ${{ (github.event_name == 'workflow_dispatch' && inputs.upload) || (github.event_name == 'push' && github.ref_name == 'testflight') }}
+        env:
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+        run: |
+          python3 scripts/testflight-status.py status --app-id 6819895282 \
+            --build-number "$BUILD_NUMBER" --wait-seconds 900 --interval-seconds 30 \
+            --report "$RUNNER_TEMP/testflight-status.json"
+
+      - name: Save sanitized Apple build status
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: testflight-status
+          path: |
+            ${{ runner.temp }}/testflight-preflight.json
+            ${{ runner.temp }}/testflight-status.json
+          if-no-files-found: warn
 
       - name: Remove API key and private verification files
         if: always()

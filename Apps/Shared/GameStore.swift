@@ -12,6 +12,7 @@ final class GameStore {
     enum Role { case watch, phone }
     private(set) var state = GameState()
     let role: Role
+    let tuning: Tuning
     private(set) var lastError: String?
     private(set) var recoveryRequired = false
     /// A collection that could be restored: a local/CloudKit backup row, or the
@@ -38,12 +39,14 @@ final class GameStore {
     @ObservationIgnored private var openingSaveID: UUID?
 
     init(container: ModelContainer, role: Role, archive: SaveArchive? = nil,
+         tuning: Tuning = SharedConfig.animationTestingEnabled ? .animationTesting : .default,
          commit: @escaping (ModelContext) throws -> Void = { try $0.save() },
          onCommit: ((Data) -> Void)? = nil) {
         self.container = container
         context = container.mainContext
         context.autosaveEnabled = false
         self.role = role
+        self.tuning = tuning
         self.archive = archive ?? SaveArchive(name: role == .watch ? "watch" : "phone")
         self.commit = commit
         self.onCommit = onCommit
@@ -58,6 +61,13 @@ final class GameStore {
 
     func load() {
         guard !isDemo else { return }
+        defer {
+            // Upgrading to the review build also shortens an existing egg.
+            // Persist through the usual transaction so failures never publish it.
+            if role == .watch, !recoveryRequired, tuning.eggTargetStepsOverride != nil {
+                try? mutate { $0.applyEggTargetOverride(using: tuning) }
+            }
+        }
         if role == .phone { try? archive.sanitizeMirrorCopies() }
         if role == .phone, let cached = archive.load() {
             // The read-only phone cache is newer than any legacy SwiftData row.
@@ -134,7 +144,9 @@ final class GameStore {
         precondition(role == .watch, "The iPhone mirror never mutates the game")
         guard !recoveryRequired else { throw StoreError.recoveryRequired }
         var next = state
+        next.applyEggTargetOverride(using: tuning)
         let result = try body(&next)
+        next.applyEggTargetOverride(using: tuning)
         guard next != state else { return result }
         if isDemo { state = next; return result }
         next.advanceRevision()

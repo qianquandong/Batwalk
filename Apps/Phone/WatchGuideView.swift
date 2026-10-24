@@ -29,7 +29,7 @@ struct WatchGuideView: View {
                         EggIcon(type: egg, size: 34).accessibilityHidden(true)
                         VStack(alignment: .leading, spacing: 5) {
                             Text(egg.displayName).font(BatwalkFont.headline)
-                            Text("\(egg.targetSteps.formatted()) steps")
+                            Text(SharedConfig.animationTestingEnabled ? "1 step" : "\(egg.targetSteps.formatted()) steps")
                             Text(egg.pool(isUnlocked: true).compactMap { Roster.species($0)?.name }.joined(separator: ", "))
                                 .foregroundStyle(BatwalkColor.textSecondaryLight)
                         }

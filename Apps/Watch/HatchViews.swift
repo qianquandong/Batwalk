@@ -7,6 +7,8 @@ struct HatchPresentation: Identifiable {
     let egg: EggType
     /// Skip straight to the reveal (demo / screenshots, Moon Dust calls).
     var startRevealed = false
+    /// The first reveal introduces the companion before any next-egg choice.
+    var isFirstCompanion = false
 }
 
 /// Hatch Ready (board: Watch › 5. Hatch Ready), now something the player *does*:
@@ -15,10 +17,14 @@ struct HatchPresentation: Identifiable {
 /// who would rather press a button (VoiceOver, AssistiveTouch, Reduce Motion).
 struct HatchReadyView: View {
     let egg: ActiveEgg
-    let onHatch: () -> Void
+    var showHint = false
+    let onHatch: () -> Bool
 
     private let ambient = AmbientMotionReader()
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.dynamicTypeSize) private var typeSize
+    @Environment(\.scenePhase) private var scenePhase
+    @Environment(\.batPageVisible) private var pageVisible
     @State private var glowing = false
     /// 0…1: how far the shell has been opened with the crown or taps.
     @State private var crack: Double = 0
@@ -26,34 +32,20 @@ struct HatchReadyView: View {
     @State private var hatched = false
     @FocusState private var crownFocused: Bool
 
+    private var motionAllowed: Bool { ambient.allowed && scenePhase == .active && pageVisible }
+
     var body: some View {
         GeometryReader { geo in
-            let stage = geo.size.height * 0.65
-            VStack(spacing: 3) {
-                ZStack {
-                    Circle()
-                        .fill(BatwalkGradient.hatchGlow)
-                        .frame(width: stage * 1.02, height: stage * 1.02)
-                        .scaleEffect((glowing ? 1.08 : 0.94) + crack * 0.1)
-                        .opacity(glowing ? 1 : 0.75)
-                    // Light leaks through the shell as it opens.
-                    Circle()
-                        .fill(BatwalkColor.moonlight.opacity(0.4 * crack))
-                        .frame(width: stage * 0.7, height: stage * 0.7)
-                        .blur(radius: 6)
-                    SparkleField(count: 5, spread: stage * 0.5)
-                    EggSprite(type: egg.type, state: crack >= 0.5 ? .cracked : .ready, size: stage * 0.86, animated: false)
-                        .rotationEffect(.degrees(reduceMotion ? 0 : sin(crack * .pi * 6) * 4), anchor: .bottom)
-                        .scaleEffect(1 + crack * 0.06)
-                        .idleFloat(crack == 0)
-                        .contentShape(Rectangle())
-                        .onTapGesture { advance(by: 0.34) }
-                        .accessibilityLabel("Egg, \(Int(crack * 100)) percent open")
-                        .accessibilityHint("Tap three times, or turn the Digital Crown, to crack it open")
-                        .accessibilityAddTraits(.isButton)
+            VStack(spacing: 4) {
+                if typeSize.isAccessibilitySize {
+                    ScrollView {
+                        readyContent(stage: 44)
+                    }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                } else {
+                    readyContent(stage: min(112, max(44, geo.size.height - (showHint ? 92 : 54))))
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
                 }
-                .frame(height: stage)
-                Spacer(minLength: 2)
                 Button(action: hatchNow) {
                     HStack(spacing: 6) {
                         EggIcon(type: egg.type, size: 16)
@@ -62,6 +54,7 @@ struct HatchReadyView: View {
                 }
                 .buttonStyle(BatwalkPrimaryButtonStyle(minHeight: 44))
                 .doubleTapPrimaryAction()
+                .fixedSize(horizontal: false, vertical: true)
             }
             .padding(.horizontal, BatwalkSpacing.sm)
             .frame(width: geo.size.width, height: geo.size.height)
@@ -71,13 +64,61 @@ struct HatchReadyView: View {
         .digitalCrownRotation($crack, from: 0, through: 1, by: 0.02, sensitivity: .medium,
                               isContinuous: false, isHapticFeedbackEnabled: false)
         .onChange(of: crack) { _, value in tick(value) }
-        .onAppear { crownFocused = true }
-        .task(id: ambient.allowed) {
+        .onAppear { crownFocused = pageVisible }
+        .onChange(of: pageVisible) { _, visible in crownFocused = visible }
+        .task(id: motionAllowed) {
             stopMotion { glowing = false }
-            guard ambient.allowed else { return }
-            withAnimation(BatwalkMotion.hatchGlow) { glowing = true }
+            guard motionAllowed else { return }
+            // A short invitation, then a still egg. No repeating glow while
+            // the player reads the first-use hint or leaves the Watch idle.
+            for _ in 0..<2 {
+                withAnimation(.easeInOut(duration: 0.65)) { glowing = true }
+                guard (try? await Task.sleep(for: .milliseconds(650))) != nil else { return }
+                withAnimation(.easeInOut(duration: 0.65)) { glowing = false }
+                guard (try? await Task.sleep(for: .milliseconds(650))) != nil else { return }
+            }
         }
         .onDisappear { stopMotion { glowing = false } }
+    }
+
+    private func readyContent(stage: CGFloat) -> some View {
+        VStack(spacing: 4) {
+            if showHint, typeSize.isAccessibilitySize { readyHint }
+            ZStack {
+                Circle()
+                    .fill(BatwalkGradient.hatchGlow)
+                    .frame(width: stage, height: stage)
+                    .scaleEffect((glowing ? 1.08 : 0.94) + crack * 0.1)
+                    .opacity(glowing ? 1 : 0.75)
+                Circle()
+                    .fill(BatwalkColor.moonlight.opacity(0.4 * crack))
+                    .frame(width: stage * 0.7, height: stage * 0.7)
+                    .blur(radius: 6)
+                Button { advance(by: 0.34) } label: {
+                    EggSprite(type: egg.type, state: crack >= 0.5 ? .cracked : .ready,
+                              size: stage * 0.86, animated: false)
+                        .rotationEffect(.degrees(reduceMotion ? 0 : sin(crack * .pi * 6) * 4), anchor: .bottom)
+                        .scaleEffect(1 + crack * 0.06)
+                        .frame(width: stage, height: stage)
+                        .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel("Egg")
+                .accessibilityValue("\(Int(crack * 100)) percent open")
+                .accessibilityHint("Tap three times, or turn the Digital Crown, to crack it open")
+            }
+            .frame(height: stage)
+            if showHint, !typeSize.isAccessibilitySize { readyHint }
+        }
+        .frame(maxWidth: .infinity)
+    }
+
+    private var readyHint: some View {
+        Text("Tap the egg or turn the Crown.")
+            .font(BatwalkFont.caption)
+            .foregroundStyle(BatwalkColor.textSecondaryDark)
+            .multilineTextAlignment(.center)
+            .fixedSize(horizontal: false, vertical: true)
     }
 
     private func advance(by amount: Double) {
@@ -98,7 +139,12 @@ struct HatchReadyView: View {
     private func hatchNow() {
         guard !hatched else { return }
         hatched = true
-        onHatch()
+        if !onHatch() {
+            // A failed save leaves this egg intact and immediately retryable.
+            hatched = false
+            crack = 0
+            lastTick = 0
+        }
     }
 }
 
@@ -139,7 +185,7 @@ struct HatchSequenceView: View {
     // A presented cover can resolve its size outside the root's demo override.
     // Apply the capture override at this presentation boundary as well.
     private var revealTypeSize: DynamicTypeSize {
-        DemoMode.scenario == "reveal-large-type" ? .accessibility3 : typeSize
+        DemoMode.scenario?.hasSuffix("large-type") == true ? .accessibility3 : typeSize
     }
 
     var body: some View {
@@ -178,7 +224,7 @@ struct HatchSequenceView: View {
         GeometryReader { geometry in
             VStack(spacing: 4) {
                 if revealTypeSize.isAccessibilitySize {
-                    ScrollView { revealDetails(pictureSize: 60) }
+                    ScrollView { revealDetails(pictureSize: presentation.isFirstCompanion ? 48 : 60) }
                 } else {
                     // Reserve space for the name, chips and Continue first. A
                     // scroll view's flexible proposal otherwise hides the labels
@@ -186,9 +232,10 @@ struct HatchSequenceView: View {
                     revealDetails(pictureSize: min(112, max(36, geometry.size.height - 76)))
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                 }
-                Button("Continue", action: onDone)
+                Button(presentation.isFirstCompanion ? "Say hello" : "Continue", action: onDone)
                     .buttonStyle(BatwalkPrimaryButtonStyle(minHeight: 44))
                     .doubleTapPrimaryAction()
+                    .fixedSize(horizontal: false, vertical: true)
                     .padding(.bottom, 4)
             }
             .padding(.horizontal, BatwalkSpacing.sm)
@@ -198,6 +245,9 @@ struct HatchSequenceView: View {
 
     private func revealDetails(pictureSize: CGFloat) -> some View {
         VStack(spacing: 4) {
+            if presentation.isFirstCompanion, revealTypeSize.isAccessibilitySize {
+                firstCompanionTitle
+            }
             ZStack {
                 Circle()
                     .fill(RadialGradient(colors: [(special ? rarity.color : BatwalkColor.accentSoft).opacity(special ? 0.22 : 0.12), .clear],
@@ -209,7 +259,9 @@ struct HatchSequenceView: View {
                     .scaleEffect(revealScale)
             }
             .frame(height: pictureSize)
-            if record.outcome == .duplicate {
+            if presentation.isFirstCompanion {
+                if !revealTypeSize.isAccessibilitySize { firstCompanionTitle }
+            } else if record.outcome == .duplicate {
                 Label("+\(presentation.result.friendshipGained) XP", systemImage: "heart")
                     .font(BatwalkFont.headline)
                     .foregroundStyle(BatwalkColor.cloud)
@@ -222,9 +274,12 @@ struct HatchSequenceView: View {
         .frame(maxWidth: .infinity)
     }
 
-    @ViewBuilder private var revealChips: some View {
-        RarityChip(rarity: rarity)
-        if record.isShiny { VariantChip(shiny: true) }
+    private var firstCompanionTitle: some View {
+        Text("Meet \(species?.name.replacingOccurrences(of: " Bat", with: "") ?? "your new friend")")
+            .font(BatwalkFont.headline)
+            .foregroundStyle(BatwalkColor.cloud)
+            .multilineTextAlignment(.center)
+            .fixedSize(horizontal: false, vertical: true)
     }
 
     /// Sleeps; false if the cover was dismissed (task cancelled) so the sequence stops.

@@ -14,7 +14,7 @@ def read_plist(path):
         raise ValueError(f"Missing or invalid archive plist: {path.name}") from error
 
 
-def verify_archive(archive, build_number, watch_entitlements):
+def verify_archive(archive, build_number, watch_entitlements, animation_testing=False):
     phone = Path(archive) / "Products/Applications/Batwalk.app"
     watch = phone / "Watch/Batwalk.app"
     widget = watch / "PlugIns/BatwalkComplication.appex"
@@ -48,6 +48,11 @@ def verify_archive(archive, build_number, watch_entitlements):
     phone_info = read_plist(phone / "Info.plist")
     watch_info = read_plist(watch / "Info.plist")
     widget_info = read_plist(widget / "Info.plist")
+    for name, info in (("iPhone", phone_info), ("Watch", watch_info)):
+        flag = info.get("BatwalkAnimationTesting", "NO")
+        actual = flag is True or (isinstance(flag, str) and flag.upper() == "YES")
+        if actual != animation_testing:
+            raise ValueError(f"Animation testing flag mismatch: {name}")
     if watch_info.get("WKCompanionAppBundleIdentifier") != expected[0][1] or not watch_info.get("WKApplication"):
         raise ValueError("Watch app is not linked to the iPhone companion")
     if widget_info.get("NSExtension", {}).get("NSExtensionPointIdentifier") != "com.apple.widgetkit-extension":
@@ -62,6 +67,7 @@ def verify_archive(archive, build_number, watch_entitlements):
         if entitlements.get(key) is not True:
             raise ValueError(f"Required Watch entitlement missing: {key}")
     return {"version": version, "build_number": str(build_number), "bundles": bundles,
+            "animation_testing": animation_testing,
             "watch_health_entitlements": True, "stage": "pre-upload archive; distribution signing occurs during Xcode export"}
 
 
@@ -70,10 +76,12 @@ if __name__ == "__main__":
     parser.add_argument("archive", type=Path)
     parser.add_argument("--build-number", required=True)
     parser.add_argument("--watch-entitlements", type=Path, required=True)
+    parser.add_argument("--animation-testing", choices=("YES", "NO"), default="NO")
     parser.add_argument("--report", type=Path, required=True)
     args = parser.parse_args()
     try:
-        result = verify_archive(args.archive, args.build_number, args.watch_entitlements)
+        result = verify_archive(args.archive, args.build_number, args.watch_entitlements,
+                                animation_testing=args.animation_testing == "YES")
     except ValueError as error:
         parser.exit(1, f"Archive validation failed: {error}\n")
     args.report.parent.mkdir(parents=True, exist_ok=True)

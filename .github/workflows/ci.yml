@@ -36,7 +36,7 @@ jobs:
       - name: Test optional Game Center capabilities
         run: python3 -m unittest discover -s scripts/tests -p 'test_game_center_*.py'
       - name: Test TestFlight archive verification
-        run: python3 -m unittest discover -s scripts/tests -p 'test_testflight_archive.py'
+        run: python3 -m unittest discover -s scripts/tests -p 'test_testflight_*.py'
       - uses: actions/setup-node@v4
         with:
           node-version: '22'

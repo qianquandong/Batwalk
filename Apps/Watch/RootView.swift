@@ -10,10 +10,14 @@ struct RootView: View {
 
     @State private var page = DemoMode.page == 1 ? 1 : 0
     @State private var stepSetup = StepSetupCoordinator()
+    @State private var onboarding = DemoMode.makeWatchOnboarding()
+    @State private var tutorialPrepared = false
 
     var body: some View {
         Group {
-        if DemoMode.scenario == "pilot-lab" {
+        if !tutorialPrepared {
+            Color.clear.watchPageBackground()
+        } else if DemoMode.scenario == "pilot-lab" {
             NavigationStack { PilotAnimationLab() }
         } else if store.recoveryRequired {
             ScrollView {
@@ -40,7 +44,21 @@ struct RootView: View {
             OnboardingView(steps: steps, setup: stepSetup)
         }
         }
+        .environment(onboarding)
         .dynamicTypeSize(DemoMode.scenario?.hasSuffix("large-type") == true ? .accessibility3 : typeSize)
+        .onAppear {
+            if !store.recoveryRequired { onboarding.prepare(for: store.state) }
+            tutorialPrepared = true
+        }
+        .onChange(of: store.state) { _, state in
+            if !store.recoveryRequired { onboarding.reconcile(with: state) }
+        }
+        .onChange(of: store.recoveryRequired) { _, required in
+            if !required { onboarding.prepare(for: store.state) }
+        }
+        .onChange(of: page) { _, value in
+            if value == 1 { onboarding.didViewEgg() }
+        }
         .onOpenURL { url in
             guard let route = WatchRoute(url: url) else { return }
             page = route == .progress ? 1 : 0
@@ -58,48 +76,49 @@ struct RootView: View {
 /// First-time flow (PRD §2.2) on the night sky.
 struct OnboardingView: View {
     @Environment(GameStore.self) private var store
+    @Environment(WatchOnboarding.self) private var onboarding
+    @Environment(\.dynamicTypeSize) private var typeSize
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     let steps: StepService
     let setup: StepSetupCoordinator
 
-    @State private var step = 0
-
     var body: some View {
-        if step == 2 {
+        if onboarding.introductionSeen {
             StepSetupView(steps: steps, setup: setup)
         } else {
-        VStack(spacing: BatwalkSpacing.sm) {
-            Spacer(minLength: 0)
-            if step == 0 {
-                Text("Something is sleeping in here…")
-                    .font(BatwalkFont.headline)
-                    .multilineTextAlignment(.center)
-                    .foregroundStyle(.white)
-                    .transition(.opacity)
-            } else {
-                EggSprite(type: .starter, state: step == 1 ? .calm : .shaking, size: 84)
-                    .idleFloat()
-                    .transition(.scale(scale: 0.8).combined(with: .opacity))
-                Text("Your steps help it hatch.")
-                    .font(BatwalkFont.caption)
-                    .foregroundStyle(BatwalkColor.textSecondaryDark)
-                    .multilineTextAlignment(.center)
+        VStack(spacing: BatwalkSpacing.xs) {
+            ScrollView {
+                VStack(spacing: BatwalkSpacing.sm) {
+                    Text("Something is sleeping in here…")
+                        .font(BatwalkFont.headline)
+                        .multilineTextAlignment(.center)
+                    if !typeSize.isAccessibilitySize {
+                        EggSprite(type: .starter, state: .calm, size: 36)
+                            .idleFloat()
+                            .accessibilityHidden(true)
+                    }
+                }
+                .frame(maxWidth: .infinity)
             }
-            Spacer(minLength: 0)
+            .frame(maxHeight: .infinity)
             // A replaced or re-paired Watch: the iPhone (or iCloud) still remembers the collection.
             if let backup = store.availableBackup, !backup.collection.isEmpty {
                 Button("Restore my \(backup.collection.count) bats") {
                     do { try store.restore(backup) } catch { Haptics.failure() }
                 }
-                .font(BatwalkFont.micro)
+                .font(BatwalkFont.caption)
+                .frame(minHeight: 44)
             }
-            Button("Next") {
-                withAnimation(.easeInOut(duration: 0.6)) { step += 1 }
+            Button("Meet them") {
+                withAnimation(reduceMotion ? nil : BatwalkMotion.page) { onboarding.finishIntroduction() }
             }
-            .buttonStyle(BatwalkPrimaryButtonStyle(minHeight: 40))
+            .buttonStyle(BatwalkPrimaryButtonStyle(minHeight: 44))
             .doubleTapPrimaryAction()
+            .fixedSize(horizontal: false, vertical: true)
         }
         .padding(.horizontal, BatwalkSpacing.sm)
-        .watchPageBackground(.night, scenery: step > 0)
+        .foregroundStyle(BatwalkColor.cloud)
+        .watchPageBackground(.night)
         }
     }
 }

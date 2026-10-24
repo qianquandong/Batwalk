@@ -49,6 +49,7 @@ struct WatchPetControlStyle: ButtonStyle {
 /// One quiet, centered Feed control. Inventory remains available to VoiceOver.
 struct FeedButton: View {
     let fruit: Int
+    var allowsEmptyTap = false
     let action: () -> Void
 
     var body: some View {
@@ -60,7 +61,8 @@ struct FeedButton: View {
             }
         }
         .buttonStyle(FeedControlStyle())
-        .disabled(fruit == 0)
+        .disabled(fruit == 0 && !allowsEmptyTap)
+        .opacity(fruit == 0 && allowsEmptyTap ? 0.55 : 1)
         .accessibilityLabel("Feed")
         .accessibilityValue("\(fruit) fruit")
         .accessibilityHint(fruit == 0 ? "Walk to find fruit" : "Use one fruit")

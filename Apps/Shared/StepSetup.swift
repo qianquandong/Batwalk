@@ -56,7 +56,7 @@ final class StepSetupCoordinator {
 
             let firstStart = !store.state.hasStarted
             if firstStart {
-                try store.mutate { $0.start(seed: UInt64.random(in: .min ... .max), now: now) }
+                try store.mutate { $0.start(seed: UInt64.random(in: .min ... .max), now: now, tuning: store.tuning) }
             }
             // Use the normal reconciliation gate: no separate reward rules,
             // no resetting an existing egg, and no double credit on retries.

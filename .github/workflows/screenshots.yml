@@ -35,6 +35,10 @@ on:
         type: choice
         options: [large, small]
         default: large
+      animation_testing:
+        description: "Review the one-step animation TestFlight profile"
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -49,6 +53,7 @@ jobs:
     timeout-minutes: 60
     env:
       BATWALK_LAUNCH_ROSTER: ${{ inputs.launch_roster && 'true' || 'false' }}
+      BATWALK_ANIMATION_TESTING: ${{ inputs.animation_testing && 'YES' || 'NO' }}
     steps:
       - uses: actions/checkout@v4
 
@@ -70,6 +75,7 @@ jobs:
             -destination 'generic/platform=watchOS Simulator' \
             -derivedDataPath build \
             CODE_SIGNING_ALLOWED=NO \
+            BATWALK_ANIMATION_TESTING="$BATWALK_ANIMATION_TESTING" \
             build
 
       - name: Boot an Apple Watch simulator
@@ -106,6 +112,7 @@ jobs:
             -destination 'generic/platform=iOS Simulator' \
             -derivedDataPath build \
             CODE_SIGNING_ALLOWED=NO \
+            BATWALK_ANIMATION_TESTING="$BATWALK_ANIMATION_TESTING" \
             build
 
       - name: Boot an iPhone simulator

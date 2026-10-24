@@ -79,6 +79,9 @@ struct PhoneRootView: View {
     @Environment(GameStore.self) private var store
 
     var body: some View {
+        if DemoMode.scenario == "phone-pilot-lab" {
+            NavigationStack { PilotAnimationLab() }
+        } else {
         TabView(selection: $tab) {
             // Three distinct glyphs: home, a grid of bats, a notebook.
             CompanionView(tab: $tab)
@@ -103,6 +106,7 @@ struct PhoneRootView: View {
                 }
                 .toolbar { ToolbarItem(placement: .confirmationAction) { Button("Done") { sharePreview = false } } }
             }
+        }
         }
     }
 }

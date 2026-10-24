@@ -60,6 +60,19 @@ class TestFlightArchiveTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "Missing or invalid"):
             self.verify()
 
+    def test_animation_build_requires_both_apps_to_enable_flag(self):
+        self.update(self.phone, BatwalkAnimationTesting="YES")
+        with self.assertRaisesRegex(ValueError, "flag mismatch: Watch"):
+            archive_check.verify_archive(self.archive, "13", self.entitlements, animation_testing=True)
+        self.update(self.watch, BatwalkAnimationTesting="YES")
+        report = archive_check.verify_archive(self.archive, "13", self.entitlements, animation_testing=True)
+        self.assertTrue(report["animation_testing"])
+
+    def test_normal_release_rejects_animation_testing(self):
+        self.update(self.watch, BatwalkAnimationTesting="YES")
+        with self.assertRaisesRegex(ValueError, "flag mismatch: Watch"):
+            self.verify()
+
     def test_unbuilt_widget_is_rejected(self):
         (self.widget / "Binary").unlink()
         with self.assertRaisesRegex(ValueError, "Executable missing"):

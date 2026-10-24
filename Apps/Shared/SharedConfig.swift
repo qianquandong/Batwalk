@@ -8,6 +8,9 @@ enum SharedConfig {
     static let paidContentEnabled = false
     static let fullUnlockProductID = "com.aimanjack.batwalk.fullunlock"
 
+    /// Explicit opt-in for an animation review build; ordinary releases stay off.
+    static var animationTestingEnabled: Bool { enabled("BatwalkAnimationTesting") }
+
     /// Cloud collection backup and live widgets are independent capabilities.
     /// They need an App Group and an
     /// iCloud container created by hand in the developer portal — an App Store

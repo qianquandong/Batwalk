@@ -197,11 +197,11 @@ struct PhoneSettingsView: View {
                     Text("Your Watch saves your progress. Keep both apps updated and open Batwalk on your Watch to refresh your collection.")
                         .font(BatwalkFont.caption)
                 }
-                #if DEBUG
-                Section("Preview") {
-                    NavigationLink("Animation samples") { PilotAnimationLab() }
+                if SharedConfig.animationTestingEnabled {
+                    Section("Preview") {
+                        NavigationLink("Animation preview") { PilotAnimationLab() }
+                    }
                 }
-                #endif
             }
             .scrollContentBackground(.hidden)
             .background(BatwalkColor.lightBackground)
