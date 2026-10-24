@@ -9,7 +9,7 @@ This change implements the first Watch phase of the Belly-inspired Batwalk desig
 3. The first egg offers **View progress** and a brief invitation to return later. Visiting the egg page completes that navigation hint.
 4. At the first hatch, an optional instruction explains tapping the egg or turning the Crown. The **Hatch** button remains available. The saved result appears as **Meet Mochi**, followed by **Say hello**.
 5. The companion page teaches a real tap, then feeding only when fruit exists. Each interaction tip can be skipped. Zero fruit bypasses the feeding lesson; tapping the empty Feed control explains that fruit comes from walking.
-6. **Choose an egg** follows the first interaction. **Later** closes the guide while leaving egg selection available from the egg page. Subsequent hatches retain the faster next-egg flow.
+6. **Choose an egg** follows the first interaction. **Later** closes the guide while leaving egg selection available from the egg page. A player who hatched immediately and has not visited the egg page gets a dismissible Crown/navigation tip after choosing an egg. Subsequent hatches retain the faster next-egg flow.
 
 The first hatch no longer automatically opens the egg picker or requests notification permission. Alerts are explicitly enabled from **More → Options**. **How to play → Show tips again** replays relevant companion/egg tips without restarting first launch, reopening permissions or replacing an active egg.
 
@@ -42,11 +42,11 @@ No egg targets, hatch odds, step accounting, fruit rewards, friendship rules or 
 
 ## Validation checklist
 
-Mac compilation, hosted application tests and small/large Watch screenshot review are **pending at this handoff**. The checks below are acceptance requirements, not recorded passes.
+Validation results and simulator artifacts are recorded on [PR #17](https://github.com/qianquandong/Batwalk/pull/17). The first implementation passed 149 core tests and 74 hosted application tests (13 tutorial tests), plus Watch/iPhone and capability-enabled simulator builds. Screenshot review prompted the small-display refinements in this change. The final revision adds a 14th tutorial test for direct-hatch navigation; consult the latest PR checks for its result. The following device checks remain acceptance requirements, not claims of real-Watch testing.
 
 - Run the existing CI workflow: core rules, Watch/iPhone simulator builds, hosted application tests and capability-enabled build. The new tutorial tests cover persistence, migration, restore, interrupted actions, zero fruit, skipped tips and preview isolation.
 - Run Watch screenshots with `watch_size: small` and `watch_size: large`, `watch_only: true`, `publish: false`. Review text, button reachability and stable art placement; keep the captured commit identifiable.
-- New demo scenarios: `onboarding`, `onboarding-large-type`, `first-egg-large-type`, `first-hatch-ready`, `first-hatch-ready-large-type`, `first-reveal`, `first-reveal-large-type`, `tutorial-hello`, `tutorial-hello-large-type`, `tutorial-feed`, `tutorial-no-fruit`, `tutorial-next-egg`, `home-no-fruit`, `fruit-help`.
+- New demo scenarios: `onboarding`, `onboarding-large-type`, `first-egg-large-type`, `first-hatch-ready`, `first-hatch-ready-large-type`, `first-reveal`, `first-reveal-large-type`, `tutorial-hello`, `tutorial-hello-large-type`, `tutorial-feed`, `tutorial-no-fruit`, `tutorial-next-egg`, `tutorial-find-egg`, `home-no-fruit`, `fruit-help`.
 - Include existing `first-egg`, `home`, `home-large-type`, `progress-61`, `progress-100`, `progress-large-type`, `step-setup`, `step-no-data`, `step-read-error`, `step-no-data-large-type`, `egg-picker` and `settings` in review.
 - Interactively verify skip, Later, Help replay, existing-save launch, restored collection and interruption after the first hatch. Confirm no forced feeding and no duplicate rewards.
 - On a real Watch, verify step authorization/zero-data recovery, Crown navigation and hatch input, VoiceOver, Reduced Motion, Always On and haptics. Simulator screenshots do not establish those results.

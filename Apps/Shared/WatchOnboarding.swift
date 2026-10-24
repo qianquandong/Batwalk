@@ -100,6 +100,7 @@ final class WatchOnboarding {
 
     func finishIntroduction() { update { $0.introductionSeen = true } }
     func didViewEgg() { update { $0.eggHintSeen = true } }
+    func dismissEggHint() { update { $0.eggHintSeen = true } }
     func didFinishHatchHelp() { update { $0.hatchHintSeen = true } }
 
     func didHatchFirstCompanion() {

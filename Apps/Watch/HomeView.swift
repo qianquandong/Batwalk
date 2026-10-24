@@ -93,7 +93,7 @@ struct HomeView: View {
     private func companionScene(_ companion: OwnedBat, time: TimeOfDay) -> some View {
         GeometryReader { geo in
             let controlsHeight: CGFloat = onboarding.phase == .greeting ? 0 : onboarding.phase == .nextEgg ? 88 : 44
-            let guideHeight: CGFloat = onboarding.isFirstCompanionGuide ? 44 : 0
+            let guideHeight: CGFloat = showsContextGuide ? 44 : 0
             let stageHeight = max(44, geo.size.height - controlsHeight - guideHeight - 8)
             let canvas = min(geo.size.width - 8, stageHeight)
             VStack(spacing: 0) {
@@ -111,7 +111,7 @@ struct HomeView: View {
                     petButton(companion, time: time, size: canvas)
                         .frame(maxWidth: .infinity)
                         .frame(height: stageHeight)
-                    if onboarding.isFirstCompanionGuide { guide.frame(height: guideHeight) }
+                    if showsContextGuide { guide.frame(height: guideHeight) }
                 }
                 if onboarding.phase == .nextEgg {
                     Button("Choose an egg") { showEggPicker = true }
@@ -132,6 +132,7 @@ struct HomeView: View {
     }
 
     private var guideText: String? {
+        if needsEggGuide { return "Turn the Crown\nfor your egg." }
         guard onboarding.isFirstCompanionGuide else { return nil }
         if let feedback { return feedback }
         switch onboarding.phase {
@@ -142,17 +143,27 @@ struct HomeView: View {
         }
     }
 
+    private var needsEggGuide: Bool {
+        onboarding.phase == .complete && !onboarding.eggHintSeen && store.state.egg != nil
+    }
+
+    private var showsContextGuide: Bool { onboarding.isFirstCompanionGuide || needsEggGuide }
+
     @ViewBuilder private var guide: some View {
         if let text = guideText {
             HStack(spacing: 0) {
-                Text(text)
-                    .font(BatwalkFont.caption)
-                    .foregroundStyle(BatwalkColor.textSecondaryDark)
-                    .multilineTextAlignment(.center)
-                    .fixedSize(horizontal: false, vertical: true)
-                    .frame(maxWidth: .infinity)
-                if onboarding.phase == .greeting || onboarding.phase == .feeding {
-                    Button { onboarding.skipInteraction() } label: {
+                if needsEggGuide {
+                    Button { page = 1 } label: { guideLabel(text).frame(minHeight: 44) }
+                        .buttonStyle(.plain)
+                        .accessibilityHint("Open your egg progress")
+                } else {
+                    guideLabel(text)
+                }
+                if onboarding.phase == .greeting || onboarding.phase == .feeding || needsEggGuide {
+                    Button {
+                        if needsEggGuide { onboarding.dismissEggHint() }
+                        else { onboarding.skipInteraction() }
+                    } label: {
                         Image(systemName: "xmark").font(BatwalkFont.micro)
                             .frame(width: 44, height: 44)
                             .contentShape(Rectangle())
@@ -163,6 +174,15 @@ struct HomeView: View {
             }
             .frame(minHeight: 44)
         }
+    }
+
+    private func guideLabel(_ text: String) -> some View {
+        Text(text)
+            .font(BatwalkFont.caption)
+            .foregroundStyle(BatwalkColor.textSecondaryDark)
+            .multilineTextAlignment(.center)
+            .fixedSize(horizontal: false, vertical: true)
+            .frame(maxWidth: .infinity)
     }
 
     private func petButton(_ companion: OwnedBat, time: TimeOfDay, size: CGFloat) -> some View {

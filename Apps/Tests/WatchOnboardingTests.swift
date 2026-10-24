@@ -265,6 +265,35 @@ final class WatchOnboardingTests: XCTestCase {
     }
 
     @MainActor
+    func testDirectHatchKeepsEggNavigationTipUntilVisitedOrDismissed() throws {
+        try withDefaults { defaults in
+            var state = GameState()
+            let guide = WatchOnboarding(defaults: defaults)
+            guide.prepare(for: state)
+            state.start(seed: 1, now: .now)
+            hatchFirst(&state)
+            guide.reconcile(with: state)
+            guide.skipInteraction()
+            try state.startEgg(.tiny, seed: 2, now: .now)
+            guide.didChooseEgg()
+            guide.reconcile(with: state)
+            XCTAssertEqual(guide.phase, .complete)
+            XCTAssertFalse(guide.eggHintSeen)
+            let reopened = WatchOnboarding(defaults: defaults)
+            reopened.prepare(for: state)
+            XCTAssertFalse(reopened.eggHintSeen)
+            reopened.dismissEggHint()
+            let dismissed = WatchOnboarding(defaults: defaults)
+            dismissed.prepare(for: state)
+            XCTAssertTrue(dismissed.eggHintSeen)
+            dismissed.replay(for: state)
+            XCTAssertFalse(dismissed.eggHintSeen)
+            dismissed.didViewEgg()
+            XCTAssertTrue(dismissed.eggHintSeen)
+        }
+    }
+
+    @MainActor
     func testPreviewStateIsIsolatedFromInventedGameProgress() {
         let guide = WatchOnboarding.preview(phase: .feeding, eggHintSeen: false)
         let state = GameState()
