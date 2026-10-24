@@ -94,7 +94,7 @@ struct HomeView: View {
             let stageHeight = max(44, geo.size.height - controlsHeight - (guideText == nil ? 8 : 52))
             let canvas = min(geo.size.width - 8, stageHeight)
             VStack(spacing: 0) {
-                if typeSize.isAccessibilitySize {
+                if typeSize.isAccessibilitySize || onboarding.phase == .nextEgg {
                     ScrollView {
                         VStack(spacing: BatwalkSpacing.xs) {
                             petButton(companion, time: time, size: 80)
@@ -294,12 +294,12 @@ struct HomeView: View {
         }
     }
 
-    private func hatch(_ egg: ActiveEgg) {
+    private func hatch(_ egg: ActiveEgg) -> Bool {
         let isFirst = store.state.history.isEmpty
         // Save the hatch first, then animate: quitting mid-animation never loses the bat.
         guard let result = try? store.mutate({ try $0.hatch(now: .now) }) else {
             Haptics.failure()
-            return
+            return false
         }
         let id = result.record.speciesID
         store.analytics.log(isFirst ? .firstHatch : .batCollected, properties: [
@@ -316,6 +316,7 @@ struct HomeView: View {
         deferPickerAfterReveal = isFirst
         hatching = HatchPresentation(result: result, egg: egg.type, startRevealed: false,
                                      isFirstCompanion: isFirst)
+        return true
     }
 }
 

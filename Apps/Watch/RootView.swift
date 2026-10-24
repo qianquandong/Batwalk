@@ -47,11 +47,14 @@ struct RootView: View {
         .environment(onboarding)
         .dynamicTypeSize(DemoMode.scenario?.hasSuffix("large-type") == true ? .accessibility3 : typeSize)
         .onAppear {
-            onboarding.prepare(for: store.state)
+            if !store.recoveryRequired { onboarding.prepare(for: store.state) }
             tutorialPrepared = true
         }
         .onChange(of: store.state) { _, state in
-            onboarding.reconcile(with: state)
+            if !store.recoveryRequired { onboarding.reconcile(with: state) }
+        }
+        .onChange(of: store.recoveryRequired) { _, required in
+            if !required { onboarding.prepare(for: store.state) }
         }
         .onChange(of: page) { _, value in
             if value == 1 { onboarding.didViewEgg() }

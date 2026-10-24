@@ -27,7 +27,12 @@ struct SettingsView: View {
                 }
                 if notificationStatus == .notDetermined {
                     Button("Turn on hatch alerts") {
-                        Task { await updateNotificationPermission() }
+                        Task {
+                            await updateNotificationPermission()
+                            if notificationStatus == .authorized || notificationStatus == .provisional {
+                                notificationsOn = true
+                            }
+                        }
                     }
                     Text("A gentle tap when an egg is ready.")
                         .font(BatwalkFont.micro)
@@ -85,7 +90,8 @@ struct SettingsView: View {
     }
 
     private func updateNotificationPermission() async {
-        await HatchNotifier.requestPermission()
+        let current = await UNUserNotificationCenter.current().notificationSettings().authorizationStatus
+        if current == .notDetermined { await HatchNotifier.requestPermission() }
         notificationStatus = await UNUserNotificationCenter.current().notificationSettings().authorizationStatus
     }
 }

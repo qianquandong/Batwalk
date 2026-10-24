@@ -30,6 +30,15 @@ struct StepSetupView: View {
                         .foregroundStyle(BatwalkColor.textSecondaryDark)
                         .multilineTextAlignment(.center)
                         .fixedSize(horizontal: false, vertical: true)
+                    if !store.state.hasStarted, let backup = store.availableBackup,
+                       !backup.collection.isEmpty {
+                        Button("Restore my bats") {
+                            do { try store.restore(backup) } catch { Haptics.failure() }
+                        }
+                        .font(BatwalkFont.caption)
+                        .frame(minHeight: 44)
+                        .accessibilityLabel("Restore my \(backup.collection.count) bats")
+                    }
                 }
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, BatwalkSpacing.xs)

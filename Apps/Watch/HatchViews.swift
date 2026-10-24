@@ -18,7 +18,7 @@ struct HatchPresentation: Identifiable {
 struct HatchReadyView: View {
     let egg: ActiveEgg
     var showHint = false
-    let onHatch: () -> Void
+    let onHatch: () -> Bool
 
     private let ambient = AmbientMotionReader()
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
@@ -136,7 +136,12 @@ struct HatchReadyView: View {
     private func hatchNow() {
         guard !hatched else { return }
         hatched = true
-        onHatch()
+        if !onHatch() {
+            // A failed save leaves this egg intact and immediately retryable.
+            hatched = false
+            crack = 0
+            lastTick = 0
+        }
     }
 }
 
