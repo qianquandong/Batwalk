@@ -6,20 +6,35 @@ import BatwalkCore
 /// Infrequent, device-local controls behind the egg page's More button.
 struct SettingsView: View {
     @Environment(GameStore.self) private var store
+    @Environment(WatchOnboarding.self) private var onboarding
     let steps: StepService
+    var onReplay: (() -> Void)? = nil
     @AppStorage(HatchNotifier.enabledKey) private var notificationsOn = true
     @AppStorage(HatchNotifier.duskEnabledKey) private var duskOn = false
     @State private var health: HealthStatus = .noData
     @State private var notificationStatus: UNAuthorizationStatus = .notDetermined
     @State private var confirmRestore = false
+    @State private var showGuide = false
 
     var body: some View {
         NavigationStack {
             List {
+                Button { showGuide = true } label: {
+                    Label("How to play", systemImage: "questionmark.circle")
+                }
                 NavigationLink { HealthAccessView(steps: steps, status: $health) } label: {
                     Label("Step access", systemImage: "heart")
                 }
-                Toggle("Hatch alert", isOn: $notificationsOn)
+                if notificationStatus == .notDetermined {
+                    Button("Turn on hatch alerts") {
+                        Task { await updateNotificationPermission() }
+                    }
+                    Text("A gentle tap when an egg is ready.")
+                        .font(BatwalkFont.micro)
+                        .foregroundStyle(BatwalkColor.textSecondaryDark)
+                } else {
+                    Toggle("Hatch alert", isOn: $notificationsOn)
+                }
                 Toggle("Dusk alert", isOn: $duskOn)
                 if (notificationsOn || duskOn) && notificationStatus == .denied {
                     Text("Alerts off in Settings").font(BatwalkFont.micro)
@@ -38,6 +53,12 @@ struct SettingsView: View {
                     .font(BatwalkFont.micro).foregroundStyle(BatwalkColor.textSecondaryDark)
             }
             .navigationTitle("Options")
+        }
+        .sheet(isPresented: $showGuide) {
+            HowToPlayView {
+                onboarding.replay(for: store.state)
+                onReplay?()
+            }
         }
         .task {
             health = await HealthAccessView.currentStatus(steps: steps, state: store.state)
@@ -83,7 +104,7 @@ struct HealthAccessView: View {
                 Label(status.label, systemImage: status == .connected ? "checkmark.circle" : "heart")
                     .font(BatwalkFont.caption)
                 Button(isWorking ? "Updating…" : "Update steps") {
-                    Task { await update(requestAccess: true) }
+                    Task { await update(requestAccess: status == .notSetUp) }
                 }
                 .buttonStyle(BatwalkPrimaryButtonStyle())
                 .disabled(isWorking)

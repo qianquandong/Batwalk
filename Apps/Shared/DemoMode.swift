@@ -26,7 +26,7 @@ enum HealthStatus: Equatable {
 /// Without the argument this file does nothing.
 enum DemoMode {
     // The capture script reads these two lines — keep each list on one line.
-    static let watchScenarios = ["first-egg", "home", "home-day", "home-cocoa", "home-long-ear", "hatch-ready", "reveal-rare", "progress-61", "progress-100", "friendship-1", "friendship-2", "friendship-3", "friendship-4", "fruit-available", "friendship-5", "settings", "health-error", "home-large-type", "pilot-mochi", "pilot-sticky", "pilot-walker", "pilot-cocoa", "pilot-long-ear", "reveal-large-type", "reveal-shiny", "progress-large-type", "step-setup", "step-no-data", "step-read-error", "step-no-data-large-type", "egg-picker", "outfit-gold", "birthday"] // scenarios:watch
+    static let watchScenarios = ["onboarding", "onboarding-large-type", "first-egg-large-type", "first-hatch-ready", "first-hatch-ready-large-type", "first-reveal", "first-reveal-large-type", "tutorial-hello", "tutorial-hello-large-type", "tutorial-feed", "tutorial-no-fruit", "tutorial-next-egg", "first-egg", "home", "home-day", "home-cocoa", "home-long-ear", "hatch-ready", "reveal-rare", "progress-61", "progress-100", "friendship-1", "friendship-2", "friendship-3", "friendship-4", "fruit-available", "friendship-5", "settings", "health-error", "home-large-type", "pilot-mochi", "pilot-sticky", "pilot-walker", "pilot-cocoa", "pilot-long-ear", "reveal-large-type", "reveal-shiny", "progress-large-type", "step-setup", "step-no-data", "step-read-error", "step-no-data-large-type", "egg-picker", "outfit-gold", "birthday"] // scenarios:watch
     static let phoneScenarios = ["phone-companion", "phone-batpedia", "phone-batpedia-rare", "phone-detail", "phone-pending", "phone-confirmed", "phone-stale", "phone-first-egg", "phone-egg-ready", "phone-history", "phone-settings", "phone-stats", "phone-empty", "phone-guide", "phone-certificate", "phone-certificate-shiny", "phone-poster", "phone-recap", "phone-challenge", "phone-challenge-gold", "phone-birthday", "phone-birthday-settings", "phone-birthday-pending", "phone-certificate-birthday", "phone-friends"] // scenarios:phone
 
     static let scenario: String? = {
@@ -36,6 +36,23 @@ enum DemoMode {
     }()
 
     static var isActive: Bool { scenario != nil }
+
+    /// Tutorial screenshot state is deliberately memory-only, just like the
+    /// associated game fixture. Captures cannot advance a real user's tips.
+    @MainActor static func makeWatchOnboarding() -> WatchOnboarding {
+        guard isActive else { return WatchOnboarding() }
+        switch scenario {
+        case "onboarding", "onboarding-large-type":
+            return .preview(phase: .waitingForFirstHatch, introductionSeen: false, eggHintSeen: false)
+        case "first-egg", "first-egg-large-type", "first-hatch-ready", "first-hatch-ready-large-type":
+            return .preview(phase: .waitingForFirstHatch, eggHintSeen: false)
+        case "tutorial-hello", "tutorial-hello-large-type", "tutorial-no-fruit", "first-reveal", "first-reveal-large-type":
+            return .preview(phase: .greeting)
+        case "tutorial-feed": return .preview(phase: .feeding)
+        case "tutorial-next-egg": return .preview(phase: .nextEgg)
+        default: return .preview(phase: .complete)
+        }
+    }
 
     static var stepSetupStatus: StepSetupCoordinator.Status? {
         switch scenario {
@@ -111,12 +128,13 @@ enum DemoMode {
             hatch(.tiny, "cocoa")
         }
 
+        if scenario == "onboarding" || scenario == "onboarding-large-type" { return state }
         state.setUnlocked(true)
         state.start(seed: 1, now: now)
 
         if stepSetupStatus != nil { return state }
 
-        if scenario == "first-egg" || scenario == "phone-first-egg" {
+        if scenario == "first-egg" || scenario == "first-egg-large-type" || scenario == "phone-first-egg" {
             walk(1_230)
             return state
         }
@@ -125,9 +143,16 @@ enum DemoMode {
         }
 
         walk(2_000)
-        _ = try? state.hatch(now: now) // Mochi, the starter
+        if scenario == "first-hatch-ready" || scenario == "first-hatch-ready-large-type" { return state }
+        let firstHatch = try? state.hatch(now: now) // Mochi, the starter
 
         switch scenario {
+        case "first-reveal", "first-reveal-large-type":
+            reveal = firstHatch
+        case "tutorial-hello", "tutorial-hello-large-type", "tutorial-feed", "tutorial-next-egg":
+            break
+        case "tutorial-no-fruit":
+            while state.fruit > 0 { _ = try? state.feed("mochi") }
         case "pilot-mochi", "pilot-sticky", "pilot-walker", "pilot-cocoa", "pilot-long-ear":
             // The three hand-drawn pilots, and two generated Gentle-pixel sets (the free roster).
             let species = String(scenario.dropFirst("pilot-".count))
