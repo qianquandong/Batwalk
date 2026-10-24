@@ -92,13 +92,11 @@ struct OnboardingView: View {
                     Text("Something is sleeping in here…")
                         .font(BatwalkFont.headline)
                         .multilineTextAlignment(.center)
-                    EggSprite(type: .starter, state: .calm, size: typeSize.isAccessibilitySize ? 48 : 68)
-                        .idleFloat()
-                        .accessibilityHidden(true)
-                    Text("A little friend is waiting.")
-                        .font(BatwalkFont.caption)
-                        .foregroundStyle(BatwalkColor.textSecondaryDark)
-                        .multilineTextAlignment(.center)
+                    if !typeSize.isAccessibilitySize {
+                        EggSprite(type: .starter, state: .calm, size: 36)
+                            .idleFloat()
+                            .accessibilityHidden(true)
+                    }
                 }
                 .frame(maxWidth: .infinity)
             }

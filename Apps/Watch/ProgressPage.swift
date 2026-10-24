@@ -19,8 +19,10 @@ struct ProgressPage: View {
                 VStack(spacing: BatwalkSpacing.xs) {
                     if typeSize.isAccessibilitySize {
                         ScrollView {
-                            eggContent(size: 48)
-                                .padding(.vertical, BatwalkSpacing.sm)
+                            // Give the remaining-step sentence the first
+                            // viewport; decorative art must not push it away.
+                            eggContent(size: 0)
+                                .padding(.vertical, BatwalkSpacing.xs)
                         }
                     } else {
                         ViewThatFits(in: .vertical) {
@@ -54,11 +56,13 @@ struct ProgressPage: View {
 
     private func eggContent(size: CGFloat) -> some View {
         VStack(spacing: BatwalkSpacing.sm) {
-            EggSprite(type: store.state.egg?.type ?? .tiny,
-                      state: store.state.egg?.visualState ?? .calm, size: size,
-                      animated: false)
-                .opacity(store.state.egg == nil ? 0.45 : 1)
-                .accessibilityHidden(true)
+            if size > 0 {
+                EggSprite(type: store.state.egg?.type ?? .tiny,
+                          state: store.state.egg?.visualState ?? .calm, size: size,
+                          animated: false)
+                    .opacity(store.state.egg == nil ? 0.45 : 1)
+                    .accessibilityHidden(true)
+            }
             if let egg = store.state.egg {
                 VStack(spacing: 6) {
                     GeometryReader { geometry in

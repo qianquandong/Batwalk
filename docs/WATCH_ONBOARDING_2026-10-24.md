@@ -15,7 +15,7 @@ The first hatch no longer automatically opens the egg picker or requests notific
 
 ## Layout changes
 
-- The companion remains the main visual subject. Normal visits keep Feed as the persistent control; teaching text and brief result messages appear only when relevant.
+- The companion remains the main visual subject. Normal visits keep Feed as the persistent control; teaching text and brief result messages appear only during the guide. Ordinary pet/feed feedback uses the existing animation and haptics, keeping the bat’s size and position stable. Empty Feed opens a short, user-requested explanation.
 - The egg page leads with remaining steps, then shows credited/target progress in secondary text. It uses a static egg, a fine progress line and a compact More control. Ready, missing-egg and step-query states expose their next action.
 - First-launch, step-setup, hatch and progress layouts keep actions reachable while large text scrolls. A short hatch glow replaces indefinite pulsing. Reduced Motion retains direct controls and readable outcomes.
 - Step setup retries after zero or failed readings only query data. Initial setup and a failed authorization flow may request access again. Returning from Settings also queries without opening another permission prompt.
@@ -46,7 +46,7 @@ Mac compilation, hosted application tests and small/large Watch screenshot revie
 
 - Run the existing CI workflow: core rules, Watch/iPhone simulator builds, hosted application tests and capability-enabled build. The new tutorial tests cover persistence, migration, restore, interrupted actions, zero fruit, skipped tips and preview isolation.
 - Run Watch screenshots with `watch_size: small` and `watch_size: large`, `watch_only: true`, `publish: false`. Review text, button reachability and stable art placement; keep the captured commit identifiable.
-- New demo scenarios: `onboarding`, `onboarding-large-type`, `first-egg-large-type`, `first-hatch-ready`, `first-hatch-ready-large-type`, `first-reveal`, `first-reveal-large-type`, `tutorial-hello`, `tutorial-hello-large-type`, `tutorial-feed`, `tutorial-no-fruit`, `tutorial-next-egg`.
+- New demo scenarios: `onboarding`, `onboarding-large-type`, `first-egg-large-type`, `first-hatch-ready`, `first-hatch-ready-large-type`, `first-reveal`, `first-reveal-large-type`, `tutorial-hello`, `tutorial-hello-large-type`, `tutorial-feed`, `tutorial-no-fruit`, `tutorial-next-egg`, `home-no-fruit`, `fruit-help`.
 - Include existing `first-egg`, `home`, `home-large-type`, `progress-61`, `progress-100`, `progress-large-type`, `step-setup`, `step-no-data`, `step-read-error`, `step-no-data-large-type`, `egg-picker` and `settings` in review.
 - Interactively verify skip, Later, Help replay, existing-save launch, restored collection and interruption after the first hatch. Confirm no forced feeding and no duplicate rewards.
 - On a real Watch, verify step authorization/zero-data recovery, Crown navigation and hatch input, VoiceOver, Reduced Motion, Always On and haptics. Simulator screenshots do not establish those results.

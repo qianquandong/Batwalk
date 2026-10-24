@@ -24,6 +24,7 @@ struct HomeView: View {
     @State private var feedback: String?
     @State private var feedbackTask: Task<Void, Never>?
     @State private var deferPickerAfterReveal = false
+    @State private var showFruitHelp = DemoMode.scenario == "fruit-help"
 
     var body: some View {
         TimelineView(.everyMinute) { context in
@@ -47,6 +48,7 @@ struct HomeView: View {
             }
         }
         .sheet(isPresented: $showEggPicker) { EggPickerView() }
+        .sheet(isPresented: $showFruitHelp) { FruitHelpView() }
         .onAppear {
             if let demo = DemoMode.reveal, !demoRevealShown {
                 demoRevealShown = true
@@ -86,25 +88,30 @@ struct HomeView: View {
         }
     }
 
-    /// Reserve only the Feed touch target below the full animation canvas.
-    /// Names and egg progress do not compete with the companion's activity space.
+    /// Ordinary visits keep the full stage. Optional lessons reserve their own
+    /// space; ordinary feedback uses the existing reaction rather than resizing it.
     private func companionScene(_ companion: OwnedBat, time: TimeOfDay) -> some View {
         GeometryReader { geo in
-            let controlsHeight: CGFloat = onboarding.phase == .nextEgg ? 88 : 44
-            let stageHeight = max(44, geo.size.height - controlsHeight - (guideText == nil ? 8 : 52))
+            let controlsHeight: CGFloat = onboarding.phase == .greeting ? 0 : onboarding.phase == .nextEgg ? 88 : 44
+            let guideHeight: CGFloat = onboarding.isFirstCompanionGuide ? 44 : 0
+            let stageHeight = max(44, geo.size.height - controlsHeight - guideHeight - 8)
             let canvas = min(geo.size.width - 8, stageHeight)
             VStack(spacing: 0) {
-                if typeSize.isAccessibilitySize || onboarding.phase == .nextEgg {
+                if onboarding.phase == .nextEgg {
+                    ScrollView { guide.padding(.vertical, BatwalkSpacing.xs) }
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                } else if typeSize.isAccessibilitySize {
                     ScrollView {
                         VStack(spacing: BatwalkSpacing.xs) {
-                            petButton(companion, time: time, size: 80)
                             guide
+                            petButton(companion, time: time, size: 80)
                         }.frame(maxWidth: .infinity)
                     }
                 } else {
                     petButton(companion, time: time, size: canvas)
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    guide
+                        .frame(maxWidth: .infinity)
+                        .frame(height: stageHeight)
+                    if onboarding.isFirstCompanionGuide { guide.frame(height: guideHeight) }
                 }
                 if onboarding.phase == .nextEgg {
                     Button("Choose an egg") { showEggPicker = true }
@@ -113,7 +120,7 @@ struct HomeView: View {
                         .font(BatwalkFont.caption)
                         .frame(maxWidth: .infinity, minHeight: 44)
                         .buttonStyle(.plain)
-                } else {
+                } else if onboarding.phase != .greeting {
                     FeedButton(fruit: store.state.fruit, allowsEmptyTap: true) { feed(companion) }
                         .fixedSize(horizontal: false, vertical: true)
                 }
@@ -125,6 +132,7 @@ struct HomeView: View {
     }
 
     private var guideText: String? {
+        guard onboarding.isFirstCompanionGuide else { return nil }
         if let feedback { return feedback }
         switch onboarding.phase {
         case .greeting: return "Tap to say hi."
@@ -186,8 +194,8 @@ struct HomeView: View {
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                 } else {
                     ViewThatFits(in: .vertical) {
-                        firstEggContent(egg, size: min(80, max(36, geo.size.height - 116)))
-                        ScrollView { firstEggContent(egg, size: 36) }
+                        firstEggContent(egg, size: min(60, max(24, geo.size.height - 124)))
+                        ScrollView { firstEggContent(egg, size: 24) }
                     }
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                 }
@@ -207,15 +215,17 @@ struct HomeView: View {
     }
 
     private func firstEggContent(_ egg: ActiveEgg, size: CGFloat) -> some View {
-        VStack(spacing: BatwalkSpacing.sm) {
+        VStack(spacing: BatwalkSpacing.xs) {
             Text("Your first egg")
                 .font(BatwalkFont.caption)
                 .multilineTextAlignment(.center)
-            EggSprite(type: egg.type, state: egg.visualState, size: size)
-                .idleFloat()
-                .accessibilityHidden(true)
+            if !typeSize.isAccessibilitySize {
+                EggSprite(type: egg.type, state: egg.visualState, size: size)
+                    .idleFloat()
+                    .accessibilityHidden(true)
+            }
             if !onboarding.eggHintSeen {
-                Text("Walk a little. Come back anytime.")
+                Text("Walk a little.\nCome back anytime.")
                     .font(BatwalkFont.micro)
                     .foregroundStyle(BatwalkColor.textSecondaryDark)
                     .multilineTextAlignment(.center)
@@ -228,7 +238,7 @@ struct HomeView: View {
 
     private func feed(_ bat: OwnedBat) {
         guard store.state.fruit > 0 else {
-            showFeedback("Fruit grows with your walks.")
+            showFruitHelp = true
             return
         }
         let before = Friendship.level(forEXP: bat.friendshipEXP)
@@ -241,7 +251,7 @@ struct HomeView: View {
         if after > before { Haptics.success() } else { Haptics.light() }
         animationRequest = .interaction(.feed, speciesID: bat.speciesID, levelBefore: before, levelAfter: after)
         onboarding.didFeed()
-        showFeedback("\(bat.displayName) enjoyed that.")
+        showFeedback("That was lovely.")
     }
 
     private func pet(_ bat: OwnedBat) {
@@ -252,7 +262,7 @@ struct HomeView: View {
         if levelAfter > levelBefore { Haptics.success() } else { Haptics.light() }
         petCount += 1
         onboarding.didPet(hasFruit: store.state.fruit > 0)
-        showFeedback("Hello, \(bat.displayName).")
+        showFeedback("Hello, little friend.")
         if PilotAnimationCatalog.speciesIDs.contains(bat.speciesID) {
             animationRequest = .interaction(.pet, speciesID: bat.speciesID,
                                             levelBefore: levelBefore, levelAfter: levelAfter)
@@ -275,6 +285,7 @@ struct HomeView: View {
     }
 
     private func showFeedback(_ message: String) {
+        guard onboarding.isFirstCompanionGuide else { return }
         feedbackTask?.cancel()
         feedback = message
         feedbackTask = Task { @MainActor in
@@ -317,6 +328,31 @@ struct HomeView: View {
         hatching = HatchPresentation(result: result, egg: egg.type, startRevealed: false,
                                      isFirstCompanion: isFirst)
         return true
+    }
+}
+
+/// An explanation requested by tapping empty Feed, rather than a persistent
+/// status message that competes with the companion's stage.
+private struct FruitHelpView: View {
+    var body: some View {
+        NavigationStack {
+            ScrollView {
+                VStack(spacing: BatwalkSpacing.sm) {
+                    FruitIcon(size: 28).accessibilityHidden(true)
+                    Text("Fruit grows with your walks.")
+                        .font(BatwalkFont.caption)
+                        .multilineTextAlignment(.center)
+                        .fixedSize(horizontal: false, vertical: true)
+                    Text("You can still tap your bat to say hi.")
+                        .font(BatwalkFont.micro)
+                        .foregroundStyle(BatwalkColor.textSecondaryDark)
+                        .multilineTextAlignment(.center)
+                        .fixedSize(horizontal: false, vertical: true)
+                }.padding(.horizontal, BatwalkSpacing.sm)
+            }
+            .navigationTitle("Fruit")
+            .watchPageBackground()
+        }
     }
 }
 

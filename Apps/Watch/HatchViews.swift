@@ -39,7 +39,7 @@ struct HatchReadyView: View {
             VStack(spacing: 4) {
                 if typeSize.isAccessibilitySize {
                     ScrollView {
-                        readyContent(stage: 64)
+                        readyContent(stage: 44)
                     }
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                 } else {
@@ -83,6 +83,7 @@ struct HatchReadyView: View {
 
     private func readyContent(stage: CGFloat) -> some View {
         VStack(spacing: 4) {
+            if showHint, typeSize.isAccessibilitySize { readyHint }
             ZStack {
                 Circle()
                     .fill(BatwalkGradient.hatchGlow)
@@ -107,15 +108,17 @@ struct HatchReadyView: View {
                 .accessibilityHint("Tap three times, or turn the Digital Crown, to crack it open")
             }
             .frame(height: stage)
-            if showHint {
-                Text("Tap the egg or turn the Crown.")
-                    .font(BatwalkFont.caption)
-                    .foregroundStyle(BatwalkColor.textSecondaryDark)
-                    .multilineTextAlignment(.center)
-                    .fixedSize(horizontal: false, vertical: true)
-            }
+            if showHint, !typeSize.isAccessibilitySize { readyHint }
         }
         .frame(maxWidth: .infinity)
+    }
+
+    private var readyHint: some View {
+        Text("Tap the egg or turn the Crown.")
+            .font(BatwalkFont.caption)
+            .foregroundStyle(BatwalkColor.textSecondaryDark)
+            .multilineTextAlignment(.center)
+            .fixedSize(horizontal: false, vertical: true)
     }
 
     private func advance(by amount: Double) {
@@ -182,7 +185,7 @@ struct HatchSequenceView: View {
     // A presented cover can resolve its size outside the root's demo override.
     // Apply the capture override at this presentation boundary as well.
     private var revealTypeSize: DynamicTypeSize {
-        DemoMode.scenario == "reveal-large-type" ? .accessibility3 : typeSize
+        DemoMode.scenario?.hasSuffix("large-type") == true ? .accessibility3 : typeSize
     }
 
     var body: some View {
@@ -221,7 +224,7 @@ struct HatchSequenceView: View {
         GeometryReader { geometry in
             VStack(spacing: 4) {
                 if revealTypeSize.isAccessibilitySize {
-                    ScrollView { revealDetails(pictureSize: 60) }
+                    ScrollView { revealDetails(pictureSize: presentation.isFirstCompanion ? 48 : 60) }
                 } else {
                     // Reserve space for the name, chips and Continue first. A
                     // scroll view's flexible proposal otherwise hides the labels
@@ -242,6 +245,9 @@ struct HatchSequenceView: View {
 
     private func revealDetails(pictureSize: CGFloat) -> some View {
         VStack(spacing: 4) {
+            if presentation.isFirstCompanion, revealTypeSize.isAccessibilitySize {
+                firstCompanionTitle
+            }
             ZStack {
                 Circle()
                     .fill(RadialGradient(colors: [(special ? rarity.color : BatwalkColor.accentSoft).opacity(special ? 0.22 : 0.12), .clear],
@@ -254,11 +260,7 @@ struct HatchSequenceView: View {
             }
             .frame(height: pictureSize)
             if presentation.isFirstCompanion {
-                Text("Meet \(species?.name.replacingOccurrences(of: " Bat", with: "") ?? "your new friend")")
-                    .font(BatwalkFont.headline)
-                    .foregroundStyle(BatwalkColor.cloud)
-                    .multilineTextAlignment(.center)
-                    .fixedSize(horizontal: false, vertical: true)
+                if !revealTypeSize.isAccessibilitySize { firstCompanionTitle }
             } else if record.outcome == .duplicate {
                 Label("+\(presentation.result.friendshipGained) XP", systemImage: "heart")
                     .font(BatwalkFont.headline)
@@ -270,6 +272,14 @@ struct HatchSequenceView: View {
             }
         }
         .frame(maxWidth: .infinity)
+    }
+
+    private var firstCompanionTitle: some View {
+        Text("Meet \(species?.name.replacingOccurrences(of: " Bat", with: "") ?? "your new friend")")
+            .font(BatwalkFont.headline)
+            .foregroundStyle(BatwalkColor.cloud)
+            .multilineTextAlignment(.center)
+            .fixedSize(horizontal: false, vertical: true)
     }
 
     /// Sleeps; false if the cover was dismissed (task cancelled) so the sequence stops.

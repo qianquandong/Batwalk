@@ -16,17 +16,17 @@ struct StepSetupView: View {
     var body: some View {
         VStack(spacing: 4) {
             ScrollView {
-                VStack(spacing: BatwalkSpacing.sm) {
+                VStack(spacing: BatwalkSpacing.xs) {
                     if !needsHelp, !typeSize.isAccessibilitySize {
-                        EggSprite(type: store.state.egg?.type ?? .starter, state: .calm, size: 44, animated: false)
+                        EggSprite(type: store.state.egg?.type ?? .starter, state: .calm, size: 24, animated: false)
                             .accessibilityHidden(true)
                     }
                     Text(title)
-                        .font(BatwalkFont.headline)
+                        .font(typeSize.isAccessibilitySize ? BatwalkFont.rounded(.caption, weight: .semibold) : BatwalkFont.headline)
                         .multilineTextAlignment(.center)
                         .fixedSize(horizontal: false, vertical: true)
                     Text(message)
-                        .font(BatwalkFont.caption)
+                        .font(BatwalkFont.micro)
                         .foregroundStyle(BatwalkColor.textSecondaryDark)
                         .multilineTextAlignment(.center)
                         .fixedSize(horizontal: false, vertical: true)
@@ -41,7 +41,6 @@ struct StepSetupView: View {
                     }
                 }
                 .frame(maxWidth: .infinity)
-                .padding(.vertical, BatwalkSpacing.xs)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
 
@@ -115,11 +114,11 @@ struct StepSetupView: View {
 
     private var message: String {
         switch status {
-        case .idle, .ready: return "Your walks help this egg hatch."
+        case .idle, .ready: return "Your steps help it hatch."
         case .checking: return "Reading today's steps…"
-        case .noSteps: return "No steps received yet. Walk a little, then check again."
+        case .noSteps: return "Walk a little, then retry."
         case .requestFailed: return "Try again or open Help."
-        case .readFailed: return "Unlock your Watch, then retry."
+        case .readFailed: return "Unlock, then retry."
         }
     }
 
