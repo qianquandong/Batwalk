@@ -331,8 +331,20 @@ public struct GameState: Codable, Equatable, Sendable {
         guard !hasStarted else { return }
         hasStarted = true
         egg = ActiveEgg(type: .starter, seed: seed, creditedSteps: 0, startedAt: now,
-                        frozenTargetSteps: Tuning.introEggTargetSteps)
+                        frozenTargetSteps: tuning.targetSteps(for: .starter, isIntro: true))
         freezeEgg(tuning: tuning)
+    }
+
+    /// Apply an explicitly selected animation-test target to the current egg.
+    /// Only the finish line changes: the sealed hatch and all earned activity
+    /// remain untouched. Ordinary tuning never rewrites a saved egg target.
+    @discardableResult
+    public mutating func applyEggTargetOverride(using tuning: Tuning) -> Bool {
+        guard var current = egg, let target = tuning.eggTargetStepsOverride,
+              current.frozenTargetSteps != target else { return false }
+        current.frozenTargetSteps = target
+        egg = current
+        return true
     }
 
     /// Seals the egg's outcome at creation (PRD §4.4; ADR 0001 §5). Pity rules are
@@ -502,7 +514,7 @@ public struct GameState: Codable, Equatable, Sendable {
         guard egg == nil else { throw GameError.eggAlreadyIncubating }
         guard type.isPickable else { throw GameError.eggLocked(type) }
         egg = ActiveEgg(type: type, seed: seed, creditedSteps: 0, startedAt: now,
-                        frozenTargetSteps: type.targetSteps)
+                        frozenTargetSteps: tuning.targetSteps(for: type))
         freezeEgg(tuning: tuning)
 
         let banked = bankedSteps

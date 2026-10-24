@@ -32,6 +32,7 @@ settings:
     BATWALK_APP_GROUP_ENABLED: "NO"
     BATWALK_CLOUD_BACKUP_ENABLED: "NO"
     BATWALK_GAME_CENTER_ENABLED: "NO"
+    BATWALK_ANIMATION_TESTING: "NO"
     # Roster waves (open question Q12): 1 = launch roster (#1–20),
     # 2 = + Oddball Bats (#21–32) for the first content update.
     BATWALK_CONTENT_WAVE: "1"
@@ -77,6 +78,7 @@ targets:
         BatwalkAppGroupEnabled: "$(BATWALK_APP_GROUP_ENABLED)"
         BatwalkCloudBackupEnabled: "$(BATWALK_CLOUD_BACKUP_ENABLED)"
         BatwalkContentWave: "$(BATWALK_CONTENT_WAVE)"
+        BatwalkAnimationTesting: "$(BATWALK_ANIMATION_TESTING)"
         BatwalkTelemetryDeckAppID: "$(BATWALK_TELEMETRYDECK_APP_ID)"
         WKCompanionAppBundleIdentifier: com.aimanjack.batwalk
         WKRunsIndependentlyOfCompanionApp: true
@@ -162,6 +164,7 @@ targets:
         BatwalkAppGroupEnabled: "$(BATWALK_APP_GROUP_ENABLED)"
         BatwalkCloudBackupEnabled: "$(BATWALK_CLOUD_BACKUP_ENABLED)"
         BatwalkContentWave: "$(BATWALK_CONTENT_WAVE)"
+        BatwalkAnimationTesting: "$(BATWALK_ANIMATION_TESTING)"
         BatwalkTelemetryDeckAppID: "$(BATWALK_TELEMETRYDECK_APP_ID)"
     # entitlements + UIBackgroundModes [remote-notification] come back with
     # iCloud / App Group (docs/SIGNING.md):

@@ -1,4 +1,5 @@
 import Foundation
+import BatwalkCore
 
 /// Identifiers that must match project.yml, the entitlements, and App Store Connect.
 enum SharedConfig {
@@ -7,6 +8,10 @@ enum SharedConfig {
     /// Free launch. Future paid content may be cosmetic only; never gameplay access.
     static let paidContentEnabled = false
     static let fullUnlockProductID = "com.aimanjack.batwalk.fullunlock"
+
+    /// Explicit opt-in for an animation review build; ordinary releases stay off.
+    static var animationTestingEnabled: Bool { enabled("BatwalkAnimationTesting") }
+    static var gameTuning: Tuning { animationTestingEnabled ? .animationTesting : .default }
 
     /// Cloud collection backup and live widgets are independent capabilities.
     /// They need an App Group and an

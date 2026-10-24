@@ -41,7 +41,7 @@ struct HomeView: View {
             HatchSequenceView(presentation: presentation) {
                 // Only one egg to choose from: start it without a detour (Q2).
                 if !presentation.isFirstCompanion, store.state.pickableEggs == [.tiny], store.state.egg == nil {
-                    do { try store.mutate { try $0.startEgg(.tiny, seed: UInt64.random(in: .min ... .max), now: .now) } }
+                    do { try store.mutate { try $0.startEgg(.tiny, seed: UInt64.random(in: .min ... .max), now: .now, tuning: store.tuning) } }
                     catch { return }
                 }
                 hatching = nil
@@ -393,7 +393,7 @@ struct EggPickerView: View {
                                 VStack(alignment: .leading, spacing: 3) {
                                     Text(type.displayName).font(BatwalkFont.caption)
                                         .lineLimit(2).multilineTextAlignment(.leading)
-                                    Text("\(type.targetSteps.formatted()) steps")
+                                    Text(stepLabel(for: type))
                                         .font(BatwalkFont.micro).monospacedDigit()
                                         .foregroundStyle(BatwalkColor.textSecondaryDark)
                                 }
@@ -403,7 +403,7 @@ struct EggPickerView: View {
                             .frame(minHeight: 44)
                         }
                         .buttonStyle(.plain)
-                        .accessibilityHint("Start this egg. \(type.targetSteps) steps to hatch.")
+                        .accessibilityHint("Start this egg. \(stepLabel(for: type)) to hatch.")
                     }
                 }
                 .padding(.horizontal, BatwalkSpacing.xs)
@@ -415,9 +415,14 @@ struct EggPickerView: View {
 
     private func start(_ type: EggType) {
         do {
-            try store.mutate { try $0.startEgg(type, seed: UInt64.random(in: .min ... .max), now: .now) }
+            try store.mutate { try $0.startEgg(type, seed: UInt64.random(in: .min ... .max), now: .now, tuning: store.tuning) }
             onboarding.didChooseEgg()
             dismiss()
         } catch { Haptics.failure() }
+    }
+
+    private func stepLabel(for type: EggType) -> String {
+        let steps = store.tuning.targetSteps(for: type)
+        return steps == 1 ? "1 step" : "\(steps.formatted()) steps"
     }
 }

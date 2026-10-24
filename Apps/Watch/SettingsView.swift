@@ -19,6 +19,11 @@ struct SettingsView: View {
     var body: some View {
         NavigationStack {
             List {
+                if SharedConfig.animationTestingEnabled {
+                    NavigationLink { PilotAnimationLab() } label: {
+                        Label("Animation preview", systemImage: "play.rectangle")
+                    }
+                }
                 Button { showGuide = true } label: {
                     Label("How to play", systemImage: "questionmark.circle")
                 }

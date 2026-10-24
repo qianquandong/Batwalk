@@ -102,9 +102,31 @@ external beta review, invite testers or expire existing builds.
 ### Existing GitHub workflow
 
 `.github/workflows/testflight.yml` uses `ASC_KEY_ID`, `ASC_ISSUER_ID` and
-`ASC_KEY_P8`. Its older run-number counter must be reconciled with Apple's latest
-build before returning to GitHub for uploads after Codemagic. With upload off it
-only validates an ad hoc archive; distribution signing happens during export.
+`ASC_KEY_P8`. The preflight now reads Apple's builds and selects the next unused
+integer, or validates an explicitly requested number. With upload off it only
+validates an ad hoc archive; distribution signing happens during export. After
+upload, a read-only check waits for Apple processing and reports internal beta
+state and assigned-group counts. It does not invite testers or change groups.
+
+### One-step animation review
+
+Run the GitHub TestFlight workflow with `animation_testing: true` on the intended
+commit. `BATWALK_ANIMATION_TESTING` defaults to `NO` in ordinary builds. The
+archive check verifies that both iPhone and Watch contain the requested flag;
+animation review exports are marked for internal TestFlight testing only.
+
+The intro egg and all five selectable eggs take one credited step. Updating
+also shortens an already-incubating egg, preserving its sealed bat, earned
+steps, collection, fruit and step ledger. Existing banked steps can make the
+next egg ready immediately. HealthKit synchronization still determines when
+new walking is credited; the review mode does not invent Health data.
+
+Watch **Options → Animation preview** and iPhone **Settings → Animation preview**
+let reviewers choose every shipped bat, Normal/Shiny, base clips and special
+actions without collecting bats or raising Friendship. Previewing has no save
+effects. Hatch rewards from playing the one-step game do persist. When returning
+to an ordinary build, new eggs use normal targets; an already-created one-step
+egg keeps its frozen target until hatched.
 
 StoreKit adapter tests use a fake backend for deterministic purchase states.
 The local `Config/Batwalk.storekit` and real sandbox/TestFlight purchase, pending

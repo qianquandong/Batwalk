@@ -43,6 +43,18 @@ public struct Tuning: Sendable, Equatable {
         .starter: 10_000, .tiny: 10_000, .forest: 21_097, .moon: 42_195, .crystal: 100_000
     ]
 
+    private var targetStepsOverride: Int?
+    /// Explicit animation-test configuration. The normal game leaves this nil.
+    /// A target must remain positive so testing still requires credited steps.
+    public var eggTargetStepsOverride: Int? {
+        get { targetStepsOverride }
+        set { targetStepsOverride = newValue.map { max(1, $0) } }
+    }
+
+    public func targetSteps(for type: EggType, isIntro: Bool = false) -> Int {
+        targetStepsOverride ?? (isIntro ? Self.introEggTargetSteps : Self.eggTargetSteps[type]!)
+    }
+
     /// Only for saves made before targets were stored on ActiveEgg.
     static let legacyEggTargetSteps: [EggType: Int] = [
         .starter: 2_000, .tiny: 2_500, .forest: 4_000, .moon: 5_000, .crystal: 6_000
@@ -114,7 +126,8 @@ public struct Tuning: Sendable, Equatable {
         duskStartHour: Int = 18,
         nightStartHour: Int = 19,
         dayStartHour: Int = 7,
-        maxNicknameLength: Int = 16
+        maxNicknameLength: Int = 16,
+        eggTargetStepsOverride: Int? = nil
     ) {
         self.rarityWeights = rarityWeights
         self.shinyChance = shinyChance
@@ -137,7 +150,9 @@ public struct Tuning: Sendable, Equatable {
         self.nightStartHour = nightStartHour
         self.dayStartHour = dayStartHour
         self.maxNicknameLength = maxNicknameLength
+        self.targetStepsOverride = eggTargetStepsOverride.map { max(1, $0) }
     }
 
     public static let `default` = Tuning()
+    public static let animationTesting = Tuning(eggTargetStepsOverride: 1)
 }
