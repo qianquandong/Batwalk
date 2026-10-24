@@ -137,7 +137,14 @@ struct PilotAnimationLab: View {
             }
             .frame(width: geometry.size.width, height: geometry.size.height)
         }
+        #if os(watchOS)
+        // The large Watch navigation title overlays a fixed GeometryReader.
+        // Options already names this destination; reserve the stage for the bat.
+        .navigationTitle("")
+        #else
         .navigationTitle("Animation preview")
+        .navigationBarTitleDisplayMode(.inline)
+        #endif
         .environment(\.batPageVisible, visible && !choosingSpecies)
         .onAppear { visible = true }
         .onDisappear { visible = false }
