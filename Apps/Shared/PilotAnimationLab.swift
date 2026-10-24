@@ -5,7 +5,7 @@ import BatwalkCore
 struct PilotAnimationLab: View {
     @State private var speciesID = "mochi"
     @State private var shiny = false
-    @State private var level = 5
+    private let level = 5
     @State private var selection = PreviewSelection.universal(.idle)
     @State private var replayID = UUID()
     @State private var choosingSpecies = false
@@ -124,15 +124,6 @@ struct PilotAnimationLab: View {
                             }
                         }
 
-                        DisclosureGroup("Preview level") {
-                            Picker("Friendship", selection: $level) {
-                                ForEach(1...5, id: \.self) { Text("Lv. \($0)").tag($0) }
-                            }
-                            Text("Only changes this preview.")
-                                .font(BatwalkFont.micro).foregroundStyle(.secondary)
-                        }
-                        .font(BatwalkFont.caption)
-
                         Text("Test preview. Your bats and progress stay as they are.")
                             .font(BatwalkFont.micro).foregroundStyle(.secondary)
                         if reduceMotion {
@@ -151,7 +142,6 @@ struct PilotAnimationLab: View {
         .onAppear { visible = true }
         .onDisappear { visible = false }
         .onChange(of: speciesID) { _, _ in resetSelection() }
-        .onChange(of: level) { _, _ in resetSelection() }
         .sheet(isPresented: $choosingSpecies) {
             NavigationStack {
                 List(species) { bat in
