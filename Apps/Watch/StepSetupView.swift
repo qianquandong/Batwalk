@@ -116,7 +116,7 @@ struct StepSetupView: View {
         switch status {
         case .idle, .ready: return "Your steps help it hatch."
         case .checking: return "Reading today's steps…"
-        case .noSteps: return "Walk a little, then retry."
+        case .noSteps: return "Walk a little, then retry. Check Help if needed."
         case .requestFailed: return "Try again or open Help."
         case .readFailed: return "Unlock, then retry."
         }
@@ -142,7 +142,7 @@ struct StepPermissionHelpView: View {
                         .font(BatwalkFont.headline)
                     Text("Settings → Health → Apps → Batwalk")
                     Text("Turn on Steps, then return here. If you've already allowed Steps, walk a few steps and check again.")
-                    Text("Batwalk only reads steps. It never writes to Health.")
+                    Text("Zero steps may mean no records yet. Batwalk only reads steps. It never writes to Health.")
                         .foregroundStyle(BatwalkColor.textSecondaryDark)
                 }
                 .font(BatwalkFont.caption)

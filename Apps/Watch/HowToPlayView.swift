@@ -10,11 +10,11 @@ struct HowToPlayView: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: BatwalkSpacing.lg) {
                     help("Walk a little", symbol: "figure.walk",
-                         message: "Your steps help an egg hatch. Come back anytime; your progress stays.")
+                         message: "Your steps help an egg hatch. Steps accumulate across days; no daily requirement. Come back anytime; your progress stays.")
                     help("Find your egg", symbol: "arrow.up.arrow.down",
                          message: "Swipe up or turn the Crown from your bat to see your egg and the steps left.")
                     help("Say hello", symbol: "hand.tap",
-                         message: "Tap your bat to greet them. Feed shares fruit you earn as you walk.")
+                         message: "Tap your bat to greet them, even without fruit. Feed uses one fruit; if empty, it shows fruit info.")
                     help("Start another journey", symbol: "sparkles",
                          message: "After hatching, choose another egg when you're ready. There's no rush.")
                     help("Need step help?", symbol: "heart",
