@@ -14,6 +14,7 @@ public enum EggType: String, Codable, CaseIterable, Sendable {
     public func displayName(forTargetSteps steps: Int?) -> String {
         switch steps {
         case 2_000 where self == .starter: return "Starter Egg"
+        case 10_000 where self == .starter: return "Mochi Egg"
         case 10_000: return "10K Egg"
         case 21_097: return "Half Marathon Egg"
         case 42_195: return "Marathon Egg"

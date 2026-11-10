@@ -93,6 +93,59 @@ final class BirthCertificateTests: XCTestCase {
         XCTAssertEqual(EggType.moon.displayName(forTargetSteps: nil), "Moon Egg")
     }
 
+    func testStarterAndTinyNamesDistinguishTheirEqualStepTargets() {
+        XCTAssertEqual(EggType.starter.displayName, "Mochi Egg")
+        XCTAssertEqual(EggType.tiny.displayName, "10K Egg")
+        XCTAssertEqual(EggType.starter.displayName(forTargetSteps: 2_000), "Starter Egg")
+        XCTAssertEqual(EggType.starter.displayName(forTargetSteps: nil), "Starter Egg")
+        XCTAssertEqual(EggType.tiny.displayName(forTargetSteps: nil), "Tiny Egg")
+    }
+
+    func testRegularStarterHatchStoresMochiNameAndItsOriginalReceipt() throws {
+        let firstStart = date("2026-10-01T12:00:00Z")
+        let regularStart = date("2026-10-02T12:00:00Z")
+        var state = GameState()
+        state.start(seed: 1, now: firstStart)
+        state.ingestSteps(dayKey: "2026-10-01", dailyTotal: Tuning.introEggTargetSteps)
+        let teaching = try state.hatch(now: firstStart).record
+        XCTAssertEqual(teaching.eggTierName, "Starter Egg")
+        XCTAssertEqual(teaching.eggSteps, 2_000)
+
+        try state.startEgg(.starter, seed: 1, now: regularStart)
+        state.ingestSteps(dayKey: "2026-10-02", dailyTotal: 10_000)
+        let result = try state.hatch(now: regularStart).record
+        XCTAssertEqual(result.eggType, .starter)
+        XCTAssertEqual(result.speciesID, "mochi")
+        XCTAssertEqual(result.eggTierName, "Mochi Egg")
+        XCTAssertEqual(result.certificateEggName, "Mochi Egg")
+        XCTAssertEqual(result.eggSteps, 10_000)
+        XCTAssertEqual(result.eggStartedAt, regularStart)
+        XCTAssertEqual(try JSONDecoder().decode(HatchRecord.self, from: JSONEncoder().encode(result)), result)
+    }
+
+    func testStoredCertificateNameIsPreservedAndLegacyFallbackUsesItsTarget() throws {
+        let hatchDate = date("2026-10-03T12:00:00Z")
+        let stored = HatchRecord(speciesID: "mochi", isShiny: false, eggType: .starter,
+                                 hatchedAt: hatchDate, outcome: .duplicate,
+                                 eggSteps: 10_000, eggTierName: "10K Egg")
+        let decoded = try JSONDecoder().decode(HatchRecord.self, from: JSONEncoder().encode(stored))
+        XCTAssertEqual(decoded, stored)
+        XCTAssertEqual(decoded.certificateEggName, "10K Egg")
+
+        let legacy = HatchRecord(speciesID: "mochi", isShiny: false, eggType: .starter,
+                                 hatchedAt: hatchDate, outcome: .duplicate, eggSteps: 10_000)
+        XCTAssertNil(legacy.eggTierName)
+        XCTAssertEqual(legacy.certificateEggName, "Mochi Egg")
+        let teaching = HatchRecord(speciesID: "mochi", isShiny: false, eggType: .starter,
+                                   hatchedAt: hatchDate, outcome: .newSpecies, eggSteps: 2_000)
+        XCTAssertEqual(teaching.certificateEggName, "Starter Egg")
+        let unknown = HatchRecord(speciesID: "mochi", isShiny: false, eggType: .starter,
+                                  hatchedAt: hatchDate, outcome: .newSpecies)
+        XCTAssertEqual(unknown.certificateEggName, "Starter Egg")
+        XCTAssertNil(unknown.eggSteps)
+        XCTAssertNil(unknown.eggStartedAt)
+    }
+
     func testMoonPhaseKnownNewAndFullMoonAndDatesBeforeEpoch() {
         XCTAssertEqual(MoonPhase.on(date("2000-01-06T18:15:00Z")), .newMoon)
         XCTAssertEqual(MoonPhase.on(date("2000-01-21T04:42:00Z")), .fullMoon)
