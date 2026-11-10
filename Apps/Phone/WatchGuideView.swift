@@ -15,7 +15,7 @@ struct WatchGuideView: View {
             Section("Step Count help") {
                 Text("On your Watch, tap Enable Steps and allow Step Count. Batwalk starts after it receives steps.")
                 Text("Your first teaching egg introduces Mochi and needs \(Tuning.introEggTargetSteps.formatted()) steps. Later eggs have different targets and character pools listed in the Eggs section. Steps accumulate across days; there is no daily requirement.")
-                Text("If you haven't walked yet today, walk a few steps, then tap Check again on your Watch.")
+                Text("If you haven't walked yet today, walk a few steps, then tap Check again or Retry on your Watch.")
                 Text("Apple Health Step Count is read-only. Automatic collection sync and backups do not include Health step totals; saved walking progress is on Watch.")
                 Text("Collection backups do not include Health step totals.")
                 Text("Choosing 'Include my steps and days' on a birth certificate requests that hatch's steps and start date from Watch to iPhone for the share card.")
