@@ -116,7 +116,7 @@ struct StepSetupView: View {
         switch status {
         case .idle, .ready: return "Your steps help it hatch."
         case .checking: return "Reading today's steps…"
-        case .noSteps: return "Walk a little, then retry."
+        case .noSteps: return typeSize.isAccessibilitySize ? "Walk, then retry." : "Walk a little, then retry."
         case .requestFailed: return "Try again or open Help."
         case .readFailed: return "Unlock, then retry."
         }
